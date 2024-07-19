@@ -1,0 +1,75 @@
+{
+  "name": "typescript-hapi-models-poc",
+  "version": "0.1.0",
+  "description": "POC project for TypeScript FHIR data models based on HAPI FHIR",
+  "keywords": [
+    "node",
+    "typescript",
+    "HAPI",
+    "FHIR",
+    "models"
+  ],
+  "author": "Joe Paquette <paqrat76@gmail.com>",
+  "homepage": "https://github.com/Paqrat76/typescript-hapi-models-poc/blob/main/README.md",
+  "bugs": {
+    "url": "https://github.com/Paqrat76/typescript-hapi-models-poc/issues",
+    "email": "paqrat76@gmail.com"
+  },
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "clean": "rm -rf tsconfig.tsbuildinfo dist coverage",
+    "build": "tsc",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "lint:docs": "markdownlint './**/*.md' -i '**/node_modules/**' -i '**/CHANGELOG.md'",
+    "prettier": "prettier . --check",
+    "prettier:fix": "prettier . --write",
+    "test": "jest",
+    "coverage": "jest --coverage",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@eslint/js": "^8.57.0",
+    "@jest/globals": "^29.7.0",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.14.11",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-jest": "^28.6.0",
+    "eslint-plugin-jsdoc": "^48.8.0",
+    "globals": "^15.8.0",
+    "husky": "^9.1.1",
+    "jest": "^29.7.0",
+    "jest-circus": "^29.7.0",
+    "lint-staged": "^15.2.7",
+    "markdownlint-cli": "^0.41.0",
+    "prettier": "^3.3.3",
+    "ts-jest": "^29.2.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.3",
+    "typescript-eslint": "^7.16.1"
+  },
+  "engines": {
+    "node": ">=20.9",
+    "npm": ">=10.1"
+  },
+  "lint-staged": {
+    "*.{json,yaml}": [
+      "prettier --write"
+    ],
+    "*.md": [
+      "prettier --write",
+      "npm run lint:docs"
+    ],
+    "*.{ts,js}": [
+      "prettier --write",
+      "eslint --max-warnings 0 --no-warn-ignored"
+    ]
+  },
+  "repository": "github:Paqrat76/typescript-hapi-models-poc"
+}

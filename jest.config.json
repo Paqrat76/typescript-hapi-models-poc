@@ -1,0 +1,29 @@
+{
+  "clearMocks": true,
+  "verbose": true,
+  "preset": "ts-jest",
+  "testEnvironment": "node",
+  "moduleNameMapper": {
+    "^@src/(.*)$": "<rootDir>/src/$1"
+  },
+  "moduleFileExtensions": ["js", "ts"],
+  "testPathIgnorePatterns": ["/node_modules/"],
+  "testMatch": ["<rootDir>/test/**/*.test.ts"],
+  "roots": ["<rootDir>/src", "<rootDir>/test"],
+  "transform": {
+    "^.+\\.(ts)$": "<rootDir>/node_modules/ts-jest"
+  },
+  "testRunner": "jest-circus/runner",
+  "collectCoverage": false,
+  "collectCoverageFrom": ["<rootDir>/src/**/*.ts"],
+  "coverageReporters": ["text", "cobertura", "lcov"],
+  "coverageDirectory": "<rootDir>/coverage/",
+  "coverageThreshold": {
+    "global": {
+      "branches": 80,
+      "functions": 90,
+      "lines": 90,
+      "statements": 90
+    }
+  }
+}

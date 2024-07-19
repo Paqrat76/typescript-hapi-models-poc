@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "exactOptionalPropertyTypes": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strict": true,
+
+    "module": "node16",
+    "paths": {
+      "@src/*": ["./src/*"]
+    },
+    "resolveJsonModule": true,
+    "rootDir": "./src",
+    "types": ["node", "jest"],
+
+    "declarationMap": true,
+    "newLine": "lf",
+    "noEmitOnError": false,
+    "outDir": "./dist",
+    "sourceMap": true,
+
+    "allowJs": false,
+
+    "plugins": [{ "name": "typescript-eslint-language-service" }],
+
+    "allowSyntheticDefaultImports": true,
+
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+
+    "composite": true,
+
+    "noErrorTruncation": true
+  }
+}
