@@ -1,0 +1,22 @@
+# Configuration for .md files
+default: true
+no-hard-tabs: true
+blanks-around-lists: false
+fenced-code-language: false
+no-inline-html: false
+no-multiple-blanks:
+  maximum: 2
+line-length:
+  line_length: 150
+  heading_line_length: 80
+  code_block_line_length: 120
+hr-style:
+  style: '---'
+no-duplicate-header:
+  siblings_only: true
+no-reversed-links: true
+heading-increment: false
+heading-start-left: true
+no-empty-links: true
+no-alt-text: true
+no-bare-urls: false
