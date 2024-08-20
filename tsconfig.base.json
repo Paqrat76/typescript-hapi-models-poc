@@ -13,11 +13,13 @@
     "strict": true,
 
     "module": "node16",
+    "target": "es2022",
+    "lib": ["es2022"],
     "paths": {
       "@src/*": ["./src/*"]
     },
     "resolveJsonModule": true,
-    "rootDir": "./src",
+    "rootDirs": ["./src", "./test"],
     "types": ["node", "jest"],
 
     "declarationMap": true,

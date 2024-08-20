@@ -21,6 +21,7 @@ on the [HAPI FHIR](https://hapifhir.io/) models (FHIR R4 and later versions).
     - org.hl7.fhir.r4 ([Surce](https://github.com/hapifhir/org.hl7.fhir.core/tree/master/org.hl7.fhir.r4))
     - org.hl7.fhir.r4b ([Surce](https://github.com/hapifhir/org.hl7.fhir.core/tree/master/org.hl7.fhir.r4b))
     - org.hl7.fhir.r5 ([Surce](https://github.com/hapifhir/org.hl7.fhir.core/tree/master/org.hl7.fhir.r5))
+- [Project Design Notes](./dev-docs/design-notes.md)
 
 ## Project Decisions
 

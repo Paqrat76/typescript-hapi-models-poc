@@ -46,7 +46,7 @@ export default tseslint.config(
     },
     linterOptions: {
       // https://eslint.org/docs/latest/use/configure/configuration-files#disabling-inline-configuration
-      noInlineConfig: true,
+      noInlineConfig: false,
       // https://eslint.org/docs/latest/use/configure/configuration-files#reporting-unused-disable-directives
       reportUnusedDisableDirectives: 'warn',
     },
