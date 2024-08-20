@@ -23,6 +23,7 @@
 
 import { DateTimeType } from '@src/fhir/data-types/primitive/DateTimeType';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
+import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 
 describe('DateTimeType', () => {
   const VALID_DATETIME = `2015-02-07T13:28:17-05:00`;
@@ -33,6 +34,7 @@ describe('DateTimeType', () => {
     const testDateTimeType = new DateTimeType();
     expect(testDateTimeType).toBeDefined();
     expect(testDateTimeType).toBeInstanceOf(DateTimeType);
+    expect(testDateTimeType).toBeInstanceOf(PrimitiveType);
     expect(testDateTimeType.constructor.name).toStrictEqual('DateTimeType');
     expect(testDateTimeType.fhirType()).toStrictEqual('dateTime');
     expect(testDateTimeType.isEmpty()).toBe(true);
@@ -147,8 +149,8 @@ describe('DateTimeType', () => {
   });
 
   it('should properly copy()', () => {
-    const uriType = new DateTimeType(VALID_DATETIME);
-    const testDateTimeType = uriType.copy();
+    const dateTimeType = new DateTimeType(VALID_DATETIME);
+    const testDateTimeType = dateTimeType.copy();
     expect(testDateTimeType).toBeDefined();
     expect(testDateTimeType).toBeInstanceOf(DateTimeType);
     expect(testDateTimeType.constructor.name).toStrictEqual('DateTimeType');

@@ -549,7 +549,7 @@ export abstract class PrimitiveType<T> extends DataType implements IBase {
   }
 
   public hasValue(): boolean {
-    return !!this.myCoercedValue;
+    return this.myCoercedValue !== undefined;
   }
 
   public getValueAsString(): string | undefined {

@@ -21,28 +21,30 @@
  *
  */
 
-import { fhirUri, fhirUriSchema } from './primitive-types';
+import { fhirTime, fhirTimeSchema } from './primitive-types';
 import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive type "uri" in FHIR: A Uniform Resource Identifier Reference (RFC 3986)
+ * Primitive type "time" in FHIR: A time during the day, in the format hh:mm:ss.
+ * There is no date specified. Seconds must be provided due to schema type
+ * constraints but may be zero-filled.
  *
- * @see {@link https://hl7.org/fhir/R5/datatypes.html#uri|uri}
+ * @see {@link https://hl7.org/fhir/R5/datatypes.html#time|time}
  */
-export class UriType extends PrimitiveType<fhirUri> {
-  constructor(value?: fhirUri) {
+export class TimeType extends PrimitiveType<fhirTime> {
+  constructor(value?: fhirTime) {
     super();
     this.setValue(value);
   }
 
-  public override setValue(value?: fhirUri): this {
+  public override setValue(value?: fhirTime): this {
     if (value !== undefined) {
-      const parseResult = fhirUriSchema.safeParse(value);
+      const parseResult = fhirTimeSchema.safeParse(value);
       if (parseResult.success) {
         super.setValue(parseResult.data);
       } else {
-        throw new PrimitiveTypeError(`Invalid value (${value}) for UriType`, parseResult.error);
+        throw new PrimitiveTypeError(`Invalid value (${value}) for TimeType`, parseResult.error);
       }
     } else {
       super.setValue(undefined);
@@ -50,35 +52,35 @@ export class UriType extends PrimitiveType<fhirUri> {
     return this;
   }
 
-  public encode(value: fhirUri): string {
-    const parseResult = fhirUriSchema.safeParse(value);
+  public encode(value: fhirTime): string {
+    const parseResult = fhirTimeSchema.safeParse(value);
     if (parseResult.success) {
       return parseResult.data.toString();
     } else {
-      throw new PrimitiveTypeError(`Invalid value (${value}) for UriType`, parseResult.error);
+      throw new PrimitiveTypeError(`Invalid value (${value}) for TimeType`, parseResult.error);
     }
   }
 
-  public parse(value: string): fhirUri {
-    const parseResult = fhirUriSchema.safeParse(value);
+  public parse(value: string): fhirTime {
+    const parseResult = fhirTimeSchema.safeParse(value);
     if (parseResult.success) {
       return parseResult.data;
     } else {
-      throw new PrimitiveTypeError(`Invalid value (${value}) for UriType`, parseResult.error);
+      throw new PrimitiveTypeError(`Invalid value (${value}) for TimeType`, parseResult.error);
     }
   }
 
   public override fhirType(): string {
-    return 'uri';
+    return 'time';
   }
 
-  public override copy(): UriType {
-    const dest = new UriType();
+  public override copy(): TimeType {
+    const dest = new TimeType();
     this.copyValues(dest);
     return dest;
   }
 
-  public override copyValues(dest: UriType): void {
+  public override copyValues(dest: TimeType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
   }

@@ -28,6 +28,8 @@ import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 /**
  * Primitive type "string" in FHIR: any sequence of Unicode characters less
  * than 1MB in length
+ *
+ * @see {@link https://hl7.org/fhir/R5/datatypes.html#string|string}
  */
 export class StringType extends PrimitiveType<fhirString> {
   constructor(value?: fhirString) {

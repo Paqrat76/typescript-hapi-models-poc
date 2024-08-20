@@ -21,28 +21,29 @@
  *
  */
 
-import { fhirUri, fhirUriSchema } from './primitive-types';
+import { fhirUuid, fhirUuidSchema } from './primitive-types';
 import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive type "uri" in FHIR: A Uniform Resource Identifier Reference (RFC 3986)
+ * Primitive type "uuid" in FHIR: A UUID (aka GUID) represented as a URI (RFC 4122 icon);
+ * e.g. urn:uuid:c757873d-ec9a-4326-a141-556f43239520
  *
- * @see {@link https://hl7.org/fhir/R5/datatypes.html#uri|uri}
+ * @see {@link https://hl7.org/fhir/R5/datatypes.html#uuid|uuid}
  */
-export class UriType extends PrimitiveType<fhirUri> {
-  constructor(value?: fhirUri) {
+export class UuidType extends PrimitiveType<fhirUuid> {
+  constructor(value?: fhirUuid) {
     super();
     this.setValue(value);
   }
 
-  public override setValue(value?: fhirUri): this {
+  public override setValue(value?: fhirUuid): this {
     if (value !== undefined) {
-      const parseResult = fhirUriSchema.safeParse(value);
+      const parseResult = fhirUuidSchema.safeParse(value);
       if (parseResult.success) {
         super.setValue(parseResult.data);
       } else {
-        throw new PrimitiveTypeError(`Invalid value (${value}) for UriType`, parseResult.error);
+        throw new PrimitiveTypeError(`Invalid value (${value}) for UuidType`, parseResult.error);
       }
     } else {
       super.setValue(undefined);
@@ -50,35 +51,35 @@ export class UriType extends PrimitiveType<fhirUri> {
     return this;
   }
 
-  public encode(value: fhirUri): string {
-    const parseResult = fhirUriSchema.safeParse(value);
+  public encode(value: fhirUuid): string {
+    const parseResult = fhirUuidSchema.safeParse(value);
     if (parseResult.success) {
       return parseResult.data.toString();
     } else {
-      throw new PrimitiveTypeError(`Invalid value (${value}) for UriType`, parseResult.error);
+      throw new PrimitiveTypeError(`Invalid value (${value}) for UuidType`, parseResult.error);
     }
   }
 
-  public parse(value: string): fhirUri {
-    const parseResult = fhirUriSchema.safeParse(value);
+  public parse(value: string): fhirUuid {
+    const parseResult = fhirUuidSchema.safeParse(value);
     if (parseResult.success) {
       return parseResult.data;
     } else {
-      throw new PrimitiveTypeError(`Invalid value (${value}) for UriType`, parseResult.error);
+      throw new PrimitiveTypeError(`Invalid value (${value}) for UuidType`, parseResult.error);
     }
   }
 
   public override fhirType(): string {
-    return 'uri';
+    return 'uuid';
   }
 
-  public override copy(): UriType {
-    const dest = new UriType();
+  public override copy(): UuidType {
+    const dest = new UuidType();
     this.copyValues(dest);
     return dest;
   }
 
-  public override copyValues(dest: UriType): void {
+  public override copyValues(dest: UuidType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
   }

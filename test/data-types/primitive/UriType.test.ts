@@ -23,6 +23,7 @@
 
 import { UriType } from '@src/fhir/data-types/primitive/UriType';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
+import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 
 describe('UriType', () => {
   const VALID_URI = `testUriType`;
@@ -33,6 +34,7 @@ describe('UriType', () => {
     const testUriType = new UriType();
     expect(testUriType).toBeDefined();
     expect(testUriType).toBeInstanceOf(UriType);
+    expect(testUriType).toBeInstanceOf(PrimitiveType);
     expect(testUriType.constructor.name).toStrictEqual('UriType');
     expect(testUriType.fhirType()).toStrictEqual('uri');
     expect(testUriType.isEmpty()).toBe(true);

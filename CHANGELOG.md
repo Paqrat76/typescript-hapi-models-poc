@@ -21,6 +21,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.3.0] - 2024-08-20
+
+### Added
+
+- Added additional WIP content including unit tests:
+  - the remaining primitive datatype models
+
+### Changed
+
+- Minor updates to original primitive datatype models and PrimitiveType
+
+
 ## [0.2.0] - 2024-08-20
 
 ### Added

@@ -21,28 +21,31 @@
  *
  */
 
-import { fhirUri, fhirUriSchema } from './primitive-types';
+import { fhirCanonical, fhirCanonicalSchema } from './primitive-types';
 import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive type "uri" in FHIR: A Uniform Resource Identifier Reference (RFC 3986)
+ * Primitive type "uri" in FHIR: A URI that refers to a resource by its canonical URL
+ * (resources with a url property). The canonical type differs from a uri in that it
+ * has special meaning in the FHIR specification, and in that it may have a version
+ * appended, separated by a vertical bar (|).
  *
- * @see {@link https://hl7.org/fhir/R5/datatypes.html#uri|uri}
+ * @see {@link https://hl7.org/fhir/R5/datatypes.html#canonical|canonical}
  */
-export class UriType extends PrimitiveType<fhirUri> {
-  constructor(value?: fhirUri) {
+export class CanonicalType extends PrimitiveType<fhirCanonical> {
+  constructor(value?: fhirCanonical) {
     super();
     this.setValue(value);
   }
 
-  public override setValue(value?: fhirUri): this {
+  public override setValue(value?: fhirCanonical): this {
     if (value !== undefined) {
-      const parseResult = fhirUriSchema.safeParse(value);
+      const parseResult = fhirCanonicalSchema.safeParse(value);
       if (parseResult.success) {
         super.setValue(parseResult.data);
       } else {
-        throw new PrimitiveTypeError(`Invalid value (${value}) for UriType`, parseResult.error);
+        throw new PrimitiveTypeError(`Invalid value (${value}) for CanonicalType`, parseResult.error);
       }
     } else {
       super.setValue(undefined);
@@ -50,35 +53,35 @@ export class UriType extends PrimitiveType<fhirUri> {
     return this;
   }
 
-  public encode(value: fhirUri): string {
-    const parseResult = fhirUriSchema.safeParse(value);
+  public encode(value: fhirCanonical): string {
+    const parseResult = fhirCanonicalSchema.safeParse(value);
     if (parseResult.success) {
       return parseResult.data.toString();
     } else {
-      throw new PrimitiveTypeError(`Invalid value (${value}) for UriType`, parseResult.error);
+      throw new PrimitiveTypeError(`Invalid value (${value}) for CanonicalType`, parseResult.error);
     }
   }
 
-  public parse(value: string): fhirUri {
-    const parseResult = fhirUriSchema.safeParse(value);
+  public parse(value: string): fhirCanonical {
+    const parseResult = fhirCanonicalSchema.safeParse(value);
     if (parseResult.success) {
       return parseResult.data;
     } else {
-      throw new PrimitiveTypeError(`Invalid value (${value}) for UriType`, parseResult.error);
+      throw new PrimitiveTypeError(`Invalid value (${value}) for CanonicalType`, parseResult.error);
     }
   }
 
   public override fhirType(): string {
-    return 'uri';
+    return 'canonical';
   }
 
-  public override copy(): UriType {
-    const dest = new UriType();
+  public override copy(): CanonicalType {
+    const dest = new CanonicalType();
     this.copyValues(dest);
     return dest;
   }
 
-  public override copyValues(dest: UriType): void {
+  public override copyValues(dest: CanonicalType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
   }

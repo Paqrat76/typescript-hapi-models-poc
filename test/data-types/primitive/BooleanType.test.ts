@@ -23,6 +23,7 @@
 
 import { BooleanType } from '@src/fhir/data-types/primitive/BooleanType';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
+import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 
 describe('BooleanType', () => {
   const INVALID_BOOLEAN = 'invalidBoolean';
@@ -31,6 +32,7 @@ describe('BooleanType', () => {
     const testBooleanType = new BooleanType();
     expect(testBooleanType).toBeDefined();
     expect(testBooleanType).toBeInstanceOf(BooleanType);
+    expect(testBooleanType).toBeInstanceOf(PrimitiveType);
     expect(testBooleanType.constructor.name).toStrictEqual('BooleanType');
     expect(testBooleanType.fhirType()).toStrictEqual('boolean');
     expect(testBooleanType.isEmpty()).toBe(true);
