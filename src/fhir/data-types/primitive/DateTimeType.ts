@@ -26,7 +26,10 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive type "dateTime" in FHIR:
+ * Primitive type "dateTime" in FHIR: A date, date-time or partial date (e.g. just year or year + month)
+ * as used in human communication. The format is YYYY, YYYY-MM, YYYY-MM-DD or YYYY-MM-DDThh:mm:ss+zz:zz.
+ *
+ * @see {@link https://hl7.org/fhir/R5/datatypes.html#dateTime|dateTime}
  */
 export class DateTimeType extends PrimitiveType<fhirDateTime> {
   constructor(value?: fhirDateTime) {

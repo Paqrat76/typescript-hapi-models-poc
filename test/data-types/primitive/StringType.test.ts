@@ -21,9 +21,10 @@
  *
  */
 
+import { TOO_BIG_STRING } from '../../test-utils';
 import { StringType } from '@src/fhir/data-types/primitive/StringType';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
-import { TOO_BIG_STRING } from '../../test-utils';
+import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 
 describe('StringType', () => {
   const VALID_STRING = 'This is a valid string.';
@@ -34,6 +35,7 @@ describe('StringType', () => {
     const testStringType = new StringType();
     expect(testStringType).toBeDefined();
     expect(testStringType).toBeInstanceOf(StringType);
+    expect(testStringType).toBeInstanceOf(PrimitiveType);
     expect(testStringType.constructor.name).toStrictEqual('StringType');
     expect(testStringType.fhirType()).toStrictEqual('string');
     expect(testStringType.isEmpty()).toBe(true);

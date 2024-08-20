@@ -21,28 +21,29 @@
  *
  */
 
-import { fhirUri, fhirUriSchema } from './primitive-types';
+import { fhirInteger64, fhirInteger64Schema } from './primitive-types';
 import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive type "uri" in FHIR: A Uniform Resource Identifier Reference (RFC 3986)
+ * Primitive type "integer64" in FHIR (added in R5): A signed integer in the range
+ * -9,223,372,036,854,775,808 to +9,223,372,036,854,775,807 (64-bit).
  *
- * @see {@link https://hl7.org/fhir/R5/datatypes.html#uri|uri}
+ * @see {@link https://hl7.org/fhir/R5/datatypes.html#integer64|integer64}
  */
-export class UriType extends PrimitiveType<fhirUri> {
-  constructor(value?: fhirUri) {
+export class Integer64Type extends PrimitiveType<fhirInteger64> {
+  constructor(value?: fhirInteger64) {
     super();
     this.setValue(value);
   }
 
-  public override setValue(value?: fhirUri): this {
+  public override setValue(value?: fhirInteger64): this {
     if (value !== undefined) {
-      const parseResult = fhirUriSchema.safeParse(value);
+      const parseResult = fhirInteger64Schema.safeParse(value);
       if (parseResult.success) {
         super.setValue(parseResult.data);
       } else {
-        throw new PrimitiveTypeError(`Invalid value (${value}) for UriType`, parseResult.error);
+        throw new PrimitiveTypeError(`Invalid value for Integer64Type`, parseResult.error);
       }
     } else {
       super.setValue(undefined);
@@ -50,35 +51,36 @@ export class UriType extends PrimitiveType<fhirUri> {
     return this;
   }
 
-  public encode(value: fhirUri): string {
-    const parseResult = fhirUriSchema.safeParse(value);
+  public encode(value: fhirInteger64): string {
+    const parseResult = fhirInteger64Schema.safeParse(value);
     if (parseResult.success) {
       return parseResult.data.toString();
     } else {
-      throw new PrimitiveTypeError(`Invalid value (${value}) for UriType`, parseResult.error);
+      throw new PrimitiveTypeError(`Invalid value for Integer64Type`, parseResult.error);
     }
   }
 
-  public parse(value: string): fhirUri {
-    const parseResult = fhirUriSchema.safeParse(value);
+  public parse(value: string): fhirInteger64 {
+    const valueNumber = BigInt(value);
+    const parseResult = fhirInteger64Schema.safeParse(valueNumber);
     if (parseResult.success) {
       return parseResult.data;
     } else {
-      throw new PrimitiveTypeError(`Invalid value (${value}) for UriType`, parseResult.error);
+      throw new PrimitiveTypeError(`Invalid value for Integer64Type`, parseResult.error);
     }
   }
 
   public override fhirType(): string {
-    return 'uri';
+    return 'integer64';
   }
 
-  public override copy(): UriType {
-    const dest = new UriType();
+  public override copy(): Integer64Type {
+    const dest = new Integer64Type();
     this.copyValues(dest);
     return dest;
   }
 
-  public override copyValues(dest: UriType): void {
+  public override copyValues(dest: Integer64Type): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
   }

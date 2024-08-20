@@ -27,6 +27,8 @@ import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
  * Primitive type "boolean" in FHIR: "true" or "false"
+ *
+ * @see {@link https://hl7.org/fhir/R5/datatypes.html#boolean|boolean}
  */
 export class BooleanType extends PrimitiveType<fhirBoolean> {
   private boolValue: boolean | undefined;

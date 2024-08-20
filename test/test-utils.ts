@@ -23,6 +23,13 @@
 
 import { FHIR_MAX_STRING_LENGTH } from '@src/fhir/data-types/primitive/primitive-types';
 
+export {
+  FHIR_MIN_INTEGER,
+  FHIR_MAX_INTEGER,
+  FHIR_MIN_INTEGER64,
+  FHIR_MAX_INTEGER64,
+} from '@src/fhir/data-types/primitive/primitive-types';
+
 export const TOO_BIG_STRING = getString(FHIR_MAX_STRING_LENGTH + 2);
 
 export function getString(maxLength: number): string {

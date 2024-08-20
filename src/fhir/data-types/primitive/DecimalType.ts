@@ -21,28 +21,29 @@
  *
  */
 
-import { fhirUri, fhirUriSchema } from './primitive-types';
+import { fhirDecimal, fhirDecimalSchema } from './primitive-types';
 import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive type "uri" in FHIR: A Uniform Resource Identifier Reference (RFC 3986)
+ * Primitive type "decimal" in FHIR: Rational numbers that have a decimal
+ * representation. Decimals in FHIR cannot have more than 18 digits and a decimal point.
  *
- * @see {@link https://hl7.org/fhir/R5/datatypes.html#uri|uri}
+ * @see {@link https://hl7.org/fhir/R5/datatypes.html#decimal|decimal}
  */
-export class UriType extends PrimitiveType<fhirUri> {
-  constructor(value?: fhirUri) {
+export class DecimalType extends PrimitiveType<fhirDecimal> {
+  constructor(value?: fhirDecimal) {
     super();
     this.setValue(value);
   }
 
-  public override setValue(value?: fhirUri): this {
+  public override setValue(value?: fhirDecimal): this {
     if (value !== undefined) {
-      const parseResult = fhirUriSchema.safeParse(value);
+      const parseResult = fhirDecimalSchema.safeParse(value);
       if (parseResult.success) {
         super.setValue(parseResult.data);
       } else {
-        throw new PrimitiveTypeError(`Invalid value (${value}) for UriType`, parseResult.error);
+        throw new PrimitiveTypeError(`Invalid value for DecimalType`, parseResult.error);
       }
     } else {
       super.setValue(undefined);
@@ -50,35 +51,39 @@ export class UriType extends PrimitiveType<fhirUri> {
     return this;
   }
 
-  public encode(value: fhirUri): string {
-    const parseResult = fhirUriSchema.safeParse(value);
+  public encode(value: fhirDecimal): string {
+    const parseResult = fhirDecimalSchema.safeParse(value);
     if (parseResult.success) {
       return parseResult.data.toString();
     } else {
-      throw new PrimitiveTypeError(`Invalid value (${value}) for UriType`, parseResult.error);
+      throw new PrimitiveTypeError(`Invalid value for DecimalType`, parseResult.error);
     }
   }
 
-  public parse(value: string): fhirUri {
-    const parseResult = fhirUriSchema.safeParse(value);
+  public parse(value: string): fhirDecimal {
+    const valueNumber = Number.parseFloat(value);
+    if (Number.isNaN(valueNumber)) {
+      throw new TypeError(`Invalid value (${value}) is not a number`);
+    }
+    const parseResult = fhirDecimalSchema.safeParse(valueNumber);
     if (parseResult.success) {
       return parseResult.data;
     } else {
-      throw new PrimitiveTypeError(`Invalid value (${value}) for UriType`, parseResult.error);
+      throw new PrimitiveTypeError(`Invalid value for DecimalType`, parseResult.error);
     }
   }
 
   public override fhirType(): string {
-    return 'uri';
+    return 'decimal';
   }
 
-  public override copy(): UriType {
-    const dest = new UriType();
+  public override copy(): DecimalType {
+    const dest = new DecimalType();
     this.copyValues(dest);
     return dest;
   }
 
-  public override copyValues(dest: UriType): void {
+  public override copyValues(dest: DecimalType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
   }
