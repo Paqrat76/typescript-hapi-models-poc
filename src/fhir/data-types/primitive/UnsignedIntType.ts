@@ -26,11 +26,19 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive type "unsignedInt" in FHIR: Any non-negative integer in the range 0..2,147,483,647
+ * Primitive FHIR Datatype: unsignedInt
  *
- * @see {@link https://hl7.org/fhir/R5/datatypes.html#unsignedInt|unsignedInt}
+ * @remarks
+ * Any non-negative integer in the range 0..2,147,483,647.
+ *
+ * @category Datatypes: Primitive
+ * @see [FHIR unsignedInt](https://hl7.org/fhir/R5/datatypes.html#unsignedInt)
  */
 export class UnsignedIntType extends PrimitiveType<fhirUnsignedInt> {
+  /**
+   * @param value - the value of the primitive `fhirUnsignedInt`
+   * @throws PrimitiveTypeError for invalid value
+   */
   constructor(value?: fhirUnsignedInt) {
     super();
     this.setValue(value);

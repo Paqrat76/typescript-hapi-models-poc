@@ -26,13 +26,20 @@ import { Extension, PrimitiveType } from '@src/fhir/base-models/core-fhir-models
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive type "xhtml" in FHIR: XHTML with rules as defined in the FHIR specification.
- * No extensions are possible, and the id property becomes an xml:id on the root element
- * which is an xhtml div.
+ * Primitive FHIR Datatype: xhtml
  *
- * @see {@link https://hl7.org/fhir/R5/narrative.html#xhtml|xhtml}
+ * @remarks
+ * XHTML with rules as defined in the FHIR specification.  No extensions are possible,
+ * and the id property becomes an xml:id on the root element which is a xhtml div.
+ *
+ * @category Datatypes: Primitive
+ * @see [FHIR xhtml](https://hl7.org/fhir/R5/datatypes.html#xhtml)
  */
 export class XhtmlType extends PrimitiveType<fhirXhtml> {
+  /**
+   * @param value - the value of the primitive `fhirXhtml`
+   * @throws PrimitiveTypeError for invalid value
+   */
   constructor(value?: fhirXhtml) {
     super();
     this.setValue(value);

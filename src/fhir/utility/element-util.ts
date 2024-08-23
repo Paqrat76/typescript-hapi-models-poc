@@ -21,28 +21,30 @@
  *
  */
 
+/**
+ * Common FHIR related utilities
+ *
+ * @module
+ */
+
 import { isEmpty as _isEmpty } from 'lodash';
 import { IBase } from '@src/fhir/base-models/IBase';
 
 /**
- * Common FHIR related utilities
- */
-
-/**
- * Determine if the all the provided elements are empty
+ * Determine if all the provided elements are empty
  *
+ * @privateRemarks
  * Loosely based on HAPI FHIR ca.uhn.fhir.util.ElementUtil
  *
- * @see {@link https://github.com/hapifhir/hapi-fhir/blob/master/hapi-fhir-base/src/main/java/ca/uhn/fhir/util/ElementUtil.java|ElementUtil}
- *
- * @param theElements - FHIR object's data elements
- * @returns true if all provided elements are empty; false if at least one element is not empty
+ * @category Utilities
+ * @param elements - FHIR instance's data elements
+ * @returns `true` if all provided elements are empty; `false` if at least one element is not empty
  */
-export function isElementEmpty(...theElements: (IBase | IBase[] | undefined)[]): boolean {
-  if (theElements.length === 1 && _isEmpty(theElements[0])) {
+export function isElementEmpty(...elements: (IBase | IBase[] | undefined)[]): boolean {
+  if (elements.length === 1 && _isEmpty(elements[0])) {
     return true;
   } else {
-    for (const element of theElements) {
+    for (const element of elements) {
       if (Array.isArray(element)) {
         // IBase[]
         for (const item of element) {

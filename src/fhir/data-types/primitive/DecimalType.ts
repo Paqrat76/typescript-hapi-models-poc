@@ -26,12 +26,20 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive type "decimal" in FHIR: Rational numbers that have a decimal
- * representation. Decimals in FHIR cannot have more than 18 digits and a decimal point.
+ * Primitive FHIR Datatype: decimal
  *
- * @see {@link https://hl7.org/fhir/R5/datatypes.html#decimal|decimal}
+ * @remarks
+ * Rational numbers that have a decimal  representation. Decimals in FHIR
+ * cannot have more than 18 digits and a decimal point.
+ *
+ * @category Datatypes: Primitive
+ * @see [FHIR decimal](https://hl7.org/fhir/R5/datatypes.html#decimal)
  */
 export class DecimalType extends PrimitiveType<fhirDecimal> {
+  /**
+   * @param value - the value of the primitive `fhirDecimal`
+   * @throws PrimitiveTypeError for invalid value
+   */
   constructor(value?: fhirDecimal) {
     super();
     this.setValue(value);

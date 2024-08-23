@@ -26,14 +26,22 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
+ * Primitive FHIR Datatype: fhirCanonical
+ *
+ * @remarks
  * Primitive type "uri" in FHIR: A URI that refers to a resource by its canonical URL
  * (resources with a url property). The canonical type differs from a uri in that it
  * has special meaning in the FHIR specification, and in that it may have a version
  * appended, separated by a vertical bar (|).
  *
- * @see {@link https://hl7.org/fhir/R5/datatypes.html#canonical|canonical}
+ * @category Datatypes: Primitive
+ * @see [FHIR canonical](https://hl7.org/fhir/R5/datatypes.html#canonical)
  */
 export class CanonicalType extends PrimitiveType<fhirCanonical> {
+  /**
+   * @param value - the value of the primitive `fhirCanonical`
+   * @throws PrimitiveTypeError for invalid value
+   */
   constructor(value?: fhirCanonical) {
     super();
     this.setValue(value);

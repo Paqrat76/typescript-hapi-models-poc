@@ -26,11 +26,22 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive type "base64Binary" in FHIR: A stream of bytes, base64 encoded (RFC 4648).
+ * Primitive FHIR Datatype: base64Binary
  *
- * @see {@link https://hl7.org/fhir/R5/datatypes.html#base64Binary|base64Binary}
+ * @remarks
+ * A stream of bytes, base64 encoded (RFC 4648).
+ *
+ * `base64Binary` content does not include any whitespace or line feeds, but reading applications
+ *  should ignore whitespace characters (per RFC 4648).
+ *
+ * @category Datatypes: Primitive
+ * @see [FHIR base64Binary](https://hl7.org/fhir/R5/datatypes.html#base64Binary)
  */
 export class Base64BinaryType extends PrimitiveType<fhirBase64Binary> {
+  /**
+   * @param value - the value of the primitive `fhirBase64Binary`
+   * @throws PrimitiveTypeError for invalid value
+   */
   constructor(value?: fhirBase64Binary) {
     super();
     this.setValue(value);

@@ -21,6 +21,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.4.0] - 2024-08-23
+
+### Added
+
+- Added dev dependency on TypeDoc
+
+### Changed
+
+- Added/updated "JSDoc" comment blocks in a current code
+- Added ability to generate project documentation
+
+
 ## [0.3.0] - 2024-08-20
 
 ### Added

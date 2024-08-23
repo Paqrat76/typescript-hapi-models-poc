@@ -1,4 +1,4 @@
-# POC project for TypeScript FHIR data models based on HAPI FHIR
+# POC Project for TypeScript FHIR Data Models Inspired by HAPI FHIR
 
 ## Project Goal
 

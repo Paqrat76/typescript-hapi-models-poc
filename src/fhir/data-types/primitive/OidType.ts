@@ -26,12 +26,19 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive type "oid" in FHIR: An OID represented as a URI (RFC 3001 icon);
- * e.g. urn:oid:1.2.3.4.5
+ * Primitive FHIR Datatype: oid
  *
- * @see {@link https://hl7.org/fhir/R5/datatypes.html#oid|oid}
+ * @remarks
+ * An OID represented as a URI (RFC 3001); e.g. urn:oid:1.2.3.4.5.
+ *
+ * @category Datatypes: Primitive
+ * @see [FHIR oid](https://hl7.org/fhir/R5/datatypes.html#oid)
  */
 export class OidType extends PrimitiveType<fhirOid> {
+  /**
+   * @param value - the value of the primitive `fhirOid`
+   * @throws PrimitiveTypeError for invalid value
+   */
   constructor(value?: fhirOid) {
     super();
     this.setValue(value);

@@ -26,11 +26,19 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive type "positiveInt" in FHIR: Any positive integer in the range 1..2,147,483,647
+ * Primitive FHIR Datatype: positiveInt
  *
- * @see {@link https://hl7.org/fhir/R5/datatypes.html#positiveInt|positiveInt}
+ * @remarks
+ * Any positive integer in the range 1..2,147,483,647.
+ *
+ * @category Datatypes: Primitive
+ * @see [FHIR positiveInt](https://hl7.org/fhir/R5/datatypes.html#positiveInt)
  */
 export class PositiveIntType extends PrimitiveType<fhirPositiveInt> {
+  /**
+   * @param value - the value of the primitive `fhirPositiveInt`
+   * @throws PrimitiveTypeError for invalid value
+   */
   constructor(value?: fhirPositiveInt) {
     super();
     this.setValue(value);

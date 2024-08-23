@@ -26,13 +26,20 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive type "id" in FHIR: Any combination of upper- or lower-case ASCII
- * letters ('A'..'Z', and 'a'..'z', numerals ('0'..'9'), '-' and '.', with a
- * length limit of 64 characters.
+ * Primitive FHIR Datatype: id
  *
- * @see {@link https://hl7.org/fhir/R5/datatypes.html#id|id}
+ * @remarks
+ * Any combination of upper- or lower-case ASCII  letters ('A'..'Z', and 'a'..'z'),
+ * numerals ('0'..'9'), '-' and '.', with a length limit of 64 characters.
+ *
+ * @category Datatypes: Primitive
+ * @see [FHIR id](https://hl7.org/fhir/R5/datatypes.html#id)
  */
 export class IdType extends PrimitiveType<fhirId> {
+  /**
+   * @param value - the value of the primitive `fhirId`
+   * @throws PrimitiveTypeError for invalid value
+   */
   constructor(value?: fhirId) {
     super();
     this.setValue(value);

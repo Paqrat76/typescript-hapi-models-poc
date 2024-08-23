@@ -23,23 +23,27 @@
 
 /**
  * Common non-FHIR related utilities
+ *
+ * @module
  */
 
 /**
- * Determines if provided string value is blank (whitespace, empty, undefined, null)
+ * Determines if provided string value is blank (whitespace, empty, `undefined`, `null`)
  *
- * @param value - test value
- * @returns true if blank; otherwise false
+ * @category Utilities
+ * @param value - value to be evaluated
+ * @returns `true` if blank; otherwise `false`
  */
 export function isBlank(value: string | undefined | null): boolean {
   return value === undefined || value === null || value.trim().length === 0;
 }
 
 /**
- * Determines if provided string value is not blank (not whitespace, empty, undefined, null)
+ * Determines if provided string value is not blank (not whitespace, empty, `undefined`, `null`)
  *
- * @param value - test value
- * @returns true if not blank; otherwise false
+ * @category Utilities
+ * @param value - value to be evaluated
+ * @returns `true` if not blank; otherwise `false`
  */
 export function isNonBlank(value: string | undefined | null): boolean {
   return !isBlank(value);

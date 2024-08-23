@@ -26,11 +26,19 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive type "uri" in FHIR: A Uniform Resource Identifier Reference (RFC 3986)
+ * Primitive FHIR Datatype: uri
  *
- * @see {@link https://hl7.org/fhir/R5/datatypes.html#uri|uri}
+ * @remarks
+ * A Uniform Resource Identifier Reference (RFC 3986).
+ *
+ * @category Datatypes: Primitive
+ * @see [FHIR uri](https://hl7.org/fhir/R5/datatypes.html#uri)
  */
 export class UriType extends PrimitiveType<fhirUri> {
+  /**
+   * @param value - the value of the primitive `fhirUri`
+   * @throws PrimitiveTypeError for invalid value
+   */
   constructor(value?: fhirUri) {
     super();
     this.setValue(value);
