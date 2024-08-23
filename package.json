@@ -1,6 +1,6 @@
 {
   "name": "typescript-hapi-models-poc",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "POC project for TypeScript FHIR data models based on HAPI FHIR",
   "keywords": [
     "node",
@@ -23,7 +23,7 @@
     "dist/**"
   ],
   "scripts": {
-    "clean": "rm -rf tsconfig.tsbuildinfo dist coverage",
+    "clean": "rm -rf tsconfig.tsbuildinfo dist coverage docs",
     "build": "tsc",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
@@ -32,6 +32,7 @@
     "prettier:fix": "prettier . --write",
     "test": "jest",
     "coverage": "jest --coverage",
+    "typedoc": "typedoc src/index.ts",
     "prepare": "husky"
   },
   "dependencies": {
@@ -40,7 +41,6 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@deepkit/type-compiler": "^1.0.1-alpha.150",
     "@jest/globals": "^29.7.0",
     "@types/eslint__js": "^8.42.3",
     "@types/jest": "^29.5.12",
@@ -60,6 +60,8 @@
     "prettier": "^3.3.3",
     "ts-jest": "^29.2.4",
     "ts-node": "^10.9.2",
+    "typedoc": "^0.26.6",
+    "typedoc-plugin-zod": "^1.2.1",
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.2.0"
   },

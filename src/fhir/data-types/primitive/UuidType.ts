@@ -26,12 +26,20 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive type "uuid" in FHIR: A UUID (aka GUID) represented as a URI (RFC 4122 icon);
- * e.g. urn:uuid:c757873d-ec9a-4326-a141-556f43239520
+ * Primitive FHIR Datatype: uuid
  *
- * @see {@link https://hl7.org/fhir/R5/datatypes.html#uuid|uuid}
+ * @remarks
+ * A UUID (aka GUID) represented as a URI (RFC 4122);
+ * e.g. urn:uuid:c757873d-ec9a-4326-a141-556f43239520.
+ *
+ * @category Datatypes: Primitive
+ * @see [FHIR uuid](https://hl7.org/fhir/R5/datatypes.html#uuid)
  */
 export class UuidType extends PrimitiveType<fhirUuid> {
+  /**
+   * @param value - the value of the primitive `fhirUuid`
+   * @throws PrimitiveTypeError for invalid value
+   */
   constructor(value?: fhirUuid) {
     super();
     this.setValue(value);

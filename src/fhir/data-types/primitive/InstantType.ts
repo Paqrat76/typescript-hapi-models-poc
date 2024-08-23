@@ -26,12 +26,20 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive type "instant" in FHIR: An instant in time in the format YYYY-MM-DDThh:mm:ss.sss+zz:zz.
- * The time SHALL be specified at least to the second and SHALL include a timezone offset.
+ * Primitive FHIR Datatype: instant
  *
- * @see {@link https://hl7.org/fhir/R5/datatypes.html#instant|instant}
+ * @remarks
+ * An instant in time in the format YYYY-MM-DDThh:mm:ss.sss+zz:zz. The time
+ * SHALL be specified at least to the second and SHALL include a timezone offset.
+ *
+ * @category Datatypes: Primitive
+ * @see [FHIR instant](https://hl7.org/fhir/R5/datatypes.html#instant)
  */
 export class InstantType extends PrimitiveType<fhirInstant> {
+  /**
+   * @param value - the value of the primitive `fhirInstant`
+   * @throws PrimitiveTypeError for invalid value
+   */
   constructor(value?: fhirInstant) {
     super();
     this.setValue(value);

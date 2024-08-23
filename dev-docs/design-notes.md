@@ -186,10 +186,45 @@ The desire is to write all unit tests as these data models evolve into a final s
 **Therefore for convenience, it will be easier to test the abstract classes rather than replicating tests
 across all hand-crafted derived classes.**
 
-### JSDoc vs TSDoc
+### Code Documentation
 
-My goal is to migrate to TSDoc. The "out of the box" rendering of generated documentation IMHO is better
-in TSDoc vs JSDoc.
-Unfortunately, TSDoc has not yet upgraded their `eslint-plugin-tsdoc` to support ESLint v9 and
-typescript-eslint v8.
-I am deferring the migration to TSDoc until after support for ESLint v9 and typescript-eslint v8 is added.
+Most Node-based projects make use of [JSDoc](https://jsdoc.app/) for documenting the code base and optionally
+generating project documentation.
+For projects using TypeScript, Microsoft provides the [JSDoc Reference](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html).
+This combination works for many cases.
+In my case, this was not a satisfactory approach. My biggest issue is the inability to provide documentation
+for TypeScript `type` definitions.
+Generating the project documentation using JSDoc and TypeScript felt like a kluge.
+
+As an alternative, Microsoft provides [TSDoc](https://tsdoc.org/) as a replacement for JSDoc in TypeScript projects.
+"TSDoc is a proposal to standardize the doc comments used in TypeScript code, so that different tools can extract content
+without getting confused by each other's markup.
+Microsoft also provides a library package that provides an open source reference implementation of a parser.
+Using this library is an easy way to ensure that your tool is 100% compatible with the standard."
+
+I decided to investigate TSDoc for my use in this project.
+I noticed the TSDoc documentation mentions various tools that interact with the JSDoc/TSDoc notations and tags.
+One that caught my eye is [TypeDoc](https://typedoc.org/).
+It generates project documentation based on JSDoc/TSDoc notations and tags.
+Its home page is very brief.
+It provides a 2-step process to use TypeDoc out of the box:
+
+```shell
+# Install
+npm install --save-dev typedoc
+
+# Execute typedoc on your project
+npx typedoc src/index.ts
+```
+
+Following the above steps, I was pleasantly surprised by the quality of the automatic generation of the project's documentation.
+The current state of the project had very limited JSDoc notations, but TypeDoc generated very good documentation based
+on the actual TypeScript code. Where JSDoc notation existed, TypeDoc parsed that content and added it to the generated
+documentation.
+I was immediately sold on TypeDoc!
+
+The TypeDoc ecosystem includes plugins for various uses.
+I was thrilled when I discovered a plugin for Zod (described above).
+TypeDoc provides extensive configuration, but in my case, I only needed to included five (5) options!
+
+**Therefore, I am using TypeDoc to generate project documentation!**

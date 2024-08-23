@@ -18,6 +18,7 @@
   "collectCoverageFrom": ["<rootDir>/src/**/*.ts"],
   "coverageReporters": ["text", "cobertura", "lcov"],
   "coverageDirectory": "<rootDir>/coverage/",
+  "coveragePathIgnorePatterns": ["<rootDir>/src/index.ts"],
   "coverageThreshold": {
     "global": {
       "branches": 95,

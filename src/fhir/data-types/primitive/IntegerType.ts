@@ -26,11 +26,19 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive type "integer" in FHIR: A signed integer in the range −2,147,483,648..2,147,483,647 (32-bit)
+ * Primitive FHIR Datatype: integer
  *
- * @see {@link https://hl7.org/fhir/R5/datatypes.html#integer|integer}
+ * @remarks
+ * A signed integer in the range −2,147,483,648..2,147,483,647 (32-bit).
+ *
+ * @category Datatypes: Primitive
+ * @see [FHIR integer](https://hl7.org/fhir/R5/datatypes.html#integer)
  */
 export class IntegerType extends PrimitiveType<fhirInteger> {
+  /**
+   * @param value - the value of the primitive `fhirInteger`
+   * @throws PrimitiveTypeError for invalid value
+   */
   constructor(value?: fhirInteger) {
     super();
     this.setValue(value);

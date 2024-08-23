@@ -23,6 +23,17 @@
 
 import { ZodError, ZodIssue } from 'zod';
 
+/**
+ * Error thrown when instances of primitive types fail validation.
+ *
+ * @remarks
+ * Validation is based on parsing the primitive value using a [Zod](https://zod.dev/?id=safeparse)
+ * schema definition that was used to define the primitive `type`.
+ *
+ * @category Errors
+ * @see [ZodError](https://zod.dev/ERROR_HANDLING?id=zoderror)
+ * @see [ZodIssue](https://zod.dev/ERROR_HANDLING?id=zodissue)
+ */
 export class PrimitiveTypeError extends Error {
   private zodIssues: ZodIssue[];
   private errorDetails: string[];
@@ -33,9 +44,21 @@ export class PrimitiveTypeError extends Error {
     this.zodIssues = cause.issues;
     this.errorDetails = cause.issues.map((issue: ZodIssue) => issue.message);
   }
+
+  /**
+   * Provides the detailed validation issues as an array of [ZodIssue](https://zod.dev/ERROR_HANDLING?id=zodissue)
+   *
+   * @returns the validation issues
+   */
   public getIssues(): ZodIssue[] {
     return this.zodIssues;
   }
+
+  /**
+   * Provides an array of validation issues messages
+   *
+   * @returns the validation issue messages
+   */
   public getDetails(): string[] {
     return this.errorDetails;
   }

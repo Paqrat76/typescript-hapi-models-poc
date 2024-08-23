@@ -28,15 +28,23 @@
  * Except for integer64 (added in R5), all FHIR primitive datatypes are consistent across FHIR releases.
  * The integer64 primitive will be excluded in R4 implementations.
  *
- * @see {@link https://zod.dev|Zod}
- * @see {@link https://hl7.org/fhir/R5/datatypes.html#primitive|FHIR R5 Primitives}
+ * @see [Zod](https://zod.dev)
+ * @see [FHIR R5 Primitives]( https://hl7.org/fhir/R5/datatypes.html#primitive)
+ *
+ * @module
  */
+
 import { z } from 'zod';
 
+/** @ignore */
 export const FHIR_MIN_INTEGER = -2147483648;
+/** @ignore */
 export const FHIR_MAX_INTEGER = 2147483647;
+/** @ignore */
 export const FHIR_MAX_STRING_LENGTH = 1048576;
+/** @ignore */
 export const FHIR_MIN_INTEGER64 = -9223372036854775808n;
+/** @ignore */
 export const FHIR_MAX_INTEGER64 = 9223372036854775807n;
 
 // FHIR Regex Usage:
@@ -61,43 +69,71 @@ const FHIR_REGEX_INSTANT = new RegExp(
 );
 const FHIR_REGEX_XHTML = new RegExp('^[ \\r\\n\\t\\S]+$');
 
-// TODO: Decide whether to use this function or not.
-// /**
-//  * Infer the specific Zod schema that is fully and properly typed.
-//  *
-//  * @param schema - Zod schema
-//  * @returns the infered Zod schema
-//  */
-// export function inferSchema<T extends z.ZodTypeAny>(schema: T): T {
-//   return schema;
-// }
-
 // FHIR boolean primitive
 
+/**
+ * @category Primitive Types
+ */
 export const fhirBooleanSchema = z.boolean().default(false);
+/**
+ * @category Primitive Types
+ */
 export type fhirBoolean = z.infer<typeof fhirBooleanSchema>;
 
 // FHIR string primitive
 
+/**
+ * @category Primitive Types
+ */
 export const fhirBase64BinarySchema = z.string().regex(FHIR_REGEX_BASE64BINARY);
+/**
+ * @category Primitive Types
+ */
 export type fhirBase64Binary = z.infer<typeof fhirBase64BinarySchema>;
 
+/**
+ * @category Primitive Types
+ */
 export const fhirStringSchema = z.string().min(1).max(FHIR_MAX_STRING_LENGTH);
+/**
+ * @category Primitive Types
+ */
 export type fhirString = z.infer<typeof fhirStringSchema>;
 
+/**
+ * @category Primitive Types
+ */
 export const fhirMarkdownSchema = fhirStringSchema.brand<'fhirMarkdown'>();
+/**
+ * @category Primitive Types
+ */
 export type fhirMarkdown = z.infer<typeof fhirMarkdownSchema>;
 
+/**
+ * @category Primitive Types
+ */
 export const fhirCodeSchema = z.string().regex(FHIR_REGEX_CODE);
+/**
+ * @category Primitive Types
+ */
 export type fhirCode = z.infer<typeof fhirCodeSchema>;
 
+/**
+ * @category Primitive Types
+ */
 export const fhirIdSchema = z.string().regex(FHIR_REGEX_ID);
+/**
+ * @category Primitive Types
+ */
 export type fhirId = z.infer<typeof fhirIdSchema>;
 
 // FHIR number primitive
 
 // NOTE: This FHIR decimal schema definition DOES NOT currently support the FHIR precision requirements.
 //       See the "warning" box at https://hl7.org/fhir/R5/json.html#primitive).
+/**
+ * @category Primitive Types
+ */
 export const fhirDecimalSchema = z.number().refine((val) => {
   const valStr = String(val);
   // Decimals in FHIR cannot have more than 18 digits and a decimal point.
@@ -106,53 +142,140 @@ export const fhirDecimalSchema = z.number().refine((val) => {
   }
   return valStr.length <= 18 && FHIR_REGEX_DECIMAL.test(valStr);
 });
+/**
+ * @category Primitive Types
+ */
 export type fhirDecimal = z.infer<typeof fhirDecimalSchema>;
 
 // integer64 was added to the FHIR specification in FHIR R5
+/**
+ * @category Primitive Types
+ */
 export const fhirInteger64Schema = z.bigint().gte(FHIR_MIN_INTEGER64).lte(FHIR_MAX_INTEGER64);
+/**
+ * @category Primitive Types
+ */
 export type fhirInteger64 = z.infer<typeof fhirInteger64Schema>;
 
+/**
+ * @category Primitive Types
+ */
 export const fhirIntegerSchema = z.number().int().gte(FHIR_MIN_INTEGER).lte(FHIR_MAX_INTEGER);
+/**
+ * @category Primitive Types
+ */
 export type fhirInteger = z.infer<typeof fhirIntegerSchema>;
 
+/**
+ * @category Primitive Types
+ */
 export const fhirUnsignedIntSchema = z.number().int().gte(0).lte(FHIR_MAX_INTEGER);
+/**
+ * @category Primitive Types
+ */
 export type fhirUnsignedInt = z.infer<typeof fhirUnsignedIntSchema>;
 
+/**
+ * @category Primitive Types
+ */
 export const fhirPositiveIntSchema = z.number().int().gte(1).lte(FHIR_MAX_INTEGER);
+/**
+ * @category Primitive Types
+ */
 export type fhirPositiveInt = z.infer<typeof fhirPositiveIntSchema>;
 
 // FHIR uri primitive
 
+/**
+ * @category Primitive Types
+ */
 export const fhirUriSchema = z.string().regex(FHIR_REGEX_URI);
+/**
+ * @category Primitive Types
+ */
 export type fhirUri = z.infer<typeof fhirUriSchema>;
 
+/**
+ * @category Primitive Types
+ */
 export const fhirUrlSchema = fhirUriSchema.brand('fhirUrl');
+/**
+ * @category Primitive Types
+ */
 export type fhirUrl = z.infer<typeof fhirUrlSchema>;
 
+/**
+ * @category Primitive Types
+ */
 export const fhirCanonicalSchema = fhirUriSchema.brand('fhirCanonical');
+/**
+ * @category Primitive Types
+ */
 export type fhirCanonical = z.infer<typeof fhirCanonicalSchema>;
 
+/**
+ * @category Primitive Types
+ */
 export const fhirUuidSchema = z.string().regex(FHIR_REGEX_UUID);
+/**
+ * @category Primitive Types
+ */
 export type fhirUuid = z.infer<typeof fhirUuidSchema>;
 
+/**
+ * @category Primitive Types
+ */
 export const fhirOidSchema = z.string().regex(FHIR_REGEX_OID);
+/**
+ * @category Primitive Types
+ */
 export type fhirOid = z.infer<typeof fhirOidSchema>;
 
 // FHIR date/time primitive
 
+/**
+ * @category Primitive Types
+ */
 export const fhirDateSchema = z.string().regex(FHIR_REGEX_DATE);
+/**
+ * @category Primitive Types
+ */
 export type fhirDate = z.infer<typeof fhirDateSchema>;
 
+/**
+ * @category Primitive Types
+ */
 export const fhirDateTimeSchema = z.string().regex(FHIR_REGEX_DATETIME);
+/**
+ * @category Primitive Types
+ */
 export type fhirDateTime = z.infer<typeof fhirDateTimeSchema>;
 
+/**
+ * @category Primitive Types
+ */
 export const fhirTimeSchema = z.string().regex(FHIR_REGEX_TIME);
+/**
+ * @category Primitive Types
+ */
 export type fhirTime = z.infer<typeof fhirTimeSchema>;
 
+/**
+ * @category Primitive Types
+ */
 export const fhirInstantSchema = z.string().regex(FHIR_REGEX_INSTANT);
+/**
+ * @category Primitive Types
+ */
 export type fhirInstant = z.infer<typeof fhirInstantSchema>;
 
 // FHIR xhtml fragment
 
+/**
+ * @category Primitive Types
+ */
 export const fhirXhtmlSchema = z.string().regex(FHIR_REGEX_XHTML);
+/**
+ * @category Primitive Types
+ */
 export type fhirXhtml = z.infer<typeof fhirXhtmlSchema>;

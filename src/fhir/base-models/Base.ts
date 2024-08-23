@@ -31,19 +31,38 @@ import { IBase } from './IBase';
  * - Element
  * - Resource
  *
+ * @privateRemarks
  * Loosely based on HAPI FHIR org.hl7.fhir.r4.model.Base
  *
- * @see {@link https://github.com/hapifhir/org.hl7.fhir.core/blob/master/org.hl7.fhir.r4/src/main/java/org/hl7/fhir/r4/model/Base.java|HAPI FHIR Base}
- * @see {@link https://hl7.org/fhir/R5/types.html#Base|FHIR Base}
+ * @category Base Models
+ * @see [FHIR Base](https://hl7.org/fhir/R5/types.html#Base)
  */
 export abstract class Base implements IBase {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   protected constructor() {}
 
+  /**
+   * @returns the FHIR type defined in the FHIR standard
+   */
   public abstract fhirType(): string;
+
+  /**
+   * @returns `true` if the instance is empty; `false` otherwise
+   */
   public abstract isEmpty(): boolean;
+
+  /**
+   * Creates a copy of the current instance.
+   */
   public abstract copy(): Base;
-  public abstract copyValues(dest: Base): void;
+
+  /**
+   * Copies the current object instance's elements into the provided object.
+   *
+   * @param dest - the instance being copied
+   * @protected
+   */
+  protected abstract copyValues(dest: Base): void;
 
   // TODO: Add additional methods as required
 }

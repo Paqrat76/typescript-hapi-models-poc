@@ -26,13 +26,20 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive type "time" in FHIR: A time during the day, in the format hh:mm:ss.
- * There is no date specified. Seconds must be provided due to schema type
- * constraints but may be zero-filled.
+ * Primitive FHIR Datatype: time
  *
- * @see {@link https://hl7.org/fhir/R5/datatypes.html#time|time}
+ * @remarks
+ * A time during the day, in the format hh:mm:ss. There is no date specified.
+ * Seconds must be provided due to schema type constraints but may be zero-filled.
+ *
+ * @category Datatypes: Primitive
+ * @see [FHIR time](https://hl7.org/fhir/R5/datatypes.html#time)
  */
 export class TimeType extends PrimitiveType<fhirTime> {
+  /**
+   * @param value - the value of the primitive `fhirTime`
+   * @throws PrimitiveTypeError for invalid value
+   */
   constructor(value?: fhirTime) {
     super();
     this.setValue(value);

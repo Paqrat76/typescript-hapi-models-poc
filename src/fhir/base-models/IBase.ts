@@ -21,8 +21,17 @@
  *
  */
 
+/**
+ * Base interface to specify methods used by utilities, etc.
+ *
+ * @category Base Models
+ * @interface
+ */
 export interface IBase {
   // TODO: Add/remove methods as needed
 
+  /**
+   * @returns `true` if the instance is empty; `false` otherwise
+   */
   isEmpty(): boolean;
 }

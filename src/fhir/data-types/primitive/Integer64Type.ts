@@ -26,12 +26,19 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive type "integer64" in FHIR (added in R5): A signed integer in the range
- * -9,223,372,036,854,775,808 to +9,223,372,036,854,775,807 (64-bit).
+ * Primitive FHIR Datatype: integer64 (added in FHIR R5)
  *
- * @see {@link https://hl7.org/fhir/R5/datatypes.html#integer64|integer64}
+ * @remarks
+ * A signed integer in the range -9,223,372,036,854,775,808 to +9,223,372,036,854,775,807 (64-bit).
+ *
+ * @category Datatypes: Primitive
+ * @see [FHIR integer64](https://hl7.org/fhir/R5/datatypes.html#integer64)
  */
 export class Integer64Type extends PrimitiveType<fhirInteger64> {
+  /**
+   * @param value - the value of the primitive `fhirInteger64`
+   * @throws PrimitiveTypeError for invalid value
+   */
   constructor(value?: fhirInteger64) {
     super();
     this.setValue(value);

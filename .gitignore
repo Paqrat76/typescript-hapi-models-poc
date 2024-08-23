@@ -137,3 +137,6 @@ dist
 
 # JetBrains
 .idea
+
+# TypeDoc
+docs

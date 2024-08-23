@@ -26,12 +26,20 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive type "code" in FHIR: Indicates that the value is taken from a set of controlled strings
- * defined elsewhere
+ * Primitive FHIR Datatype: code
  *
- * @see {@link https://hl7.org/fhir/R5/datatypes.html#code|code}
+ * @remarks
+ * Indicates that the value is taken from a set of controlled strings
+ * defined elsewhere.
+ *
+ * @category Datatypes: Primitive
+ * @see [FHIR code](https://hl7.org/fhir/R5/datatypes.html#code)
  */
 export class CodeType extends PrimitiveType<fhirCode> {
+  /**
+   * @param value - the value of the primitive `fhirCode`
+   * @throws PrimitiveTypeError for invalid value
+   */
   constructor(value?: fhirCode) {
     super();
     this.setValue(value);

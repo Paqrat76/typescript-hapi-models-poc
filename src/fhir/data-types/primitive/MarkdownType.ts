@@ -26,12 +26,21 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive type "markdown" in FHIR: A FHIR string that may contain markdown syntax for optional
- * processing by a markdown presentation engine, in the GFM extension of CommonMark format.
+ * Primitive FHIR Datatype: markdown
  *
- * @see {@link https://hl7.org/fhir/R5/datatypes.html#markdown|markdown}
+ * @remarks
+ * A FHIR string that may contain Markdown syntax for optional processing by
+ * a markdown presentation engine, in the [GFM extension](https://github.github.com/gfm/)
+ * of CommonMark format.
+ *
+ * @category Datatypes: Primitive
+ * @see [FHIR markdown](https://hl7.org/fhir/R5/datatypes.html#markdown)
  */
 export class MarkdownType extends PrimitiveType<fhirMarkdown> {
+  /**
+   * @param value - the value of the primitive `fhirMarkdown`
+   * @throws PrimitiveTypeError for invalid value
+   */
   constructor(value?: fhirMarkdown) {
     super();
     this.setValue(value);

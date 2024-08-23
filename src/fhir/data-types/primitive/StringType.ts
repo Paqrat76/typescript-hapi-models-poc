@@ -26,12 +26,19 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive type "string" in FHIR: any sequence of Unicode characters less
- * than 1MB in length
+ * Primitive FHIR Datatype: string
  *
- * @see {@link https://hl7.org/fhir/R5/datatypes.html#string|string}
+ * @remarks
+ * Any sequence of Unicode characters less than 1MB in length.
+ *
+ * @category Datatypes: Primitive
+ * @see [FHIR string](https://hl7.org/fhir/R5/datatypes.html#string)
  */
 export class StringType extends PrimitiveType<fhirString> {
+  /**
+   * @param value - the value of the primitive `fhirString`
+   * @throws PrimitiveTypeError for invalid value
+   */
   constructor(value?: fhirString) {
     super();
     this.setValue(value);
