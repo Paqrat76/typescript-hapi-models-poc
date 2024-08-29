@@ -1,3 +1,20 @@
 # TODO
 
-These todos are documented here for future consideration.
+## POC Feature Set
+
+- Investigate approaches to runtime parameter assertions (e.g., not null, not undefined, not empty,
+  appropriate type, etc.)
+- Add Date handling for FHIR `date`/`dateTime`/`time`/`instant` using [Luxon](https://moment.github.io/luxon/#/?id=luxon)
+- Figure out serialization/parsing (deserialization) for all FHIR data models
+  - See HAPI FHIR [Parsing and Serialization](https://hapifhir.io/hapi-fhir/docs/model/parsers.html)
+- Setup functional testing to verify implementation of HAPI FHIR features
+  - Adding simple and complex and multiple extensions and modifierExtensions within DataTypes and Resources
+  - [Working With Resources](https://hapifhir.io/hapi-fhir/docs/model/working_with_resources.html)
+  - [Resource References](https://hapifhir.io/hapi-fhir/docs/model/references.html)
+  - [Profiles and Extensions](https://hapifhir.io/hapi-fhir/docs/model/profiles_and_extensions.html)
+
+## Possible Considerations (future roadmap)
+
+- HAPI FHIR Features
+  - [Custom Structures](https://hapifhir.io/hapi-fhir/docs/model/custom_structures.html)
+  - [Bundle Builder](https://hapifhir.io/hapi-fhir/docs/model/bundle_builder.html)

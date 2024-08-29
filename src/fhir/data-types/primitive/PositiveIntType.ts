@@ -41,20 +41,11 @@ export class PositiveIntType extends PrimitiveType<fhirPositiveInt> {
    */
   constructor(value?: fhirPositiveInt) {
     super();
-    this.setValue(value);
+    this.assignValue(value);
   }
 
   public override setValue(value?: fhirPositiveInt): this {
-    if (value !== undefined) {
-      const parseResult = fhirPositiveIntSchema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value for PositiveIntType`, parseResult.error);
-      }
-    } else {
-      super.setValue(undefined);
-    }
+    this.assignValue(value);
     return this;
   }
 
@@ -90,5 +81,18 @@ export class PositiveIntType extends PrimitiveType<fhirPositiveInt> {
   public override copyValues(dest: PositiveIntType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
+  }
+
+  private assignValue(value: fhirPositiveInt | undefined): void {
+    if (value !== undefined) {
+      const parseResult = fhirPositiveIntSchema.safeParse(value);
+      if (parseResult.success) {
+        super.setValue(parseResult.data);
+      } else {
+        throw new PrimitiveTypeError(`Invalid value for PositiveIntType`, parseResult.error);
+      }
+    } else {
+      super.setValue(undefined);
+    }
   }
 }

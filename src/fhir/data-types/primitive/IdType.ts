@@ -42,20 +42,11 @@ export class IdType extends PrimitiveType<fhirId> {
    */
   constructor(value?: fhirId) {
     super();
-    this.setValue(value);
+    this.assignValue(value);
   }
 
   public override setValue(value?: fhirId): this {
-    if (value !== undefined) {
-      const parseResult = fhirIdSchema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value (${value}) for IdType`, parseResult.error);
-      }
-    } else {
-      super.setValue(undefined);
-    }
+    this.assignValue(value);
     return this;
   }
 
@@ -90,5 +81,18 @@ export class IdType extends PrimitiveType<fhirId> {
   public override copyValues(dest: IdType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
+  }
+
+  private assignValue(value: fhirId | undefined): void {
+    if (value !== undefined) {
+      const parseResult = fhirIdSchema.safeParse(value);
+      if (parseResult.success) {
+        super.setValue(parseResult.data);
+      } else {
+        throw new PrimitiveTypeError(`Invalid value (${value}) for IdType`, parseResult.error);
+      }
+    } else {
+      super.setValue(undefined);
+    }
   }
 }

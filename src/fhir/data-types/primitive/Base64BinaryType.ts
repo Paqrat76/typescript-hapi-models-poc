@@ -44,20 +44,11 @@ export class Base64BinaryType extends PrimitiveType<fhirBase64Binary> {
    */
   constructor(value?: fhirBase64Binary) {
     super();
-    this.setValue(value);
+    this.assignValue(value);
   }
 
   public override setValue(value?: fhirBase64Binary): this {
-    if (value !== undefined) {
-      const parseResult = fhirBase64BinarySchema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value for Base64BinaryType`, parseResult.error);
-      }
-    } else {
-      super.setValue(undefined);
-    }
+    this.assignValue(value);
     return this;
   }
 
@@ -92,5 +83,18 @@ export class Base64BinaryType extends PrimitiveType<fhirBase64Binary> {
   public override copyValues(dest: Base64BinaryType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
+  }
+
+  private assignValue(value: fhirBase64Binary | undefined): void {
+    if (value !== undefined) {
+      const parseResult = fhirBase64BinarySchema.safeParse(value);
+      if (parseResult.success) {
+        super.setValue(parseResult.data);
+      } else {
+        throw new PrimitiveTypeError(`Invalid value for Base64BinaryType`, parseResult.error);
+      }
+    } else {
+      super.setValue(undefined);
+    }
   }
 }

@@ -21,6 +21,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.5.0] - 2024-08-29
+
+### Added
+
+- Added complex data types: Coding, Meta, Narrative
+- Added FHIR resources: Resource, DomainResource
+- Added support for CodeTypes having a required enumerated code system
+  - Added primitive data types: EnumCodeType
+  - Added FHIR code system: NarrativeStatusEnum
+- Added support for TypeDoc and the ability to generate library documentation
+-
+### Changed
+
+- Updated dependencies
+- Added/changed "JSDoc" headers compatible with TypeDoc
+- Minor updates to improve tests
+
+### Fixed
+
+- Fixed several bugs identified from additional tests
+
+### Security
+
+- Overrode micromatch to version 4.0.8 to resolve [CVE-2024-4067](https://github.com/advisories/GHSA-952p-6rrq-rcjv)
+
+
 ## [0.4.0] - 2024-08-23
 
 ### Added

@@ -41,20 +41,11 @@ export class UriType extends PrimitiveType<fhirUri> {
    */
   constructor(value?: fhirUri) {
     super();
-    this.setValue(value);
+    this.assignValue(value);
   }
 
   public override setValue(value?: fhirUri): this {
-    if (value !== undefined) {
-      const parseResult = fhirUriSchema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value (${value}) for UriType`, parseResult.error);
-      }
-    } else {
-      super.setValue(undefined);
-    }
+    this.assignValue(value);
     return this;
   }
 
@@ -89,5 +80,18 @@ export class UriType extends PrimitiveType<fhirUri> {
   public override copyValues(dest: UriType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
+  }
+
+  private assignValue(value: fhirUri | undefined): void {
+    if (value !== undefined) {
+      const parseResult = fhirUriSchema.safeParse(value);
+      if (parseResult.success) {
+        super.setValue(parseResult.data);
+      } else {
+        throw new PrimitiveTypeError(`Invalid value (${value}) for UriType`, parseResult.error);
+      }
+    } else {
+      super.setValue(undefined);
+    }
   }
 }

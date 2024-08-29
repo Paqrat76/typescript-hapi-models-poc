@@ -41,20 +41,11 @@ export class UnsignedIntType extends PrimitiveType<fhirUnsignedInt> {
    */
   constructor(value?: fhirUnsignedInt) {
     super();
-    this.setValue(value);
+    this.assignValue(value);
   }
 
   public override setValue(value?: fhirUnsignedInt): this {
-    if (value !== undefined) {
-      const parseResult = fhirUnsignedIntSchema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value for UnsignedIntType`, parseResult.error);
-      }
-    } else {
-      super.setValue(undefined);
-    }
+    this.assignValue(value);
     return this;
   }
 
@@ -90,5 +81,18 @@ export class UnsignedIntType extends PrimitiveType<fhirUnsignedInt> {
   public override copyValues(dest: UnsignedIntType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
+  }
+
+  private assignValue(value: fhirUnsignedInt | undefined): void {
+    if (value !== undefined) {
+      const parseResult = fhirUnsignedIntSchema.safeParse(value);
+      if (parseResult.success) {
+        super.setValue(parseResult.data);
+      } else {
+        throw new PrimitiveTypeError(`Invalid value for UnsignedIntType`, parseResult.error);
+      }
+    } else {
+      super.setValue(undefined);
+    }
   }
 }

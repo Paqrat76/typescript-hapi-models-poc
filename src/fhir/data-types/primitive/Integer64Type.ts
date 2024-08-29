@@ -41,20 +41,11 @@ export class Integer64Type extends PrimitiveType<fhirInteger64> {
    */
   constructor(value?: fhirInteger64) {
     super();
-    this.setValue(value);
+    this.assignValue(value);
   }
 
   public override setValue(value?: fhirInteger64): this {
-    if (value !== undefined) {
-      const parseResult = fhirInteger64Schema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value for Integer64Type`, parseResult.error);
-      }
-    } else {
-      super.setValue(undefined);
-    }
+    this.assignValue(value);
     return this;
   }
 
@@ -90,5 +81,18 @@ export class Integer64Type extends PrimitiveType<fhirInteger64> {
   public override copyValues(dest: Integer64Type): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
+  }
+
+  private assignValue(value: fhirInteger64 | undefined): void {
+    if (value !== undefined) {
+      const parseResult = fhirInteger64Schema.safeParse(value);
+      if (parseResult.success) {
+        super.setValue(parseResult.data);
+      } else {
+        throw new PrimitiveTypeError(`Invalid value for Integer64Type`, parseResult.error);
+      }
+    } else {
+      super.setValue(undefined);
+    }
   }
 }

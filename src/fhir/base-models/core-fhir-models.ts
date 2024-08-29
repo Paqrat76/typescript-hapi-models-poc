@@ -41,13 +41,12 @@
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
-import { strict as assert } from 'assert';
+import { strict as assert } from 'node:assert';
 import { isEmpty as _isEmpty } from 'lodash';
 import { Base } from './Base';
 import { IBase } from './IBase';
 import { fhirString, fhirStringSchema, fhirUri, fhirUriSchema } from '@src/fhir/data-types/primitive/primitive-types';
-import { isNonBlank } from '@src/fhir/utility/common-util';
-import { isElementEmpty } from '@src/fhir/utility/element-util';
+import { getExtensionsByUrl, isElementEmpty, validateUrl } from '@src/fhir/utility/element-util';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
@@ -60,14 +59,14 @@ export interface IBaseExtension {
   /**
    * Returns the array of `extension` values
    */
-  getExtension(): Extension[] | undefined;
+  getExtension: () => Extension[] | undefined;
 
   /**
    * Assigns the provided array of Extension values to the `extension` property.
    *
    * @param extension - array of Extensions
    */
-  setExtension(extension: Extension[] | undefined): this;
+  setExtension: (extension: Extension[] | undefined) => this;
 
   /**
    * Determines if the `extension` property exists.
@@ -79,7 +78,7 @@ export interface IBaseExtension {
    * @param url - the url that identifies a specific Extension
    * @throws AssertionError for invalid url
    */
-  hasExtension(url?: fhirUri): boolean;
+  hasExtension: (url?: fhirUri) => boolean;
 
   /**
    * Returns the Extension having the provided url.
@@ -87,14 +86,14 @@ export interface IBaseExtension {
    * @param url - the url that identifies a specific Extension
    * @throws AssertionError for invalid url
    */
-  getExtensionByUrl(url: fhirUri): Extension | undefined;
+  getExtensionByUrl: (url: fhirUri) => Extension | undefined;
 
   /**
    * Adds the provided Extension to the `extension` property array.
    *
    * @param extension - the Extension value to add to the `extension` property array
    */
-  addExtension(extension?: Extension): this;
+  addExtension: (extension?: Extension) => this;
 
   /**
    * Removes the Extension having the provided url from the `extension` property array.
@@ -102,7 +101,7 @@ export interface IBaseExtension {
    * @param url - the url that identifies a specific Extension to remove
    * @throws AssertionError for invalid url
    */
-  removeExtension(url: fhirUri): void;
+  removeExtension: (url: fhirUri) => void;
 }
 
 /**
@@ -115,14 +114,14 @@ export interface IBaseModifierExtension {
   /**
    * Returns the array of `modifierExtension` values
    */
-  getModifierExtension(): Extension[] | undefined;
+  getModifierExtension: () => Extension[] | undefined;
 
   /**
    * Assigns the provided array of Extension values to the `modifierExtension` property.
    *
    * @param extension - array of Extensions
    */
-  setModifierExtension(extension: Extension[] | undefined): this;
+  setModifierExtension: (extension: Extension[] | undefined) => this;
 
   /**
    * Determines if the `modifierExtension` property exists.
@@ -134,7 +133,7 @@ export interface IBaseModifierExtension {
    * @param url - the url that identifies a specific Extension
    * @throws AssertionError for invalid url
    */
-  hasModifierExtension(url?: fhirUri): boolean;
+  hasModifierExtension: (url?: fhirUri) => boolean;
 
   /**
    * Returns the Extension having the provided url.
@@ -142,14 +141,14 @@ export interface IBaseModifierExtension {
    * @param url - the url that identifies a specific Extension
    * @throws AssertionError for invalid url
    */
-  getModifierExtensionByUrl(url: fhirUri): Extension | undefined;
+  getModifierExtensionByUrl: (url: fhirUri) => Extension | undefined;
 
   /**
    * Adds the provided Extension to the `modifierExtension` property array.
    *
    * @param extension - the Extension value to add to the `modifierExtension` property array
    */
-  addModifierExtension(extension?: Extension): this;
+  addModifierExtension: (extension?: Extension) => this;
 
   /**
    * Removes the Extension having the provided url from the `modifierExtension` property array.
@@ -157,7 +156,7 @@ export interface IBaseModifierExtension {
    * @param url - the url that identifies a specific Extension to remove
    * @throws AssertionError for invalid url
    */
-  removeModifierExtension(url: fhirUri): void;
+  removeModifierExtension: (url: fhirUri) => void;
 }
 
 /**
@@ -258,7 +257,7 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
   public hasExtension(url?: fhirUri): boolean {
     if (url) {
       validateUrl(url);
-      return this.getExtensionsByUrl(url).length > 0;
+      return getExtensionsByUrl(url, this.getExtension()).length > 0;
     }
     return this.existsExtension();
   }
@@ -332,23 +331,6 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
       return false;
     }
     return false;
-  }
-
-  /**
-   * Returns all Extensions having the provided url or if the url does not exist,
-   * returns an empty array.
-   *
-   * @param url - the url that identifies a specific Extension
-   * @returns an array of Extensions having the provided url or an empty array
-   * @private
-   */
-  private getExtensionsByUrl(url: fhirUri): Extension[] {
-    validateUrl(url);
-    if (this.hasExtension()) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      return this.getExtension()!.filter((ext) => ext.getUrl() && ext.getUrl() === url);
-    }
-    return [] as Extension[];
   }
 
   /**
@@ -1059,19 +1041,6 @@ export class Extension extends Element implements IBase {
     dest.url = this.url;
     dest.value = this.value ? this.value.copy() : undefined;
   }
-}
-
-/**
- * Validate the provided url. The url must be a non-blank valid fhirUri.
- *
- * @param url - url to test
- * @throws AssertionError for invalid url
- * @private
- */
-function validateUrl(url: string) {
-  assert(isNonBlank(url), 'The url must be defined and cannot be blank');
-  const parseResult = fhirUriSchema.safeParse(url);
-  assert(parseResult.success, 'url must be a valid fhirUri');
 }
 
 /* eslint-enable jsdoc/require-param, jsdoc/require-returns */

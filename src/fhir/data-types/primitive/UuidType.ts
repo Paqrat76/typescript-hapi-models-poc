@@ -42,20 +42,11 @@ export class UuidType extends PrimitiveType<fhirUuid> {
    */
   constructor(value?: fhirUuid) {
     super();
-    this.setValue(value);
+    this.assignValue(value);
   }
 
   public override setValue(value?: fhirUuid): this {
-    if (value !== undefined) {
-      const parseResult = fhirUuidSchema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value (${value}) for UuidType`, parseResult.error);
-      }
-    } else {
-      super.setValue(undefined);
-    }
+    this.assignValue(value);
     return this;
   }
 
@@ -90,5 +81,18 @@ export class UuidType extends PrimitiveType<fhirUuid> {
   public override copyValues(dest: UuidType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
+  }
+
+  private assignValue(value: fhirUuid | undefined): void {
+    if (value !== undefined) {
+      const parseResult = fhirUuidSchema.safeParse(value);
+      if (parseResult.success) {
+        super.setValue(parseResult.data);
+      } else {
+        throw new PrimitiveTypeError(`Invalid value (${value}) for UuidType`, parseResult.error);
+      }
+    } else {
+      super.setValue(undefined);
+    }
   }
 }

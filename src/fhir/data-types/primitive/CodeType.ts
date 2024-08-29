@@ -42,20 +42,11 @@ export class CodeType extends PrimitiveType<fhirCode> {
    */
   constructor(value?: fhirCode) {
     super();
-    this.setValue(value);
+    this.assignValue(value);
   }
 
   public override setValue(value?: fhirCode): this {
-    if (value !== undefined) {
-      const parseResult = fhirCodeSchema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value (${value}) for CodeType`, parseResult.error);
-      }
-    } else {
-      super.setValue(undefined);
-    }
+    this.assignValue(value);
     return this;
   }
 
@@ -90,5 +81,18 @@ export class CodeType extends PrimitiveType<fhirCode> {
   public override copyValues(dest: CodeType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
+  }
+
+  private assignValue(value: fhirCode | undefined): void {
+    if (value !== undefined) {
+      const parseResult = fhirCodeSchema.safeParse(value);
+      if (parseResult.success) {
+        super.setValue(parseResult.data);
+      } else {
+        throw new PrimitiveTypeError(`Invalid value (${value}) for CodeType`, parseResult.error);
+      }
+    } else {
+      super.setValue(undefined);
+    }
   }
 }

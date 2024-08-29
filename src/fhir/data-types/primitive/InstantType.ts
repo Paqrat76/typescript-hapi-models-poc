@@ -42,20 +42,11 @@ export class InstantType extends PrimitiveType<fhirInstant> {
    */
   constructor(value?: fhirInstant) {
     super();
-    this.setValue(value);
+    this.assignValue(value);
   }
 
   public override setValue(value?: fhirInstant): this {
-    if (value !== undefined) {
-      const parseResult = fhirInstantSchema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value (${value}) for InstantType`, parseResult.error);
-      }
-    } else {
-      super.setValue(undefined);
-    }
+    this.assignValue(value);
     return this;
   }
 
@@ -90,5 +81,18 @@ export class InstantType extends PrimitiveType<fhirInstant> {
   public override copyValues(dest: InstantType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
+  }
+
+  private assignValue(value: fhirInstant | undefined): void {
+    if (value !== undefined) {
+      const parseResult = fhirInstantSchema.safeParse(value);
+      if (parseResult.success) {
+        super.setValue(parseResult.data);
+      } else {
+        throw new PrimitiveTypeError(`Invalid value (${value}) for InstantType`, parseResult.error);
+      }
+    } else {
+      super.setValue(undefined);
+    }
   }
 }

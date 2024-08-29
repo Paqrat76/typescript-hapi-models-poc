@@ -27,8 +27,12 @@
  * @module
  */
 
+import { strict as assert } from 'node:assert';
 import { isEmpty as _isEmpty } from 'lodash';
 import { IBase } from '@src/fhir/base-models/IBase';
+import { isNonBlank } from '@src/fhir/utility/common-util';
+import { fhirUri, fhirUriSchema } from '@src/fhir/data-types/primitive/primitive-types';
+import { Extension } from '@src/fhir/base-models/core-fhir-models';
 
 /**
  * Determine if all the provided elements are empty
@@ -61,4 +65,34 @@ export function isElementEmpty(...elements: (IBase | IBase[] | undefined)[]): bo
     }
   }
   return true;
+}
+
+/**
+ * Validate the provided url. The url must be a non-blank valid fhirUri.
+ *
+ * @param url - url to test
+ * @throws AssertionError for invalid url
+ * @private
+ */
+export function validateUrl(url: string) {
+  assert(isNonBlank(url), 'The url must be defined and cannot be blank');
+  const parseResult = fhirUriSchema.safeParse(url);
+  assert(parseResult.success, 'The url must be a valid fhirUri');
+}
+
+/**
+ * Returns all Extensions having the provided url or if the url does not exist,
+ * returns an empty Extension array.
+ *
+ * @param url - the url that identifies a specific Extension
+ * @param sourceExtensions - array of Extensions to filter
+ * @returns an array of Extensions having the provided url or an empty array
+ * @private
+ */
+export function getExtensionsByUrl(url: fhirUri, sourceExtensions: Extension[] | undefined): Extension[] {
+  validateUrl(url);
+  if (Array.isArray(sourceExtensions)) {
+    return sourceExtensions.filter((ext) => ext.getUrl() && ext.getUrl() === url);
+  }
+  return [] as Extension[];
 }

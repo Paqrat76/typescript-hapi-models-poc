@@ -42,20 +42,11 @@ export class DecimalType extends PrimitiveType<fhirDecimal> {
    */
   constructor(value?: fhirDecimal) {
     super();
-    this.setValue(value);
+    this.assignValue(value);
   }
 
   public override setValue(value?: fhirDecimal): this {
-    if (value !== undefined) {
-      const parseResult = fhirDecimalSchema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value for DecimalType`, parseResult.error);
-      }
-    } else {
-      super.setValue(undefined);
-    }
+    this.assignValue(value);
     return this;
   }
 
@@ -94,5 +85,17 @@ export class DecimalType extends PrimitiveType<fhirDecimal> {
   public override copyValues(dest: DecimalType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
+  }
+  private assignValue(value: fhirDecimal | undefined): void {
+    if (value !== undefined) {
+      const parseResult = fhirDecimalSchema.safeParse(value);
+      if (parseResult.success) {
+        super.setValue(parseResult.data);
+      } else {
+        throw new PrimitiveTypeError(`Invalid value for DecimalType`, parseResult.error);
+      }
+    } else {
+      super.setValue(undefined);
+    }
   }
 }

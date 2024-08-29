@@ -41,20 +41,11 @@ export class IntegerType extends PrimitiveType<fhirInteger> {
    */
   constructor(value?: fhirInteger) {
     super();
-    this.setValue(value);
+    this.assignValue(value);
   }
 
   public override setValue(value?: fhirInteger): this {
-    if (value !== undefined) {
-      const parseResult = fhirIntegerSchema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value for IntegerType`, parseResult.error);
-      }
-    } else {
-      super.setValue(undefined);
-    }
+    this.assignValue(value);
     return this;
   }
 
@@ -90,5 +81,18 @@ export class IntegerType extends PrimitiveType<fhirInteger> {
   public override copyValues(dest: IntegerType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
+  }
+
+  private assignValue(value: fhirInteger | undefined): void {
+    if (value !== undefined) {
+      const parseResult = fhirIntegerSchema.safeParse(value);
+      if (parseResult.success) {
+        super.setValue(parseResult.data);
+      } else {
+        throw new PrimitiveTypeError(`Invalid value for IntegerType`, parseResult.error);
+      }
+    } else {
+      super.setValue(undefined);
+    }
   }
 }

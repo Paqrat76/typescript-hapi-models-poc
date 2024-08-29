@@ -44,20 +44,11 @@ export class CanonicalType extends PrimitiveType<fhirCanonical> {
    */
   constructor(value?: fhirCanonical) {
     super();
-    this.setValue(value);
+    this.assignValue(value);
   }
 
   public override setValue(value?: fhirCanonical): this {
-    if (value !== undefined) {
-      const parseResult = fhirCanonicalSchema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value (${value}) for CanonicalType`, parseResult.error);
-      }
-    } else {
-      super.setValue(undefined);
-    }
+    this.assignValue(value);
     return this;
   }
 
@@ -92,5 +83,18 @@ export class CanonicalType extends PrimitiveType<fhirCanonical> {
   public override copyValues(dest: CanonicalType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
+  }
+
+  private assignValue(value: fhirCanonical | undefined): void {
+    if (value !== undefined) {
+      const parseResult = fhirCanonicalSchema.safeParse(value);
+      if (parseResult.success) {
+        super.setValue(parseResult.data);
+      } else {
+        throw new PrimitiveTypeError(`Invalid value (${value}) for CanonicalType`, parseResult.error);
+      }
+    } else {
+      super.setValue(undefined);
+    }
   }
 }
