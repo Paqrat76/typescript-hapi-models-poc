@@ -148,6 +148,9 @@ GitHub: [hapifhir/org.hl7.fhir.core](https://github.com/hapifhir/org.hl7.fhir.co
   - [Random Generator](https://typia.io/docs/random/)
   - [samchon/typia](https://github.com/samchon/typia)
   - [Online Typia Playground](https://typia.io/playground/)
+- [TypeScript Enums and Serialization](https://blog.mavnn.co.uk/2022/11/24/typescript_enums_and_serialization.html)
+  - [schemawax](https://www.npmjs.com/package/schemawax)
+- [Recreating advanced Enum types in Typescript](https://medium.com/swlh/recreating-advanced-enum-types-in-typescript-7a267a2a885)
 
 ## Design Decisions
 

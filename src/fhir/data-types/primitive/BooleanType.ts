@@ -43,7 +43,7 @@ export class BooleanType extends PrimitiveType<fhirBoolean> {
    */
   constructor(value?: fhirBoolean) {
     super();
-    this.setValue(value);
+    this.assignValue(value);
   }
 
   public override getValue(): fhirBoolean | undefined {
@@ -51,16 +51,7 @@ export class BooleanType extends PrimitiveType<fhirBoolean> {
   }
 
   public override setValue(value?: fhirBoolean): this {
-    if (value !== undefined) {
-      const parseResult = fhirBooleanSchema.safeParse(value);
-      if (parseResult.success) {
-        this.boolValue = parseResult.data;
-      } else {
-        throw new PrimitiveTypeError(`Invalid value for BooleanType`, parseResult.error);
-      }
-    } else {
-      this.boolValue = undefined;
-    }
+    this.assignValue(value);
     return this;
   }
 
@@ -120,5 +111,18 @@ export class BooleanType extends PrimitiveType<fhirBoolean> {
   public override copyValues(dest: BooleanType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
+  }
+
+  private assignValue(value: fhirBoolean | undefined): void {
+    if (value !== undefined) {
+      const parseResult = fhirBooleanSchema.safeParse(value);
+      if (parseResult.success) {
+        this.boolValue = parseResult.data;
+      } else {
+        throw new PrimitiveTypeError(`Invalid value for BooleanType`, parseResult.error);
+      }
+    } else {
+      this.boolValue = undefined;
+    }
   }
 }

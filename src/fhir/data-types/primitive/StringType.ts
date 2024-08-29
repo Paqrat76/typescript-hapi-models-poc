@@ -41,20 +41,11 @@ export class StringType extends PrimitiveType<fhirString> {
    */
   constructor(value?: fhirString) {
     super();
-    this.setValue(value);
+    this.assignValue(value);
   }
 
   public override setValue(value?: fhirString): this {
-    if (value !== undefined) {
-      const parseResult = fhirStringSchema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value for StringType`, parseResult.error);
-      }
-    } else {
-      super.setValue(undefined);
-    }
+    this.assignValue(value);
     return this;
   }
 
@@ -89,5 +80,18 @@ export class StringType extends PrimitiveType<fhirString> {
   public override copyValues(dest: StringType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
+  }
+
+  private assignValue(value: fhirString | undefined): void {
+    if (value !== undefined) {
+      const parseResult = fhirStringSchema.safeParse(value);
+      if (parseResult.success) {
+        super.setValue(parseResult.data);
+      } else {
+        throw new PrimitiveTypeError(`Invalid value for StringType`, parseResult.error);
+      }
+    } else {
+      super.setValue(undefined);
+    }
   }
 }

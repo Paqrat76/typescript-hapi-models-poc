@@ -42,20 +42,11 @@ export class UrlType extends PrimitiveType<fhirUrl> {
    */
   constructor(value?: fhirUrl) {
     super();
-    this.setValue(value);
+    this.assignValue(value);
   }
 
   public override setValue(value?: fhirUrl): this {
-    if (value !== undefined) {
-      const parseResult = fhirUrlSchema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value (${value}) for UrlType`, parseResult.error);
-      }
-    } else {
-      super.setValue(undefined);
-    }
+    this.assignValue(value);
     return this;
   }
 
@@ -90,5 +81,18 @@ export class UrlType extends PrimitiveType<fhirUrl> {
   public override copyValues(dest: UrlType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
+  }
+
+  private assignValue(value: fhirUrl | undefined): void {
+    if (value !== undefined) {
+      const parseResult = fhirUrlSchema.safeParse(value);
+      if (parseResult.success) {
+        super.setValue(parseResult.data);
+      } else {
+        throw new PrimitiveTypeError(`Invalid value (${value}) for UrlType`, parseResult.error);
+      }
+    } else {
+      super.setValue(undefined);
+    }
   }
 }

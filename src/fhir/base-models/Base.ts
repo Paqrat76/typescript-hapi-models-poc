@@ -26,6 +26,7 @@ import { IBase } from './IBase';
 /**
  * Abstract Base class.
  *
+ * @remarks
  * The Base type that all other types specialize. This type has no properties or constraints.
  * Specializations:
  * - Element

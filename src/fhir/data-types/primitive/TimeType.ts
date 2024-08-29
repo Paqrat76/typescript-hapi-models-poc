@@ -42,20 +42,11 @@ export class TimeType extends PrimitiveType<fhirTime> {
    */
   constructor(value?: fhirTime) {
     super();
-    this.setValue(value);
+    this.assignValue(value);
   }
 
   public override setValue(value?: fhirTime): this {
-    if (value !== undefined) {
-      const parseResult = fhirTimeSchema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value (${value}) for TimeType`, parseResult.error);
-      }
-    } else {
-      super.setValue(undefined);
-    }
+    this.assignValue(value);
     return this;
   }
 
@@ -90,5 +81,18 @@ export class TimeType extends PrimitiveType<fhirTime> {
   public override copyValues(dest: TimeType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
+  }
+
+  private assignValue(value: fhirTime | undefined): void {
+    if (value !== undefined) {
+      const parseResult = fhirTimeSchema.safeParse(value);
+      if (parseResult.success) {
+        super.setValue(parseResult.data);
+      } else {
+        throw new PrimitiveTypeError(`Invalid value (${value}) for TimeType`, parseResult.error);
+      }
+    } else {
+      super.setValue(undefined);
+    }
   }
 }

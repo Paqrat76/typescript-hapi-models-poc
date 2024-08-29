@@ -21,11 +21,14 @@
  *
  */
 
+import { AssertionError } from 'node:assert';
 import { BooleanType } from '@src/fhir/data-types/primitive/BooleanType';
 import { DateTimeType } from '@src/fhir/data-types/primitive/DateTimeType';
 import { StringType } from '@src/fhir/data-types/primitive/StringType';
 import { UriType } from '@src/fhir/data-types/primitive/UriType';
-import { isElementEmpty } from '@src/fhir/utility/element-util';
+import { getExtensionsByUrl, isElementEmpty, validateUrl } from '@src/fhir/utility/element-util';
+import { fhirUrl } from '@src/fhir/data-types/primitive/primitive-types';
+import { Extension } from '@src/fhir/base-models/core-fhir-models';
 
 describe('element-util', () => {
   describe('isElementEmpty', () => {
@@ -108,6 +111,68 @@ describe('element-util', () => {
     it('should return false for array of non-empty types', () => {
       const result = isElementEmpty(TEST_URI_TYPE_ARRAY);
       expect(result).toBe(false);
+    });
+  });
+
+  describe('validateUrl', () => {
+    const VALID_URL = `testUrlType` as fhirUrl;
+    const INVALID_URL = ' invalid Url ' as fhirUrl;
+    const UNDEFINED_URL = undefined;
+
+    it('should not throw errors for valid url', () => {
+      validateUrl(VALID_URL);
+      const t = () => {
+        validateUrl(VALID_URL);
+      };
+      expect(t).not.toThrow();
+    });
+
+    it('should throw AssertionError for invalid URL', () => {
+      const t = () => {
+        validateUrl(INVALID_URL);
+      };
+      expect(t).toThrow(AssertionError);
+      expect(t).toThrow(`The url must be a valid fhirUri`);
+    });
+
+    it('should throw AssertionError for undefined URL', () => {
+      const t = () => {
+        // @ts-expect-error: allow for testing
+        validateUrl(UNDEFINED_URL);
+      };
+      expect(t).toThrow(AssertionError);
+      expect(t).toThrow(`The url must be defined and cannot be blank`);
+    });
+  });
+
+  describe('getExtensionsByUrl', () => {
+    const sourceExtensionsUndefined = undefined;
+    const sourceExtensionsEmpty = [] as Extension[];
+    const ext1 = new Extension('url1', new StringType('ext string1'));
+    const ext2 = new Extension('url2', new StringType('ext string2-1'));
+    const ext3 = new Extension('url2', new StringType('ext string2-1'));
+    const sourceExtensions: Extension[] = [ext3, ext1, ext2];
+
+    it('should return an empty extension array for undefined source array', () => {
+      const result = getExtensionsByUrl('urlForUndefined', sourceExtensionsUndefined);
+      expect(result).toHaveLength(0);
+    });
+
+    it('should return an empty extension array for empty source array', () => {
+      const result = getExtensionsByUrl('urlForEmpty', sourceExtensionsEmpty);
+      expect(result).toHaveLength(0);
+    });
+
+    it('should return an extension array with one extension for source array', () => {
+      const result = getExtensionsByUrl('url1', sourceExtensions);
+      expect(result).toHaveLength(1);
+      expect(result).toEqual(expect.arrayContaining([ext1]));
+    });
+
+    it('should return an extension array with two extensions for source array', () => {
+      const result = getExtensionsByUrl('url2', sourceExtensions);
+      expect(result).toHaveLength(2);
+      expect(result).toEqual(expect.arrayContaining([ext2, ext3]));
     });
   });
 });

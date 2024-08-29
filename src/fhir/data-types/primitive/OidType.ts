@@ -41,20 +41,11 @@ export class OidType extends PrimitiveType<fhirOid> {
    */
   constructor(value?: fhirOid) {
     super();
-    this.setValue(value);
+    this.assignValue(value);
   }
 
   public override setValue(value?: fhirOid): this {
-    if (value !== undefined) {
-      const parseResult = fhirOidSchema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value (${value}) for OidType`, parseResult.error);
-      }
-    } else {
-      super.setValue(undefined);
-    }
+    this.assignValue(value);
     return this;
   }
 
@@ -89,5 +80,18 @@ export class OidType extends PrimitiveType<fhirOid> {
   public override copyValues(dest: OidType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
+  }
+
+  private assignValue(value: fhirOid | undefined): void {
+    if (value !== undefined) {
+      const parseResult = fhirOidSchema.safeParse(value);
+      if (parseResult.success) {
+        super.setValue(parseResult.data);
+      } else {
+        throw new PrimitiveTypeError(`Invalid value (${value}) for OidType`, parseResult.error);
+      }
+    } else {
+      super.setValue(undefined);
+    }
   }
 }

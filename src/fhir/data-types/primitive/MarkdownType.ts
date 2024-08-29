@@ -43,20 +43,11 @@ export class MarkdownType extends PrimitiveType<fhirMarkdown> {
    */
   constructor(value?: fhirMarkdown) {
     super();
-    this.setValue(value);
+    this.assignValue(value);
   }
 
   public override setValue(value?: fhirMarkdown): this {
-    if (value !== undefined) {
-      const parseResult = fhirMarkdownSchema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value for MarkdownType`, parseResult.error);
-      }
-    } else {
-      super.setValue(undefined);
-    }
+    this.assignValue(value);
     return this;
   }
 
@@ -91,5 +82,18 @@ export class MarkdownType extends PrimitiveType<fhirMarkdown> {
   public override copyValues(dest: MarkdownType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
+  }
+
+  private assignValue(value: fhirMarkdown | undefined): void {
+    if (value !== undefined) {
+      const parseResult = fhirMarkdownSchema.safeParse(value);
+      if (parseResult.success) {
+        super.setValue(parseResult.data);
+      } else {
+        throw new PrimitiveTypeError(`Invalid value for MarkdownType`, parseResult.error);
+      }
+    } else {
+      super.setValue(undefined);
+    }
   }
 }

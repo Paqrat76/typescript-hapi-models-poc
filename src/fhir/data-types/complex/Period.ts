@@ -50,10 +50,12 @@ export class Period extends DataType implements IBase {
   /**
    * @param start - Starting dateTime with inclusive boundary
    * @param end - End dateTime with inclusive boundary, if not ongoing
+   * @throws PrimitiveTypeError for invalid primitive types
+   * @throws TypeError when Period.start > Period.end
    */
   constructor(start?: DateTimeType | fhirDateTime, end?: DateTimeType | fhirDateTime) {
     super();
-    if (start) {
+    if (start !== undefined) {
       if (start instanceof DateTimeType) {
         this.start = start;
       } else {
@@ -64,7 +66,7 @@ export class Period extends DataType implements IBase {
         this.start = new DateTimeType(parseResult.data);
       }
     }
-    if (end) {
+    if (end !== undefined) {
       if (end instanceof DateTimeType) {
         this.end = end;
       } else {
@@ -113,6 +115,7 @@ export class Period extends DataType implements IBase {
    *
    * @param element - the `start` value
    * @returns this
+   * @throws TypeError when Period.start > Period.end
    */
   public setStartElement(element: DateTimeType | undefined): this {
     this.start = element;
@@ -141,9 +144,11 @@ export class Period extends DataType implements IBase {
    *
    * @param value - the `start` value
    * @returns this
+   * @throws PrimitiveTypeError for invalid primitive types
+   * @throws TypeError when Period.start > Period.end
    */
   public setStart(value: fhirDateTime | undefined): this {
-    if (!value) {
+    if (value === undefined) {
       this.start = undefined;
     } else {
       const parseResult = fhirDateTimeSchema.safeParse(value);
@@ -177,6 +182,7 @@ export class Period extends DataType implements IBase {
    *
    * @param element - the `end` value
    * @returns this
+   * @throws TypeError when Period.start > Period.end
    */
   public setEndElement(element: DateTimeType | undefined): this {
     this.end = element;
@@ -205,9 +211,11 @@ export class Period extends DataType implements IBase {
    *
    * @param value - the `end` value
    * @returns this
+   * @throws PrimitiveTypeError for invalid primitive types
+   * @throws TypeError when Period.start > Period.end
    */
   public setEnd(value: fhirDateTime | undefined): this {
-    if (!value) {
+    if (value === undefined) {
       this.end = undefined;
     } else {
       const parseResult = fhirDateTimeSchema.safeParse(value);

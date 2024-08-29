@@ -42,20 +42,11 @@ export class DateType extends PrimitiveType<fhirDate> {
    */
   constructor(value?: fhirDate) {
     super();
-    this.setValue(value);
+    this.assignValue(value);
   }
 
   public override setValue(value?: fhirDate): this {
-    if (value !== undefined) {
-      const parseResult = fhirDateSchema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value (${value}) for DateType`, parseResult.error);
-      }
-    } else {
-      super.setValue(undefined);
-    }
+    this.assignValue(value);
     return this;
   }
 
@@ -90,5 +81,18 @@ export class DateType extends PrimitiveType<fhirDate> {
   public override copyValues(dest: DateType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
+  }
+
+  private assignValue(value: fhirDate | undefined): void {
+    if (value !== undefined) {
+      const parseResult = fhirDateSchema.safeParse(value);
+      if (parseResult.success) {
+        super.setValue(parseResult.data);
+      } else {
+        throw new PrimitiveTypeError(`Invalid value (${value}) for DateType`, parseResult.error);
+      }
+    } else {
+      super.setValue(undefined);
+    }
   }
 }

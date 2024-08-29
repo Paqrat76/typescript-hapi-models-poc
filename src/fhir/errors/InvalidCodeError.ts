@@ -21,17 +21,16 @@
  *
  */
 
-/**
- * Base interface to specify methods used by utilities, etc.
- *
- * @category Base Models
- * @interface
- */
-export interface IBase {
-  // TODO: Add/remove methods as needed
+/* istanbul ignore file */
 
-  /**
-   * @returns `true` if the instance is empty; `false` otherwise
-   */
-  isEmpty: () => boolean;
+/**
+ * Error thrown when an unknown code in a "code enumerator" is requested.
+ *
+ * @category Errors
+ */
+export class InvalidCodeError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'InvalidCodeError';
+  }
 }

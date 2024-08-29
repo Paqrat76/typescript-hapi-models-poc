@@ -51,6 +51,9 @@ export default tseslint.config(
       reportUnusedDisableDirectives: 'warn',
     },
     rules: {
+      // Additional rules
+      // https://typescript-eslint.io/rules/method-signature-style/
+      '@typescript-eslint/method-signature-style': ['error', 'property'],
       // JSDoc overrides
       'jsdoc/tag-lines': [
         'error',

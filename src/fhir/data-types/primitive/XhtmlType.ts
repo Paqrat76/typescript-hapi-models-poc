@@ -42,15 +42,12 @@ export class XhtmlType extends PrimitiveType<fhirXhtml> {
    */
   constructor(value?: fhirXhtml) {
     super();
-    this.setValue(value);
-    this.setExtension(undefined);
+    this.assignValue(value);
+    this.assignExtension(undefined);
   }
 
   public override setExtension(extension: Extension[] | undefined): this {
-    if (extension !== undefined) {
-      throw new TypeError('According to the FHIR specification, Extensions are not permitted on the xhtml type');
-    }
-    this.extension = undefined;
+    this.assignExtension(extension);
     return this;
   }
 
@@ -63,16 +60,7 @@ export class XhtmlType extends PrimitiveType<fhirXhtml> {
   }
 
   public override setValue(value?: fhirXhtml): this {
-    if (value !== undefined) {
-      const parseResult = fhirXhtmlSchema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value for XhtmlType`, parseResult.error);
-      }
-    } else {
-      super.setValue(undefined);
-    }
+    this.assignValue(value);
     return this;
   }
 
@@ -107,5 +95,25 @@ export class XhtmlType extends PrimitiveType<fhirXhtml> {
   public override copyValues(dest: XhtmlType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
+  }
+
+  private assignValue(value: fhirXhtml | undefined): void {
+    if (value !== undefined) {
+      const parseResult = fhirXhtmlSchema.safeParse(value);
+      if (parseResult.success) {
+        super.setValue(parseResult.data);
+      } else {
+        throw new PrimitiveTypeError(`Invalid value for XhtmlType`, parseResult.error);
+      }
+    } else {
+      super.setValue(undefined);
+    }
+  }
+
+  private assignExtension(extension: Extension[] | undefined): void {
+    if (extension !== undefined) {
+      throw new TypeError('According to the FHIR specification, Extensions are not permitted on the xhtml type');
+    }
+    this.extension = undefined;
   }
 }
