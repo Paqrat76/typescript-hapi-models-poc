@@ -42,8 +42,8 @@ export class TempTemplateTypeMethods {
   /**
    * @returns the `xxxxBoolean` property value as a PrimitiveType
    */
-  public getXxxxBooleanElement(): BooleanType | undefined {
-    return this.xxxxBoolean;
+  public getXxxxBooleanElement(): BooleanType {
+    return this.xxxxBoolean ?? new BooleanType();
   }
 
   /**
@@ -106,8 +106,8 @@ export class TempTemplateTypeMethods {
   /**
    * @returns the `xxxxCanonical` property value as a PrimitiveType
    */
-  public getXxxxCanonicalElement(): CanonicalType | undefined {
-    return this.xxxxCanonical;
+  public getXxxxCanonicalElement(): CanonicalType {
+    return this.xxxxCanonical ?? new CanonicalType();
   }
 
   /**
@@ -170,8 +170,8 @@ export class TempTemplateTypeMethods {
   /**
    * @returns the `xxxxCode` property value as a PrimitiveType
    */
-  public getXxxxCodeElement(): CodeType | undefined {
-    return this.xxxxCode;
+  public getXxxxCodeElement(): CodeType {
+    return this.xxxxCode ?? new CodeType();
   }
 
   /**
@@ -234,8 +234,8 @@ export class TempTemplateTypeMethods {
   /**
    * @returns the `xxxxDataTime` property value as a PrimitiveType
    */
-  public getXxxxDataTimeElement(): DateTimeType | undefined {
-    return this.xxxxDataTime;
+  public getXxxxDataTimeElement(): DateTimeType {
+    return this.xxxxDataTime ?? new DateTimeType();
   }
 
   /**
@@ -298,8 +298,8 @@ export class TempTemplateTypeMethods {
   /**
    * @returns the `xxxxId` property value as a PrimitiveType
    */
-  public getXxxxIdElement(): IdType | undefined {
-    return this.xxxxId;
+  public getXxxxIdElement(): IdType {
+    return this.xxxxId ?? new IdType();
   }
 
   /**
@@ -362,8 +362,8 @@ export class TempTemplateTypeMethods {
   /**
    * @returns the `xxxxInstant` property value as a PrimitiveType
    */
-  public getXxxxInstantElement(): InstantType | undefined {
-    return this.xxxxInstant;
+  public getXxxxInstantElement(): InstantType {
+    return this.xxxxInstant ?? new InstantType();
   }
 
   /**
@@ -426,8 +426,8 @@ export class TempTemplateTypeMethods {
   /**
    * @returns the `xxxxString` property value as a PrimitiveType
    */
-  public getXxxxStringElement(): StringType | undefined {
-    return this.xxxxString;
+  public getXxxxStringElement(): StringType {
+    return this.xxxxString ?? new StringType();
   }
 
   /**
@@ -490,8 +490,8 @@ export class TempTemplateTypeMethods {
   /**
    * @returns the `xxxxUri` property value as a PrimitiveType
    */
-  public getXxxxUriElement(): UriType | undefined {
-    return this.xxxxUri;
+  public getXxxxUriElement(): UriType {
+    return this.xxxxUri ?? new UriType();
   }
 
   /**
@@ -554,8 +554,8 @@ export class TempTemplateTypeMethods {
   /**
    * @returns the `xxxxXhtml` property value as a PrimitiveType
    */
-  public getXxxxXhtmlElement(): XhtmlType | undefined {
-    return this.xxxxXhtml;
+  public getXxxxXhtmlElement(): XhtmlType {
+    return this.xxxxXhtml ?? new XhtmlType();
   }
 
   /**
