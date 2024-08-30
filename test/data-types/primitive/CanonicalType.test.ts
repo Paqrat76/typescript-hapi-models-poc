@@ -23,7 +23,7 @@
 
 import { CanonicalType } from '@src/fhir/data-types/primitive/CanonicalType';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
-import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
+import { Extension, PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { fhirCanonical } from '@src/fhir/data-types/primitive/primitive-types';
 
 describe('CanonicalType', () => {
@@ -44,7 +44,7 @@ describe('CanonicalType', () => {
     expect(testCanonicalType.hasId()).toBe(false);
     expect(testCanonicalType.getId()).toBeUndefined();
     expect(testCanonicalType.hasExtension()).toBe(false);
-    expect(testCanonicalType.getExtension()).toBeUndefined();
+    expect(testCanonicalType.getExtension()).toMatchObject([] as Extension[]);
     // primitive value properties
     expect(testCanonicalType.hasValue()).toBe(false);
     expect(testCanonicalType.getValue()).toBeUndefined();

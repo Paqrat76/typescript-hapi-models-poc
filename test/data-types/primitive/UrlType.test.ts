@@ -23,7 +23,7 @@
 
 import { UrlType } from '@src/fhir/data-types/primitive/UrlType';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
-import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
+import { Extension, PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { fhirUrl } from '@src/fhir/data-types/primitive/primitive-types';
 
 describe('UrlType', () => {
@@ -44,7 +44,7 @@ describe('UrlType', () => {
     expect(testUrlType.hasId()).toBe(false);
     expect(testUrlType.getId()).toBeUndefined();
     expect(testUrlType.hasExtension()).toBe(false);
-    expect(testUrlType.getExtension()).toBeUndefined();
+    expect(testUrlType.getExtension()).toMatchObject([] as Extension[]);
     // primitive value properties
     expect(testUrlType.hasValue()).toBe(false);
     expect(testUrlType.getValue()).toBeUndefined();

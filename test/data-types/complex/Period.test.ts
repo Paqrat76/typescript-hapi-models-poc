@@ -22,7 +22,7 @@
  */
 
 import { Period } from '@src/fhir/data-types/complex/Period';
-import { DataType } from '@src/fhir/base-models/core-fhir-models';
+import { DataType, Extension } from '@src/fhir/base-models/core-fhir-models';
 import { DateTimeType } from '@src/fhir/data-types/primitive/DateTimeType';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
@@ -47,13 +47,13 @@ describe('Period', () => {
     expect(testPeriod.hasId()).toBe(false);
     expect(testPeriod.getId()).toBeUndefined();
     expect(testPeriod.hasExtension()).toBe(false);
-    expect(testPeriod.getExtension()).toBeUndefined();
+    expect(testPeriod.getExtension()).toMatchObject([] as Extension[]);
 
     // Period properties
     expect(testPeriod.hasStartElement()).toBe(false);
-    expect(testPeriod.getStartElement()).toBeUndefined();
+    expect(testPeriod.getStartElement()).toMatchObject(new DateTimeType());
     expect(testPeriod.hasEndElement()).toBe(false);
-    expect(testPeriod.getEndElement()).toBeUndefined();
+    expect(testPeriod.getEndElement()).toMatchObject(new DateTimeType());
 
     expect(testPeriod.hasStart()).toBe(false);
     expect(testPeriod.getStart()).toBeUndefined();
@@ -76,7 +76,7 @@ describe('Period', () => {
     expect(testPeriod.hasId()).toBe(false);
     expect(testPeriod.getId()).toBeUndefined();
     expect(testPeriod.hasExtension()).toBe(false);
-    expect(testPeriod.getExtension()).toBeUndefined();
+    expect(testPeriod.getExtension()).toMatchObject([] as Extension[]);
 
     // Period properties
     expect(testPeriod.hasStartElement()).toBe(true);
@@ -105,7 +105,7 @@ describe('Period', () => {
     expect(testPeriod.hasId()).toBe(false);
     expect(testPeriod.getId()).toBeUndefined();
     expect(testPeriod.hasExtension()).toBe(false);
-    expect(testPeriod.getExtension()).toBeUndefined();
+    expect(testPeriod.getExtension()).toMatchObject([] as Extension[]);
 
     // Period properties
     expect(testPeriod.hasStartElement()).toBe(true);
@@ -132,7 +132,7 @@ describe('Period', () => {
     expect(testPeriod.hasId()).toBe(false);
     expect(testPeriod.getId()).toBeUndefined();
     expect(testPeriod.hasExtension()).toBe(false);
-    expect(testPeriod.getExtension()).toBeUndefined();
+    expect(testPeriod.getExtension()).toMatchObject([] as Extension[]);
 
     // Period properties
     expect(testPeriod.hasStartElement()).toBe(true);
@@ -159,13 +159,13 @@ describe('Period', () => {
     expect(testPeriod.hasId()).toBe(false);
     expect(testPeriod.getId()).toBeUndefined();
     expect(testPeriod.hasExtension()).toBe(false);
-    expect(testPeriod.getExtension()).toBeUndefined();
+    expect(testPeriod.getExtension()).toMatchObject([] as Extension[]);
 
     // Period properties
     expect(testPeriod.hasStartElement()).toBe(true);
     expect(testPeriod.getStartElement()).toMatchObject(new DateTimeType(VALID_START_DATETIME));
     expect(testPeriod.hasEndElement()).toBe(false);
-    expect(testPeriod.getEndElement()).toBeUndefined();
+    expect(testPeriod.getEndElement()).toMatchObject(new DateTimeType());
 
     expect(testPeriod.hasStart()).toBe(true);
     expect(testPeriod.getStart()).toStrictEqual(VALID_START_DATETIME);
@@ -186,11 +186,11 @@ describe('Period', () => {
     expect(testPeriod.hasId()).toBe(false);
     expect(testPeriod.getId()).toBeUndefined();
     expect(testPeriod.hasExtension()).toBe(false);
-    expect(testPeriod.getExtension()).toBeUndefined();
+    expect(testPeriod.getExtension()).toMatchObject([] as Extension[]);
 
     // Period properties
     expect(testPeriod.hasStartElement()).toBe(false);
-    expect(testPeriod.getStartElement()).toBeUndefined();
+    expect(testPeriod.getStartElement()).toMatchObject(new DateTimeType());
     expect(testPeriod.hasEndElement()).toBe(true);
     expect(testPeriod.getEndElement()).toMatchObject(new DateTimeType(VALID_END_DATETIME));
 
@@ -273,9 +273,9 @@ describe('Period', () => {
 
     // Period properties
     expect(testPeriod.hasStartElement()).toBe(false);
-    expect(testPeriod.getStartElement()).toBeUndefined();
+    expect(testPeriod.getStartElement()).toMatchObject(new DateTimeType());
     expect(testPeriod.hasEndElement()).toBe(false);
-    expect(testPeriod.getEndElement()).toBeUndefined();
+    expect(testPeriod.getEndElement()).toMatchObject(new DateTimeType());
 
     expect(testPeriod.hasStart()).toBe(false);
     expect(testPeriod.getStart()).toBeUndefined();
@@ -319,7 +319,7 @@ describe('Period', () => {
     expect(testPeriod.hasId()).toBe(false);
     expect(testPeriod.getId()).toBeUndefined();
     expect(testPeriod.hasExtension()).toBe(false);
-    expect(testPeriod.getExtension()).toBeUndefined();
+    expect(testPeriod.getExtension()).toMatchObject([] as Extension[]);
 
     // Period properties
     expect(testPeriod.hasStartElement()).toBe(true);
@@ -349,7 +349,7 @@ describe('Period', () => {
     expect(testPeriod.hasId()).toBe(false);
     expect(testPeriod.getId()).toBeUndefined();
     expect(testPeriod.hasExtension()).toBe(false);
-    expect(testPeriod.getExtension()).toBeUndefined();
+    expect(testPeriod.getExtension()).toMatchObject([] as Extension[]);
 
     // Period properties
     expect(testPeriod.hasStartElement()).toBe(true);
@@ -378,13 +378,13 @@ describe('Period', () => {
     expect(testPeriod.hasId()).toBe(false);
     expect(testPeriod.getId()).toBeUndefined();
     expect(testPeriod.hasExtension()).toBe(false);
-    expect(testPeriod.getExtension()).toBeUndefined();
+    expect(testPeriod.getExtension()).toMatchObject([] as Extension[]);
 
     // Period properties
     expect(testPeriod.hasStartElement()).toBe(true);
     expect(testPeriod.getStartElement()).toMatchObject(startDt);
     expect(testPeriod.hasEndElement()).toBe(false);
-    expect(testPeriod.getEndElement()).toBeUndefined();
+    expect(testPeriod.getEndElement()).toMatchObject(new DateTimeType());
 
     expect(testPeriod.hasStart()).toBe(true);
     expect(testPeriod.getStart()).toStrictEqual(VALID_START_DATETIME);
@@ -407,11 +407,11 @@ describe('Period', () => {
     expect(testPeriod.hasId()).toBe(false);
     expect(testPeriod.getId()).toBeUndefined();
     expect(testPeriod.hasExtension()).toBe(false);
-    expect(testPeriod.getExtension()).toBeUndefined();
+    expect(testPeriod.getExtension()).toMatchObject([] as Extension[]);
 
     // Period properties
     expect(testPeriod.hasStartElement()).toBe(false);
-    expect(testPeriod.getStartElement()).toBeUndefined();
+    expect(testPeriod.getStartElement()).toMatchObject(new DateTimeType());
     expect(testPeriod.hasEndElement()).toBe(true);
     expect(testPeriod.getEndElement()).toMatchObject(endDt);
 
@@ -462,9 +462,9 @@ describe('Period', () => {
 
     // Period properties
     expect(testPeriod.hasStartElement()).toBe(false);
-    expect(testPeriod.getStartElement()).toBeUndefined();
+    expect(testPeriod.getStartElement()).toMatchObject(new DateTimeType());
     expect(testPeriod.hasEndElement()).toBe(false);
-    expect(testPeriod.getEndElement()).toBeUndefined();
+    expect(testPeriod.getEndElement()).toMatchObject(new DateTimeType());
 
     expect(testPeriod.hasStart()).toBe(false);
     expect(testPeriod.getStart()).toBeUndefined();

@@ -23,7 +23,7 @@
 
 import { CodeType } from '@src/fhir/data-types/primitive/CodeType';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
-import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
+import { Extension, PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 
 describe('CodeType', () => {
   const VALID_CODE = `testCodeType`;
@@ -43,7 +43,7 @@ describe('CodeType', () => {
     expect(testCodeType.hasId()).toBe(false);
     expect(testCodeType.getId()).toBeUndefined();
     expect(testCodeType.hasExtension()).toBe(false);
-    expect(testCodeType.getExtension()).toBeUndefined();
+    expect(testCodeType.getExtension()).toMatchObject([] as Extension[]);
     // primitive value properties
     expect(testCodeType.hasValue()).toBe(false);
     expect(testCodeType.getValue()).toBeUndefined();

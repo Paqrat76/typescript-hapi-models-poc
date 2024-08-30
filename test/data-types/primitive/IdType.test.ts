@@ -23,7 +23,7 @@
 
 import { IdType } from '@src/fhir/data-types/primitive/IdType';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
-import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
+import { Extension, PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 
 describe('IdType', () => {
   const VALID_ID = `testIdType`;
@@ -43,7 +43,7 @@ describe('IdType', () => {
     expect(testIdType.hasId()).toBe(false);
     expect(testIdType.getId()).toBeUndefined();
     expect(testIdType.hasExtension()).toBe(false);
-    expect(testIdType.getExtension()).toBeUndefined();
+    expect(testIdType.getExtension()).toMatchObject([] as Extension[]);
     // primitive value properties
     expect(testIdType.hasValue()).toBe(false);
     expect(testIdType.getValue()).toBeUndefined();

@@ -22,7 +22,7 @@
  */
 
 import { Coding } from '@src/fhir/data-types/complex/Coding';
-import { DataType } from '@src/fhir/base-models/core-fhir-models';
+import { DataType, Extension } from '@src/fhir/base-models/core-fhir-models';
 import { UriType } from '@src/fhir/data-types/primitive/UriType';
 import { StringType } from '@src/fhir/data-types/primitive/StringType';
 import { CodeType } from '@src/fhir/data-types/primitive/CodeType';
@@ -65,19 +65,19 @@ describe('Coding', () => {
     expect(testCoding.hasId()).toBe(false);
     expect(testCoding.getId()).toBeUndefined();
     expect(testCoding.hasExtension()).toBe(false);
-    expect(testCoding.getExtension()).toBeUndefined();
+    expect(testCoding.getExtension()).toMatchObject([] as Extension[]);
 
     // Coding properties
     expect(testCoding.hasSystemElement()).toBe(false);
-    expect(testCoding.getSystemElement()).toBeUndefined();
+    expect(testCoding.getSystemElement()).toMatchObject(new UriType());
     expect(testCoding.hasVersionElement()).toBe(false);
-    expect(testCoding.getVersionElement()).toBeUndefined();
+    expect(testCoding.getVersionElement()).toMatchObject(new StringType());
     expect(testCoding.hasCodeElement()).toBe(false);
-    expect(testCoding.getCodeElement()).toBeUndefined();
+    expect(testCoding.getCodeElement()).toMatchObject(new CodeType());
     expect(testCoding.hasDisplayElement()).toBe(false);
-    expect(testCoding.getDisplayElement()).toBeUndefined();
+    expect(testCoding.getDisplayElement()).toMatchObject(new StringType());
     expect(testCoding.hasUserSelectedElement()).toBe(false);
-    expect(testCoding.getUserSelectedElement()).toBeUndefined();
+    expect(testCoding.getUserSelectedElement()).toMatchObject(new BooleanType());
 
     expect(testCoding.hasSystem()).toBe(false);
     expect(testCoding.getSystem()).toBeUndefined();
@@ -106,19 +106,19 @@ describe('Coding', () => {
     expect(testCoding.hasId()).toBe(false);
     expect(testCoding.getId()).toBeUndefined();
     expect(testCoding.hasExtension()).toBe(false);
-    expect(testCoding.getExtension()).toBeUndefined();
+    expect(testCoding.getExtension()).toMatchObject([] as Extension[]);
 
     // Coding properties
     expect(testCoding.hasSystemElement()).toBe(true);
     expect(testCoding.getSystemElement()).toMatchObject(new UriType(VALID_URI));
     expect(testCoding.hasVersionElement()).toBe(false);
-    expect(testCoding.getVersionElement()).toBeUndefined();
+    expect(testCoding.getVersionElement()).toMatchObject(new StringType());
     expect(testCoding.hasCodeElement()).toBe(true);
     expect(testCoding.getCodeElement()).toMatchObject(new CodeType(VALID_CODE));
     expect(testCoding.hasDisplayElement()).toBe(true);
     expect(testCoding.getDisplayElement()).toMatchObject(new StringType(VALID_STRING));
     expect(testCoding.hasUserSelectedElement()).toBe(false);
-    expect(testCoding.getUserSelectedElement()).toBeUndefined();
+    expect(testCoding.getUserSelectedElement()).toMatchObject(new BooleanType());
 
     expect(testCoding.hasSystem()).toBe(true);
     expect(testCoding.getSystem()).toStrictEqual(VALID_URI);
@@ -147,19 +147,19 @@ describe('Coding', () => {
     expect(testCoding.hasId()).toBe(false);
     expect(testCoding.getId()).toBeUndefined();
     expect(testCoding.hasExtension()).toBe(false);
-    expect(testCoding.getExtension()).toBeUndefined();
+    expect(testCoding.getExtension()).toMatchObject([] as Extension[]);
 
     // Coding properties
     expect(testCoding.hasSystemElement()).toBe(true);
     expect(testCoding.getSystemElement()).toStrictEqual(VALID_URI_TYPE);
     expect(testCoding.hasVersionElement()).toBe(false);
-    expect(testCoding.getVersionElement()).toBeUndefined();
+    expect(testCoding.getVersionElement()).toMatchObject(new StringType());
     expect(testCoding.hasCodeElement()).toBe(true);
     expect(testCoding.getCodeElement()).toStrictEqual(VALID_CODE_TYPE);
     expect(testCoding.hasDisplayElement()).toBe(true);
     expect(testCoding.getDisplayElement()).toStrictEqual(VALID_STRING_TYPE);
     expect(testCoding.hasUserSelectedElement()).toBe(false);
-    expect(testCoding.getUserSelectedElement()).toBeUndefined();
+    expect(testCoding.getUserSelectedElement()).toMatchObject(new BooleanType());
 
     expect(testCoding.hasSystem()).toBe(true);
     expect(testCoding.getSystem()).toStrictEqual(VALID_URI);
@@ -237,15 +237,15 @@ describe('Coding', () => {
     testCoding.setUserSelected(UNDEFINED_VALUE);
 
     expect(testCoding.hasSystemElement()).toBe(false);
-    expect(testCoding.getSystemElement()).toBeUndefined();
+    expect(testCoding.getSystemElement()).toMatchObject(new UriType());
     expect(testCoding.hasVersionElement()).toBe(false);
-    expect(testCoding.getVersionElement()).toBeUndefined();
+    expect(testCoding.getVersionElement()).toMatchObject(new StringType());
     expect(testCoding.hasCodeElement()).toBe(false);
-    expect(testCoding.getCodeElement()).toBeUndefined();
+    expect(testCoding.getCodeElement()).toMatchObject(new CodeType());
     expect(testCoding.hasDisplayElement()).toBe(false);
-    expect(testCoding.getDisplayElement()).toBeUndefined();
+    expect(testCoding.getDisplayElement()).toMatchObject(new StringType());
     expect(testCoding.hasUserSelectedElement()).toBe(false);
-    expect(testCoding.getUserSelectedElement()).toBeUndefined();
+    expect(testCoding.getUserSelectedElement()).toMatchObject(new BooleanType());
 
     expect(testCoding.hasSystem()).toBe(false);
     expect(testCoding.getSystem()).toBeUndefined();
@@ -320,19 +320,19 @@ describe('Coding', () => {
     expect(testCoding.hasId()).toBe(false);
     expect(testCoding.getId()).toBeUndefined();
     expect(testCoding.hasExtension()).toBe(false);
-    expect(testCoding.getExtension()).toBeUndefined();
+    expect(testCoding.getExtension()).toMatchObject([] as Extension[]);
 
     // Coding properties
     expect(testCoding.hasSystemElement()).toBe(true);
     expect(testCoding.getSystemElement()).toStrictEqual(VALID_URI_TYPE);
     expect(testCoding.hasVersionElement()).toBe(false);
-    expect(testCoding.getVersionElement()).toBeUndefined();
+    expect(testCoding.getVersionElement()).toMatchObject(new StringType());
     expect(testCoding.hasCodeElement()).toBe(true);
     expect(testCoding.getCodeElement()).toStrictEqual(VALID_CODE_TYPE);
     expect(testCoding.hasDisplayElement()).toBe(true);
     expect(testCoding.getDisplayElement()).toStrictEqual(VALID_STRING_TYPE);
     expect(testCoding.hasUserSelectedElement()).toBe(false);
-    expect(testCoding.getUserSelectedElement()).toBeUndefined();
+    expect(testCoding.getUserSelectedElement()).toMatchObject(new BooleanType());
 
     expect(testCoding.hasSystem()).toBe(true);
     expect(testCoding.getSystem()).toStrictEqual(VALID_URI);
@@ -386,15 +386,15 @@ describe('Coding', () => {
     testCoding.setUserSelectedElement(UNDEFINED_VALUE);
 
     expect(testCoding.hasSystemElement()).toBe(false);
-    expect(testCoding.getSystemElement()).toBeUndefined();
+    expect(testCoding.getSystemElement()).toMatchObject(new UriType());
     expect(testCoding.hasVersionElement()).toBe(false);
-    expect(testCoding.getVersionElement()).toBeUndefined();
+    expect(testCoding.getVersionElement()).toMatchObject(new StringType());
     expect(testCoding.hasCodeElement()).toBe(false);
-    expect(testCoding.getCodeElement()).toBeUndefined();
+    expect(testCoding.getCodeElement()).toMatchObject(new CodeType());
     expect(testCoding.hasDisplayElement()).toBe(false);
-    expect(testCoding.getDisplayElement()).toBeUndefined();
+    expect(testCoding.getDisplayElement()).toMatchObject(new StringType());
     expect(testCoding.hasUserSelectedElement()).toBe(false);
-    expect(testCoding.getUserSelectedElement()).toBeUndefined();
+    expect(testCoding.getUserSelectedElement()).toMatchObject(new BooleanType());
 
     expect(testCoding.hasSystem()).toBe(false);
     expect(testCoding.getSystem()).toBeUndefined();

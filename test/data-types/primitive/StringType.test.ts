@@ -24,7 +24,7 @@
 import { TOO_BIG_STRING } from '../../test-utils';
 import { StringType } from '@src/fhir/data-types/primitive/StringType';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
-import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
+import { Extension, PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 
 describe('StringType', () => {
   const VALID_STRING = 'This is a valid string.';
@@ -44,7 +44,7 @@ describe('StringType', () => {
     expect(testStringType.hasId()).toBe(false);
     expect(testStringType.getId()).toBeUndefined();
     expect(testStringType.hasExtension()).toBe(false);
-    expect(testStringType.getExtension()).toBeUndefined();
+    expect(testStringType.getExtension()).toMatchObject([] as Extension[]);
     // primitive value properties
     expect(testStringType.hasValue()).toBe(false);
     expect(testStringType.getValue()).toBeUndefined();

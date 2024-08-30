@@ -50,7 +50,7 @@ describe('EnumCodeType', () => {
     expect(testEnumCodeType.hasId()).toBe(false);
     expect(testEnumCodeType.getId()).toBeUndefined();
     expect(testEnumCodeType.hasExtension()).toBe(false);
-    expect(testEnumCodeType.getExtension()).toBeUndefined();
+    expect(testEnumCodeType.getExtension()).toMatchObject([] as Extension[]);
 
     // primitive value properties
     expect(testEnumCodeType.hasValue()).toBe(true);
@@ -82,7 +82,7 @@ describe('EnumCodeType', () => {
     expect(testEnumCodeType.hasId()).toBe(false);
     expect(testEnumCodeType.getId()).toBeUndefined();
     expect(testEnumCodeType.hasExtension()).toBe(false);
-    expect(testEnumCodeType.getExtension()).toBeUndefined();
+    expect(testEnumCodeType.getExtension()).toMatchObject([] as Extension[]);
 
     // primitive value properties
     expect(testEnumCodeType.hasValue()).toBe(true);
@@ -199,7 +199,7 @@ describe('EnumCodeType', () => {
     expect(testEnumCodeType.hasId()).toBe(false);
     expect(testEnumCodeType.getId()).toBeUndefined();
     expect(testEnumCodeType.hasExtension()).toBe(false);
-    expect(testEnumCodeType.getExtension()).toBeUndefined();
+    expect(testEnumCodeType.getExtension()).toMatchObject([] as Extension[]);
 
     // primitive value properties
     expect(testEnumCodeType.hasValue()).toBe(true);

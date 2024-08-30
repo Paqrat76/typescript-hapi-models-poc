@@ -106,8 +106,8 @@ export class Period extends DataType implements IBase {
   /**
    * @returns the `start` property value as a PrimitiveType
    */
-  public getStartElement(): DateTimeType | undefined {
-    return this.start;
+  public getStartElement(): DateTimeType {
+    return this.start ?? new DateTimeType();
   }
 
   /**
@@ -173,8 +173,8 @@ export class Period extends DataType implements IBase {
   /**
    * @returns the `end` property value as a PrimitiveType
    */
-  public getEndElement(): DateTimeType | undefined {
-    return this.end;
+  public getEndElement(): DateTimeType {
+    return this.end ?? new DateTimeType();
   }
 
   /**

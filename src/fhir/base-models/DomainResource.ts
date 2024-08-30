@@ -133,8 +133,8 @@ export abstract class DomainResource extends Resource implements IBaseExtension,
   /**
    * @returns the `text` property value as a Narrative
    */
-  public getText(): Narrative | undefined {
-    return this.text;
+  public getText(): Narrative {
+    return this.text ?? new Narrative();
   }
 
   /**
@@ -158,8 +158,8 @@ export abstract class DomainResource extends Resource implements IBaseExtension,
   /**
    * @returns the `contained` property value as a Resource array
    */
-  public getContained(): Resource[] | undefined {
-    return this.contained;
+  public getContained(): Resource[] {
+    return this.contained ?? ([] as Resource[]);
   }
 
   /**
@@ -179,8 +179,10 @@ export abstract class DomainResource extends Resource implements IBaseExtension,
    * @param value - the `contained` value
    * @returns this
    */
-  public addContained(value: Resource): this {
-    assert(value, `'value' is required`);
+  public addContained(value?: Resource): this {
+    if (value === undefined) {
+      return this;
+    }
     this.initContained();
     this.contained?.push(value);
     return this;
@@ -207,8 +209,8 @@ export abstract class DomainResource extends Resource implements IBaseExtension,
   /**
    * {@inheritDoc IBaseExtension.getExtension}
    */
-  public getExtension(): Extension[] | undefined {
-    return this.extension;
+  public getExtension(): Extension[] {
+    return this.extension ?? ([] as Extension[]);
   }
 
   /**
@@ -236,8 +238,7 @@ export abstract class DomainResource extends Resource implements IBaseExtension,
   public getExtensionByUrl(url: fhirUri): Extension | undefined {
     validateUrl(url);
     if (this.hasExtension()) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const results = this.getExtension()!.filter((ext) => ext.getUrl() && ext.getUrl() === url);
+      const results = this.getExtension().filter((ext) => ext.getUrl() && ext.getUrl() === url);
       if (results.length === 0) {
         return undefined;
       }
@@ -251,7 +252,7 @@ export abstract class DomainResource extends Resource implements IBaseExtension,
    * {@inheritDoc IBaseExtension.addExtension}
    */
   public addExtension(extension?: Extension): this {
-    if (!extension) {
+    if (extension === undefined) {
       return this;
     }
     this.initExtension();
@@ -266,8 +267,7 @@ export abstract class DomainResource extends Resource implements IBaseExtension,
   public removeExtension(url: fhirUri): void {
     validateUrl(url);
     if (this.hasExtension()) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const results = this.getExtension()!.filter((ext) => !ext.getUrl() || ext.getUrl() !== url);
+      const results = this.getExtension().filter((ext) => !ext.getUrl() || ext.getUrl() !== url);
       this.setExtension(results);
     }
   }
@@ -304,8 +304,8 @@ export abstract class DomainResource extends Resource implements IBaseExtension,
   /**
    * {@inheritDoc IBaseModifierExtension.getModifierExtension}
    */
-  public getModifierExtension(): Extension[] | undefined {
-    return this.modifierExtension;
+  public getModifierExtension(): Extension[] {
+    return this.modifierExtension ?? ([] as Extension[]);
   }
 
   /**
@@ -333,8 +333,7 @@ export abstract class DomainResource extends Resource implements IBaseExtension,
   public getModifierExtensionByUrl(url: fhirUri): Extension | undefined {
     validateUrl(url);
     if (this.hasModifierExtension()) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const results = this.getModifierExtension()!.filter((ext) => ext.getUrl() && ext.getUrl() === url);
+      const results = this.getModifierExtension().filter((ext) => ext.getUrl() && ext.getUrl() === url);
       if (results.length === 0) {
         return undefined;
       }
@@ -348,7 +347,7 @@ export abstract class DomainResource extends Resource implements IBaseExtension,
    * {@inheritDoc IBaseModifierExtension.addModifierExtension}
    */
   public addModifierExtension(extension: Extension | undefined): this {
-    if (!extension) {
+    if (extension === undefined) {
       return this;
     }
     this.initModifierExtension();
@@ -363,8 +362,7 @@ export abstract class DomainResource extends Resource implements IBaseExtension,
   public removeModifierExtension(url: fhirUri): void {
     validateUrl(url);
     if (this.hasModifierExtension()) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const results = this.getModifierExtension()!.filter((ext) => !ext.getUrl() || ext.getUrl() !== url);
+      const results = this.getModifierExtension().filter((ext) => !ext.getUrl() || ext.getUrl() !== url);
       this.setModifierExtension(results);
     }
   }
@@ -425,29 +423,29 @@ export abstract class DomainResource extends Resource implements IBaseExtension,
   public override copyValues(dest: DomainResource): void {
     super.copyValues(dest);
     dest.text = this.text?.copy();
-    if (this.contained !== undefined) {
+    if (this.contained == undefined) {
+      dest.contained = undefined;
+    } else {
       dest.contained = [] as Resource[];
       for (const contained of this.contained) {
         dest.contained.push(contained.copy());
       }
-    } else {
-      dest.contained = undefined;
     }
-    if (this.extension !== undefined) {
+    if (this.extension === undefined) {
+      dest.extension = undefined;
+    } else {
       dest.extension = [] as Extension[];
       for (const extension of this.extension) {
         dest.extension.push(extension.copy());
       }
-    } else {
-      dest.extension = undefined;
     }
-    if (this.modifierExtension !== undefined) {
+    if (this.modifierExtension == undefined) {
+      dest.modifierExtension = undefined;
+    } else {
       dest.modifierExtension = [] as Extension[];
       for (const modifierExtension of this.modifierExtension) {
         dest.modifierExtension.push(modifierExtension.copy());
       }
-    } else {
-      dest.modifierExtension = undefined;
     }
   }
 }

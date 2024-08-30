@@ -45,7 +45,7 @@ describe('XhtmlType', () => {
     expect(testXhtmlType.hasId()).toBe(false);
     expect(testXhtmlType.getId()).toBeUndefined();
     expect(testXhtmlType.hasExtension()).toBe(false);
-    expect(testXhtmlType.getExtension()).toBeUndefined();
+    expect(testXhtmlType.getExtension()).toMatchObject([] as Extension[]);
     // primitive value properties
     expect(testXhtmlType.hasValue()).toBe(false);
     expect(testXhtmlType.getValue()).toBeUndefined();
@@ -75,15 +75,15 @@ describe('XhtmlType', () => {
     expect(testXhtmlType.getValueAsString()).toStrictEqual(VALID_XHTML);
 
     expect(testXhtmlType.hasExtension()).toBe(false);
-    expect(testXhtmlType.getExtension()).toBeUndefined();
+    expect(testXhtmlType.getExtension()).toMatchObject([] as Extension[]);
 
     testXhtmlType.setExtension(undefined);
     expect(testXhtmlType.hasExtension()).toBe(false);
-    expect(testXhtmlType.getExtension()).toBeUndefined();
+    expect(testXhtmlType.getExtension()).toMatchObject([] as Extension[]);
 
     testXhtmlType.addExtension(undefined);
     expect(testXhtmlType.hasExtension()).toBe(false);
-    expect(testXhtmlType.getExtension()).toBeUndefined();
+    expect(testXhtmlType.getExtension()).toMatchObject([] as Extension[]);
   });
 
   it('should throw TypeError when attempting to setExtension()', () => {

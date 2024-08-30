@@ -23,7 +23,7 @@
 
 import { UuidType } from '@src/fhir/data-types/primitive/UuidType';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
-import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
+import { Extension, PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 
 describe('UuidType', () => {
   const VALID_UUID = `urn:uuid:c757873d-ec9a-4326-a141-556f43239520`;
@@ -43,7 +43,7 @@ describe('UuidType', () => {
     expect(testUuidType.hasId()).toBe(false);
     expect(testUuidType.getId()).toBeUndefined();
     expect(testUuidType.hasExtension()).toBe(false);
-    expect(testUuidType.getExtension()).toBeUndefined();
+    expect(testUuidType.getExtension()).toMatchObject([] as Extension[]);
     // primitive value properties
     expect(testUuidType.hasValue()).toBe(false);
     expect(testUuidType.getValue()).toBeUndefined();

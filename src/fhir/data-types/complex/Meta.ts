@@ -21,7 +21,6 @@
  *
  */
 
-import { strict as assert } from 'node:assert';
 import { isEmpty } from 'lodash';
 import { DataType } from '@src/fhir/base-models/core-fhir-models';
 import { IBase } from '@src/fhir/base-models/IBase';
@@ -121,8 +120,8 @@ export class Meta extends DataType implements IBase {
   /**
    * @returns the `versionId` property value as a PrimitiveType
    */
-  public getVersionIdElement(): IdType | undefined {
-    return this.versionId;
+  public getVersionIdElement(): IdType {
+    return this.versionId ?? new IdType();
   }
 
   /**
@@ -180,8 +179,8 @@ export class Meta extends DataType implements IBase {
   /**
    * @returns the `lastUpdated` property value as a PrimitiveType
    */
-  public getLastUpdatedElement(): InstantType | undefined {
-    return this.lastUpdated;
+  public getLastUpdatedElement(): InstantType {
+    return this.lastUpdated ?? new InstantType();
   }
 
   /**
@@ -239,8 +238,8 @@ export class Meta extends DataType implements IBase {
   /**
    * @returns the `source` property value as a PrimitiveType
    */
-  public getSourceElement(): UriType | undefined {
-    return this.source;
+  public getSourceElement(): UriType {
+    return this.source ?? new UriType();
   }
 
   /**
@@ -299,9 +298,7 @@ export class Meta extends DataType implements IBase {
    * @returns the `profile` property value as a PrimitiveType array
    */
   public getProfileElement(): CanonicalType[] {
-    this.initProfile();
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return this.profile!;
+    return this.profile ?? ([] as CanonicalType[]);
   }
 
   /**
@@ -321,8 +318,10 @@ export class Meta extends DataType implements IBase {
    * @param value - the `profile` value
    * @returns this
    */
-  public addProfileElement(value: CanonicalType): this {
-    assert(value, `'value' is required`);
+  public addProfileElement(value?: CanonicalType): this {
+    if (value === undefined) {
+      return this;
+    }
     this.initProfile();
     this.profile?.push(value);
     return this;
@@ -382,8 +381,10 @@ export class Meta extends DataType implements IBase {
    * @param value - the `profile` value
    * @returns this
    */
-  public addProfile(value: fhirCanonical): this {
-    assert(value, `'value' is required`);
+  public addProfile(value?: fhirCanonical): this {
+    if (value === undefined) {
+      return this;
+    }
     const parseResult = fhirCanonicalSchema.safeParse(value);
     if (!parseResult.success) {
       throw new PrimitiveTypeError(`Invalid Meta.profile array item (${value})`, parseResult.error);
@@ -415,9 +416,7 @@ export class Meta extends DataType implements IBase {
    * @returns the `security` property value as a Coding array
    */
   public getSecurity(): Coding[] {
-    this.initSecurity();
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return this.security!;
+    return this.security ?? ([] as Coding[]);
   }
 
   /**
@@ -437,8 +436,10 @@ export class Meta extends DataType implements IBase {
    * @param value - the `security` value
    * @returns this
    */
-  public addSecurity(value: Coding): this {
-    assert(value, `'value' is required`);
+  public addSecurity(value?: Coding): this {
+    if (value === undefined) {
+      return this;
+    }
     this.initSecurity();
     this.security?.push(value);
     return this;
@@ -466,9 +467,7 @@ export class Meta extends DataType implements IBase {
    * @returns the `tag` property value as a Coding array
    */
   public getTag(): Coding[] {
-    this.initTag();
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return this.tag!;
+    return this.tag ?? ([] as Coding[]);
   }
 
   /**
@@ -488,8 +487,10 @@ export class Meta extends DataType implements IBase {
    * @param value - the `tag` value
    * @returns this
    */
-  public addTag(value: Coding): this {
-    assert(value, `'value' is required`);
+  public addTag(value?: Coding): this {
+    if (value === undefined) {
+      return this;
+    }
     this.initTag();
     this.tag?.push(value);
     return this;

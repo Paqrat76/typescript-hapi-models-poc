@@ -239,8 +239,8 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
   /**
    * {@inheritDoc IBaseExtension.getExtension}
    */
-  public getExtension(): Extension[] | undefined {
-    return this.extension;
+  public getExtension(): Extension[] {
+    return this.extension ?? ([] as Extension[]);
   }
 
   /**
@@ -268,8 +268,7 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
   public getExtensionByUrl(url: fhirUri): Extension | undefined {
     validateUrl(url);
     if (this.hasExtension()) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const results = this.getExtension()!.filter((ext) => ext.getUrl() && ext.getUrl() === url);
+      const results = this.getExtension().filter((ext) => ext.getUrl() && ext.getUrl() === url);
       if (results.length === 0) {
         return undefined;
       }
@@ -298,8 +297,7 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
   public removeExtension(url: fhirUri): void {
     validateUrl(url);
     if (this.hasExtension()) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const results = this.getExtension()!.filter((ext) => !ext.getUrl() || ext.getUrl() !== url);
+      const results = this.getExtension().filter((ext) => !ext.getUrl() || ext.getUrl() !== url);
       this.setExtension(results);
     }
   }
@@ -414,8 +412,8 @@ export abstract class BackboneElement extends Element implements IBase, IBaseMod
   /**
    * {@inheritDoc IBaseModifierExtension.getModifierExtension}
    */
-  public getModifierExtension(): Extension[] | undefined {
-    return this.modifierExtension;
+  public getModifierExtension(): Extension[] {
+    return this.modifierExtension ?? ([] as Extension[]);
   }
 
   /**
@@ -443,8 +441,7 @@ export abstract class BackboneElement extends Element implements IBase, IBaseMod
   public getModifierExtensionByUrl(url: fhirUri): Extension | undefined {
     validateUrl(url);
     if (this.hasModifierExtension()) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const results = this.getModifierExtension()!.filter((ext) => ext.getUrl() && ext.getUrl() === url);
+      const results = this.getModifierExtension().filter((ext) => ext.getUrl() && ext.getUrl() === url);
       if (results.length === 0) {
         return undefined;
       }
@@ -473,8 +470,7 @@ export abstract class BackboneElement extends Element implements IBase, IBaseMod
   public removeModifierExtension(url: fhirUri): void {
     validateUrl(url);
     if (this.hasModifierExtension()) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const results = this.getModifierExtension()!.filter((ext) => !ext.getUrl() || ext.getUrl() !== url);
+      const results = this.getModifierExtension().filter((ext) => !ext.getUrl() || ext.getUrl() !== url);
       this.setModifierExtension(results);
     }
   }
@@ -520,8 +516,7 @@ export abstract class BackboneElement extends Element implements IBase, IBaseMod
   private getModifierExtensionsByUrl(url: fhirUri): Extension[] {
     validateUrl(url);
     if (this.hasModifierExtension()) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      return this.getModifierExtension()!.filter((ext) => ext.getUrl() && ext.getUrl() === url);
+      return this.getModifierExtension().filter((ext) => ext.getUrl() && ext.getUrl() === url);
     }
     return [] as Extension[];
   }
@@ -626,8 +621,8 @@ export abstract class BackboneType extends DataType implements IBase, IBaseModif
   /**
    * {@inheritDoc IBaseModifierExtension.getModifierExtension}
    */
-  public getModifierExtension(): Extension[] | undefined {
-    return this.modifierExtension;
+  public getModifierExtension(): Extension[] {
+    return this.modifierExtension ?? ([] as Extension[]);
   }
 
   /**
@@ -655,8 +650,7 @@ export abstract class BackboneType extends DataType implements IBase, IBaseModif
   public getModifierExtensionByUrl(url: fhirUri): Extension | undefined {
     validateUrl(url);
     if (this.hasModifierExtension()) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const results = this.getModifierExtension()!.filter((ext) => ext.getUrl() && ext.getUrl() === url);
+      const results = this.getModifierExtension().filter((ext) => ext.getUrl() && ext.getUrl() === url);
       if (results.length === 0) {
         return undefined;
       }
@@ -685,8 +679,7 @@ export abstract class BackboneType extends DataType implements IBase, IBaseModif
   public removeModifierExtension(url: fhirUri): void {
     validateUrl(url);
     if (this.hasModifierExtension()) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const results = this.getModifierExtension()!.filter((ext) => !ext.getUrl() || ext.getUrl() !== url);
+      const results = this.getModifierExtension().filter((ext) => !ext.getUrl() || ext.getUrl() !== url);
       this.setModifierExtension(results);
     }
   }
@@ -732,8 +725,7 @@ export abstract class BackboneType extends DataType implements IBase, IBaseModif
   private getModifierExtensionsByUrl(url: fhirUri): Extension[] {
     validateUrl(url);
     if (this.hasModifierExtension()) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      return this.getModifierExtension()!.filter((ext) => ext.getUrl() && ext.getUrl() === url);
+      return this.getModifierExtension().filter((ext) => ext.getUrl() && ext.getUrl() === url);
     }
     return [] as Extension[];
   }

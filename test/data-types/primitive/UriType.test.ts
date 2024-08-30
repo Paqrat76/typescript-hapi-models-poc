@@ -23,7 +23,7 @@
 
 import { UriType } from '@src/fhir/data-types/primitive/UriType';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
-import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
+import { Extension, PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 
 describe('UriType', () => {
   const VALID_URI = `testUriType`;
@@ -43,7 +43,7 @@ describe('UriType', () => {
     expect(testUriType.hasId()).toBe(false);
     expect(testUriType.getId()).toBeUndefined();
     expect(testUriType.hasExtension()).toBe(false);
-    expect(testUriType.getExtension()).toBeUndefined();
+    expect(testUriType.getExtension()).toMatchObject([] as Extension[]);
     // primitive value properties
     expect(testUriType.hasValue()).toBe(false);
     expect(testUriType.getValue()).toBeUndefined();

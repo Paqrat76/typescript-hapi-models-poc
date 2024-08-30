@@ -23,7 +23,7 @@
 
 import { TimeType } from '@src/fhir/data-types/primitive/TimeType';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
-import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
+import { Extension, PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 
 describe('TimeType', () => {
   const VALID_TIME = `13:28:17`;
@@ -43,7 +43,7 @@ describe('TimeType', () => {
     expect(testTimeType.hasId()).toBe(false);
     expect(testTimeType.getId()).toBeUndefined();
     expect(testTimeType.hasExtension()).toBe(false);
-    expect(testTimeType.getExtension()).toBeUndefined();
+    expect(testTimeType.getExtension()).toMatchObject([] as Extension[]);
     // primitive value properties
     expect(testTimeType.hasValue()).toBe(false);
     expect(testTimeType.getValue()).toBeUndefined();

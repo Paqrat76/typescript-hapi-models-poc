@@ -24,7 +24,7 @@
 import { TOO_BIG_STRING } from '../../test-utils';
 import { MarkdownType } from '@src/fhir/data-types/primitive/MarkdownType';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
-import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
+import { Extension, PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { fhirMarkdown } from '@src/fhir/data-types/primitive/primitive-types';
 
 describe('MarkdownType', () => {
@@ -45,7 +45,7 @@ describe('MarkdownType', () => {
     expect(testMarkdownType.hasId()).toBe(false);
     expect(testMarkdownType.getId()).toBeUndefined();
     expect(testMarkdownType.hasExtension()).toBe(false);
-    expect(testMarkdownType.getExtension()).toBeUndefined();
+    expect(testMarkdownType.getExtension()).toMatchObject([] as Extension[]);
     // primitive value properties
     expect(testMarkdownType.hasValue()).toBe(false);
     expect(testMarkdownType.getValue()).toBeUndefined();

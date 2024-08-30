@@ -41,7 +41,7 @@ describe('Extension', () => {
     expect(testExtension.hasId()).toBe(false);
     expect(testExtension.getId()).toBeUndefined();
     expect(testExtension.hasExtension()).toBe(false);
-    expect(testExtension.getExtension()).toBeUndefined();
+    expect(testExtension.getExtension()).toMatchObject([] as Extension[]);
     // Extension properties
     expect(testExtension.hasUrl()).toBe(true);
     expect(testExtension.getUrl()).toStrictEqual(testUrl);
@@ -64,7 +64,7 @@ describe('Extension', () => {
     expect(testExtension.hasId()).toBe(false);
     expect(testExtension.getId()).toBeUndefined();
     expect(testExtension.hasExtension()).toBe(false);
-    expect(testExtension.getExtension()).toBeUndefined();
+    expect(testExtension.getExtension()).toMatchObject([] as Extension[]);
     // Extension properties
     expect(testExtension.hasUrl()).toBe(true);
     expect(testExtension.getUrl()).toStrictEqual(testUrl);
@@ -203,7 +203,7 @@ describe('Extension', () => {
     expect(testExtension.hasId()).toBe(false);
     expect(testExtension.getId()).toBeUndefined();
     expect(testExtension.hasExtension()).toBe(false);
-    expect(testExtension.getExtension()).toBeUndefined();
+    expect(testExtension.getExtension()).toMatchObject([] as Extension[]);
     // Extension properties
     expect(testExtension.hasUrl()).toBe(true);
     expect(testExtension.getUrl()).toStrictEqual(testUrl);

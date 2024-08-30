@@ -23,7 +23,7 @@
 
 import { DateTimeType } from '@src/fhir/data-types/primitive/DateTimeType';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
-import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
+import { Extension, PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 
 describe('DateTimeType', () => {
   const VALID_DATETIME = `2015-02-07T13:28:17-05:00`;
@@ -43,7 +43,7 @@ describe('DateTimeType', () => {
     expect(testDateTimeType.hasId()).toBe(false);
     expect(testDateTimeType.getId()).toBeUndefined();
     expect(testDateTimeType.hasExtension()).toBe(false);
-    expect(testDateTimeType.getExtension()).toBeUndefined();
+    expect(testDateTimeType.getExtension()).toMatchObject([] as Extension[]);
     // primitive value properties
     expect(testDateTimeType.hasValue()).toBe(false);
     expect(testDateTimeType.getValue()).toBeUndefined();

@@ -65,6 +65,8 @@ export abstract class Resource extends Base {
     super();
   }
 
+  public abstract resourceType(): string;
+
   /**
    * Logical id of this artifact
    *
@@ -117,8 +119,8 @@ export abstract class Resource extends Base {
   /**
    * @returns the `id` property value as a PrimitiveType
    */
-  public getIdElement(): IdType | undefined {
-    return this.id;
+  public getIdElement(): IdType {
+    return this.id ?? new IdType();
   }
 
   /**
@@ -176,8 +178,8 @@ export abstract class Resource extends Base {
   /**
    * @returns the `meta` property value as a Meta
    */
-  public getMeta(): Meta | undefined {
-    return this.meta;
+  public getMeta(): Meta {
+    return this.meta ?? new Meta();
   }
 
   /**
@@ -201,8 +203,8 @@ export abstract class Resource extends Base {
   /**
    * @returns the `implicitRules` property value as a PrimitiveType
    */
-  public getImplicitRulesElement(): UriType | undefined {
-    return this.implicitRules;
+  public getImplicitRulesElement(): UriType {
+    return this.implicitRules ?? new UriType();
   }
 
   /**
@@ -260,8 +262,8 @@ export abstract class Resource extends Base {
   /**
    * @returns the `language` property value as a PrimitiveType
    */
-  public getLanguageElement(): CodeType | undefined {
-    return this.language;
+  public getLanguageElement(): CodeType {
+    return this.language ?? new CodeType();
   }
 
   /**

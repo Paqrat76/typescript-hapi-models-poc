@@ -24,7 +24,7 @@
 import { FHIR_MAX_INTEGER } from '../../test-utils';
 import { UnsignedIntType } from '@src/fhir/data-types/primitive/UnsignedIntType';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
-import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
+import { Extension, PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 
 describe('UnsignedIntType', () => {
   const VALID_INTEGER = 0;
@@ -44,7 +44,7 @@ describe('UnsignedIntType', () => {
     expect(testUnsignedIntType.hasId()).toBe(false);
     expect(testUnsignedIntType.getId()).toBeUndefined();
     expect(testUnsignedIntType.hasExtension()).toBe(false);
-    expect(testUnsignedIntType.getExtension()).toBeUndefined();
+    expect(testUnsignedIntType.getExtension()).toMatchObject([] as Extension[]);
     // primitive value properties
     expect(testUnsignedIntType.hasValue()).toBe(false);
     expect(testUnsignedIntType.getValue()).toBeUndefined();

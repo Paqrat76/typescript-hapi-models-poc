@@ -23,7 +23,7 @@
 
 import { OidType } from '@src/fhir/data-types/primitive/OidType';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
-import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
+import { Extension, PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 
 describe('OidType', () => {
   const VALID_OID = `urn:oid:1.2.3.4.5`;
@@ -43,7 +43,7 @@ describe('OidType', () => {
     expect(testOidType.hasId()).toBe(false);
     expect(testOidType.getId()).toBeUndefined();
     expect(testOidType.hasExtension()).toBe(false);
-    expect(testOidType.getExtension()).toBeUndefined();
+    expect(testOidType.getExtension()).toMatchObject([] as Extension[]);
     // primitive value properties
     expect(testOidType.hasValue()).toBe(false);
     expect(testOidType.getValue()).toBeUndefined();

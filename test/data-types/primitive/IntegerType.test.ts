@@ -24,7 +24,7 @@
 import { FHIR_MIN_INTEGER, FHIR_MAX_INTEGER } from '../../test-utils';
 import { IntegerType } from '@src/fhir/data-types/primitive/IntegerType';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
-import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
+import { Extension, PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 
 describe('IntegerType', () => {
   const VALID_INTEGER = FHIR_MIN_INTEGER;
@@ -45,7 +45,7 @@ describe('IntegerType', () => {
     expect(testIntegerType.hasId()).toBe(false);
     expect(testIntegerType.getId()).toBeUndefined();
     expect(testIntegerType.hasExtension()).toBe(false);
-    expect(testIntegerType.getExtension()).toBeUndefined();
+    expect(testIntegerType.getExtension()).toMatchObject([] as Extension[]);
     // primitive value properties
     expect(testIntegerType.hasValue()).toBe(false);
     expect(testIntegerType.getValue()).toBeUndefined();

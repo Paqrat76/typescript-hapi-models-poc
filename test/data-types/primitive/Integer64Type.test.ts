@@ -24,7 +24,7 @@
 import { FHIR_MIN_INTEGER64, FHIR_MAX_INTEGER64 } from '../../test-utils';
 import { Integer64Type } from '@src/fhir/data-types/primitive/Integer64Type';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
-import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
+import { Extension, PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 
 describe('Integer64Type', () => {
   const VALID_INTEGER64 = BigInt(FHIR_MIN_INTEGER64);
@@ -45,7 +45,7 @@ describe('Integer64Type', () => {
     expect(testInteger64Type.hasId()).toBe(false);
     expect(testInteger64Type.getId()).toBeUndefined();
     expect(testInteger64Type.hasExtension()).toBe(false);
-    expect(testInteger64Type.getExtension()).toBeUndefined();
+    expect(testInteger64Type.getExtension()).toMatchObject([] as Extension[]);
     // primitive value properties
     expect(testInteger64Type.hasValue()).toBe(false);
     expect(testInteger64Type.getValue()).toBeUndefined();

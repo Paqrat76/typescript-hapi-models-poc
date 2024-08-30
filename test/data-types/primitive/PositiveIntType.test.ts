@@ -24,7 +24,7 @@
 import { FHIR_MAX_INTEGER } from '../../test-utils';
 import { PositiveIntType } from '@src/fhir/data-types/primitive/PositiveIntType';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
-import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
+import { Extension, PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 
 describe('PositiveIntType', () => {
   const VALID_INTEGER = 1;
@@ -44,7 +44,7 @@ describe('PositiveIntType', () => {
     expect(testPositiveIntType.hasId()).toBe(false);
     expect(testPositiveIntType.getId()).toBeUndefined();
     expect(testPositiveIntType.hasExtension()).toBe(false);
-    expect(testPositiveIntType.getExtension()).toBeUndefined();
+    expect(testPositiveIntType.getExtension()).toMatchObject([] as Extension[]);
     // primitive value properties
     expect(testPositiveIntType.hasValue()).toBe(false);
     expect(testPositiveIntType.getValue()).toBeUndefined();

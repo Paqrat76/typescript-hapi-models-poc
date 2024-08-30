@@ -22,7 +22,7 @@
  */
 
 import { Meta } from '@src/fhir/data-types/complex/Meta';
-import { DataType } from '@src/fhir/base-models/core-fhir-models';
+import { DataType, Extension } from '@src/fhir/base-models/core-fhir-models';
 import { IdType } from '@src/fhir/data-types/primitive/IdType';
 import { InstantType } from '@src/fhir/data-types/primitive/InstantType';
 import { UriType } from '@src/fhir/data-types/primitive/UriType';
@@ -77,15 +77,15 @@ describe('Meta', () => {
     expect(testMeta.hasId()).toBe(false);
     expect(testMeta.getId()).toBeUndefined();
     expect(testMeta.hasExtension()).toBe(false);
-    expect(testMeta.getExtension()).toBeUndefined();
+    expect(testMeta.getExtension()).toMatchObject([] as Extension[]);
 
     // Coding properties
     expect(testMeta.hasVersionIdElement()).toBe(false);
-    expect(testMeta.getVersionIdElement()).toBeUndefined();
+    expect(testMeta.getVersionIdElement()).toMatchObject(new IdType());
     expect(testMeta.hasLastUpdatedElement()).toBe(false);
-    expect(testMeta.getLastUpdatedElement()).toBeUndefined();
+    expect(testMeta.getLastUpdatedElement()).toMatchObject(new InstantType());
     expect(testMeta.hasSourceElement()).toBe(false);
-    expect(testMeta.getSourceElement()).toBeUndefined();
+    expect(testMeta.getSourceElement()).toMatchObject(new UriType());
     expect(testMeta.hasProfileElement()).toBe(false);
     expect(testMeta.getProfileElement()).toHaveLength(0); // always returns an array
 
@@ -124,7 +124,7 @@ describe('Meta', () => {
     expect(testMeta.hasId()).toBe(false);
     expect(testMeta.getId()).toBeUndefined();
     expect(testMeta.hasExtension()).toBe(false);
-    expect(testMeta.getExtension()).toBeUndefined();
+    expect(testMeta.getExtension()).toMatchObject([] as Extension[]);
 
     // Coding properties
     expect(testMeta.hasVersionIdElement()).toBe(true);
@@ -189,7 +189,7 @@ describe('Meta', () => {
     expect(testMeta.hasId()).toBe(false);
     expect(testMeta.getId()).toBeUndefined();
     expect(testMeta.hasExtension()).toBe(false);
-    expect(testMeta.getExtension()).toBeUndefined();
+    expect(testMeta.getExtension()).toMatchObject([] as Extension[]);
 
     // Coding properties
     expect(testMeta.hasVersionIdElement()).toBe(true);
@@ -264,7 +264,7 @@ describe('Meta', () => {
     expect(t).toThrow(`Invalid Meta.profile array item (${INVALID_URI})`);
   });
 
-  it('should be properly reset by modifying all properties with primitive values', () => {
+  it('should properly reset by modifying all properties with primitive values', () => {
     const testMeta = new Meta();
     testMeta.setVersionId(VALID_ID);
     testMeta.setLastUpdated(VALID_INSTANT);
@@ -316,11 +316,11 @@ describe('Meta', () => {
     testMeta.setTag(UNDEFINED_VALUE);
 
     expect(testMeta.hasVersionIdElement()).toBe(false);
-    expect(testMeta.getVersionIdElement()).toBeUndefined();
+    expect(testMeta.getVersionIdElement()).toMatchObject(new IdType());
     expect(testMeta.hasLastUpdatedElement()).toBe(false);
-    expect(testMeta.getLastUpdatedElement()).toBeUndefined();
+    expect(testMeta.getLastUpdatedElement()).toMatchObject(new InstantType());
     expect(testMeta.hasSourceElement()).toBe(false);
-    expect(testMeta.getSourceElement()).toBeUndefined();
+    expect(testMeta.getSourceElement()).toMatchObject(new UriType());
     expect(testMeta.hasProfileElement()).toBe(false);
     expect(testMeta.getProfileElement()).toHaveLength(0); // always returns an array
 
@@ -338,7 +338,7 @@ describe('Meta', () => {
     expect(testMeta.getTag()).toHaveLength(0); // always returns an array
   });
 
-  it('should be properly by adding array elements', () => {
+  it('should properly by adding array elements', () => {
     const testMeta = new Meta();
     expect(testMeta).toBeDefined();
     expect(testMeta.isEmpty()).toBe(true);
@@ -356,6 +356,27 @@ describe('Meta', () => {
     expect(testMeta.hasProfileElement()).toBe(true);
     expect(testMeta.getProfileElement()).toHaveLength(2); // always returns an array
     const expectedType = [VALID_CANONICAL_TYPE, VALID_CANONICAL_TYPE_2];
+    expect(testMeta.getProfileElement()).toEqual(expect.arrayContaining(expectedType));
+
+    expect(testMeta.hasSecurity()).toBe(true);
+    expect(testMeta.getSecurity()).toHaveLength(1); // always returns an array
+    expect(testMeta.getSecurity()[0]).toMatchObject(VALID_CODING_SECURITY);
+
+    expect(testMeta.hasTag()).toBe(true);
+    expect(testMeta.getTag()).toHaveLength(1); // always returns an array
+    expect(testMeta.getTag()[0]).toMatchObject(VALID_CODING_TAG);
+
+    testMeta.addProfile(UNDEFINED_VALUE);
+    testMeta.addProfileElement(UNDEFINED_VALUE);
+    testMeta.addSecurity(UNDEFINED_VALUE);
+    testMeta.addTag(UNDEFINED_VALUE);
+
+    expect(testMeta.hasProfile()).toBe(true);
+    expect(testMeta.getProfile()).toHaveLength(2); // always returns an array
+    expect(testMeta.getProfile()).toEqual(expect.arrayContaining(expected));
+
+    expect(testMeta.hasProfileElement()).toBe(true);
+    expect(testMeta.getProfileElement()).toHaveLength(2); // always returns an array
     expect(testMeta.getProfileElement()).toEqual(expect.arrayContaining(expectedType));
 
     expect(testMeta.hasSecurity()).toBe(true);
@@ -387,7 +408,7 @@ describe('Meta', () => {
     expect(testMeta.hasId()).toBe(false);
     expect(testMeta.getId()).toBeUndefined();
     expect(testMeta.hasExtension()).toBe(false);
-    expect(testMeta.getExtension()).toBeUndefined();
+    expect(testMeta.getExtension()).toMatchObject([] as Extension[]);
 
     // Coding properties
     expect(testMeta.hasVersionIdElement()).toBe(true);
@@ -469,11 +490,11 @@ describe('Meta', () => {
     testMeta.setTag(UNDEFINED_VALUE);
 
     expect(testMeta.hasVersionIdElement()).toBe(false);
-    expect(testMeta.getVersionIdElement()).toBeUndefined();
+    expect(testMeta.getVersionIdElement()).toMatchObject(new IdType());
     expect(testMeta.hasLastUpdatedElement()).toBe(false);
-    expect(testMeta.getLastUpdatedElement()).toBeUndefined();
+    expect(testMeta.getLastUpdatedElement()).toMatchObject(new InstantType());
     expect(testMeta.hasSourceElement()).toBe(false);
-    expect(testMeta.getSourceElement()).toBeUndefined();
+    expect(testMeta.getSourceElement()).toMatchObject(new UriType());
     expect(testMeta.hasProfileElement()).toBe(false);
     expect(testMeta.getProfileElement()).toHaveLength(0); // always returns an array
 

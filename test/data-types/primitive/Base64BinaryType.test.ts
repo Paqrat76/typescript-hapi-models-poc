@@ -23,7 +23,7 @@
 
 import { Base64BinaryType } from '@src/fhir/data-types/primitive/Base64BinaryType';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
-import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
+import { Extension, PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 
 describe('Base64BinaryType', () => {
   const VALID_BASE64BINARY = `dGVzdEJhc2U2NEJpbmFyeQ==`; // from "testBase64Binary"
@@ -43,7 +43,7 @@ describe('Base64BinaryType', () => {
     expect(testBase64BinaryType.hasId()).toBe(false);
     expect(testBase64BinaryType.getId()).toBeUndefined();
     expect(testBase64BinaryType.hasExtension()).toBe(false);
-    expect(testBase64BinaryType.getExtension()).toBeUndefined();
+    expect(testBase64BinaryType.getExtension()).toMatchObject([] as Extension[]);
     // primitive value properties
     expect(testBase64BinaryType.hasValue()).toBe(false);
     expect(testBase64BinaryType.getValue()).toBeUndefined();

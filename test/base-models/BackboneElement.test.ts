@@ -38,7 +38,7 @@ describe('BackboneElement', () => {
     expect(mockElement.constructor.name).toStrictEqual('MockBackboneElement');
     expect(mockElement.fhirType()).toStrictEqual('BackboneElement');
     expect(mockElement.hasModifierExtension()).toBe(false);
-    expect(mockElement.getModifierExtension()).toBeUndefined();
+    expect(mockElement.getModifierExtension()).toMatchObject([] as Extension[]);
     expect(mockElement.isEmpty()).toBe(true);
   });
 
@@ -47,13 +47,13 @@ describe('BackboneElement', () => {
     expect(mockElement).toBeDefined();
     expect(mockElement.hasModifierExtension()).toBe(false);
     expect(mockElement.hasModifierExtension(testUrl)).toBe(false);
-    expect(mockElement.getModifierExtension()).toBeUndefined();
+    expect(mockElement.getModifierExtension()).toMatchObject([] as Extension[]);
     expect(mockElement.isEmpty()).toBe(true);
 
     mockElement.addModifierExtension();
     expect(mockElement.hasModifierExtension()).toBe(false);
     expect(mockElement.hasModifierExtension(testUrl)).toBe(false);
-    expect(mockElement.getModifierExtension()).toBeUndefined();
+    expect(mockElement.getModifierExtension()).toMatchObject([] as Extension[]);
     expect(mockElement.isEmpty()).toBe(true);
 
     mockElement.addModifierExtension(testExtension);
@@ -67,7 +67,7 @@ describe('BackboneElement', () => {
     const mockElement = new MockBackboneElement();
     expect(mockElement).toBeDefined();
     expect(mockElement.hasModifierExtension()).toBe(false);
-    expect(mockElement.getModifierExtension()).toBeUndefined();
+    expect(mockElement.getModifierExtension()).toMatchObject([] as Extension[]);
     expect(mockElement.isEmpty()).toBe(true);
 
     mockElement.addModifierExtension(testExtension);
@@ -91,7 +91,7 @@ describe('BackboneElement', () => {
     expect(mockElement).toBeDefined();
     expect(mockElement.hasModifierExtension()).toBe(false);
     expect(mockElement.hasModifierExtension(testUrl)).toBe(false);
-    expect(mockElement.getModifierExtension()).toBeUndefined();
+    expect(mockElement.getModifierExtension()).toMatchObject([] as Extension[]);
     expect(mockElement.isEmpty()).toBe(true);
 
     mockElement.addModifierExtension(testExtension);
@@ -105,7 +105,7 @@ describe('BackboneElement', () => {
     const mockElement = new MockBackboneElement();
     expect(mockElement).toBeDefined();
     expect(mockElement.hasModifierExtension()).toBe(false);
-    expect(mockElement.getModifierExtension()).toBeUndefined();
+    expect(mockElement.getModifierExtension()).toMatchObject([] as Extension[]);
     expect(mockElement.isEmpty()).toBe(true);
 
     const undefExtensionPath1 = mockElement.getModifierExtensionByUrl('nonExistentUrl');

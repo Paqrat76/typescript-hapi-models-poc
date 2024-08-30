@@ -23,7 +23,7 @@
 
 import { InstantType } from '@src/fhir/data-types/primitive/InstantType';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
-import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
+import { Extension, PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 
 describe('InstantType', () => {
   const VALID_INSTANT = `2015-02-07T13:28:17.239+02:00`;
@@ -43,7 +43,7 @@ describe('InstantType', () => {
     expect(testInstantType.hasId()).toBe(false);
     expect(testInstantType.getId()).toBeUndefined();
     expect(testInstantType.hasExtension()).toBe(false);
-    expect(testInstantType.getExtension()).toBeUndefined();
+    expect(testInstantType.getExtension()).toMatchObject([] as Extension[]);
     // primitive value properties
     expect(testInstantType.hasValue()).toBe(false);
     expect(testInstantType.getValue()).toBeUndefined();

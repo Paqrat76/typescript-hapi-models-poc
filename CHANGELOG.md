@@ -21,6 +21,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.5.1] - 2024-08-30
+
+### Added
+
+- Added `public abstract resourceType(): string;` to Resource
+
+### Changed
+
+- Changed all `getXxxxElement` methods to "auto create" an empty `XxxxType` rather than returning undefined.
+  See "Auto Create DataType Elements on `getXxxxElement`" section under "Design Decisions" in [design-note.md](./dev-docs/design-notes.md)
+
 ## [0.5.0] - 2024-08-29
 
 ### Added

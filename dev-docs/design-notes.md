@@ -154,6 +154,12 @@ GitHub: [hapifhir/org.hl7.fhir.core](https://github.com/hapifhir/org.hl7.fhir.co
 
 ## Design Decisions
 
+### Auto Create DataType Elements on `getXxxxElement`
+
+- **NOTE:** HAPI FHIR has been designed to "auto create" data type elements rather than to return `null`.
+  See class header content in [Configuration.java](https://github.com/hapifhir/org.hl7.fhir.core/blob/master/org.hl7.fhir.r4/src/main/java/org/hl7/fhir/r4/model/Configuration.java)
+- Therefore, we will follow suite and not return `undefined` for all `getXxxxElement` methods.
+
 ### TypeScript Runtime Data Validator for Primitives
 
 Based on past experience with FHIR data model generators for TypeScript, I wanted to define at least FHIR primitive

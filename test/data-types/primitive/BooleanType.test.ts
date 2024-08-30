@@ -23,7 +23,7 @@
 
 import { BooleanType } from '@src/fhir/data-types/primitive/BooleanType';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
-import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
+import { Extension, PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 
 describe('BooleanType', () => {
   const INVALID_BOOLEAN = 'invalidBoolean';
@@ -41,7 +41,7 @@ describe('BooleanType', () => {
     expect(testBooleanType.hasId()).toBe(false);
     expect(testBooleanType.getId()).toBeUndefined();
     expect(testBooleanType.hasExtension()).toBe(false);
-    expect(testBooleanType.getExtension()).toBeUndefined();
+    expect(testBooleanType.getExtension()).toMatchObject([] as Extension[]);
     // primitive value properties
     expect(testBooleanType.hasValue()).toBe(false);
     expect(testBooleanType.getValue()).toBeUndefined();

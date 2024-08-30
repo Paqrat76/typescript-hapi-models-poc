@@ -2,6 +2,7 @@
 
 ## POC Feature Set
 
+- Decide on whether `resourceType()` should return a string based on `fhirType()` or an `enum ResourceType`.
 - Investigate approaches to runtime parameter assertions (e.g., not null, not undefined, not empty,
   appropriate type, etc.)
 - Add Date handling for FHIR `date`/`dateTime`/`time`/`instant` using [Luxon](https://moment.github.io/luxon/#/?id=luxon)

@@ -43,7 +43,7 @@ describe('Element', () => {
     expect(mockElement.hasId()).toBe(false);
     expect(mockElement.getId()).toBeUndefined();
     expect(mockElement.hasExtension()).toBe(false);
-    expect(mockElement.getExtension()).toBeUndefined();
+    expect(mockElement.getExtension()).toMatchObject([] as Extension[]);
     expect(mockElement.isEmpty()).toBe(true);
   });
 
@@ -76,13 +76,13 @@ describe('Element', () => {
     expect(mockElement).toBeDefined();
     expect(mockElement.hasExtension()).toBe(false);
     expect(mockElement.hasExtension(testUrl)).toBe(false);
-    expect(mockElement.getExtension()).toBeUndefined();
+    expect(mockElement.getExtension()).toMatchObject([] as Extension[]);
     expect(mockElement.isEmpty()).toBe(true);
 
     mockElement.addExtension();
     expect(mockElement.hasExtension()).toBe(false);
     expect(mockElement.hasExtension(testUrl)).toBe(false);
-    expect(mockElement.getExtension()).toBeUndefined();
+    expect(mockElement.getExtension()).toMatchObject([] as Extension[]);
     expect(mockElement.isEmpty()).toBe(true);
 
     mockElement.addExtension(testExtension);
@@ -96,7 +96,7 @@ describe('Element', () => {
     const mockElement = new MockElement();
     expect(mockElement).toBeDefined();
     expect(mockElement.hasExtension()).toBe(false);
-    expect(mockElement.getExtension()).toBeUndefined();
+    expect(mockElement.getExtension()).toMatchObject([] as Extension[]);
     expect(mockElement.isEmpty()).toBe(true);
 
     mockElement.addExtension(testExtension);
@@ -120,7 +120,7 @@ describe('Element', () => {
     expect(mockElement).toBeDefined();
     expect(mockElement.hasExtension()).toBe(false);
     expect(mockElement.hasExtension(testUrl)).toBe(false);
-    expect(mockElement.getExtension()).toBeUndefined();
+    expect(mockElement.getExtension()).toMatchObject([] as Extension[]);
     expect(mockElement.isEmpty()).toBe(true);
 
     mockElement.setExtension([testExtension]);
@@ -134,7 +134,7 @@ describe('Element', () => {
     const mockElement = new MockElement();
     expect(mockElement).toBeDefined();
     expect(mockElement.hasExtension()).toBe(false);
-    expect(mockElement.getExtension()).toBeUndefined();
+    expect(mockElement.getExtension()).toMatchObject([] as Extension[]);
     expect(mockElement.isEmpty()).toBe(true);
 
     const undefExtensionPath1 = mockElement.getExtensionByUrl('nonExistentUrl');

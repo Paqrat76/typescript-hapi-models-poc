@@ -61,24 +61,25 @@ describe('Resource', () => {
     expect(testResource).toBeInstanceOf(Resource);
     expect(testResource).toBeInstanceOf(Base);
     expect(testResource.constructor.name).toStrictEqual('MockResource');
+    expect(testResource.resourceType()).toStrictEqual('MockResource');
     expect(testResource.fhirType()).toStrictEqual('Resource');
     expect(testResource.isEmpty()).toBe(true);
 
     expect(testResource.hasId()).toBe(false);
     expect(testResource.getId()).toBeUndefined();
     expect(testResource.hasMeta()).toBe(false);
-    expect(testResource.getMeta()).toBeUndefined();
+    expect(testResource.getMeta()).toMatchObject(new Meta());
     expect(testResource.hasImplicitRules()).toBe(false);
     expect(testResource.getImplicitRules()).toBeUndefined();
     expect(testResource.hasLanguage()).toBe(false);
     expect(testResource.getLanguage()).toBeUndefined();
 
     expect(testResource.hasIdElement()).toBe(false);
-    expect(testResource.getIdElement()).toBeUndefined();
+    expect(testResource.getIdElement()).toMatchObject(new IdType());
     expect(testResource.hasImplicitRulesElement()).toBe(false);
-    expect(testResource.getImplicitRulesElement()).toBeUndefined();
+    expect(testResource.getImplicitRulesElement()).toMatchObject(new UriType());
     expect(testResource.hasLanguageElement()).toBe(false);
-    expect(testResource.getLanguageElement()).toBeUndefined();
+    expect(testResource.getLanguageElement()).toMatchObject(new CodeType());
   });
 
   it('should be properly instantiated with primitive values', () => {
@@ -92,6 +93,7 @@ describe('Resource', () => {
     expect(testResource).toBeInstanceOf(Resource);
     expect(testResource).toBeInstanceOf(Base);
     expect(testResource.constructor.name).toStrictEqual('MockResource');
+    expect(testResource.resourceType()).toStrictEqual('MockResource');
     expect(testResource.fhirType()).toStrictEqual('Resource');
     expect(testResource.isEmpty()).toBe(false);
 
@@ -153,18 +155,18 @@ describe('Resource', () => {
     expect(testResource.hasId()).toBe(false);
     expect(testResource.getId()).toBeUndefined();
     expect(testResource.hasMeta()).toBe(false);
-    expect(testResource.getMeta()).toBeUndefined();
+    expect(testResource.getMeta()).toMatchObject(new Meta());
     expect(testResource.hasImplicitRules()).toBe(false);
     expect(testResource.getImplicitRules()).toBeUndefined();
     expect(testResource.hasLanguage()).toBe(false);
     expect(testResource.getLanguage()).toBeUndefined();
 
     expect(testResource.hasIdElement()).toBe(false);
-    expect(testResource.getIdElement()).toBeUndefined();
+    expect(testResource.getIdElement()).toMatchObject(new IdType());
     expect(testResource.hasImplicitRulesElement()).toBe(false);
-    expect(testResource.getImplicitRulesElement()).toBeUndefined();
+    expect(testResource.getImplicitRulesElement()).toMatchObject(new UriType());
     expect(testResource.hasLanguageElement()).toBe(false);
-    expect(testResource.getLanguageElement()).toBeUndefined();
+    expect(testResource.getLanguageElement()).toMatchObject(new CodeType());
   });
 
   it('should throw PrimitiveTypeError when reset with invalid primitive Resource.id value', () => {
@@ -205,6 +207,8 @@ describe('Resource', () => {
     expect(testResource).toBeInstanceOf(Resource);
     expect(testResource).toBeInstanceOf(Base);
     expect(testResource.constructor.name).toStrictEqual('MockResource');
+    expect(testResource.resourceType()).toStrictEqual('MockResource');
+    expect(testResource.resourceType()).toStrictEqual('MockResource');
     expect(testResource.fhirType()).toStrictEqual('Resource');
     expect(testResource.isEmpty()).toBe(false);
 
@@ -294,6 +298,10 @@ class MockResource extends Resource {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor() {
     super();
+  }
+
+  resourceType(): string {
+    return 'MockResource';
   }
 
   public copy(): MockResource {

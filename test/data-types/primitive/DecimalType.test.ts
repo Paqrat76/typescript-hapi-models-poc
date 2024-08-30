@@ -23,7 +23,7 @@
 
 import { DecimalType } from '@src/fhir/data-types/primitive/DecimalType';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
-import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
+import { Extension, PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 
 describe('DecimalType', () => {
   const VALID_DECIMAL = -1234.56789;
@@ -44,7 +44,7 @@ describe('DecimalType', () => {
     expect(testDecimalType.hasId()).toBe(false);
     expect(testDecimalType.getId()).toBeUndefined();
     expect(testDecimalType.hasExtension()).toBe(false);
-    expect(testDecimalType.getExtension()).toBeUndefined();
+    expect(testDecimalType.getExtension()).toMatchObject([] as Extension[]);
     // primitive value properties
     expect(testDecimalType.hasValue()).toBe(false);
     expect(testDecimalType.getValue()).toBeUndefined();

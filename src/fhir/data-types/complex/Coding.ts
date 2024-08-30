@@ -146,8 +146,8 @@ export class Coding extends DataType implements IBase {
   /**
    * @returns the `system` property value as a PrimitiveType
    */
-  public getSystemElement(): UriType | undefined {
-    return this.system;
+  public getSystemElement(): UriType {
+    return this.system ?? new UriType();
   }
 
   /**
@@ -205,8 +205,8 @@ export class Coding extends DataType implements IBase {
   /**
    * @returns the `version` property value as a PrimitiveType
    */
-  public getVersionElement(): StringType | undefined {
-    return this.version;
+  public getVersionElement(): StringType {
+    return this.version ?? new StringType();
   }
 
   /**
@@ -264,8 +264,8 @@ export class Coding extends DataType implements IBase {
   /**
    * @returns the `code` property value as a PrimitiveType
    */
-  public getCodeElement(): CodeType | undefined {
-    return this.code;
+  public getCodeElement(): CodeType {
+    return this.code ?? new CodeType();
   }
 
   /**
@@ -323,8 +323,8 @@ export class Coding extends DataType implements IBase {
   /**
    * @returns the `display` property value as a PrimitiveType
    */
-  public getDisplayElement(): StringType | undefined {
-    return this.display;
+  public getDisplayElement(): StringType {
+    return this.display ?? new StringType();
   }
 
   /**
@@ -382,8 +382,8 @@ export class Coding extends DataType implements IBase {
   /**
    * @returns the `userSelected` property value as a PrimitiveType
    */
-  public getUserSelectedElement(): BooleanType | undefined {
-    return this.userSelected;
+  public getUserSelectedElement(): BooleanType {
+    return this.userSelected ?? new BooleanType();
   }
 
   /**
