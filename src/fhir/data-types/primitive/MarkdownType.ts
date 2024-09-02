@@ -26,15 +26,19 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive FHIR Datatype: markdown
+ * Markdown Class
  *
  * @remarks
- * A FHIR string that may contain Markdown syntax for optional processing by
- * a markdown presentation engine, in the [GFM extension](https://github.github.com/gfm/)
- * of CommonMark format.
+ * Base StructureDefinition for markdown type: A string that may contain Github Flavored Markdown syntax for optional processing by a mark down presentation engine
+ *
+ * **FHIR Specification**
+ * - **Short:** Primitive Type markdown
+ * - **Definition:** A string that may contain Github Flavored Markdown syntax for optional processing by a mark down presentation engine
+ * - **Comment:** Systems are not required to have markdown support, so the text should be readable without markdown processing. The markdown syntax is GFM - see https://github.github.com/gfm/
+ * - **FHIR Version:** 4.0.1
  *
  * @category Datatypes: Primitive
- * @see [FHIR markdown](https://hl7.org/fhir/R5/datatypes.html#markdown)
+ * @see [FHIR markdown](http://hl7.org/fhir/StructureDefinition/markdown)
  */
 export class MarkdownType extends PrimitiveType<fhirMarkdown> {
   /**
@@ -79,7 +83,7 @@ export class MarkdownType extends PrimitiveType<fhirMarkdown> {
     return dest;
   }
 
-  public override copyValues(dest: MarkdownType): void {
+  protected override copyValues(dest: MarkdownType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
   }

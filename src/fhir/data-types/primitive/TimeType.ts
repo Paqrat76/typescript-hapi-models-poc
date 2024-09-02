@@ -26,14 +26,18 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive FHIR Datatype: time
+ * Time Class
  *
  * @remarks
- * A time during the day, in the format hh:mm:ss. There is no date specified.
- * Seconds must be provided due to schema type constraints but may be zero-filled.
+ * Base StructureDefinition for time Type: A time during the day, with no date specified
+ *
+ * **FHIR Specification**
+ * - **Short:** Primitive Type time
+ * - **Definition:** A time during the day, with no date specified
+ * - **FHIR Version:** 4.0.1
  *
  * @category Datatypes: Primitive
- * @see [FHIR time](https://hl7.org/fhir/R5/datatypes.html#time)
+ * @see [FHIR time](http://hl7.org/fhir/StructureDefinition/time)
  */
 export class TimeType extends PrimitiveType<fhirTime> {
   /**
@@ -78,7 +82,7 @@ export class TimeType extends PrimitiveType<fhirTime> {
     return dest;
   }
 
-  public override copyValues(dest: TimeType): void {
+  protected override copyValues(dest: TimeType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
   }

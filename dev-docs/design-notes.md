@@ -237,3 +237,70 @@ I was thrilled when I discovered a plugin for Zod (described above).
 TypeDoc provides extensive configuration, but in my case, I only needed to included five (5) options!
 
 **Therefore, I am using TypeDoc to generate project documentation!**
+
+#### Class Header Template
+
+```typescript
+/**
+ * <StructureDefinition.type> Class
+ *
+ * @remarks
+ * <StructureDefinition.description>
+ *
+ * **FHIR Specification**
+ * - **Short:** <StructureDefinition.snapshot.element[0]?.short>
+ * - **Definition:** <StructureDefinition.snapshot.element[0]?.definition>
+ * - **Comment:** <StructureDefinition.snapshot.element[0]?.comment>
+ * - **Requirements:** <StructureDefinition.snapshot.element[0]?.requirements>
+ * - **FHIR Version:** <StructureDefinition.fhirVersion>
+ *
+ * @privateRemarks
+ * Loosely based on HAPI FHIR org.hl7.fhir.r4.model.<StructureDefinition.type>
+ *
+ * @category Resource Models | Datatypes: Complex
+ * @see [FHIR <StructureDefinition.type>](<StructureDefinition.url>)
+ */
+```
+
+#### Field Header Template
+
+```typescript
+/**
+ * <StructureDefinition.snapshot.element[i].path> Element
+ *
+ * @remarks
+ * **FHIR Specification**
+ * - **Short:** <StructureDefinition.snapshot.element[i]?.short>
+ * - **Definition:** <StructureDefinition.snapshot.element[i]?.definition>
+ * - **Comment:** <StructureDefinition.snapshot.element[i]?.comment>
+ * - **Requirements:** <StructureDefinition.snapshot.element[i]?.requirements>
+ * - **FHIR Type:** `<StructureDefinition.snapshot.element[i].type.code[0]>`
+ *   - _TargetProfiles_: [ <StructureDefinition.snapshot.element[i].type.code[0].taretProfile[?]> ]
+ * - **Cardinality:** <StructureDefinition.snapshot.element[i].min>..<StructureDefinition.snapshot.element[i].max>
+ * - **isModifier:** <StructureDefinition.snapshot.element[i].isModifier>
+ * - **isModifierReason:** <StructureDefinition.snapshot.element[i].isModifier?>
+ * - **isSummary:** <StructureDefinition.snapshot.element[i].isSummary>
+ */
+```
+
+#### Polymorphic Field Header Template
+
+```typescript
+/**
+ * <StructureDefinition.snapshot.element[i].path> Element
+ *
+ * @remarks
+ * **FHIR Specification**
+ * - **Short:** <StructureDefinition.snapshot.element[i]?.short>
+ * - **Definition:** <StructureDefinition.snapshot.element[i]?.definition>
+ * - **Comment:** <StructureDefinition.snapshot.element[i]?.comment>
+ * - **Requirements:** <StructureDefinition.snapshot.element[i]?.requirements>
+ * - **FHIR Types:**
+ *  - `<StructureDefinition.snapshot.element[i].type.code[j]>`
+ *    - _TargetProfiles_: [ <StructureDefinition.snapshot.element[i].type.code[0].taretProfile[?]> ]
+ * - **Cardinality:** <StructureDefinition.snapshot.element[i].min>..<StructureDefinition.snapshot.element[i].max>
+ * - **isModifier:** <StructureDefinition.snapshot.element[i].isModifier>
+ * - **isModifierReason:** <StructureDefinition.snapshot.element[i].isModifier?>
+ * - **isSummary:** <StructureDefinition.snapshot.element[i].isSummary>
+ */
+```

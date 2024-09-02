@@ -26,14 +26,18 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive FHIR Datatype: dateTime
+ * DateTime Class
  *
  * @remarks
- * A date, date-time or partial date (e.g. just year or year + month)
- * as used in human communication. The format is YYYY, YYYY-MM, YYYY-MM-DD, or YYYY-MM-DDThh:mm:ss+zz:zz.
+ * Base StructureDefinition for dateTime Type: A date, date-time or partial date (e.g. just year or year + month).  If hours and minutes are specified, a time zone SHALL be populated. The format is a union of the schema types gYear, gYearMonth, date and dateTime. Seconds must be provided due to schema type constraints but may be zero-filled and may be ignored. Dates SHALL be valid dates.
+ *
+ * **FHIR Specification**
+ * - **Short:** Primitive Type dateTime
+ * - **Definition:** A date, date-time or partial date (e.g. just year or year + month).  If hours and minutes are specified, a time zone SHALL be populated. The format is a union of the schema types gYear, gYearMonth, date and dateTime. Seconds must be provided due to schema type constraints but may be zero-filled and may be ignored. Dates SHALL be valid dates.
+ * - **FHIR Version:** 4.0.1
  *
  * @category Datatypes: Primitive
- * @see [FHIR dateTime](https://hl7.org/fhir/R5/datatypes.html#dateTime)
+ * @see [FHIR dateTime](http://hl7.org/fhir/StructureDefinition/dateTime)
  */
 export class DateTimeType extends PrimitiveType<fhirDateTime> {
   /**
@@ -78,7 +82,7 @@ export class DateTimeType extends PrimitiveType<fhirDateTime> {
     return dest;
   }
 
-  public override copyValues(dest: DateTimeType): void {
+  protected override copyValues(dest: DateTimeType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
   }

@@ -26,13 +26,19 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive FHIR Datatype: string
+ * String Class
  *
  * @remarks
- * Any sequence of Unicode characters less than 1MB in length.
+ * Base StructureDefinition for string Type: A sequence of Unicode characters
+ *
+ * **FHIR Specification**
+ * - **Short:** Primitive Type string
+ * - **Definition:** A sequence of Unicode characters
+ * - **Comment:** Note that FHIR strings SHALL NOT exceed 1MB in size
+ * - **FHIR Version:** 4.0.1
  *
  * @category Datatypes: Primitive
- * @see [FHIR string](https://hl7.org/fhir/R5/datatypes.html#string)
+ * @see [FHIR string](http://hl7.org/fhir/StructureDefinition/string)
  */
 export class StringType extends PrimitiveType<fhirString> {
   /**
@@ -77,7 +83,7 @@ export class StringType extends PrimitiveType<fhirString> {
     return dest;
   }
 
-  public override copyValues(dest: StringType): void {
+  protected override copyValues(dest: StringType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
   }

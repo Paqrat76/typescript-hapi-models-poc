@@ -26,14 +26,19 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive FHIR Datatype: decimal
+ * Decimal Class
  *
  * @remarks
- * Rational numbers that have a decimal  representation. Decimals in FHIR
- * cannot have more than 18 digits and a decimal point.
+ * Base StructureDefinition for decimal Type: A rational number with implicit precision
+ *
+ * **FHIR Specification**
+ * - **Short:** Primitive Type decimal
+ * - **Definition:** A rational number with implicit precision
+ * - **Comment:** Do not use an IEEE type floating point type, instead use something that works like a true decimal, with inbuilt precision (e.g. Java BigInteger)
+ * - **FHIR Version:** 4.0.1
  *
  * @category Datatypes: Primitive
- * @see [FHIR decimal](https://hl7.org/fhir/R5/datatypes.html#decimal)
+ * @see [FHIR decimal](http://hl7.org/fhir/StructureDefinition/decimal)
  */
 export class DecimalType extends PrimitiveType<fhirDecimal> {
   /**
@@ -82,7 +87,7 @@ export class DecimalType extends PrimitiveType<fhirDecimal> {
     return dest;
   }
 
-  public override copyValues(dest: DecimalType): void {
+  protected override copyValues(dest: DecimalType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
   }

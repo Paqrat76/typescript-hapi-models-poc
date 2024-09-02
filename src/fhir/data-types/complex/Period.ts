@@ -32,19 +32,22 @@ import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
 /**
- * Complex FHIR Datatype: Period
+ * Period Class
  *
  * @remarks
- * A time period defined by a start and end date/time.
+ * Base StructureDefinition for Period Type: A time period defined by a start and end date and optionally time.
  *
- * A period specifies a range of times. The context of use will specify whether the entire range applies (e.g. "the patient was an inpatient of the hospital for this time range") or one value from the period applies (e.g. "give to the patient between 2 and 4 pm on 24-Jun 2013").
+ * **FHIR Specification**
+ * - **Short:** Time range defined by start and end date/time
+ * - **Definition:** A time period defined by a start and end date and optionally time.
+ * - **Comment:** A Period specifies a range of time; the context of use will specify whether the entire range applies (e.g. "the patient was an inpatient of the hospital for this time range") or one value from the range applies (e.g. "give to the patient between these two times"). Period is not used for a duration (a measure of elapsed time).
+ * - **FHIR Version:** 4.0.1
  *
- * If the start element is missing, the start of the period is not known. If the end element is missing, it means that the period is ongoing. Alternatively, this may be represented by having an explicit end in the future, in which case this means the period is expected/planned to end at the specified time.
- *
- * The end value includes any matching date/time. For example, the period 2011-05-23 to 2011-05-27 includes all the times from the start of the 23rd May through to the end of the 27th of May.
+ * @privateRemarks
+ * Loosely based on HAPI FHIR org.hl7.fhir.r4.model.Period
  *
  * @category Datatypes: Complex
- * @see [FHIR Period](https://hl7.org/fhir/R5/datatypes.html#period)
+ * @see [FHIR Period](http://hl7.org/fhir/StructureDefinition/Period)
  */
 export class Period extends DataType implements IBase {
   /**
@@ -83,23 +86,32 @@ export class Period extends DataType implements IBase {
   }
 
   /**
-   * The start of the period. The boundary is inclusive.
+   * Period.start Element
    *
    * @remarks
-   * If the start element is missing, the meaning is that the low boundary is not known.
+   * **FHIR Specification**
+   * - **Short:** Starting time with inclusive boundary
+   * - **Definition:** The start of the period. The boundary is inclusive.
+   * - **Comment:** If the low element is missing, the meaning is that the low boundary is not known.
+   * - **FHIR Type:** `dateTime`
+   * - **Cardinality:** 0..1
+   * - **isModifier:** false
+   * - **isSummary:** true
    */
   protected start: DateTimeType | undefined;
 
   /**
-   * The end of the Period with inclusive boundary, if not ongoing.
+   * Period.end Element
    *
    * @remarks
-   * The end of the period. If the end of the period is missing, it means no end
-   * was known or planned at the time the instance was created. The start may be
-   * in the past, and the end date in the future, which means that period is
-   * expected/planned to end at that time.
-   *
-   * If the end of the period is missing, it means that the period is ongoing.
+   * **FHIR Specification**
+   * - **Short:** End time with inclusive boundary, if not ongoing
+   * - **Definition:**
+   * - **Comment:** The high value includes any matching date/time. i.e. 2012-02-03T10:00:00 is in a period that has an end value of 2012-02-03.
+   * - **FHIR Type:** `dateTime`
+   * - **Cardinality:** 0..1
+   * - **isModifier:** false
+   * - **isSummary:** true
    */
   protected end: DateTimeType | undefined;
 
@@ -238,21 +250,21 @@ export class Period extends DataType implements IBase {
   }
 
   /**
-   * {@inheritDoc Element.fhirType}
+   * {@inheritDoc Base.fhirType}
    */
   public override fhirType(): string {
     return 'Period';
   }
 
   /**
-   * {@inheritDoc Element.isEmpty}
+   * {@inheritDoc Base.isEmpty}
    */
   public override isEmpty(): boolean {
     return super.isEmpty() && isElementEmpty(this.start, this.end);
   }
 
   /**
-   * {@inheritDoc DataType.copy}
+   * {@inheritDoc Base.copy}
    */
   public override copy(): Period {
     const dest = new Period();
@@ -261,9 +273,9 @@ export class Period extends DataType implements IBase {
   }
 
   /**
-   * {@inheritDoc Element.copyValues}
+   * {@inheritDoc Base.copyValues}
    */
-  public override copyValues(dest: Period): void {
+  protected override copyValues(dest: Period): void {
     super.copyValues(dest);
     dest.start = this.start?.copy();
     dest.end = this.end?.copy();

@@ -25,7 +25,7 @@ import { CodeType } from '@src/fhir/data-types/primitive/CodeType';
 import { EnumCodeType } from '@src/fhir/data-types/primitive/EnumCodeType';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 import { Extension, PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
-import { BaseFhirCode, IBaseFhirCode, IFhirCodeEnum } from '@src/fhir/base-models/core-fhir-codes';
+import { FhirCodeDefinition, IFhirCodeDefinition, IFhirCodeEnum } from '@src/fhir/base-models/core-fhir-codes';
 import { fhirCode } from '@src/fhir/data-types/primitive/primitive-types';
 import { InvalidCodeError } from '@src/fhir/errors/InvalidCodeError';
 import { StringType } from '@src/fhir/data-types/primitive/StringType';
@@ -220,28 +220,28 @@ describe('EnumCodeType', () => {
 
 class MockCodeEnum implements IFhirCodeEnum {
   // Code definitions copied from NarrativeStatusEnum
-  public static readonly GENERATED = new BaseFhirCode(
+  public static readonly GENERATED = new FhirCodeDefinition(
     'GENERATED',
     `generated`,
     `http://hl7.org/fhir/narrative-status`,
     `Generated`,
     `The contents of the narrative are entirely generated from the core elements in the content.`,
   );
-  public static readonly EXTENSIONS = new BaseFhirCode(
+  public static readonly EXTENSIONS = new FhirCodeDefinition(
     'EXTENSIONS',
     `extensions`,
     `http://hl7.org/fhir/narrative-status`,
     `Extensions`,
     `The contents of the narrative are entirely generated from the core elements in the content and some of the content is generated from extensions. The narrative SHALL reflect the impact of all modifier extensions.`,
   );
-  public static readonly ADDITIONAL = new BaseFhirCode(
+  public static readonly ADDITIONAL = new FhirCodeDefinition(
     'ADDITIONAL',
     `additional`,
     `http://hl7.org/fhir/narrative-status`,
     `Additional`,
     `The contents of the narrative may contain additional information not found in the structured data. Note that there is no computable way to determine what the extra information is, other than by human inspection.`,
   );
-  public static readonly EMPTY = new BaseFhirCode(
+  public static readonly EMPTY = new FhirCodeDefinition(
     'EMPTY',
     `empty`,
     `http://hl7.org/fhir/narrative-status`,
@@ -249,11 +249,11 @@ class MockCodeEnum implements IFhirCodeEnum {
     `The contents of the narrative are some equivalent of "No human-readable text provided in this case".`,
   );
 
-  values(): IBaseFhirCode[] {
+  values(): IFhirCodeDefinition[] {
     return [MockCodeEnum.GENERATED, MockCodeEnum.EXTENSIONS, MockCodeEnum.ADDITIONAL, MockCodeEnum.EMPTY];
   }
 
-  fromCode(code: fhirCode | undefined): IBaseFhirCode {
+  fromCode(code: fhirCode | undefined): IFhirCodeDefinition {
     if (code === undefined) {
       throw new InvalidCodeError(`The provided 'code' value is undefined`);
     } else if (MockCodeEnum.GENERATED.code === code) {

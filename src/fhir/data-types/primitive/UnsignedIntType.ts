@@ -24,15 +24,19 @@
 import { fhirUnsignedInt, fhirUnsignedIntSchema } from './primitive-types';
 import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
-
 /**
- * Primitive FHIR Datatype: unsignedInt
+ * UnsignedInt Class
  *
  * @remarks
- * Any non-negative integer in the range 0..2,147,483,647.
+ * Base StructureDefinition for unsignedInt type: An integer with a value that is not negative (e.g. >= 0)
+ *
+ * **FHIR Specification**
+ * - **Short:** Primitive Type unsignedInt
+ * - **Definition:** An integer with a value that is not negative (e.g. >= 0)
+ * - **FHIR Version:** 4.0.1
  *
  * @category Datatypes: Primitive
- * @see [FHIR unsignedInt](https://hl7.org/fhir/R5/datatypes.html#unsignedInt)
+ * @see [FHIR unsignedInt](http://hl7.org/fhir/StructureDefinition/unsignedInt)
  */
 export class UnsignedIntType extends PrimitiveType<fhirUnsignedInt> {
   /**
@@ -78,7 +82,7 @@ export class UnsignedIntType extends PrimitiveType<fhirUnsignedInt> {
     return dest;
   }
 
-  public override copyValues(dest: UnsignedIntType): void {
+  protected override copyValues(dest: UnsignedIntType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
   }

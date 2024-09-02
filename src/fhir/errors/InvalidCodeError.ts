@@ -29,8 +29,13 @@
  * @category Errors
  */
 export class InvalidCodeError extends Error {
-  constructor(message: string) {
-    super(message);
+  constructor(message: string, cause?: Error) {
+    if (cause) {
+      super(message, cause);
+      this.cause = cause;
+    } else {
+      super(message);
+    }
     this.name = 'InvalidCodeError';
   }
 }

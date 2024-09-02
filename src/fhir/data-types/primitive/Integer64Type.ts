@@ -26,13 +26,19 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive FHIR Datatype: integer64 (added in FHIR R5)
+ * Integer64 Class
  *
  * @remarks
- * A signed integer in the range -9,223,372,036,854,775,808 to +9,223,372,036,854,775,807 (64-bit).
+ * integer64 Type: A very large whole number
+ *
+ * **FHIR Specification**
+ * - **Short:** Primitive Type integer64
+ * - **Definition:** A very large whole number
+ * - **Comment:** Typically this is used for record counters (e.g. database keys)
+ * - **FHIR Version:** 5.0.0
  *
  * @category Datatypes: Primitive
- * @see [FHIR integer64](https://hl7.org/fhir/R5/datatypes.html#integer64)
+ * @see [FHIR integer64](http://hl7.org/fhir/StructureDefinition/integer64)
  */
 export class Integer64Type extends PrimitiveType<fhirInteger64> {
   /**
@@ -78,7 +84,7 @@ export class Integer64Type extends PrimitiveType<fhirInteger64> {
     return dest;
   }
 
-  public override copyValues(dest: Integer64Type): void {
+  protected override copyValues(dest: Integer64Type): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
   }

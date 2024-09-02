@@ -30,9 +30,10 @@
 /**
  * Determines if provided string value is blank (whitespace, empty, `undefined`, `null`)
  *
- * @category Utilities
  * @param value - value to be evaluated
  * @returns `true` if blank; otherwise `false`
+ *
+ * @category Utilities
  */
 export function isBlank(value: string | undefined | null): boolean {
   return value === undefined || value === null || value.trim().length === 0;
@@ -41,9 +42,10 @@ export function isBlank(value: string | undefined | null): boolean {
 /**
  * Determines if provided string value is not blank (not whitespace, empty, `undefined`, `null`)
  *
- * @category Utilities
  * @param value - value to be evaluated
  * @returns `true` if not blank; otherwise `false`
+ *
+ * @category Utilities
  */
 export function isNonBlank(value: string | undefined | null): boolean {
   return !isBlank(value);

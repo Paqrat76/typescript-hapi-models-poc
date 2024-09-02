@@ -24,12 +24,12 @@ import { fhirCode, fhirCodeSchema } from '@src/fhir/data-types/primitive/primiti
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Base FHIR code system definition for a particular code.
+ * Base FHIR code system definition for a particular code defined in an implementation of IFhirCodeEnum.
  *
  * @category CodeSystems
  * @interface
  */
-export interface IBaseFhirCode {
+export interface IFhirCodeDefinition {
   /**
    * Enum name (all UPPERCASE)
    */
@@ -62,7 +62,7 @@ export interface IBaseFhirCode {
  *
  * @category CodeSystems
  */
-export class BaseFhirCode implements IBaseFhirCode {
+export class FhirCodeDefinition implements IFhirCodeDefinition {
   public readonly name: string;
   public readonly code: fhirCode;
   public readonly system?: string | undefined;
@@ -109,14 +109,14 @@ export class BaseFhirCode implements IBaseFhirCode {
  */
 export interface IFhirCodeEnum {
   /**
-   * @returns an IBaseFhirCode[] containing the enumeration of code system code definitions
+   * @returns an IFhirCodeDefinition[] containing the enumeration of code system code definitions
    */
-  values: () => IBaseFhirCode[];
+  values: () => IFhirCodeDefinition[];
 
   /**
    * @param code - fhirCode primitive value
-   * @returns the IBaseFhirCode instance for the provided code value
+   * @returns the IFhirCodeDefinition instance for the provided code value
    * @throws InvalidCodeError for undefined or invalid code value
    */
-  fromCode: (code: fhirCode | undefined) => IBaseFhirCode;
+  fromCode: (code: fhirCode | undefined) => IFhirCodeDefinition;
 }

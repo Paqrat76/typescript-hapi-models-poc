@@ -21,6 +21,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.5.2] - 2024-09-02
+
+### Added
+
+- Added stub class for Group
+- Added FHIR CodeSystem: GroupTypeEnum
+
+### Changed
+
+- Updated all class and property headers using new template headers
+- Renamed FHIR code interfaces and code definition object
+
+### Fixed
+
+- Fixed Narrative - properties are required (1..1)
+
+
 ## [0.5.1] - 2024-08-30
 
 ### Added
@@ -31,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Changed all `getXxxxElement` methods to "auto create" an empty `XxxxType` rather than returning undefined.
   See "Auto Create DataType Elements on `getXxxxElement`" section under "Design Decisions" in [design-note.md](./dev-docs/design-notes.md)
+
 
 ## [0.5.0] - 2024-08-29
 

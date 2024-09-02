@@ -30,79 +30,110 @@ import { XhtmlType } from '@src/fhir/data-types/primitive/XhtmlType';
 import { fhirCode, fhirXhtml, fhirXhtmlSchema } from '@src/fhir/data-types/primitive/primitive-types';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 import { isElementEmpty } from '@src/fhir/utility/element-util';
+import { InvalidCodeError } from '@src/fhir/errors/InvalidCodeError';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
 /**
- * Complex FHIR Datatype: Narrative
+ * Narrative Class
  *
  * @remarks
- * A human-readable summary of the resource conveying the essential clinical and
- * business information for the resource.
+ * Base StructureDefinition for Narrative Type: A human-readable summary of the resource conveying the essential clinical and business information for the resource.
+ *
+ * While both `status` and `div` cannot be `undefined`, either may be initialized via the constructor to `null`.
+ * However, both `status` and `div` cannot be set (reassigned) to `null`.
+ * This supports the rare need to initialize Narrative as "empty".
+ *
+ * **FHIR Specification**
+ * - **Short:** Human-readable summary of the resource (essential clinical and business information)
+ * - **Definition:** A human-readable summary of the resource conveying the essential clinical and business information for the resource.
+ * - **FHIR Version:** 4.0.1
+ *
+ * @privateRemarks
+ * Loosely based on HAPI FHIR org.hl7.fhir.r4.model.Narrative
  *
  * @category Datatypes: Complex
- * @see [FHIR Narrative](https://www.hl7.org/fhir/R4/narrative.html)
- * @see [FHIR Styling the XHTML](https://www.hl7.org/fhir/R4/narrative.html#css)
- * @see [FHIR Clinical Safety Concerns](https://www.hl7.org/fhir/R4/narrative.html#safety)
+ * @see [FHIR Narrative](http://hl7.org/fhir/StructureDefinition/Narrative)
  */
 export class Narrative extends DataType implements IBase {
   /**
    * @param status - The status of the narrative
    * @param div - The actual narrative content, a stripped down version of XHTML
    */
-  constructor(status?: EnumCodeType | CodeType | fhirCode, div?: XhtmlType | fhirXhtml) {
+  constructor(status: EnumCodeType | CodeType | fhirCode | null, div: XhtmlType | fhirXhtml | null) {
     super();
 
     this.narrativeStatusEnum = new NarrativeStatusEnum();
 
-    if (status !== undefined) {
-      if (status instanceof EnumCodeType) {
-        this.status = status;
-      } else {
+    if (status === null) {
+      this.status = status;
+    } else if (status instanceof EnumCodeType) {
+      this.status = status;
+    } else {
+      try {
         this.status = new EnumCodeType(status, this.narrativeStatusEnum);
+      } catch (err) {
+        // fromCode() in EnumCodeType() will throw InvalidCodeError
+        // if the provided code is undefined or is unknown
+        let errMsg: string;
+        if (status instanceof CodeType) {
+          const val = status.getValueAsString();
+          errMsg = `Invalid Narrative.status (${val ? val : 'undefined'})`;
+        } else {
+          errMsg = `Invalid Narrative.status (${status})`;
+        }
+        throw new InvalidCodeError(errMsg, err as Error);
       }
     }
 
-    if (div !== undefined) {
-      if (div instanceof XhtmlType) {
-        this.div = div;
-      } else {
-        const parseResult = fhirXhtmlSchema.safeParse(div);
-        if (!parseResult.success) {
-          throw new PrimitiveTypeError(`Invalid Narrative.div (${div})`, parseResult.error);
-        }
-        this.div = new XhtmlType(parseResult.data);
+    if (div === null) {
+      this.div = div;
+    } else if (div instanceof XhtmlType) {
+      this.div = div;
+    } else {
+      const parseResult = fhirXhtmlSchema.safeParse(div);
+      if (!parseResult.success) {
+        throw new PrimitiveTypeError(`Invalid Narrative.div (${div})`, parseResult.error);
       }
+      this.div = new XhtmlType(parseResult.data);
     }
   }
 
   private readonly narrativeStatusEnum: NarrativeStatusEnum;
 
   /**
-   * The status of the narrative
+   * Narrative.status Element
    *
    * @remarks
-   * The status defines whether it's entirely generated (from just the defined data or
-   * the extensions too), or whether a human authored it, and it may contain additional data.
+   * **FHIR Specification**
+   * - **Short:** generated | extensions | additional | empty
+   * - **Definition:** The status of the narrative - whether it's entirely generated (from just the defined data or the extensions too), or whether a human authored it and it may contain additional data.
+   * - **FHIR Type:** `code`
+   * - **Cardinality:** 1..1
+   * - **isModifier:** false
+   * - **isSummary:** false
    */
-  protected status?: EnumCodeType | undefined;
+  protected status: EnumCodeType | null;
 
   /**
-   * The actual narrative content, a stripped down version of XHTML.
+   * Narrative.div Element
    *
    * @remarks
-   * The contents of the html element are an XHTML fragment containing only the basic html
-   * formatting elements described in chapters 7-11 and 15 of the HTML 4.0 standard, `<a>` elements
-   * (either name or href), images and internally contained stylesheets. The XHTML content
-   * SHALL NOT contain a head, a body, external stylesheet references, scripts, forms,
-   * base/link/xlink, frames, iframes and objects.
+   * **FHIR Specification**
+   * - **Short:** Limited xhtml content
+   * - **Definition:** The actual narrative content, a stripped down version of XHTML.
+   * - **Comment:** The contents of the html element are an XHTML fragment containing only the basic html formatting elements described in chapters 7-11 and 15 of the HTML 4.0 standard, <a> elements (either name or href), images and internally contained stylesheets. The XHTML content SHALL NOT contain a head, a body, external stylesheet references, scripts, forms, base/link/xlink, frames, iframes and objects.
+   * - **FHIR Type:** `xhtml`
+   * - **Cardinality:** 1..1
+   * - **isModifier:** false
+   * - **isSummary:** false
    */
-  protected div?: XhtmlType | undefined;
+  protected div: XhtmlType | null;
 
   /**
    * @returns the `status` property value as a EnumCodeType
    */
-  public getStatusEnumType(): EnumCodeType | undefined {
+  public getStatusEnumType(): EnumCodeType | null {
     return this.status;
   }
 
@@ -112,7 +143,11 @@ export class Narrative extends DataType implements IBase {
    * @param enumType - the `status` value
    * @returns this
    */
-  public setStatueEnumType(enumType: EnumCodeType | undefined): this {
+  public setStatueEnumType(enumType: EnumCodeType): this {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (enumType === null) {
+      return this;
+    }
     this.status = enumType;
     return this;
   }
@@ -121,14 +156,17 @@ export class Narrative extends DataType implements IBase {
    * @returns `true` if the `status` property exists and has a value; `false` otherwise
    */
   public hasStatusEnumType(): boolean {
-    return this.status !== undefined && !this.status.isEmpty() && this.status.fhirCodeEnumeration.length > 0;
+    return this.status !== null && !this.status.isEmpty() && this.status.fhirCodeEnumeration.length > 0;
   }
 
   /**
    * @returns the `status` property value as a PrimitiveType
    */
-  public getStatusElement(): CodeType | undefined {
-    return this.status === undefined ? undefined : (this.status as CodeType);
+  public getStatusElement(): CodeType | null {
+    if (this.status === null) {
+      return null;
+    }
+    return this.status as CodeType;
   }
 
   /**
@@ -137,8 +175,12 @@ export class Narrative extends DataType implements IBase {
    * @param element - the `status` value
    * @returns this
    */
-  public setStatusElement(element: CodeType | undefined): this {
-    this.status = element === undefined ? undefined : new EnumCodeType(element, this.narrativeStatusEnum);
+  public setStatusElement(element: CodeType): this {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (element === null) {
+      return this;
+    }
+    this.status = new EnumCodeType(element, this.narrativeStatusEnum);
     return this;
   }
 
@@ -152,8 +194,11 @@ export class Narrative extends DataType implements IBase {
   /**
    * @returns the `status` property value as a primitive value
    */
-  public getStatus(): fhirCode | undefined {
-    return this.status?.fhirCode.code;
+  public getStatus(): fhirCode | null {
+    if (this.status === null) {
+      return null;
+    }
+    return this.status.fhirCode.code;
   }
 
   /**
@@ -161,10 +206,13 @@ export class Narrative extends DataType implements IBase {
    *
    * @param value - the `status` value
    * @returns this
-   * @throws TypeError for invalid `status` (NarrativeStatusCode) code
    */
-  public setStatus(value: fhirCode | undefined): this {
-    this.status = value === undefined ? undefined : new EnumCodeType(value, this.narrativeStatusEnum);
+  public setStatus(value: fhirCode): this {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (value === null) {
+      return this;
+    }
+    this.status = new EnumCodeType(value, this.narrativeStatusEnum);
     return this;
   }
 
@@ -178,7 +226,7 @@ export class Narrative extends DataType implements IBase {
   /**
    * @returns the `div` property value as a PrimitiveType
    */
-  public getDivElement(): XhtmlType | undefined {
+  public getDivElement(): XhtmlType | null {
     return this.div;
   }
 
@@ -188,7 +236,11 @@ export class Narrative extends DataType implements IBase {
    * @param element - the `div` value
    * @returns this
    */
-  public setDivElement(element: XhtmlType | undefined): this {
+  public setDivElement(element: XhtmlType): this {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (element === null) {
+      return this;
+    }
     this.div = element;
     return this;
   }
@@ -197,14 +249,18 @@ export class Narrative extends DataType implements IBase {
    * @returns `true` if the `div` property exists and has a value; `false` otherwise
    */
   public hasDivElement(): boolean {
-    return this.div !== undefined && !this.div.isEmpty();
+    return this.div !== null && !this.div.isEmpty();
   }
 
   /**
    * @returns the `div` property value as a primitive value
    */
-  public getDiv(): fhirXhtml | undefined {
-    return this.div?.getValue();
+  public getDiv(): fhirXhtml | null {
+    if (this.div?.getValue() === undefined) {
+      return null;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return this.div.getValue()!;
   }
 
   /**
@@ -214,16 +270,16 @@ export class Narrative extends DataType implements IBase {
    * @returns this
    * @throws PrimitiveTypeError for invalid primitive types
    */
-  public setDiv(value: fhirXhtml | undefined): this {
-    if (value === undefined) {
-      this.div = undefined;
-    } else {
-      const parseResult = fhirXhtmlSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Narrative.div value`, parseResult.error);
-      }
-      this.div = new XhtmlType(parseResult.data);
+  public setDiv(value: fhirXhtml): this {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (value === null) {
+      return this;
     }
+    const parseResult = fhirXhtmlSchema.safeParse(value);
+    if (!parseResult.success) {
+      throw new PrimitiveTypeError(`Invalid Narrative.div value`, parseResult.error);
+    }
+    this.div = new XhtmlType(parseResult.data);
     return this;
   }
 
@@ -235,35 +291,36 @@ export class Narrative extends DataType implements IBase {
   }
 
   /**
-   * {@inheritDoc Element.fhirType}
+   * {@inheritDoc Base.fhirType}
    */
   public override fhirType(): string {
     return 'Narrative';
   }
 
   /**
-   * {@inheritDoc Element.isEmpty}
+   * {@inheritDoc Base.isEmpty}
    */
   public override isEmpty(): boolean {
     return super.isEmpty() && isElementEmpty(this.status, this.div);
   }
 
   /**
-   * {@inheritDoc DataType.copy}
+   * {@inheritDoc Base.copy}
    */
   public override copy(): Narrative {
-    const dest = new Narrative();
+    // Initialize dest Narrative - these values will be overridden in copyValues()
+    const dest = new Narrative(null, null);
     this.copyValues(dest);
     return dest;
   }
 
   /**
-   * {@inheritDoc Element.copyValues}
+   * {@inheritDoc Base.copyValues}
    */
-  public override copyValues(dest: Narrative): void {
+  protected override copyValues(dest: Narrative): void {
     super.copyValues(dest);
-    dest.status = this.status?.copy();
-    dest.div = this.div?.copy();
+    dest.status = this.status === null ? null : this.status.copy();
+    dest.div = this.div === null ? null : this.div.copy();
   }
 }
 

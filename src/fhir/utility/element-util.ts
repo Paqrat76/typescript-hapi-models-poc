@@ -40,11 +40,12 @@ import { Extension } from '@src/fhir/base-models/core-fhir-models';
  * @privateRemarks
  * Loosely based on HAPI FHIR ca.uhn.fhir.util.ElementUtil
  *
- * @category Utilities
  * @param elements - FHIR instance's data elements
  * @returns `true` if all provided elements are empty; `false` if at least one element is not empty
+ *
+ * @category Utilities
  */
-export function isElementEmpty(...elements: (IBase | IBase[] | undefined)[]): boolean {
+export function isElementEmpty(...elements: (IBase | IBase[] | undefined | null)[]): boolean {
   if (elements.length === 1 && _isEmpty(elements[0])) {
     return true;
   } else {
@@ -58,7 +59,7 @@ export function isElementEmpty(...elements: (IBase | IBase[] | undefined)[]): bo
         }
       } else {
         // IBase or undefined
-        if (element !== undefined && !element.isEmpty()) {
+        if (element !== undefined && element !== null && !element.isEmpty()) {
           return false;
         }
       }
@@ -72,7 +73,8 @@ export function isElementEmpty(...elements: (IBase | IBase[] | undefined)[]): bo
  *
  * @param url - url to test
  * @throws AssertionError for invalid url
- * @private
+ *
+ * @category Utilities
  */
 export function validateUrl(url: string) {
   assert(isNonBlank(url), 'The url must be defined and cannot be blank');
@@ -87,7 +89,8 @@ export function validateUrl(url: string) {
  * @param url - the url that identifies a specific Extension
  * @param sourceExtensions - array of Extensions to filter
  * @returns an array of Extensions having the provided url or an empty array
- * @private
+ *
+ * @category Utilities
  */
 export function getExtensionsByUrl(url: fhirUri, sourceExtensions: Extension[] | undefined): Extension[] {
   validateUrl(url);

@@ -26,13 +26,18 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive FHIR Datatype: positiveInt
+ * PositiveInt Class
  *
  * @remarks
- * Any positive integer in the range 1..2,147,483,647.
+ * Base StructureDefinition for positiveInt type: An integer with a value that is positive (e.g. >0)
+ *
+ * **FHIR Specification**
+ * - **Short:** Primitive Type positiveInt
+ * - **Definition:** An integer with a value that is positive (e.g. >0)
+ * - **FHIR Version:** 4.0.1
  *
  * @category Datatypes: Primitive
- * @see [FHIR positiveInt](https://hl7.org/fhir/R5/datatypes.html#positiveInt)
+ * @see [FHIR positiveInt](http://hl7.org/fhir/StructureDefinition/positiveInt)
  */
 export class PositiveIntType extends PrimitiveType<fhirPositiveInt> {
   /**
@@ -78,7 +83,7 @@ export class PositiveIntType extends PrimitiveType<fhirPositiveInt> {
     return dest;
   }
 
-  public override copyValues(dest: PositiveIntType): void {
+  protected override copyValues(dest: PositiveIntType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
   }

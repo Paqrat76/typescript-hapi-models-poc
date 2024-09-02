@@ -26,13 +26,19 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive FHIR Datatype: oid
+ * Oid Class
  *
  * @remarks
- * An OID represented as a URI (RFC 3001); e.g. urn:oid:1.2.3.4.5.
+ * Base StructureDefinition for oid type: An OID represented as a URI
+ *
+ * **FHIR Specification**
+ * - **Short:** Primitive Type oid
+ * - **Definition:** An OID represented as a URI
+ * - **Comment:** RFC 3001. See also ISO/IEC 8824:1990
+ * - **FHIR Version:** 4.0.1
  *
  * @category Datatypes: Primitive
- * @see [FHIR oid](https://hl7.org/fhir/R5/datatypes.html#oid)
+ * @see [FHIR oid](http://hl7.org/fhir/StructureDefinition/oid)
  */
 export class OidType extends PrimitiveType<fhirOid> {
   /**
@@ -77,7 +83,7 @@ export class OidType extends PrimitiveType<fhirOid> {
     return dest;
   }
 
-  public override copyValues(dest: OidType): void {
+  protected override copyValues(dest: OidType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
   }

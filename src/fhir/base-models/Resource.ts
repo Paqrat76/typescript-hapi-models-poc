@@ -37,82 +37,100 @@ import {
 import { isElementEmpty } from '@src/fhir/utility/element-util';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
+/* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
+
 /**
- * Abstract Resource class
+ * Abstract Resource Class
  *
  * @remarks
- * This is the base resource type ALL FHIR resources.
+ * This is the base resource type for everything.
  *
- * This specification defines a series of different types of resource that can be used to exchange
- * and/or store data in order to solve a wide range of healthcare related problems, both clinical
- * and administrative. In addition, this specification defines several different ways of exchanging
- * the resources.
+ * This specification defines a series of different types of resource that can be used to exchange and/or store data in order to solve a wide range of healthcare related problems, both clinical and administrative. In addition, this specification defines several different ways of exchanging the resources.
  *
  * A resource is an entity that:
  * - has a known identity (a URL) by which it can be addressed
  * - identifies itself as one of the types of resource defined in this specification
  * - contains a set of structured data items as described by the definition of the resource type
- * - has an identified version that changes if the contents of the resource change
+ * - has an identified version that changes if the contents of the resource change.
+ *
+ * **FHIR Specification**
+ * - **Short:** Base Resource.
+ * - **Definition:** This is the base resource type for everything.
+ * - **FHIR Version:** 4.0.1; Normative since 4.0.0
  *
  * @privateRemarks
  * Loosely based on HAPI FHIR org.hl7.fhir.r4.model.Resource
  *
  * @category Base Models
- * @see [FHIR Base Resource Definitions](https://www.hl7.org/fhir/R4/resource.html)
+ * @see [FHIR Resource](http://hl7.org/fhir/StructureDefinition/Resource)
  */
 export abstract class Resource extends Base {
   protected constructor() {
     super();
   }
 
+  /**
+   * @returns the FHIR resource type as defined by the FHIR specification
+   */
   public abstract resourceType(): string;
 
   /**
-   * Logical id of this artifact
+   * Resource.id Element
    *
    * @remarks
-   * The logical id of the resource, as used in the URL for the resource. Once assigned, this value never changes.
-   * The only time that a resource does not have an id is when it is being submitted to the server using a create operation.
+   * **FHIR Specification**
+   * - **Short:** Logical id of this artifact
+   * - **Definition:** The logical id of the resource, as used in the URL for the resource. Once assigned, this value never changes.
+   * - **Comment:** The only time that a resource does not have an id is when it is being submitted to the server using a create operation.
+   * - **FHIR Type:** `id`
+   * - **Cardinality:** 0..1
+   * - **isModifier:** false
+   * - **isSummary:** true
    */
   protected id?: IdType | undefined;
 
   /**
-   * Metadata about the resource
+   * Resource.meta Element
    *
    * @remarks
-   * This is content that is maintained by the infrastructure. Changes to the content might not always
-   * be associated with version changes to the resource.
+   * **FHIR Specification**
+   * - **Short:** Metadata about the resource
+   * - **Definition:** The metadata about the resource. This is content that is maintained by the infrastructure. Changes to the content might not always be associated with version changes to the resource.
+   * - **FHIR Type:** `Meta`
+   * - **Cardinality:** 0..1
+   * - **isModifier:** false
+   * - **isSummary:** true
    */
   protected meta?: Meta | undefined;
 
   /**
-   * A set of rules under which this content was created
+   * Resource.implicitRules Element
    *
    * @remarks
-   * A reference to a set of rules that were followed when the resource was constructed, and which
-   * must be understood when processing the content. Often, this is a reference to an implementation
-   * guide that defines the special rules along with other profiles etc.
-   *
-   * Asserting this rule set restricts the content to be only understood by a limited set of trading
-   * partners. This inherently limits the usefulness of the data in the long term. However, the
-   * existing health ecosystem is highly fractured, and not yet ready to define, collect, and
-   * exchange data in a generally computable sense. Wherever possible, implementers and/or specification
-   * writers should avoid using this element. Often, when used, the URL is a reference to an implementation
-   * guide that defines these special rules as part of its narrative along with other profiles, value sets, etc.
+   * **FHIR Specification**
+   * - **Short:** A set of rules under which this content was created
+   * - **Definition:** A reference to a set of rules that were followed when the resource was constructed, and which must be understood when processing the content. Often, this is a reference to an implementation guide that defines the special rules along with other profiles etc.
+   * - **Comment:** Asserting this rule set restricts the content to be only understood by a limited set of trading partners. This inherently limits the usefulness of the data in the long term. However, the existing health eco-system is highly fractured, and not yet ready to define, collect, and exchange data in a generally computable sense. Wherever possible, implementers and/or specification writers should avoid using this element. Often, when used, the URL is a reference to an implementation guide that defines these special rules as part of it's narrative along with other profiles, value sets, etc.
+   * - **FHIR Type:** `uri`
+   * - **Cardinality:** 0..1
+   * - **isModifier:** true
+   * - **isModifierReason:** This element is labeled as a modifier because the implicit rules may provide additional knowledge about the resource that modifies it's meaning or interpretation
+   * - **isSummary:** true
    */
   protected implicitRules?: UriType | undefined;
 
   /**
-   * Language of the resource content
+   * Resource.language Element
    *
    * @remarks
-   * Language is provided to support indexing and accessibility (typically, services such as text to
-   * speech use the language tag). The html language tag in the narrative applies to the narrative.
-   * The language tag on the resource may be used to specify the language of other presentations
-   * generated from the data in the resource. Not all the content has to be in the base language.
-   * The Resource.language should not be assumed to apply to the narrative automatically. If a
-   * language is specified, it should it also be specified on the div element in the html (see
-   * rules in HTML5 for information about the relationship between xml:lang and the html lang attribute).
+   * **FHIR Specification**
+   * - **Short:** Language of the resource content
+   * - **Definition:** The base language in which the resource is written.
+   * - **Comment:** Language is provided to support indexing and accessibility (typically, services such as text to speech use the language tag). The html language tag in the narrative applies  to the narrative. The language tag on the resource may be used to specify the language of other presentations generated from the data in the resource. Not all the content has to be in the base language. The Resource.language should not be assumed to apply to the narrative automatically. If a language is specified, it should it also be specified on the div element in the html (see rules in HTML5 for information about the relationship between xml:lang and the html lang attribute).
+   * - **FHIR Type:** `code`
+   * - **Cardinality:** 0..1
+   * - **isModifier:** false
+   * - **isSummary:** false
    */
   protected language?: CodeType | undefined;
 
@@ -319,29 +337,26 @@ export abstract class Resource extends Base {
   }
 
   /**
-   * @returns the FHIR type defined in the FHIR standard
+   * {@inheritDoc Base.fhirType}
    */
   public fhirType(): string {
     return 'Resource';
   }
 
   /**
-   * @returns `true` if the instance is empty; `false` otherwise
+   * {@inheritDoc Base.isEmpty}
    */
   public isEmpty(): boolean {
     return isElementEmpty(this.id, this.meta, this.implicitRules, this.language);
   }
 
   /**
-   * Creates a copy of the current instance.
+   * {@inheritDoc Base.copy}
    */
   public abstract override copy(): Resource;
 
   /**
-   * Copies the current object instance's elements into the provided object.
-   *
-   * @param dest - the instance being copied
-   * @protected
+   * {@inheritDoc Base.copyValues}
    */
   protected copyValues(dest: Resource): void {
     dest.id = this.id?.copy();
@@ -350,3 +365,5 @@ export abstract class Resource extends Base {
     dest.language = this.language?.copy();
   }
 }
+
+/* eslint-enable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */

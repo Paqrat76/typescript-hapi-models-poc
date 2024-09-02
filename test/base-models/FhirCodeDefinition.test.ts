@@ -21,10 +21,10 @@
  *
  */
 
-import { BaseFhirCode } from '@src/fhir/base-models/core-fhir-codes';
+import { FhirCodeDefinition } from '@src/fhir/base-models/core-fhir-codes';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
-describe('BaseFhirCode', () => {
+describe('FhirCodeDefinition', () => {
   const TEST_NAME = 'GENERATED';
   const VALID_CODE = `generated`;
   const INVALID_CODE = ' invalid CodeType ';
@@ -33,10 +33,10 @@ describe('BaseFhirCode', () => {
   const TEST_DEFINITION = `The contents of the narrative are entirely generated from the core elements in the content.`;
 
   it('should be properly instantiated with minimum args', () => {
-    const testBaseFhirCode = new BaseFhirCode(TEST_NAME, VALID_CODE);
+    const testBaseFhirCode = new FhirCodeDefinition(TEST_NAME, VALID_CODE);
     expect(testBaseFhirCode).toBeDefined();
-    expect(testBaseFhirCode).toBeInstanceOf(BaseFhirCode);
-    expect(testBaseFhirCode.constructor.name).toStrictEqual('BaseFhirCode');
+    expect(testBaseFhirCode).toBeInstanceOf(FhirCodeDefinition);
+    expect(testBaseFhirCode.constructor.name).toStrictEqual('FhirCodeDefinition');
     expect(testBaseFhirCode.name).toStrictEqual(TEST_NAME);
     expect(testBaseFhirCode.code).toStrictEqual(VALID_CODE);
     expect(testBaseFhirCode.system).toBeUndefined();
@@ -46,10 +46,10 @@ describe('BaseFhirCode', () => {
   });
 
   it('should be properly instantiated with all args', () => {
-    const testBaseFhirCode = new BaseFhirCode(TEST_NAME, VALID_CODE, TEST_SYSTEM, TEST_DISPLAY, TEST_DEFINITION);
+    const testBaseFhirCode = new FhirCodeDefinition(TEST_NAME, VALID_CODE, TEST_SYSTEM, TEST_DISPLAY, TEST_DEFINITION);
     expect(testBaseFhirCode).toBeDefined();
-    expect(testBaseFhirCode).toBeInstanceOf(BaseFhirCode);
-    expect(testBaseFhirCode.constructor.name).toStrictEqual('BaseFhirCode');
+    expect(testBaseFhirCode).toBeInstanceOf(FhirCodeDefinition);
+    expect(testBaseFhirCode.constructor.name).toStrictEqual('FhirCodeDefinition');
     expect(testBaseFhirCode.name).toStrictEqual(TEST_NAME);
     expect(testBaseFhirCode.code).toStrictEqual(VALID_CODE);
     expect(testBaseFhirCode.system).toStrictEqual(TEST_SYSTEM);
@@ -60,7 +60,7 @@ describe('BaseFhirCode', () => {
 
   it('should throw PrimitiveTypeError from constructor when initialized with invalid code', () => {
     const t = () => {
-      new BaseFhirCode(TEST_NAME, INVALID_CODE);
+      new FhirCodeDefinition(TEST_NAME, INVALID_CODE);
     };
     expect(t).toThrow(PrimitiveTypeError);
     expect(t).toThrow(`Invalid code (${INVALID_CODE})`);

@@ -26,14 +26,18 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive FHIR Datatype: url
+ * Url Class
  *
  * @remarks
- * A Uniform Resource Locator (RFC 1738). Note URLs are accessed
- * directly using the specified protocol.
+ * Base StructureDefinition for url type: A URI that is a literal reference
+ *
+ * **FHIR Specification**
+ * - **Short:** Primitive Type url
+ * - **Definition:** A URI that is a literal reference
+ * - **FHIR Version:** 4.0.1
  *
  * @category Datatypes: Primitive
- * @see [FHIR url](https://hl7.org/fhir/R5/datatypes.html#url)
+ * @see [FHIR url](http://hl7.org/fhir/StructureDefinition/url)
  */
 export class UrlType extends PrimitiveType<fhirUrl> {
   /**
@@ -78,7 +82,7 @@ export class UrlType extends PrimitiveType<fhirUrl> {
     return dest;
   }
 
-  public override copyValues(dest: UrlType): void {
+  protected override copyValues(dest: UrlType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
   }

@@ -36,6 +36,7 @@ describe('Narrative', () => {
   const VALID_CODE_ADDITIONAL = `additional`;
   const VALID_CODE_ADDITIONAL_TYPE_2 = new CodeType(VALID_CODE_ADDITIONAL);
   const UNSUPPORTED_ENUM_CODE = 'unsupporedEnumCode';
+  const UNDEFINED_ENUM_CODE_VALUE = `undefined`;
   const INVALID_CODE = ' invalid CodeType ';
 
   const VALID_XHTML = '<div xmlns="http://www.w3.org/1999/xhtml">text</div>';
@@ -44,15 +45,13 @@ describe('Narrative', () => {
   const VALID_XHTML_TYPE_2 = new XhtmlType(VALID_XHTML_2);
   const INVALID_XHTML = '';
 
-  const UNDEFINED_VALUE = undefined;
-
   let narrativeStatusEnum: NarrativeStatusEnum;
   beforeAll(() => {
     narrativeStatusEnum = new NarrativeStatusEnum();
   });
 
-  it('should be properly instantiated as empty', () => {
-    const testNarrative = new Narrative();
+  it(`should be properly instantiated as empty`, () => {
+    const testNarrative = new Narrative(null, null);
     expect(testNarrative).toBeDefined();
     expect(testNarrative).toBeInstanceOf(DataType);
     expect(testNarrative).toBeInstanceOf(Narrative);
@@ -68,15 +67,15 @@ describe('Narrative', () => {
 
     // Narrative properties
     expect(testNarrative.hasStatusEnumType()).toBe(false);
-    expect(testNarrative.getStatusEnumType()).toBeUndefined();
+    expect(testNarrative.getStatusEnumType()).toBeNull();
     expect(testNarrative.hasStatusElement()).toBe(false);
-    expect(testNarrative.getStatusElement()).toBeUndefined();
+    expect(testNarrative.getStatusElement()).toBeNull();
     expect(testNarrative.hasDivElement()).toBe(false);
-    expect(testNarrative.getDivElement()).toBeUndefined();
+    expect(testNarrative.getDivElement()).toBeNull();
     expect(testNarrative.hasStatus()).toBe(false);
-    expect(testNarrative.getStatus()).toBeUndefined();
+    expect(testNarrative.getStatus()).toBeNull();
     expect(testNarrative.hasDiv()).toBe(false);
-    expect(testNarrative.getDiv()).toBeUndefined();
+    expect(testNarrative.getDiv()).toBeNull();
   });
 
   it('should be properly initialized by primitive values', () => {
@@ -177,15 +176,21 @@ describe('Narrative', () => {
       new Narrative(UNSUPPORTED_ENUM_CODE, VALID_XHTML);
     };
     expect(t).toThrow(InvalidCodeError);
-    expect(t).toThrow(`Unknown NarrativeStatusEnum 'code' value '${UNSUPPORTED_ENUM_CODE}'`);
+    expect(t).toThrow(`Invalid Narrative.status (${UNSUPPORTED_ENUM_CODE})`);
   });
 
   it('should throw InvalidCodeError when initialized with unsupported PrimitiveType Narrative.status value', () => {
-    const t = () => {
+    let t = () => {
       new Narrative(new CodeType(UNSUPPORTED_ENUM_CODE), VALID_XHTML);
     };
     expect(t).toThrow(InvalidCodeError);
-    expect(t).toThrow(`Unknown NarrativeStatusEnum 'code' value '${UNSUPPORTED_ENUM_CODE}'`);
+    expect(t).toThrow(`Invalid Narrative.status (${UNSUPPORTED_ENUM_CODE})`);
+
+    t = () => {
+      new Narrative(new CodeType(), VALID_XHTML);
+    };
+    expect(t).toThrow(InvalidCodeError);
+    expect(t).toThrow(`Invalid Narrative.status (${UNDEFINED_ENUM_CODE_VALUE})`);
   });
 
   it('should throw InvalidCodeError when initialized with unsupported EnumCodeType Narrative.status value', () => {
@@ -200,8 +205,8 @@ describe('Narrative', () => {
     const t = () => {
       new Narrative(INVALID_CODE, VALID_XHTML);
     };
-    expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_CODE}) for CodeType`);
+    expect(t).toThrow(InvalidCodeError);
+    expect(t).toThrow(`Invalid Narrative.status (${INVALID_CODE})`);
   });
 
   it('should throw PrimitiveTypeError when initialized with invalid PrimitiveType Narrative.status value', () => {
@@ -329,6 +334,123 @@ describe('Narrative', () => {
     expect(testNarrative.getDiv()).toStrictEqual(VALID_XHTML_2);
   });
 
+  it('should NOT reset by modifying Narrative.status and Narrative.div for primitive values with null', () => {
+    const testNarrative = new Narrative(VALID_CODE_GENERATED, VALID_XHTML);
+    expect(testNarrative).toBeDefined();
+    expect(testNarrative.isEmpty()).toBe(false);
+
+    expect(testNarrative.hasStatusEnumType()).toBe(true);
+    expect(testNarrative.getStatusEnumType()).toMatchObject(
+      new EnumCodeType(VALID_CODE_GENERATED, narrativeStatusEnum),
+    );
+    expect(testNarrative.hasStatusElement()).toBe(true);
+    expect(testNarrative.getStatusElement()).toMatchObject(new CodeType(VALID_CODE_GENERATED));
+    expect(testNarrative.hasDivElement()).toBe(true);
+    expect(testNarrative.getDivElement()).toMatchObject(new XhtmlType(VALID_XHTML));
+    expect(testNarrative.hasStatus()).toBe(true);
+    expect(testNarrative.getStatus()).toStrictEqual(VALID_CODE_GENERATED);
+    expect(testNarrative.hasDiv()).toBe(true);
+    expect(testNarrative.getDiv()).toStrictEqual(VALID_XHTML);
+
+    // @ts-expect-error: allow null for testing
+    testNarrative.setStatus(null);
+    // @ts-expect-error: allow null for testing
+    testNarrative.setDiv(null);
+
+    // setting to null should result in NO changes
+
+    expect(testNarrative.hasStatusEnumType()).toBe(true);
+    expect(testNarrative.getStatusEnumType()).toMatchObject(
+      new EnumCodeType(VALID_CODE_GENERATED, narrativeStatusEnum),
+    );
+    expect(testNarrative.hasStatusElement()).toBe(true);
+    expect(testNarrative.getStatusElement()).toMatchObject(new CodeType(VALID_CODE_GENERATED));
+    expect(testNarrative.hasDivElement()).toBe(true);
+    expect(testNarrative.getDivElement()).toMatchObject(new XhtmlType(VALID_XHTML));
+    expect(testNarrative.hasStatus()).toBe(true);
+    expect(testNarrative.getStatus()).toStrictEqual(VALID_CODE_GENERATED);
+    expect(testNarrative.hasDiv()).toBe(true);
+    expect(testNarrative.getDiv()).toStrictEqual(VALID_XHTML);
+  });
+
+  it('should NOT reset by modifying Narrative.status and Narrative.div for PrimitiveType values with null', () => {
+    const testNarrative = new Narrative(VALID_CODE_GENERATED, VALID_XHTML);
+    expect(testNarrative).toBeDefined();
+    expect(testNarrative.isEmpty()).toBe(false);
+
+    expect(testNarrative.hasStatusEnumType()).toBe(true);
+    expect(testNarrative.getStatusEnumType()).toMatchObject(
+      new EnumCodeType(VALID_CODE_GENERATED, narrativeStatusEnum),
+    );
+    expect(testNarrative.hasStatusElement()).toBe(true);
+    expect(testNarrative.getStatusElement()).toMatchObject(new CodeType(VALID_CODE_GENERATED));
+    expect(testNarrative.hasDivElement()).toBe(true);
+    expect(testNarrative.getDivElement()).toMatchObject(new XhtmlType(VALID_XHTML));
+    expect(testNarrative.hasStatus()).toBe(true);
+    expect(testNarrative.getStatus()).toStrictEqual(VALID_CODE_GENERATED);
+    expect(testNarrative.hasDiv()).toBe(true);
+    expect(testNarrative.getDiv()).toStrictEqual(VALID_XHTML);
+
+    // @ts-expect-error: allow null for testing
+    testNarrative.setStatusElement(null);
+    // @ts-expect-error: allow null for testing
+    testNarrative.setDivElement(null);
+
+    // setting to null should result in NO changes
+
+    expect(testNarrative.hasStatusEnumType()).toBe(true);
+    expect(testNarrative.getStatusEnumType()).toMatchObject(
+      new EnumCodeType(VALID_CODE_GENERATED, narrativeStatusEnum),
+    );
+    expect(testNarrative.hasStatusElement()).toBe(true);
+    expect(testNarrative.getStatusElement()).toMatchObject(new CodeType(VALID_CODE_GENERATED));
+    expect(testNarrative.hasDivElement()).toBe(true);
+    expect(testNarrative.getDivElement()).toMatchObject(new XhtmlType(VALID_XHTML));
+    expect(testNarrative.hasStatus()).toBe(true);
+    expect(testNarrative.getStatus()).toStrictEqual(VALID_CODE_GENERATED);
+    expect(testNarrative.hasDiv()).toBe(true);
+    expect(testNarrative.getDiv()).toStrictEqual(VALID_XHTML);
+  });
+
+  it('should NOT reset by modifying Narrative.status for EnumCodeType and Narrative.div for PrimitiveType values with null', () => {
+    const testNarrative = new Narrative(VALID_CODE_GENERATED, VALID_XHTML);
+    expect(testNarrative).toBeDefined();
+    expect(testNarrative.isEmpty()).toBe(false);
+
+    expect(testNarrative.hasStatusEnumType()).toBe(true);
+    expect(testNarrative.getStatusEnumType()).toMatchObject(
+      new EnumCodeType(VALID_CODE_GENERATED, narrativeStatusEnum),
+    );
+    expect(testNarrative.hasStatusElement()).toBe(true);
+    expect(testNarrative.getStatusElement()).toMatchObject(new CodeType(VALID_CODE_GENERATED));
+    expect(testNarrative.hasDivElement()).toBe(true);
+    expect(testNarrative.getDivElement()).toMatchObject(new XhtmlType(VALID_XHTML));
+    expect(testNarrative.hasStatus()).toBe(true);
+    expect(testNarrative.getStatus()).toStrictEqual(VALID_CODE_GENERATED);
+    expect(testNarrative.hasDiv()).toBe(true);
+    expect(testNarrative.getDiv()).toStrictEqual(VALID_XHTML);
+
+    // @ts-expect-error: allow null for testing
+    testNarrative.setStatueEnumType(null);
+    // @ts-expect-error: allow null for testing
+    testNarrative.setDivElement(null);
+
+    // setting to null should result in NO changes
+
+    expect(testNarrative.hasStatusEnumType()).toBe(true);
+    expect(testNarrative.getStatusEnumType()).toMatchObject(
+      new EnumCodeType(VALID_CODE_GENERATED, narrativeStatusEnum),
+    );
+    expect(testNarrative.hasStatusElement()).toBe(true);
+    expect(testNarrative.getStatusElement()).toMatchObject(new CodeType(VALID_CODE_GENERATED));
+    expect(testNarrative.hasDivElement()).toBe(true);
+    expect(testNarrative.getDivElement()).toMatchObject(new XhtmlType(VALID_XHTML));
+    expect(testNarrative.hasStatus()).toBe(true);
+    expect(testNarrative.getStatus()).toStrictEqual(VALID_CODE_GENERATED);
+    expect(testNarrative.hasDiv()).toBe(true);
+    expect(testNarrative.getDiv()).toStrictEqual(VALID_XHTML);
+  });
+
   it('should throw PrimitiveTypeError when reset with invalid primitive Narrative.div value', () => {
     const testNarrative = new Narrative(VALID_CODE_GENERATED, VALID_XHTML);
     const t = () => {
@@ -345,46 +467,6 @@ describe('Narrative', () => {
     };
     expect(t).toThrow(PrimitiveTypeError);
     expect(t).toThrow(`Invalid value for XhtmlType`);
-  });
-
-  it('should be properly reset by modifying Narrative.status and Narrative.div with undefined values', () => {
-    let testNarrative = new Narrative(VALID_CODE_GENERATED, VALID_XHTML);
-    expect(testNarrative).toBeDefined();
-    expect(testNarrative.isEmpty()).toBe(false);
-
-    testNarrative.setStatus(UNDEFINED_VALUE);
-    testNarrative.setDiv(UNDEFINED_VALUE);
-
-    expect(testNarrative.isEmpty()).toBe(true);
-    expect(testNarrative.hasStatusEnumType()).toBe(false);
-    expect(testNarrative.getStatusEnumType()).toBeUndefined();
-    expect(testNarrative.hasStatusElement()).toBe(false);
-    expect(testNarrative.getStatusElement()).toBeUndefined();
-    expect(testNarrative.hasDivElement()).toBe(false);
-    expect(testNarrative.getDivElement()).toBeUndefined();
-    expect(testNarrative.hasStatus()).toBe(false);
-    expect(testNarrative.getStatus()).toBeUndefined();
-    expect(testNarrative.hasDiv()).toBe(false);
-    expect(testNarrative.getDiv()).toBeUndefined();
-
-    testNarrative = new Narrative(VALID_CODE_GENERATED, VALID_XHTML);
-    expect(testNarrative).toBeDefined();
-    expect(testNarrative.isEmpty()).toBe(false);
-
-    testNarrative.setStatusElement(UNDEFINED_VALUE);
-    testNarrative.setDivElement(UNDEFINED_VALUE);
-
-    expect(testNarrative.isEmpty()).toBe(true);
-    expect(testNarrative.hasStatusEnumType()).toBe(false);
-    expect(testNarrative.getStatusEnumType()).toBeUndefined();
-    expect(testNarrative.hasStatusElement()).toBe(false);
-    expect(testNarrative.getStatusElement()).toBeUndefined();
-    expect(testNarrative.hasDivElement()).toBe(false);
-    expect(testNarrative.getDivElement()).toBeUndefined();
-    expect(testNarrative.hasStatus()).toBe(false);
-    expect(testNarrative.getStatus()).toBeUndefined();
-    expect(testNarrative.hasDiv()).toBe(false);
-    expect(testNarrative.getDiv()).toBeUndefined();
   });
 
   it('should properly copy()', () => {
@@ -417,5 +499,35 @@ describe('Narrative', () => {
     expect(testNarrative.getStatus()).toStrictEqual(VALID_CODE_GENERATED);
     expect(testNarrative.hasDiv()).toBe(true);
     expect(testNarrative.getDiv()).toStrictEqual(VALID_XHTML);
+  });
+
+  it('should properly copy() when initialized with null', () => {
+    const narrativeType = new Narrative(null, null);
+    const testNarrative = narrativeType.copy();
+
+    expect(testNarrative).toBeDefined();
+    expect(testNarrative).toBeInstanceOf(DataType);
+    expect(testNarrative).toBeInstanceOf(Narrative);
+    expect(testNarrative.constructor.name).toStrictEqual('Narrative');
+    expect(testNarrative.fhirType()).toStrictEqual('Narrative');
+    expect(testNarrative.isEmpty()).toBe(true);
+
+    // inherited properties from Element
+    expect(testNarrative.hasId()).toBe(false);
+    expect(testNarrative.getId()).toBeUndefined();
+    expect(testNarrative.hasExtension()).toBe(false);
+    expect(testNarrative.getExtension()).toMatchObject([] as Extension[]);
+
+    // Narrative properties
+    expect(testNarrative.hasStatusEnumType()).toBe(false);
+    expect(testNarrative.getStatusEnumType()).toBeNull();
+    expect(testNarrative.hasStatusElement()).toBe(false);
+    expect(testNarrative.getStatusElement()).toBeNull();
+    expect(testNarrative.hasDivElement()).toBe(false);
+    expect(testNarrative.getDivElement()).toBeNull();
+    expect(testNarrative.hasStatus()).toBe(false);
+    expect(testNarrative.getStatus()).toBeNull();
+    expect(testNarrative.hasDiv()).toBe(false);
+    expect(testNarrative.getDiv()).toBeNull();
   });
 });

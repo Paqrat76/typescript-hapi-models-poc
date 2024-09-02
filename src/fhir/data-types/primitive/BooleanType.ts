@@ -26,13 +26,18 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive FHIR Datatype: boolean
+ * Boolean Class
  *
  * @remarks
- * `true` or `false`
+ * Base StructureDefinition for boolean Type: Value of "true" or "false"
+ *
+ * **FHIR Specification**
+ * - **Short:** Primitive Type boolean
+ * - **Definition:** Value of "true" or "false"
+ * - **FHIR Version:** 4.0.1
  *
  * @category Datatypes: Primitive
- * @see [FHIR boolean](https://hl7.org/fhir/R5/datatypes.html#boolean)
+ * @see [FHIR boolean](http://hl7.org/fhir/StructureDefinition/boolean)
  */
 export class BooleanType extends PrimitiveType<fhirBoolean> {
   private boolValue: boolean | undefined;
@@ -108,7 +113,7 @@ export class BooleanType extends PrimitiveType<fhirBoolean> {
     return dest;
   }
 
-  public override copyValues(dest: BooleanType): void {
+  protected override copyValues(dest: BooleanType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
   }

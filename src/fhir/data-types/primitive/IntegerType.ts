@@ -26,13 +26,19 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive FHIR Datatype: integer
+ * Integer Class
  *
  * @remarks
- * A signed integer in the range −2,147,483,648..2,147,483,647 (32-bit).
+ * Base StructureDefinition for integer Type: A whole number
+ *
+ * **FHIR Specification**
+ * - **Short:** Primitive Type integer
+ * - **Definition:** A whole number
+ * - **Comment:** 32 bit number; for values larger than this, use decimal
+ * - **FHIR Version:** 4.0.1
  *
  * @category Datatypes: Primitive
- * @see [FHIR integer](https://hl7.org/fhir/R5/datatypes.html#integer)
+ * @see [FHIR integer](http://hl7.org/fhir/StructureDefinition/integer)
  */
 export class IntegerType extends PrimitiveType<fhirInteger> {
   /**
@@ -78,7 +84,7 @@ export class IntegerType extends PrimitiveType<fhirInteger> {
     return dest;
   }
 
-  public override copyValues(dest: IntegerType): void {
+  protected override copyValues(dest: IntegerType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
   }

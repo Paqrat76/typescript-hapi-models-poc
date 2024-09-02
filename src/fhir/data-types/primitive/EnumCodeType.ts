@@ -23,21 +23,25 @@
 
 import { fhirCode } from './primitive-types';
 import { CodeType } from '@src/fhir/data-types/primitive/CodeType';
-import { IBaseFhirCode, IFhirCodeEnum } from '@src/fhir/base-models/core-fhir-codes';
+import { IFhirCodeDefinition, IFhirCodeEnum } from '@src/fhir/base-models/core-fhir-codes';
 
 /**
- * Extended Primitive FHIR Datatype: code
+ * EnumCode Class
  *
  * @remarks
- * Extends {@link CodeType} to include the code system enumeration and the full FHIR definition
- * of the code value.
+ * Extends {@link CodeType} to include the code system enumeration and the full FHIR definition of each `code` value.
+ *
+ * **FHIR Specification**
+ * - **Short:** Primitive Type code
+ * - **Definition:** A string which has at least one character and no leading or trailing whitespace and where there is no whitespace other than single spaces in the contents
+ * - **FHIR Version:** N/A
  *
  * @category Datatypes: Primitive
- * @see [FHIR code](https://hl7.org/fhir/R5/datatypes.html#code)
+ * @see [FHIR code](http://hl7.org/fhir/StructureDefinition/code)
  */
 export class EnumCodeType extends CodeType {
   private codeEnum: IFhirCodeEnum;
-  private fhirCodeObject: IBaseFhirCode;
+  private fhirCodeObject: IFhirCodeDefinition;
 
   constructor(code: fhirCode | CodeType, codeSource: IFhirCodeEnum) {
     let fhirCode: fhirCode | undefined;
@@ -63,11 +67,11 @@ export class EnumCodeType extends CodeType {
     }
   }
 
-  public get fhirCodeEnumeration(): IBaseFhirCode[] {
+  public get fhirCodeEnumeration(): IFhirCodeDefinition[] {
     return this.codeEnum.values();
   }
 
-  public get fhirCode(): IBaseFhirCode {
+  public get fhirCode(): IFhirCodeDefinition {
     return this.fhirCodeObject;
   }
 
@@ -78,7 +82,7 @@ export class EnumCodeType extends CodeType {
   }
 
   public override isEmpty(): boolean {
-    return super.isEmpty() && this.codeEnum.values().length === 0;
+    return super.isEmpty();
   }
 
   public override fhirType(): string {
@@ -91,7 +95,7 @@ export class EnumCodeType extends CodeType {
     return dest;
   }
 
-  public override copyValues(dest: EnumCodeType): void {
+  protected override copyValues(dest: EnumCodeType): void {
     super.copyValues(dest);
   }
 }

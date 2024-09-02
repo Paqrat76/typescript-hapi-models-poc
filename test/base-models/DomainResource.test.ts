@@ -82,7 +82,7 @@ describe('DomainResource', () => {
 
     // DomainResources
     expect(testDomainResource.hasText()).toBe(false);
-    expect(testDomainResource.getText()).toMatchObject(new Narrative());
+    expect(testDomainResource.getText()).toMatchObject(new Narrative(null, null));
     expect(testDomainResource.hasContained()).toBe(false);
     expect(testDomainResource.getContained()).toMatchObject([] as Resource[]);
     expect(testDomainResource.hasExtension()).toBe(false);
@@ -176,7 +176,7 @@ describe('DomainResource', () => {
     testDomainResource.setModifierExtension(UNDEFINED_VALUE);
 
     expect(testDomainResource.hasText()).toBe(false);
-    expect(testDomainResource.getText()).toMatchObject(new Narrative());
+    expect(testDomainResource.getText()).toMatchObject(new Narrative(null, null));
     expect(testDomainResource.hasContained()).toBe(false);
     expect(testDomainResource.getContained()).toMatchObject([] as Resource[]);
     expect(testDomainResource.hasExtension()).toBe(false);
@@ -233,7 +233,7 @@ describe('DomainResource', () => {
     expect(testDomainResourceCopyEmpty.isEmpty()).toBe(true);
 
     expect(testDomainResource.hasText()).toBe(false);
-    expect(testDomainResource.getText()).toMatchObject(new Narrative());
+    expect(testDomainResource.getText()).toMatchObject(new Narrative(null, null));
     expect(testDomainResource.hasContained()).toBe(false);
     expect(testDomainResource.getContained()).toMatchObject([] as Resource[]);
     expect(testDomainResource.hasExtension()).toBe(false);

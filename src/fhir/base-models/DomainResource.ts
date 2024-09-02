@@ -21,41 +21,32 @@
  *
  */
 
+import { strict as assert } from 'node:assert';
 import { isEmpty } from 'lodash';
 import { Resource } from '@src/fhir/base-models/Resource';
 import { Narrative } from '@src/fhir/data-types/complex/Narrative';
 import { Extension, IBaseExtension, IBaseModifierExtension } from '@src/fhir/base-models/core-fhir-models';
 import { fhirUri } from '@src/fhir/data-types/primitive/primitive-types';
 import { getExtensionsByUrl, isElementEmpty, validateUrl } from '@src/fhir/utility/element-util';
-import { strict as assert } from 'node:assert';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
 /**
- * Abstract DomainResource class
+ * Abstract DomainResource Class
  *
  * @remarks
- * This is a resource with narrative, extensions, and contained resources.
+ * A resource that includes narrative, extensions, and contained resources.
  *
- * A domain resource is a resource that:
- * - has a human-readable XHTML representation of the content of the resource
- *   (see [Human Narrative in resources](https://hl7.org/fhir/R4/narrative.html)
- * - can contain additional related resources inside the resource
- *   (see [Contained Resources](https://hl7.org/fhir/R4/references.html#contained)
- * - can have additional extensions and modifierExtensions as well as the defined data
- *   (See [Extensibility](https://hl7.org/fhir/R4/extensibility.html)
- *
- * As an abstract resource, this resource is never created directly; instead,
- * one of its descendant resources is created.
- *
- * This resource extends the base {@link Resource}. All listed Resources except Bundle,
- * Parameters, and Binary extend this resource.
+ * **FHIR Specification**
+ * - **Short:** A resource with narrative, extensions, and contained resources.
+ * - **Definition:** A resource that includes narrative, extensions, and contained resources.
+ * - **FHIR Version:** 4.0.1; Normative since 4.0.0
  *
  * @privateRemarks
  * Loosely based on HAPI FHIR org.hl7.fhir.r4.model.DomainResource
  *
  * @category Base Models
- * @see [FHIR Base DomainResource Definitions](https://www.hl7.org/fhir/R4/domainresource.html)
+ * @see [FHIR DomainResource](http://hl7.org/fhir/StructureDefinition/DomainResource)
  */
 export abstract class DomainResource extends Resource implements IBaseExtension, IBaseModifierExtension {
   protected constructor() {
@@ -63,70 +54,64 @@ export abstract class DomainResource extends Resource implements IBaseExtension,
   }
 
   /**
-   * Text summary of the resource, for human interpretation
+   * DomainResource.text Element
    *
    * @remarks
-   * A human-readable narrative that contains a summary of the resource and can be used to represent
-   * the content of the resource to a human. The narrative need not encode all the structured data,
-   * but is required to contain sufficient detail to make it "clinically safe" for a human to just
-   * read the narrative. Resource definitions may define what content should be represented in the
-   * narrative to ensure clinical safety.
-   *
-   * Contained resources do not have narrative. Resources that are not contained SHOULD have a narrative.
-   * In some cases, a resource may only have text with little or no additional discrete data (as long
-   * as all minOccurs=1 elements are satisfied). This may be necessary for data from legacy systems
-   * where information is captured as a "text blob" or where text is additionally entered raw or
-   * narrated and encoded information is added later.
+   * **FHIR Specification**
+   * - **Short:** Text summary of the resource, for human interpretation
+   * - **Definition:** A human-readable narrative that contains a summary of the resource and can be used to represent the content of the resource to a human. The narrative need not encode all the structured data, but is required to contain sufficient detail to make it "clinically safe" for a human to just read the narrative. Resource definitions may define what content should be represented in the narrative to ensure clinical safety.
+   * - **Comment:** Contained resources do not have narrative. Resources that are not contained SHOULD have a narrative. In some cases, a resource may only have text with little or no additional discrete data (as long as all minOccurs=1 elements are satisfied).  This may be necessary for data from legacy systems where information is captured as a "text blob" or where text is additionally entered raw or narrated and encoded information is added later.
+   * - **FHIR Type:** `Narrative`
+   * - **Cardinality:** 0..1
+   * - **isModifier:** false
+   * - **isSummary:** false
    */
   protected text?: Narrative | undefined;
 
   /**
-   * Contained, inline Resources
+   * DomainResource.contained Element
    *
    * @remarks
-   * These resources do not have an independent existence apart from the resource that contains them.
-   * They cannot be identified independently nor can they have their own independent transaction scope.
-   *
-   * This should never be done when the content can be identified properly, as once identification is lost,
-   * it is extremely difficult (and context dependent) to restore it again. Contained resources may have
-   * profiles and tags In their meta elements, but SHALL NOT have security labels.
-   *
-   * Contained resources do not have narrative.
+   * **FHIR Specification**
+   * - **Short:** Contained, inline Resources
+   * - **Definition:** These resources do not have an independent existence apart from the resource that contains them - they cannot be identified independently, and nor can they have their own independent transaction scope.
+   * - **Comment:** This should never be done when the content can be identified properly, as once identification is lost, it is extremely difficult (and context dependent) to restore it again. Contained resources may have profiles and tags In their meta elements, but SHALL NOT have security labels.
+   * - **FHIR Type:** `Resource`
+   * - **Cardinality:** 0..*
+   * - **isModifier:** false
+   * - **isSummary:** false
    */
   protected contained?: Resource[] | undefined;
 
   /**
-   * Additional content defined by implementations
+   * DomainResource.extension Element
    *
    * @remarks
-   * May be used to represent additional information that is not part of the basic definition
-   * of the resource. To make the use of extensions safe and manageable, there is a strict set
-   * of governance applied to the definition and use of extensions. Though any implementer can
-   * define an extension, there is a set of requirements that SHALL be met as part of the
-   * definition of the extension.
+   * **FHIR Specification**
+   * - **Short:** Additional content defined by implementations
+   * - **Definition:** May be used to represent additional information that is not part of the basic definition of the resource. To make the use of extensions safe and manageable, there is a strict set of governance  applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension.
+   * - **Comment:** There can be no stigma associated with the use of extensions by any application, project, or standard - regardless of the institution or jurisdiction that uses or defines the extensions.  The use of extensions is what allows the FHIR specification to retain a core level of simplicity for everyone.
+   * - **FHIR Type:** `Extension`
+   * - **Cardinality:** 0..*
+   * - **isModifier:** false
+   * - **isSummary:** false
    */
   protected extension?: Extension[] | undefined;
 
   /**
-   * Extensions that cannot be ignored
+   * DomainResource.modifierExtension Element
    *
    * @remarks
-   * May be used to represent additional information that is not part of the basic definition
-   * of the resource and that modifies the understanding of the element that contains it and/or
-   * the understanding of the containing element's descendants. Usually modifier elements provide
-   * negation or qualification. To make the use of extensions safe and manageable, there is a
-   * strict set of governance applied to the definition and use of extensions. Though any implementer
-   * is allowed to define an extension, there is a set of requirements that SHALL be met as part
-   * of the definition of the extension. Applications processing a resource are required to check
-   * for modifier extensions.
-   *
-   * Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource
-   * (including cannot change the meaning of modifierExtension itself).
-   *
-   * Modifier extensions allow for extensions that cannot be safely ignored to be clearly distinguished
-   * from the vast majority of extensions which can be safely ignored. This promotes interoperability
-   * by eliminating the need for implementers to prohibit the presence of extensions. For further
-   * information, see the [definition of modifier extensions](https://hl7.org/fhir/R4/extensibility.html#modifierExtension).
+   * **FHIR Specification**
+   * - **Short:** Extensions that cannot be ignored
+   * - **Definition:** May be used to represent additional information that is not part of the basic definition of the resource and that modifies the understanding of the element that contains it and/or the understanding of the containing element's descendants. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer is allowed to define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions. Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
+   * - **Comment:** There can be no stigma associated with the use of extensions by any application, project, or standard - regardless of the institution or jurisdiction that uses or defines the extensions.  The use of extensions is what allows the FHIR specification to retain a core level of simplicity for everyone.
+   * - **Requirements:** Modifier extensions allow for extensions that *cannot* be safely ignored to be clearly distinguished from the vast majority of extensions which can be safely ignored.  This promotes interoperability by eliminating the need for implementers to prohibit the presence of extensions. For further information, see the [definition of modifier extensions](https://hl7.org/fhir/R4/extensibility.html#modifierExtension).
+   * - **FHIR Type:** `Extension`
+   * - **Cardinality:** 0..*
+   * - **isModifier:** true
+   * - **isModifierReason:** Modifier extensions allow for extensions that *cannot* be safely ignored to be clearly distinguished from the vast majority of extensions which can be safely ignored.  This promotes interoperability by eliminating the need for implementers to prohibit the presence of extensions. For further information, see the [definition of modifier extensions](https://hl7.org/fhir/R4/extensibility.html#modifierExtension).
+   * - **isSummary:** false
    */
   protected modifierExtension?: Extension[] | undefined;
 
@@ -134,7 +119,7 @@ export abstract class DomainResource extends Resource implements IBaseExtension,
    * @returns the `text` property value as a Narrative
    */
   public getText(): Narrative {
-    return this.text ?? new Narrative();
+    return this.text ?? new Narrative(null, null);
   }
 
   /**
@@ -399,28 +384,28 @@ export abstract class DomainResource extends Resource implements IBaseExtension,
   }
 
   /**
-   * {@inheritDoc Resource.fhirType}
+   * {@inheritDoc Base.fhirType}
    */
   public override fhirType(): string {
     return 'DomainResource';
   }
 
   /**
-   * {@inheritDoc Resource.isEmpty}
+   * {@inheritDoc Base.isEmpty}
    */
   public override isEmpty(): boolean {
     return super.isEmpty() && isElementEmpty(this.text, this.contained, this.extension, this.modifierExtension);
   }
 
   /**
-   * {@inheritDoc Resource.copy}
+   * {@inheritDoc Base.copy}
    */
   public abstract override copy(): DomainResource;
 
   /**
-   * {@inheritDoc Resource.copyValues}
+   * {@inheritDoc Base.copyValues}
    */
-  public override copyValues(dest: DomainResource): void {
+  protected override copyValues(dest: DomainResource): void {
     super.copyValues(dest);
     dest.text = this.text?.copy();
     if (this.contained == undefined) {

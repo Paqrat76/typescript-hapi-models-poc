@@ -24,19 +24,25 @@
 import { IBase } from './IBase';
 
 /**
- * Abstract Base class.
+ * Abstract Base Class
  *
  * @remarks
- * The Base type that all other types specialize. This type has no properties or constraints.
- * Specializations:
- * - Element
- * - Resource
+ * Base Type: Base definition for all types defined in FHIR type system.
+ *
+ * The Base type that all other types specialize.
+ * This type has no properties or constraints.
+ * This class contains abstract methods useful to all FHIR classes.
+ *
+ * **FHIR Specification**
+ * - **Short**: Base for all types and resources
+ * - **Definition**: Base definition for all types defined in FHIR type system.
+ * - **FHIR Version**: 5.0.0; Normative since 4.0.0
  *
  * @privateRemarks
  * Loosely based on HAPI FHIR org.hl7.fhir.r4.model.Base
  *
  * @category Base Models
- * @see [FHIR Base](https://hl7.org/fhir/R5/types.html#Base)
+ * @see [FHIR Base](http://hl7.org/fhir/StructureDefinition/Base)
  */
 export abstract class Base implements IBase {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -54,13 +60,15 @@ export abstract class Base implements IBase {
 
   /**
    * Creates a copy of the current instance.
+   *
+   * @returns the a new instance copied from the current instance
    */
   public abstract copy(): Base;
 
   /**
-   * Copies the current object instance's elements into the provided object.
+   * Copies the current instance's elements into the provided object.
    *
-   * @param dest - the instance being copied
+   * @param dest - the copied instance
    * @protected
    */
   protected abstract copyValues(dest: Base): void;

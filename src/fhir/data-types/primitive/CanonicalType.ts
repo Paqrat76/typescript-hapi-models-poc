@@ -26,16 +26,18 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive FHIR Datatype: fhirCanonical
+ * Canonical Class
  *
  * @remarks
- * Primitive type "uri" in FHIR: A URI that refers to a resource by its canonical URL
- * (resources with a url property). The canonical type differs from a uri in that it
- * has special meaning in the FHIR specification, and in that it may have a version
- * appended, separated by a vertical bar (|).
+ * Base StructureDefinition for canonical type: A URI that is a reference to a canonical URL on a FHIR resource
+ *
+ * **FHIR Specification**
+ * - **Short:** Primitive Type canonical
+ * - **Definition:** A URI that is a reference to a canonical URL on a FHIR resource
+ * - **FHIR Version:** 4.0.1
  *
  * @category Datatypes: Primitive
- * @see [FHIR canonical](https://hl7.org/fhir/R5/datatypes.html#canonical)
+ * @see [FHIR canonical](http://hl7.org/fhir/StructureDefinition/canonical)
  */
 export class CanonicalType extends PrimitiveType<fhirCanonical> {
   /**
@@ -80,7 +82,7 @@ export class CanonicalType extends PrimitiveType<fhirCanonical> {
     return dest;
   }
 
-  public override copyValues(dest: CanonicalType): void {
+  protected override copyValues(dest: CanonicalType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
   }

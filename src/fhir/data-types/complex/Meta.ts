@@ -45,15 +45,21 @@ import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
 /**
- * Complex FHIR Datatype: Meta
+ * Meta Class
  *
  * @remarks
- * Each resource contains an element "meta", of type "Meta", which is a set of metadata that provides
- * technical and workflow context to the resource. The metadata items are all optional, though some
- * or all of them may be required in particular implementations or contexts of use.
+ * Base StructureDefinition for Meta Type: The metadata about a resource. This is content in the resource that is maintained by the infrastructure. Changes to the content might not always be associated with version changes to the resource.
+ *
+ * **FHIR Specification**
+ * - **Short:** Metadata about a resource
+ * - **Definition:** The metadata about a resource. This is content in the resource that is maintained by the infrastructure. Changes to the content might not always be associated with version changes to the resource.
+ * - **FHIR Version:** 4.0.1
+ *
+ * @privateRemarks
+ * Loosely based on HAPI FHIR org.hl7.fhir.r4.model.Meta
  *
  * @category Datatypes: Complex
- * @see [FHIR Meta](https://www.hl7.org/fhir/R4/resource.html#Meta)
+ * @see [FHIR Meta](http://hl7.org/fhir/StructureDefinition/Meta)
  */
 export class Meta extends DataType implements IBase {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
@@ -62,58 +68,92 @@ export class Meta extends DataType implements IBase {
   }
 
   /**
-   * Version specific identifier
+   * Meta.versionId Element
    *
    * @remarks
-   * The version specific identifier, as it appears in the version portion of the URL. This value
-   * changes when the resource is created, updated, or deleted.
+   * **FHIR Specification**
+   * - **Short:** Version specific identifier
+   * - **Definition:** The version specific identifier, as it appears in the version portion of the URL. This value changes when the resource is created, updated, or deleted.
+   * - **Comment:** The server assigns this value, and ignores what the client specifies, except in the case that the server is imposing version integrity on updates/deletes.
+   * - **FHIR Type:** `id`
+   * - **Cardinality:** 0..1
+   * - **isModifier:** false
+   * - **isSummary:** true
    */
   protected versionId?: IdType | undefined;
+
   /**
-   * When the resource version last changed
+   * Meta.lastUpdated Element
    *
    * @remarks
-   * When the resource last changed - e.g. when the version changed.
+   * **FHIR Specification**
+   * - **Short:** When the resource version last changed
+   * - **Definition:** When the resource last changed - e.g. when the version changed.
+   * - **Comment:** This value is always populated except when the resource is first being created. The server / resource manager sets this value; what a client provides is irrelevant. This is equivalent to the HTTP Last-Modified and SHOULD have the same value on a [read](https://hl7.org/fhir/R4/http.html#read) interaction.
+   * - **FHIR Type:** `instant`
+   * - **Cardinality:** 0..1
+   * - **isModifier:** false
+   * - **isSummary:** true
    */
   protected lastUpdated?: InstantType | undefined;
+
   /**
-   * Identifies where the resource comes from
+   * Meta.source Element
    *
    * @remarks
-   * An uri that identifies the source system of the resource. This provides a minimal amount of
-   * Provenance information that can be used to track or differentiate the source of information
-   * in the resource. The source may identify another FHIR server, document, message, database, etc.
+   * **FHIR Specification**
+   * - **Short:** Identifies where the resource comes from
+   * - **Definition:** A uri that identifies the source system of the resource. This provides a minimal amount of [Provenance](https://hl7.org/fhir/R4/provenance.html) information that can be used to track or differentiate the source of information in the resource. The source may identify another FHIR server, document, message, database, etc.
+   * - **Comment:** In the provenance resource, this corresponds to Provenance.entity.what[x]. The exact use of the source (and the implied Provenance.entity.role) is left to implementer discretion. Only one nominated source is allowed; for additional provenance details, a full Provenance resource should be used. This element can be used to indicate where the current master source of a resource that has a canonical URL if the resource is no longer hosted at the canonical URL.
+   * - **FHIR Type:** `uri`
+   * - **Cardinality:** 0..1
+   * - **isModifier:** false
+   * - **isSummary:** true
    */
   protected source?: UriType | undefined;
+
   /**
-   * Profiles this resource claims to conform to
+   * Meta.profile Element
    *
    * @remarks
-   * A list of profiles (references to StructureDefinition resources) that this resource claims to
-   * conform to. The URL is a reference to StructureDefinition.url.
+   * **FHIR Specification**
+   * - **Short:** Profiles this resource claims to conform to
+   * - **Definition:** A list of profiles (references to [StructureDefinition](https://hl7.org/fhir/R4/structuredefinition.html) resources) that this resource claims to conform to. The URL is a reference to [StructureDefinition.url](https://hl7.org/fhir/R4/structuredefinition-definitions.html#StructureDefinition.url).
+   * - **Comment:** It is up to the server and/or other infrastructure of policy to determine whether/how these claims are verified and/or updated over time.  The list of profile URLs is a set.
+   * - **FHIR Type:** `canonical`
+   * - **Cardinality:** 0..*
+   * - **isModifier:** false
+   * - **isSummary:** true
    */
   protected profile?: CanonicalType[] | undefined;
+
   /**
-   * Security Labels applied to this resource
+   * Meta.security Element
    *
    * @remarks
-   * Security labels applied to this resource. These tags connect specific resources to the overall
-   * security policy and infrastructure.
-   *
-   * The security labels can be updated without changing the stated version of the resource. The list
-   * of security labels is a set. Uniqueness is based the system/code, and version and display are ignored.
+   * **FHIR Specification**
+   * - **Short:** Security Labels applied to this resource
+   * - **Definition:** Security labels applied to this resource. These tags connect specific resources to the overall security policy and infrastructure.
+   * - **Comment:** The security labels can be updated without changing the stated version of the resource. The list of security labels is a set. Uniqueness is based the system/code, and version and display are ignored.
+   * - **FHIR Type:** `Coding`
+   * - **Cardinality:** 0..*
+   * - **isModifier:** false
+   * - **isSummary:** true
    */
   protected security?: Coding[] | undefined;
+
   /**
-   * Tags applied to this resource
+   * Meta.tag Element
    *
    * @remarks
-   * Tags applied to this resource. Tags are intended to be used to identify and relate resources
-   * to process and workflow, and applications are not required to consider the tags when interpreting
-   * the meaning of a resource.
-   *
-   * The tags can be updated without changing the stated version of the resource. The list of tags is a set.
-   * Uniqueness is based the system/code, and version and display are ignored.
+   * **FHIR Specification**
+   * - **Short:** Tags applied to this resource
+   * - **Definition:** Tags applied to this resource. Tags are intended to be used to identify and relate resources to process and workflow, and applications are not required to consider the tags when interpreting the meaning of a resource.
+   * - **Comment:** The tags can be updated without changing the stated version of the resource. The list of tags is a set. Uniqueness is based the system/code, and version and display are ignored.
+   * - **FHIR Type:** `Coding`
+   * - **Cardinality:** 0..*
+   * - **isModifier:** false
+   * - **isSummary:** true
    */
   protected tag?: Coding[] | undefined;
 
@@ -515,14 +555,14 @@ export class Meta extends DataType implements IBase {
   }
 
   /**
-   * {@inheritDoc Element.fhirType}
+   * {@inheritDoc Base.fhirType}
    */
   public override fhirType(): string {
     return 'Meta';
   }
 
   /**
-   * {@inheritDoc Element.isEmpty}
+   * {@inheritDoc Base.isEmpty}
    */
   public override isEmpty(): boolean {
     return (
@@ -532,7 +572,7 @@ export class Meta extends DataType implements IBase {
   }
 
   /**
-   * {@inheritDoc DataType.copy}
+   * {@inheritDoc Base.copy}
    */
   public override copy(): Meta {
     const dest = new Meta();
@@ -541,9 +581,9 @@ export class Meta extends DataType implements IBase {
   }
 
   /**
-   * {@inheritDoc Element.copyValues}
+   * {@inheritDoc Base.copyValues}
    */
-  public override copyValues(dest: Meta): void {
+  protected override copyValues(dest: Meta): void {
     super.copyValues(dest);
     dest.versionId = this.versionId?.copy();
     dest.lastUpdated = this.lastUpdated?.copy();

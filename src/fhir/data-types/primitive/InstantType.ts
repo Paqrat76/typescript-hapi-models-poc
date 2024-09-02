@@ -26,14 +26,19 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive FHIR Datatype: instant
+ * Instant Class
  *
  * @remarks
- * An instant in time in the format YYYY-MM-DDThh:mm:ss.sss+zz:zz. The time
- * SHALL be specified at least to the second and SHALL include a timezone offset.
+ * Base StructureDefinition for instant Type: An instant in time - known at least to the second
+ *
+ * **FHIR Specification**
+ * - **Short:** Primitive Type instant
+ * - **Definition:** An instant in time - known at least to the second
+ * - **Comment:** This is intended for where precisely observed times are required, typically system logs etc., and not human-reported times - for them, see date and dateTime (which can be as precise as instant, but is not required to be) below. Time zone is always required
+ * - **FHIR Version:** 4.0.1
  *
  * @category Datatypes: Primitive
- * @see [FHIR instant](https://hl7.org/fhir/R5/datatypes.html#instant)
+ * @see [FHIR instant](http://hl7.org/fhir/StructureDefinition/instant)
  */
 export class InstantType extends PrimitiveType<fhirInstant> {
   /**
@@ -78,7 +83,7 @@ export class InstantType extends PrimitiveType<fhirInstant> {
     return dest;
   }
 
-  public override copyValues(dest: InstantType): void {
+  protected override copyValues(dest: InstantType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
   }

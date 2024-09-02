@@ -26,14 +26,19 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive FHIR Datatype: id
+ * Id Class
  *
  * @remarks
- * Any combination of upper- or lower-case ASCII  letters ('A'..'Z', and 'a'..'z'),
- * numerals ('0'..'9'), '-' and '.', with a length limit of 64 characters.
+ * Base StructureDefinition for id type: Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.) Ids are case-insensitive.
+ *
+ * **FHIR Specification**
+ * - **Short:** Primitive Type id
+ * - **Definition:** Any combination of letters, numerals, "-" and ".", with a length limit of 64 characters.  (This might be an integer, an unprefixed OID, UUID or any other identifier pattern that meets these constraints.) Ids are case-insensitive.
+ * - **Comment:** RFC 4122
+ * - **FHIR Version:** 4.0.1
  *
  * @category Datatypes: Primitive
- * @see [FHIR id](https://hl7.org/fhir/R5/datatypes.html#id)
+ * @see [FHIR id](http://hl7.org/fhir/StructureDefinition/id)
  */
 export class IdType extends PrimitiveType<fhirId> {
   /**
@@ -78,7 +83,7 @@ export class IdType extends PrimitiveType<fhirId> {
     return dest;
   }
 
-  public override copyValues(dest: IdType): void {
+  protected override copyValues(dest: IdType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
   }

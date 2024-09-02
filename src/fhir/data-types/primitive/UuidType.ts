@@ -26,14 +26,19 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive FHIR Datatype: uuid
+ * Uuid Class
  *
  * @remarks
- * A UUID (aka GUID) represented as a URI (RFC 4122);
- * e.g. urn:uuid:c757873d-ec9a-4326-a141-556f43239520.
+ * Base StructureDefinition for uuid type: A UUID, represented as a URI
+ *
+ * **FHIR Specification**
+ * - **Short:** Primitive Type uuid
+ * - **Definition:** A UUID, represented as a URI
+ * - **Comment:** See The Open Group, CDE 1.1 Remote Procedure Call specification, Appendix A
+ * - **FHIR Version:** 4.0.1
  *
  * @category Datatypes: Primitive
- * @see [FHIR uuid](https://hl7.org/fhir/R5/datatypes.html#uuid)
+ * @see [FHIR uuid](http://hl7.org/fhir/StructureDefinition/uuid)
  */
 export class UuidType extends PrimitiveType<fhirUuid> {
   /**
@@ -78,7 +83,7 @@ export class UuidType extends PrimitiveType<fhirUuid> {
     return dest;
   }
 
-  public override copyValues(dest: UuidType): void {
+  protected override copyValues(dest: UuidType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
   }

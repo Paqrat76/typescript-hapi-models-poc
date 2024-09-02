@@ -160,27 +160,26 @@ export interface IBaseModifierExtension {
 }
 
 /**
- * Abstract Element class.
+ * Abstract Element Class
  *
- * The base definition for all elements contained inside a resource. All elements,
- * whether defined as a Datatype (including primitive) or as part of a resource
- * structure, have this base content:
- * - An internal id
- * - Extensions
+ * @remarks
+ * Base StructureDefinition for Element Type: Base definition for all elements in a resource.
  *
  * There are 3 kinds of descendant types that specialize Element:
  * - Primitive datatypes, that add a primitive value property of the specified type
  * - Complex datatypes, that add their own children (all of which are also elements)
- * - BackboneElement, a specialization that adds modifierExtension, which is the
- *   super-type of all the element types defined in resource definitions (e.g. Patient.contact)
+ * - BackboneElement, a specialization that adds modifierExtension, which is the super-type of all the element types defined in resource definitions (e.g. Patient.contact)
  *
- * Note that resources themselves all specialize the base type Resource.
+ * **FHIR Specification**
+ *  - **Short:** Base for all elements
+ *  - **Definition:** Base definition for all elements in a resource.
+ *  - **FHIR Version:** 4.0.1; Normative since 4.0.0
  *
  * @privateRemarks
  * Loosely based on HAPI FHIR org.hl7.fhir.r4.model.Element
  *
  * @category Base Models
- * @see [FHIR Element](https://hl7.org/fhir/R5/types.html#Element)
+ * @see [FHIR Element](http://hl7.org/fhir/StructureDefinition/Element)
  */
 export abstract class Element extends Base implements IBase, IBaseExtension {
   protected constructor() {
@@ -188,17 +187,31 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
   }
 
   /**
-   * Unique id for the element within a resource (for internal references). This
-   * may be any string value that does not contain spaces.
+   * Element.id Element
+   *
+   * @remarks
+   * **FHIR Specification**
+   *  - **Short:** Unique id for inter-element referencing
+   *  - **Definition:** Unique id for the element within a resource (for internal references). This may be any string value that does not contain spaces.
+   *  - **FHIR Type:** `string`
+   *  - **Cardinality:** 0..1
+   *  - **isModifier:** false
+   *  - **isSummary:** false
    */
   protected id?: fhirString | undefined;
 
   /**
-   * May be used to represent additional information that is not part of the basic
-   * definition of the element. To make the use of extensions safe and manageable,
-   * there is a strict set of governance applied to the definition and use of
-   * extensions. Though any implementer can define an extension, there is a set of
-   * requirements that SHALL be met as part of the definition of the extension.
+   * Element.extension Element
+   *
+   * @remarks
+   * **FHIR Specification**
+   *  - **Short:** Additional content defined by implementations
+   *  - **Definition:** May be used to represent additional information that is not part of the basic definition of the element. To make the use of extensions safe and manageable, there is a strict set of governance  applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension.
+   *  - **Comment:** There can be no stigma associated with the use of extensions by any application, project, or standard - regardless of the institution or jurisdiction that uses or defines the extensions.  The use of extensions is what allows the FHIR specification to retain a core level of simplicity for everyone.
+   *  - **FHIR Type:** `Extension`
+   *  - **Cardinality:** 0..*
+   *  - **isModifier:** false
+   *  - **isSummary:** false
    */
   protected extension?: Extension[] | undefined;
 
@@ -367,21 +380,21 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
 }
 
 /**
- * Abstract BackboneElement class.
+ * Abstract BackboneElement Class
  *
- * The base definition for complex elements defined as part of a resource definition - that is,
- * elements that have children that are defined in the resource. Datatype elements do not use
- * this type. For instance, Patient.contact is an element that is defined as part of the patient
- * resource, so it automatically has the type BackboneElement.
+ * @remarks
+ * Base StructureDefinition for BackboneElement Type: Base definition for all elements that are defined inside a resource - but not those in a data type.
  *
- * Note that the descendant types of BackboneElement are all declared implicitly as part of the
- * definitions of the resources.
+ * **FHIR Specification**
+ *  - **Short:** Base for elements defined inside a resource
+ *  - **Definition:** Base definition for all elements that are defined inside a resource - but not those in a data type.
+ *  - **FHIR Version:** 4.0.1; Normative since 4.0.0
  *
  * @privateRemarks
  * Loosely based on HAPI FHIR org.hl7.fhir.r4.model.BackboneElement
  *
  * @category Base Models
- * @see [FHIR BackboneElement](https://hl7.org/fhir/R5/types.html#BackboneElement)
+ * @see [FHIR BackboneElement](http://hl7.org/fhir/StructureDefinition/BackboneElement)
  */
 export abstract class BackboneElement extends Element implements IBase, IBaseModifierExtension {
   protected constructor() {
@@ -389,23 +402,19 @@ export abstract class BackboneElement extends Element implements IBase, IBaseMod
   }
 
   /**
-   * Extensions that cannot be ignored even if unrecognized.
+   * BackboneElement.modifierExtension Element
    *
-   * May be used to represent additional information that is not part of the basic
-   * definition of the element and that modifies the understanding of the element
-   * in which it is contained and/or the understanding of the containing element's
-   * descendants. Usually modifier elements provide negation or qualification. To
-   * make the use of extensions safe and manageable, there is a strict set of
-   * governance applied to the definition and use of extensions. Though any
-   * implementer can define an extension, there is a set of requirements that
-   * SHALL be met as part of the definition of the extension. Applications
-   * processing a resource are required to check for modifier extensions.
-   *
-   * Modifier extensions SHALL NOT change the meaning of any elements on Resource
-   * or DomainResource (including cannot change the meaning of modifierExtension
-   * itself).
-   *
-   * @protected
+   * @remarks
+   * **FHIR Specification**
+   *  - **Short:** Extensions that cannot be ignored even if unrecognized
+   *  - **Definition:** May be used to represent additional information that is not part of the basic definition of the element and that modifies the understanding of the element in which it is contained and/or the understanding of the containing element's descendants. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions. Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
+   *  - **Comment:** There can be no stigma associated with the use of extensions by any application, project, or standard - regardless of the institution or jurisdiction that uses or defines the extensions.  The use of extensions is what allows the FHIR specification to retain a core level of simplicity for everyone.
+   *  - **Requirements:** Modifier extensions allow for extensions that *cannot* be safely ignored to be clearly distinguished from the vast majority of extensions which can be safely ignored.  This promotes interoperability by eliminating the need for implementers to prohibit the presence of extensions. For further information, see the [definition of modifier extensions](https://hl7.org/fhir/R4/extensibility.html#modifierExtension).
+   *  - **FHIR Type:** `Extension`
+   *  - **Cardinality:** 0..*
+   *  - **isModifier:** true
+   *  - **isModifierReason:** Modifier extensions are expected to modify the meaning or interpretation of the element that contains them
+   *  - **isSummary:** true
    */
   protected modifierExtension?: Extension[] | undefined;
 
@@ -522,26 +531,26 @@ export abstract class BackboneElement extends Element implements IBase, IBaseMod
   }
 
   /**
-   * {@inheritDoc Element.fhirType}
+   * {@inheritDoc Base.fhirType}
    */
   public override fhirType(): string {
     return 'BackboneElement';
   }
 
   /**
-   * {@inheritDoc Element.isEmpty}
+   * {@inheritDoc Base.isEmpty}
    */
   public override isEmpty(): boolean {
     return super.isEmpty() && isElementEmpty(this.modifierExtension);
   }
 
   /**
-   * {@inheritDoc Element.copy}
+   * {@inheritDoc Base.copy}
    */
   public abstract override copy(): BackboneElement;
 
   /**
-   * {@inheritDoc Element.copyValues}
+   * {@inheritDoc Base.copyValues}
    */
   protected override copyValues(dest: BackboneElement): void {
     super.copyValues(dest);
@@ -555,17 +564,21 @@ export abstract class BackboneElement extends Element implements IBase, IBaseMod
 }
 
 /**
- * Abstract DataType class.
+ * Abstract DataType Class
  *
- * The base definition for the usable types defined by the FHIR Specification.
- * Base class for all FHIR related datatypes including both PrimitiveType and complex datatypes.
+ * @remarks
+ * DataType Type: The base class for all re-useable types defined as part of the FHIR Specification.
+ *
+ * **FHIR Specification**
+ * - **Short:** Reuseable Types
+ * - **Definition:** The base class for all re-useable types defined as part of the FHIR Specification.
+ * - **FHIR Version:** 5.0.0; Normative since 4.0.0
+ *
+ * @privateRemarks
+ * Loosely based on HAPI FHIR org.hl7.fhir.r4.model.DataType
  *
  * @category Base Models
- * @see [FHIR DataType](https://hl7.org/fhir/R5/types.html#DataType)
- * @see [FHIR Primitives](https://hl7.org/fhir/R5/datatypes.html#primitive)
- * @see [FHIR Complex Types](https://hl7.org/fhir/R5/datatypes.html#complex)
- * @see [FHIR MetaData Types](https://hl7.org/fhir/R5/metadatatypes.html)
- * @see [FHIR Special Purpose Types](https://hl7.org/fhir/R5/datatypes.html#other)
+ * @see [FHIR DataType](http://hl7.org/fhir/StructureDefinition/DataType)
  */
 export abstract class DataType extends Element implements IBase {
   protected constructor() {
@@ -573,24 +586,27 @@ export abstract class DataType extends Element implements IBase {
   }
 
   /**
-   * {@inheritDoc Element.copy}
+   * {@inheritDoc Base.copy}
    */
   abstract override copy(): DataType;
 }
 
 /**
- * Abstract BackboneType class.
+ * Abstract BackboneType Class
  *
- *  The base definition for the few datatypes that allow modifier extensions:
- *  - Timing
- *  - Dosage
- *  - ElementDefinition
+ * @remarks
+ * BackboneType Type: Base definition for the few data types that are allowed to carry modifier extensions.
+ *
+ * **FHIR Specification**
+ *  - **Short:** Base for datatypes that can carry modifier extensions
+ *  - **Definition:** Base definition for the few data types that are allowed to carry modifier extensions.
+ *  - **FHIR Version:** 5.0.0; Normative since 4.0.0
  *
  * @privateRemarks
  * Loosely based on HAPI FHIR org.hl7.fhir.r4.model.BackboneType
  *
  * @category Base Models
- * @see [FHIR BackboneType](https://hl7.org/fhir/R5/types.html#BackboneType)
+ * @see [FHIR BackboneType](http://hl7.org/fhir/StructureDefinition/BackboneType)
  */
 export abstract class BackboneType extends DataType implements IBase, IBaseModifierExtension {
   protected constructor() {
@@ -598,23 +614,19 @@ export abstract class BackboneType extends DataType implements IBase, IBaseModif
   }
 
   /**
-   * Extensions that cannot be ignored even if unrecognized.
+   * BackboneType.modifierExtension Element
    *
-   * May be used to represent additional information that is not part of the basic
-   * definition of the element and that modifies the understanding of the element
-   * in which it is contained and/or the understanding of the containing element's
-   * descendants. Usually modifier elements provide negation or qualification. To
-   * make the use of extensions safe and manageable, there is a strict set of
-   * governance applied to the definition and use of extensions. Though any
-   * implementer can define an extension, there is a set of requirements that
-   * SHALL be met as part of the definition of the extension. Applications
-   * processing a resource are required to check for modifier extensions.
-   *
-   * Modifier extensions SHALL NOT change the meaning of any elements on Resource
-   * or DomainResource (including cannot change the meaning of modifierExtension
-   * itself).
-   *
-   * @protected
+   * @remarks
+   * **FHIR Specification**
+   * - **Short:** Extensions that cannot be ignored even if unrecognized
+   * - **Definition:** May be used to represent additional information that is not part of the basic definition of the element and that modifies the understanding of the element in which it is contained and/or the understanding of the containing element's descendants. Usually modifier elements provide negation or qualification. To make the use of extensions safe and managable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions. Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
+   * - **Comment:** There can be no stigma associated with the use of extensions by any application, project, or standard - regardless of the institution or jurisdiction that uses or defines the extensions.  The use of extensions is what allows the FHIR specification to retain a core level of simplicity for everyone.
+   * - **Requirements:** Modifier extensions allow for extensions that *cannot* be safely ignored to be clearly distinguished from the vast majority of extensions which can be safely ignored.  This promotes interoperability by eliminating the need for implementers to prohibit the presence of extensions. For further information, see the [definition of modifier extensions](https://hl7.org/fhir/R4/extensibility.html#modifierExtension).
+   * - **FHIR Type:** `Extension`
+   * - **Cardinality:** 0..*
+   * - **isModifier:** true
+   * - **isModifierReason:** Modifier extensions are expected to modify the meaning or interpretation of the element that contains them
+   * - **isSummary:** true
    */
   protected modifierExtension?: Extension[] | undefined;
 
@@ -731,26 +743,26 @@ export abstract class BackboneType extends DataType implements IBase, IBaseModif
   }
 
   /**
-   * {@inheritDoc Element.fhirType}
+   * {@inheritDoc Base.fhirType}
    */
   public override fhirType(): string {
     return 'BackboneType';
   }
 
   /**
-   * {@inheritDoc Element.isEmpty}
+   * {@inheritDoc Base.isEmpty}
    */
   public override isEmpty(): boolean {
     return super.isEmpty() && isElementEmpty(this.modifierExtension);
   }
 
   /**
-   * {@inheritDoc DataType.copy}
+   * {@inheritDoc Base.copy}
    */
   public abstract override copy(): BackboneType;
 
   /**
-   * {@inheritDoc Element.copyValues}
+   * {@inheritDoc Base.copyValues}
    */
   protected override copyValues(dest: BackboneType): void {
     super.copyValues(dest);
@@ -764,18 +776,22 @@ export abstract class BackboneType extends DataType implements IBase, IBaseModif
 }
 
 /**
- * Abstract PrimitiveType generic class.
+ * Abstract PrimitiveType Class
  *
- * The base type for all re-usable types defined that have a simple property.
- * Contains common functionality shared by all FHIR primitive datatypes.
+ * @remarks
+ * PrimitiveType Type: The base type for all re-useable types defined that have a simple property.
+ *
+ * **FHIR Specification**
+ * - **Short:** Parent type for DataTypes with a simple value
+ * - **Definition:** The base type for all re-useable types defined that have a simple property.
+ * - **FHIR Version:** 5.0.0; Normative since 4.0.0
  *
  * @privateRemarks
  * Loosely based on HAPI FHIR org.hl7.fhir.r4.model.PrimitiveType
  *
  * @category Base Models
  * @template T - the primitive type
- * @see [FHIR PrimitiveType](https://hl7.org/fhir/R5/types.html#PrimitiveType)
- * @see [FHIR Primitives](https://hl7.org/fhir/R5/datatypes.html#primitive)
+ * @see [FHIR PrimitiveType](http://hl7.org/fhir/StructureDefinition/PrimitiveType)
  */
 export abstract class PrimitiveType<T> extends DataType implements IBase {
   protected constructor() {
@@ -880,19 +896,19 @@ export abstract class PrimitiveType<T> extends DataType implements IBase {
   public abstract parse(value: string): T;
 
   /**
-   * {@inheritDoc Element.isEmpty}
+   * {@inheritDoc Base.isEmpty}
    */
   public override isEmpty(): boolean {
     return !this.hasValue();
   }
 
   /**
-   * {@inheritDoc DataType.copy}
+   * {@inheritDoc Base.copy}
    */
   public abstract override copy(): PrimitiveType<T>;
 
   /**
-   * {@inheritDoc Element.copyValues}
+   * {@inheritDoc Base.copyValues}
    */
   protected override copyValues(dest: PrimitiveType<T>): void {
     super.copyValues(dest);
@@ -900,18 +916,22 @@ export abstract class PrimitiveType<T> extends DataType implements IBase {
 }
 
 /**
- * Optional Extension Element.
+ * Extension Class
  *
- * Every resource or datatype element may include one or more Extension child elements.
- * The Extension is either simple or complex. Simple Extensions have only a value and no
- * nested Extensions. Complex Extensions contain one or more nested Extensions and no value.
- * An Extension can not have both a value and nested extensions.
+ * @remarks
+ * Base StructureDefinition for Extension Type: Optional Extension Element - found in all resources.
+ *
+ * **FHIR Specification**
+ * - **Short:** Optional Extensions Element
+ * - **Definition:** Optional Extension Element - found in all resources.
+ * - **FHIR Version:** 4.0.1; Normative since 4.0.0
  *
  * @privateRemarks
  * Loosely based on HAPI FHIR org.hl7.fhir.r4.model.Extension
  *
  * @category Base Models
- * @see [FHIR Extensibility](https://hl7.org/fhir/R5/extensibility.html)
+ * @see [FHIR Extension](http://hl7.org/fhir/StructureDefinition/Extension)
+ * @see [FHIR Extensibility](https://hl7.org/fhir/R4/extensibility.html)
  */
 export class Extension extends Element implements IBase {
   /**
@@ -934,16 +954,32 @@ export class Extension extends Element implements IBase {
   }
 
   /**
-   * Source of the definition for the Extension - a logical name or a URL.
+   * Extension.url Element
+   *
+   * @remarks
+   * **FHIR Specification**
+   * - **Short:** identifies the meaning of the extension
+   * - **Definition:** Source of the definition for the extension code - a logical name or a URL.
+   * - **Comment:** The definition may point directly to a computable or human-readable definition of the extensibility codes, or it may be a logical URI as declared in some other specification. The definition SHALL be a URI for the Structure Definition defining the extension.
+   * - **FHIR Type:** `uri`
+   * - **Cardinality:** 1..1
+   * - **isModifier:** false
+   * - **isSummary:** false
    */
   protected url: fhirUri;
 
   /**
-   * Value of Extension
+   * Extension.value[x] Element
    *
    * @remarks
-   * Must be one of a constrained set of FHIR data types (see
-   * [Extensibility](https://hl7.org/fhir/R5/datatypes.html#open) for a list).
+   * **FHIR Specification**
+   * - **Short:** Value of extension
+   * - **Definition:** Value of extension - must be one of a constrained set of the data types.
+   * - **FHIR Types:**
+   *   - Refer to [Open Type Element](https://hl7.org/fhir/R4/datatypes.html#open)
+   * - **Cardinality:** 0..1
+   * - **isModifier:** false
+   * - **isSummary:** false
    */
   protected value?: DataType | undefined;
 
@@ -1003,21 +1039,21 @@ export class Extension extends Element implements IBase {
   }
 
   /**
-   * {@inheritDoc Element.fhirType}
+   * {@inheritDoc Base.fhirType}
    */
   public override fhirType(): string {
     return 'Extension';
   }
 
   /**
-   * {@inheritDoc Element.isEmpty}
+   * {@inheritDoc Base.isEmpty}
    */
   public override isEmpty() {
     return super.isEmpty() && isElementEmpty(this.value) && !this.hasUrl();
   }
 
   /**
-   * {@inheritDoc Element.copy}
+   * {@inheritDoc Base.copy}
    */
   public override copy(): Extension {
     const dest = new Extension(this.url);
@@ -1026,7 +1062,7 @@ export class Extension extends Element implements IBase {
   }
 
   /**
-   * {@inheritDoc Element.copyValues}
+   * {@inheritDoc Base.copyValues}
    */
   protected override copyValues(dest: Extension): void {
     super.copyValues(dest);

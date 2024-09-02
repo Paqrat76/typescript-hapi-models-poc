@@ -43,17 +43,22 @@ import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
 /**
- * Complex FHIR Datatype: Coding
+ * Coding Class
  *
  * @remarks
- * A Coding is a representation of a defined concept using a symbol from a defined "code system".
+ * Base StructureDefinition for Coding Type: A reference to a code defined by a terminology system.
  *
- * The meaning of the Coding is defined by the code. The system provides the source of the definition
- * of the code, along with an optional version reference. The display is a human display for the text
- * defined by the system - it is not intended for computation.
+ * **FHIR Specification**
+ * - **Short:** A reference to a code defined by a terminology system
+ * - **Definition:** A reference to a code defined by a terminology system.
+ * - **Comment:** Codes may be defined very casually in enumerations or code lists, up to very formal definitions such as SNOMED CT - see the HL7 v3 Core Principles for more information.
+ * - **FHIR Version:** 4.0.1
+ *
+ * @privateRemarks
+ * Loosely based on HAPI FHIR org.hl7.fhir.r4.model.Coding
  *
  * @category Datatypes: Complex
- * @see [FHIR Coding](https://hl7.org/fhir/R5/datatypes.html#Coding)
+ * @see [FHIR Coding](http://hl7.org/fhir/StructureDefinition/Coding)
  */
 export class Coding extends DataType implements IBase {
   /**
@@ -100,46 +105,79 @@ export class Coding extends DataType implements IBase {
   }
 
   /**
-   * Identity of the terminology system
+   * Coding.system Element
    *
    * @remarks
-   * The URI may be an OID (urn:oid:...) or a UUID (urn:uuid:...). OIDs and UUIDs SHALL be references
-   * to the HL7 OID registry. Otherwise, the URI should come from HL7's list of FHIR defined special URIs,
-   * or it should reference to some definition that establishes the system clearly and unambiguously.
+   * **FHIR Specification**
+   * - **Short:** Identity of the terminology system
+   * - **Definition:** The identification of the code system that defines the meaning of the symbol in the code.
+   * - **Comment:** The URI may be an OID (urn:oid:...) or a UUID (urn:uuid:...).  OIDs and UUIDs SHALL be references to the HL7 OID registry. Otherwise, the URI should come from HL7's list of FHIR defined special URIs or it should reference to some definition that establishes the system clearly and unambiguously.
+   * - **Requirements:** Need to be unambiguous about the source of the definition of the symbol.
+   * - **FHIR Type:** `uri`
+   * - **Cardinality:** 0..1
+   * - **isModifier:** false
+   * - **isSummary:** true
    */
   protected system?: UriType | undefined;
+
   /**
-   * Version of the system - if relevant
+   * Coding.version Element
    *
    * @remarks
-   * The version of the code system which was used when choosing this code. Note that a well-maintained
-   * code system does not need the version reported, because the meaning of codes is consistent across
-   * versions. However, this cannot consistently be assured, and when the meaning is not guaranteed to be
-   * consistent, the version SHOULD be exchanged.
+   * **FHIR Specification**
+   * - **Short:** Version of the system - if relevant
+   * - **Definition:** The version of the code system which was used when choosing this code. Note that a well-maintained code system does not need the version reported, because the meaning of codes is consistent across versions. However this cannot consistently be assured, and when the meaning is not guaranteed to be consistent, the version SHOULD be exchanged.
+   * - **Comment:** Where the terminology does not clearly define what string should be used to identify code system versions, the recommendation is to use the date (expressed in FHIR date format) on which that version was officially published as the version date.
+   * - **FHIR Type:** `string`
+   * - **Cardinality:** 0..1
+   * - **isModifier:** false
+   * - **isSummary:** true
    */
   protected version?: StringType | undefined;
+
   /**
-   * Symbol in syntax defined by the system
+   * Coding.code Element
    *
    * @remarks
-   * The symbol may be a predefined code or an expression in a syntax defined by the coding system
-   * (e.g. post-coordination).
+   * **FHIR Specification**
+   * - **Short:** Symbol in syntax defined by the system
+   * - **Definition:** A symbol in syntax defined by the system. The symbol may be a predefined code or an expression in a syntax defined by the coding system (e.g. post-coordination).
+   * - **Requirements:** Need to refer to a particular code in the system.
+   * - **FHIR Type:** `code`
+   * - **Cardinality:** 0..1
+   * - **isModifier:** false
+   * - **isSummary:** true
    */
   protected code?: CodeType | undefined;
+
   /**
-   * Representation defined by the system
+   * Coding.display Element
    *
    * @remarks
-   * A representation of the meaning of the code in the system, following the rules of the system.
-   * Need to be able to carry a human-readable meaning of the code for readers that do not know the system.
+   * **FHIR Specification**
+   * - **Short:** Representation defined by the system
+   * - **Definition:** A representation of the meaning of the code in the system, following the rules of the system.
+   * - **Requirements:** Need to be able to carry a human-readable meaning of the code for readers that do not know  the system.
+   * - **FHIR Type:** `string`
+   * - **Cardinality:** 0..1
+   * - **isModifier:** false
+   * - **isSummary:** true
    */
   protected display?: StringType | undefined;
+
   /**
-   * If this coding was chosen directly by the user
+   * Coding.userSelected Element
    *
    * @remarks
-   * Indicates that this coding was chosen by a user directly - e.g. off a pick list of available items
-   * (codes or displays).
+   * **FHIR Specification**
+   * - **Short:** If this coding was chosen directly by the user
+   * - **Definition:** Indicates that this coding was chosen by a user directly - e.g. off a pick list of available items (codes or displays).
+   * - **Comment:** Amongst a set of alternatives, a directly chosen code is the most appropriate starting point for new translations. There is some ambiguity about what exactly 'directly chosen' implies, and trading partner agreement may be needed to clarify the use of this element and its consequences more completely.
+   * - **Requirements:** This has been identified as a clinical safety criterium - that this exact system/code pair was chosen explicitly, rather than inferred by the system based on some rules or language processing.
+   * - **FHIR Type:** `boolean`
+   * - **Cardinality:** 0..1
+   * - **isModifier:** false
+   * - **isSummary:** true
    */
   protected userSelected?: BooleanType | undefined;
 
@@ -439,21 +477,21 @@ export class Coding extends DataType implements IBase {
   }
 
   /**
-   * {@inheritDoc Element.fhirType}
+   * {@inheritDoc Base.fhirType}
    */
   public override fhirType(): string {
     return 'Coding';
   }
 
   /**
-   * {@inheritDoc Element.isEmpty}
+   * {@inheritDoc Base.isEmpty}
    */
   public override isEmpty(): boolean {
     return super.isEmpty() && isElementEmpty(this.system, this.version, this.code, this.display, this.userSelected);
   }
 
   /**
-   * {@inheritDoc DataType.copy}
+   * {@inheritDoc Base.copy}
    */
   public override copy(): Coding {
     const dest = new Coding();
@@ -462,9 +500,9 @@ export class Coding extends DataType implements IBase {
   }
 
   /**
-   * {@inheritDoc Element.copyValues}
+   * {@inheritDoc Base.copyValues}
    */
-  public override copyValues(dest: Coding): void {
+  protected override copyValues(dest: Coding): void {
     super.copyValues(dest);
     dest.system = this.system?.copy();
     dest.version = this.version?.copy();

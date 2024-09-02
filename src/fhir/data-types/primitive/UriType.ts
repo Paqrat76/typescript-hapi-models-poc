@@ -26,13 +26,19 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive FHIR Datatype: uri
+ * Uri Class
  *
  * @remarks
- * A Uniform Resource Identifier Reference (RFC 3986).
+ * Base StructureDefinition for uri Type: String of characters used to identify a name or a resource
+ *
+ * **FHIR Specification**
+ * - **Short:** Primitive Type uri
+ * - **Definition:** String of characters used to identify a name or a resource
+ * - **Comment:** see http://en.wikipedia.org/wiki/Uniform_resource_identifier
+ * - **FHIR Version:** 4.0.1
  *
  * @category Datatypes: Primitive
- * @see [FHIR uri](https://hl7.org/fhir/R5/datatypes.html#uri)
+ * @see [FHIR uri](http://hl7.org/fhir/StructureDefinition/uri)
  */
 export class UriType extends PrimitiveType<fhirUri> {
   /**
@@ -77,7 +83,7 @@ export class UriType extends PrimitiveType<fhirUri> {
     return dest;
   }
 
-  public override copyValues(dest: UriType): void {
+  protected override copyValues(dest: UriType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
   }

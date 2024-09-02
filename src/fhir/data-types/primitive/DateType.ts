@@ -26,14 +26,18 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive FHIR Datatype: date
+ * Date Class
  *
  * @remarks
- * A date or partial date (e.g. just year or year + month)
- * as used in human communication. The format is YYYY, YYYY-MM, or YYYY-MM-DD.
+ * Base StructureDefinition for date Type: A date or partial date (e.g. just year or year + month). There is no time zone. The format is a union of the schema types gYear, gYearMonth and date. Dates SHALL be valid dates.
+ *
+ * **FHIR Specification**
+ * - **Short:** Primitive Type date
+ * - **Definition:** A date or partial date (e.g. just year or year + month). There is no time zone. The format is a union of the schema types gYear, gYearMonth and date. Dates SHALL be valid dates.
+ * - **FHIR Version:** 4.0.1
  *
  * @category Datatypes: Primitive
- * @see [FHIR date](https://hl7.org/fhir/R5/datatypes.html#date)
+ * @see [FHIR date](http://hl7.org/fhir/StructureDefinition/date)
  */
 export class DateType extends PrimitiveType<fhirDate> {
   /**
@@ -78,7 +82,7 @@ export class DateType extends PrimitiveType<fhirDate> {
     return dest;
   }
 
-  public override copyValues(dest: DateType): void {
+  protected override copyValues(dest: DateType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
   }

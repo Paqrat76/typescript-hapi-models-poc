@@ -26,16 +26,19 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive FHIR Datatype: base64Binary
+ * Base64Binary Class
  *
  * @remarks
- * A stream of bytes, base64 encoded (RFC 4648).
+ * Base StructureDefinition for base64Binary Type: A stream of bytes
  *
- * `base64Binary` content does not include any whitespace or line feeds, but reading applications
- *  should ignore whitespace characters (per RFC 4648).
+ * **FHIR Specification**
+ * - **Short:** Primitive Type base64Binary
+ * - **Definition:** A stream of bytes
+ * - **Comment:** A stream of bytes, base64 encoded
+ * - **FHIR Version:** 4.0.1
  *
  * @category Datatypes: Primitive
- * @see [FHIR base64Binary](https://hl7.org/fhir/R5/datatypes.html#base64Binary)
+ * @see [FHIR base64Binary](http://hl7.org/fhir/StructureDefinition/base64Binary)
  */
 export class Base64BinaryType extends PrimitiveType<fhirBase64Binary> {
   /**
@@ -80,7 +83,7 @@ export class Base64BinaryType extends PrimitiveType<fhirBase64Binary> {
     return dest;
   }
 
-  public override copyValues(dest: Base64BinaryType): void {
+  protected override copyValues(dest: Base64BinaryType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
   }

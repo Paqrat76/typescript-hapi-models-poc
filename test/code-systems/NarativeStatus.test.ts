@@ -22,7 +22,7 @@
  */
 
 import { NarrativeStatusEnum } from '@src/fhir/code-systems/NarrativeStatusEnum';
-import { BaseFhirCode } from '@src/fhir/base-models/core-fhir-codes';
+import { FhirCodeDefinition } from '@src/fhir/base-models/core-fhir-codes';
 import { InvalidCodeError } from '@src/fhir/errors/InvalidCodeError';
 
 describe('NarrativeStatusEnum', () => {
@@ -31,30 +31,35 @@ describe('NarrativeStatusEnum', () => {
   const testNarrativeStatusEnum = new NarrativeStatusEnum();
 
   it('should be fully defined', () => {
-    expect(testNarrativeStatusEnum.values()).toHaveLength(4);
+    expect(testNarrativeStatusEnum.values()).toHaveLength(5);
     const expectedEnums = [
       NarrativeStatusEnum.GENERATED,
       NarrativeStatusEnum.EXTENSIONS,
       NarrativeStatusEnum.ADDITIONAL,
       NarrativeStatusEnum.EMPTY,
+      NarrativeStatusEnum.NULL,
     ];
     expect(testNarrativeStatusEnum.values()).toEqual(expect.arrayContaining(expectedEnums));
 
-    let generated = testNarrativeStatusEnum.fromCode('generated');
-    expect(generated).toBeDefined();
-    expect(generated).toMatchObject(NarrativeStatusEnum.GENERATED);
+    let enumValue = testNarrativeStatusEnum.fromCode('generated');
+    expect(enumValue).toBeDefined();
+    expect(enumValue).toMatchObject(NarrativeStatusEnum.GENERATED);
 
-    generated = testNarrativeStatusEnum.fromCode('extensions');
-    expect(generated).toBeDefined();
-    expect(generated).toMatchObject(NarrativeStatusEnum.EXTENSIONS);
+    enumValue = testNarrativeStatusEnum.fromCode('extensions');
+    expect(enumValue).toBeDefined();
+    expect(enumValue).toMatchObject(NarrativeStatusEnum.EXTENSIONS);
 
-    generated = testNarrativeStatusEnum.fromCode('additional');
-    expect(generated).toBeDefined();
-    expect(generated).toMatchObject(NarrativeStatusEnum.ADDITIONAL);
+    enumValue = testNarrativeStatusEnum.fromCode('additional');
+    expect(enumValue).toBeDefined();
+    expect(enumValue).toMatchObject(NarrativeStatusEnum.ADDITIONAL);
 
-    generated = testNarrativeStatusEnum.fromCode('empty');
-    expect(generated).toBeDefined();
-    expect(generated).toMatchObject(NarrativeStatusEnum.EMPTY);
+    enumValue = testNarrativeStatusEnum.fromCode('empty');
+    expect(enumValue).toBeDefined();
+    expect(enumValue).toMatchObject(NarrativeStatusEnum.EMPTY);
+
+    enumValue = testNarrativeStatusEnum.fromCode('null');
+    expect(enumValue).toBeDefined();
+    expect(enumValue).toMatchObject(NarrativeStatusEnum.NULL);
   });
 
   it('should throw InvalidCodeError when executing fromCode() with undefined code value', () => {
@@ -75,7 +80,7 @@ describe('NarrativeStatusEnum', () => {
 
   it('should properly define NarrativeStatusCode.GENERATED', () => {
     expect(NarrativeStatusEnum.GENERATED).toBeDefined();
-    expect(NarrativeStatusEnum.GENERATED).toBeInstanceOf(BaseFhirCode);
+    expect(NarrativeStatusEnum.GENERATED).toBeInstanceOf(FhirCodeDefinition);
     expect(NarrativeStatusEnum.GENERATED.name).toStrictEqual('GENERATED');
     expect(NarrativeStatusEnum.GENERATED.code).toStrictEqual('generated');
     expect(NarrativeStatusEnum.GENERATED.system).toStrictEqual('http://hl7.org/fhir/narrative-status');
@@ -88,7 +93,7 @@ describe('NarrativeStatusEnum', () => {
 
   it('should properly define NarrativeStatusCode.EXTENSIONS', () => {
     expect(NarrativeStatusEnum.EXTENSIONS).toBeDefined();
-    expect(NarrativeStatusEnum.EXTENSIONS).toBeInstanceOf(BaseFhirCode);
+    expect(NarrativeStatusEnum.EXTENSIONS).toBeInstanceOf(FhirCodeDefinition);
     expect(NarrativeStatusEnum.EXTENSIONS.name).toStrictEqual('EXTENSIONS');
     expect(NarrativeStatusEnum.EXTENSIONS.code).toStrictEqual('extensions');
     expect(NarrativeStatusEnum.EXTENSIONS.system).toStrictEqual('http://hl7.org/fhir/narrative-status');
@@ -101,7 +106,7 @@ describe('NarrativeStatusEnum', () => {
 
   it('should properly define NarrativeStatusCode.ADDITIONAL', () => {
     expect(NarrativeStatusEnum.ADDITIONAL).toBeDefined();
-    expect(NarrativeStatusEnum.ADDITIONAL).toBeInstanceOf(BaseFhirCode);
+    expect(NarrativeStatusEnum.ADDITIONAL).toBeInstanceOf(FhirCodeDefinition);
     expect(NarrativeStatusEnum.ADDITIONAL.name).toStrictEqual('ADDITIONAL');
     expect(NarrativeStatusEnum.ADDITIONAL.code).toStrictEqual('additional');
     expect(NarrativeStatusEnum.ADDITIONAL.system).toStrictEqual('http://hl7.org/fhir/narrative-status');
@@ -114,7 +119,7 @@ describe('NarrativeStatusEnum', () => {
 
   it('should properly define NarrativeStatusCode.EMPTY', () => {
     expect(NarrativeStatusEnum.EMPTY).toBeDefined();
-    expect(NarrativeStatusEnum.EMPTY).toBeInstanceOf(BaseFhirCode);
+    expect(NarrativeStatusEnum.EMPTY).toBeInstanceOf(FhirCodeDefinition);
     expect(NarrativeStatusEnum.EMPTY.name).toStrictEqual('EMPTY');
     expect(NarrativeStatusEnum.EMPTY.code).toStrictEqual('empty');
     expect(NarrativeStatusEnum.EMPTY.system).toStrictEqual('http://hl7.org/fhir/narrative-status');

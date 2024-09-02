@@ -26,14 +26,18 @@ import { PrimitiveType } from '@src/fhir/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir/errors/PrimitiveTypeError';
 
 /**
- * Primitive FHIR Datatype: code
+ * Code Class
  *
  * @remarks
- * Indicates that the value is taken from a set of controlled strings
- * defined elsewhere.
+ * Base StructureDefinition for code type: A string which has at least one character and no leading or trailing whitespace and where there is no whitespace other than single spaces in the contents
+ *
+ * **FHIR Specification**
+ * - **Short:** Primitive Type code
+ * - **Definition:** A string which has at least one character and no leading or trailing whitespace and where there is no whitespace other than single spaces in the contents
+ * - **FHIR Version:** 4.0.1
  *
  * @category Datatypes: Primitive
- * @see [FHIR code](https://hl7.org/fhir/R5/datatypes.html#code)
+ * @see [FHIR code](http://hl7.org/fhir/StructureDefinition/code)
  */
 export class CodeType extends PrimitiveType<fhirCode> {
   /**
@@ -78,7 +82,7 @@ export class CodeType extends PrimitiveType<fhirCode> {
     return dest;
   }
 
-  public override copyValues(dest: CodeType): void {
+  protected override copyValues(dest: CodeType): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
   }
