@@ -21,6 +21,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.5.3] - 2024-09-05
+
+### Added
+
+- Added following complex data types for FHIR Group
+  - CodeableConcept
+  - Identifier
+  - Quantity
+  - Range
+  - Reference
+  - SimpleQuantity
+- Added QuantityComparatorEnum code system
+
+### Changed
+
+- Reorganized the source and test directory structure
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+- Resolved circular dependencies
+
+### Security
+
+
 ## [0.5.2] - 2024-09-02
 
 ### Added

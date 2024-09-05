@@ -9,7 +9,7 @@
 - [FHIR R4](https://hl7.org/fhir/R4)
 - [FHIR R4B](https://hl7.org/fhir/R4B)
 - [FHIR R5](https://hl7.org/fhir/R5)
-- [FHIR (6.0.0-ballot1)](https://hl7.org/fhir/6.0.0-ballot1)
+- [FHIR (6.0.0-ballot2)](https://hl7.org/fhir/6.0.0-ballot2)
 - [FHIR (CI-build)](https://build.fhir.org/index.html)
 
 ### HAPI FHIR
@@ -135,7 +135,7 @@ GitHub: [hapifhir/org.hl7.fhir.core](https://github.com/hapifhir/org.hl7.fhir.co
 - [typescript-json-serializer](https://www.npmjs.com/package/typescript-json-serializer) - uses experimentalDecorators
 - [ts-jackson](https://www.npmjs.com/package/ts-jackson) - uses experimentalDecorators
 - [ts-serializable](https://www.npmjs.com/package/ts-serializable) - uses experimentalDecorators
-- [mobxjs/serializr](https://github.com/mobxjs/serializr) - uses experimentalDecorators
+- [serializr](https://www.npmjs.com/package/serializr) - uses experimentalDecorators
 - [DeepKit Framework](https://deepkit.io/) - High-quality TypeScript libraries and next-gen backend framework; Perpetual "alpha" since 2020
   - [Documentation](https://deepkit.io/documentation)
   - [Deepkit Runtime Types](https://deepkit.io/library/type) - @deepkit/type; Rich runtime type system for TypeScript with reflection,
@@ -197,6 +197,8 @@ across all hand-crafted derived classes.**
 
 ### Code Documentation
 
+#### Background
+
 Most Node-based projects make use of [JSDoc](https://jsdoc.app/) for documenting the code base and optionally
 generating project documentation.
 For projects using TypeScript, Microsoft provides the [JSDoc Reference](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html).
@@ -255,7 +257,7 @@ TypeDoc provides extensive configuration, but in my case, I only needed to inclu
  * - **FHIR Version:** <StructureDefinition.fhirVersion>
  *
  * @privateRemarks
- * Loosely based on HAPI FHIR org.hl7.fhir.r4.model.<StructureDefinition.type>
+ * Loosely based on HAPI FHIR org.hl7.fhir-core.r4.model.<StructureDefinition.type>
  *
  * @category Resource Models | Datatypes: Complex
  * @see [FHIR <StructureDefinition.type>](<StructureDefinition.url>)
