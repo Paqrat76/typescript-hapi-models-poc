@@ -273,7 +273,7 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
    * {@inheritDoc IBaseExtension.hasExtension}
    */
   public hasExtension(url?: fhirUri): boolean {
-    if (url) {
+    if (url !== undefined) {
       validateUrl(url);
       return this.getExtension().some((ext) => ext.getUrl() && ext.getUrl() === url);
     }
@@ -300,12 +300,11 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
    * {@inheritDoc IBaseExtension.addExtension}
    */
   public addExtension(extension?: Extension): this {
-    if (!extension) {
-      return this;
+    if (extension !== undefined) {
+      this.initExtension();
+      // @ts-expect-error: initExtension() ensures this.extension exists
+      this.extension.push(extension);
     }
-    this.initExtension();
-    // @ts-expect-error: initExtension() ensures this.extension exists
-    this.extension.push(extension);
     return this;
   }
 
@@ -338,15 +337,11 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
    * @private
    */
   private existsExtension(): boolean {
-    if (this.extension) {
-      for (const item of this.extension) {
-        if (!item.isEmpty()) {
-          return true;
-        }
-      }
-      return false;
-    }
-    return false;
+    return (
+      this.extension !== undefined &&
+      this.extension.length > 0 &&
+      this.extension.some((item: Extension) => !item.isEmpty())
+    );
   }
 
   /**
@@ -442,9 +437,9 @@ export abstract class BackboneElement extends Element implements IBase, IBaseMod
    * {@inheritDoc IBaseModifierExtension.hasModifierExtension}
    */
   public hasModifierExtension(url?: fhirUri): boolean {
-    if (url) {
+    if (url !== undefined) {
       validateUrl(url);
-      return this.getModifierExtensionsByUrl(url).length > 0;
+      return this.getModifierExtension().some((ext) => ext.getUrl() && ext.getUrl() === url);
     }
     return this.existsModifierExtension();
   }
@@ -469,12 +464,11 @@ export abstract class BackboneElement extends Element implements IBase, IBaseMod
    * {@inheritDoc IBaseModifierExtension.addModifierExtension}
    */
   public addModifierExtension(modifierExtension?: Extension): this {
-    if (!modifierExtension) {
-      return this;
+    if (modifierExtension !== undefined) {
+      this.initModifierExtension();
+      // @ts-expect-error: initModifierExtension() ensures this.modifierExtension exists
+      this.modifierExtension.push(modifierExtension);
     }
-    this.initModifierExtension();
-    // @ts-expect-error: initModifierExtension() ensures this.modifierExtension exists
-    this.modifierExtension.push(modifierExtension);
     return this;
   }
 
@@ -508,31 +502,11 @@ export abstract class BackboneElement extends Element implements IBase, IBaseMod
    * @private
    */
   private existsModifierExtension(): boolean {
-    if (this.modifierExtension) {
-      for (const item of this.modifierExtension) {
-        if (!item.isEmpty()) {
-          return true;
-        }
-      }
-      return false;
-    }
-    return false;
-  }
-
-  /**
-   * Returns all Extensions having the provided url or if the url does not exist,
-   * returns an empty array.
-   *
-   * @param url - the url that identifies a specific Extension
-   * @returns an array of Extensions having the provided url or an empty array
-   * @private
-   */
-  private getModifierExtensionsByUrl(url: fhirUri): Extension[] {
-    validateUrl(url);
-    if (this.hasModifierExtension()) {
-      return this.getModifierExtension().filter((ext) => ext.getUrl() && ext.getUrl() === url);
-    }
-    return [] as Extension[];
+    return (
+      this.modifierExtension !== undefined &&
+      this.modifierExtension.length > 0 &&
+      this.modifierExtension.some((item: Extension) => !item.isEmpty())
+    );
   }
 
   /**
@@ -654,9 +628,9 @@ export abstract class BackboneType extends DataType implements IBase, IBaseModif
    * {@inheritDoc IBaseModifierExtension.hasModifierExtension}
    */
   public hasModifierExtension(url?: fhirUri): boolean {
-    if (url) {
+    if (url !== undefined) {
       validateUrl(url);
-      return this.getModifierExtensionsByUrl(url).length > 0;
+      return this.getModifierExtension().some((ext) => ext.getUrl() && ext.getUrl() === url);
     }
     return this.existsModifierExtension();
   }
@@ -681,12 +655,11 @@ export abstract class BackboneType extends DataType implements IBase, IBaseModif
    * {@inheritDoc IBaseModifierExtension.addModifierExtension}
    */
   public addModifierExtension(modifierExtension?: Extension): this {
-    if (!modifierExtension) {
-      return this;
+    if (modifierExtension !== undefined) {
+      this.initModifierExtension();
+      // @ts-expect-error: initModifierExtension() ensures this.modifierExtension exists
+      this.modifierExtension.push(modifierExtension);
     }
-    this.initModifierExtension();
-    // @ts-expect-error: initModifierExtension() ensures this.modifierExtension exists
-    this.modifierExtension.push(modifierExtension);
     return this;
   }
 
@@ -707,7 +680,7 @@ export abstract class BackboneType extends DataType implements IBase, IBaseModif
    * @private
    */
   private initModifierExtension(): void {
-    if (!this.modifierExtension) {
+    if (this.modifierExtension === undefined) {
       this.modifierExtension = [] as Extension[];
     }
   }
@@ -720,31 +693,11 @@ export abstract class BackboneType extends DataType implements IBase, IBaseModif
    * @private
    */
   private existsModifierExtension(): boolean {
-    if (this.modifierExtension) {
-      for (const item of this.modifierExtension) {
-        if (!item.isEmpty()) {
-          return true;
-        }
-      }
-      return false;
-    }
-    return false;
-  }
-
-  /**
-   * Returns all Extensions having the provided url or if the url does not exist,
-   * returns an empty array.
-   *
-   * @param url - the url that identifies a specific Extension
-   * @returns an array of Extensions having the provided url or an empty array
-   * @private
-   */
-  private getModifierExtensionsByUrl(url: fhirUri): Extension[] {
-    validateUrl(url);
-    if (this.hasModifierExtension()) {
-      return this.getModifierExtension().filter((ext) => ext.getUrl() && ext.getUrl() === url);
-    }
-    return [] as Extension[];
+    return (
+      this.modifierExtension !== undefined &&
+      this.modifierExtension.length > 0 &&
+      this.modifierExtension.some((item: Extension) => !item.isEmpty())
+    );
   }
 
   /**
@@ -944,16 +897,22 @@ export class Extension extends Element implements IBase {
    * @param value - Value of Extension
    * @throws PrimitiveTypeError for invalid url
    */
-  constructor(url: fhirUri, value?: DataType) {
+  constructor(url: fhirUri | null, value?: DataType) {
     super();
 
-    const parseResult = fhirUriSchema.safeParse(url);
-    if (!parseResult.success) {
-      throw new PrimitiveTypeError(`Invalid Extension.url (${url})`, parseResult.error);
+    if (url === null) {
+      this.url = null;
+    } else {
+      const parseResult = fhirUriSchema.safeParse(url);
+      if (!parseResult.success) {
+        throw new PrimitiveTypeError(`Invalid Extension.url (${url})`, parseResult.error);
+      }
+      this.url = parseResult.data;
     }
-    this.url = parseResult.data;
 
-    if (value) {
+    if (value === undefined) {
+      this.value = undefined;
+    } else {
       this.value = value;
     }
   }
@@ -971,7 +930,7 @@ export class Extension extends Element implements IBase {
    * - **isModifier:** false
    * - **isSummary:** false
    */
-  protected url: fhirUri;
+  protected url: fhirUri | null;
 
   /**
    * Extension.value[x] Element
@@ -991,7 +950,7 @@ export class Extension extends Element implements IBase {
   /**
    * @returns the `url` property value
    */
-  public getUrl(): fhirUri {
+  public getUrl(): fhirUri | null {
     return this.url;
   }
 
@@ -1003,11 +962,14 @@ export class Extension extends Element implements IBase {
    * @throws AssertionError for invalid value
    */
   public setUrl(value: fhirUri): this {
-    const parseResult = fhirUriSchema.safeParse(value);
-    if (!parseResult.success) {
-      throw new PrimitiveTypeError(`Invalid Extension.url (${value})`, parseResult.error);
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (value !== null) {
+      const parseResult = fhirUriSchema.safeParse(value);
+      if (!parseResult.success) {
+        throw new PrimitiveTypeError(`Invalid Extension.url (${value})`, parseResult.error);
+      }
+      this.url = parseResult.data;
     }
-    this.url = parseResult.data;
     return this;
   }
 

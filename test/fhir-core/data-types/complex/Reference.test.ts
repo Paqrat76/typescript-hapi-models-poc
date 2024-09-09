@@ -340,7 +340,7 @@ describe('Reference', () => {
     expect(testReference.getDisplay()).toStrictEqual(VALID_STRING_2);
   });
 
-  it('should be properly reset by modifying all properties with primitive values', () => {
+  it('should be properly reset by modifying all properties with PrimitiveType values', () => {
     const testReference = new Reference();
     testReference.setReferenceElement(VALID_STRING_TYPE);
     testReference.setTypeElement(VALID_URI_TYPE);

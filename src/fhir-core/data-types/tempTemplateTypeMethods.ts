@@ -1,17 +1,21 @@
 /* istanbul ignore file */
 
-// TODO: After all complex datatype classes are created, DELETE this file!!
+// TODO: After all complex datatype classes are created, convert this file to template documentation!
 
+import { IBase } from '@src/fhir-core/base-models/IBase';
 import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
 import { CanonicalType } from '@src/fhir-core/data-types/primitive/CanonicalType';
 import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
-import { Coding } from '@src/fhir-core/data-types/complex/Coding';
 import { DateTimeType } from '@src/fhir-core/data-types/primitive/DateTimeType';
+import { DecimalType } from '@src/fhir-core/data-types/primitive/DecimalType';
+import { EnumCodeType } from '@src/fhir-core/data-types/primitive/EnumCodeType';
 import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
 import { InstantType } from '@src/fhir-core/data-types/primitive/InstantType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { UnsignedIntType } from '@src/fhir-core/data-types/primitive/UnsignedIntType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { XhtmlType } from '@src/fhir-core/data-types/primitive/XhtmlType';
+import { FhirCodeDefinition, IFhirCodeDefinition, IFhirCodeEnum } from '@src/fhir-core/base-models/core-fhir-codes';
 import {
   fhirBoolean,
   fhirBooleanSchema,
@@ -29,18 +33,17 @@ import {
   fhirInstantSchema,
   fhirString,
   fhirStringSchema,
+  fhirUnsignedInt,
+  fhirUnsignedIntSchema,
   fhirUri,
   fhirUriSchema,
   fhirXhtml,
   fhirXhtmlSchema,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { FhirCodeDefinition, IFhirCodeDefinition, IFhirCodeEnum } from '@src/fhir-core/base-models/core-fhir-codes';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
-import { EnumCodeType } from '@src/fhir-core/data-types/primitive/EnumCodeType';
-import { DecimalType } from '@src/fhir-core/data-types/primitive/DecimalType';
 
-//region EnumCodeType
+//region FhirCodeEnum
 // import { fhirCode } from '@src/fhir-core/data-types/primitive/primitive-types';
 // import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 // import { FhirCodeDefinition, IFhirCodeDefinition, IFhirCodeEnum } from '@src/fhir-core/base-models/core-fhir-codes';
@@ -98,7 +101,7 @@ export class XxxxEnum implements IFhirCodeEnum {
 //endregion
 
 export class TempTemplateTypeMethods {
-  //region BooleanType
+  //region BooleanType - Optional
   // =====================================================================
   // XxxClass / BooleanType (xxxxBoolean / XxxxBoolean)
   // =====================================================================
@@ -126,7 +129,7 @@ export class TempTemplateTypeMethods {
    * @returns `true` if the `xxxxBoolean` property exists and has a value; `false` otherwise
    */
   public hasXxxxBooleanElement(): boolean {
-    return this.xxxxBoolean !== undefined;
+    return this.xxxxBoolean !== undefined && !this.xxxxBoolean.isEmpty();
   }
 
   /**
@@ -161,6 +164,78 @@ export class TempTemplateTypeMethods {
    */
   public hasXxxxBoolean(): boolean {
     return this.hasXxxxBooleanElement();
+  }
+  //endregion
+
+  //region BooleanType - Required
+  // =====================================================================
+  // XxxClass / BooleanType (xxxxBooleanReq / XxxxBooleanReq)
+  // =====================================================================
+  protected xxxxBooleanReq: BooleanType | null = null;
+
+  /**
+   * @returns the `xxxxBooleanReq` property value as a PrimitiveType
+   */
+  public getXxxxBooleanReqElement(): BooleanType | null {
+    return this.xxxxBooleanReq;
+  }
+
+  /**
+   * Assigns the provided PrimitiveType value to the `xxxxBooleanReq` property.
+   *
+   * @param element - the `xxxxBooleanReq` value
+   * @returns this
+   */
+  public setXxxxBooleanReqElement(element: BooleanType): this {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (element !== null) {
+      this.xxxxBooleanReq = element;
+    }
+    return this;
+  }
+
+  /**
+   * @returns `true` if the `xxxxBooleanReq` property exists and has a value; `false` otherwise
+   */
+  public hasXxxxBooleanReqElement(): boolean {
+    return this.xxxxBooleanReq !== null && !this.xxxxBooleanReq.isEmpty();
+  }
+
+  /**
+   * @returns the `xxxxBooleanReq` property value as a primitive value
+   */
+  public getXxxxBooleanReq(): fhirBoolean | null {
+    if (this.xxxxBooleanReq?.getValue() === undefined) {
+      return null;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return this.xxxxBooleanReq.getValue()!;
+  }
+
+  /**
+   * Assigns the provided primitive value to the `xxxxBooleanReq` property.
+   *
+   * @param value - the `xxxxBooleanReq` value
+   * @returns this
+   * @throws PrimitiveTypeError for invalid primitive types
+   */
+  public setXxxxBooleanReq(value: fhirBoolean): this {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (value !== null) {
+      const parseResult = fhirBooleanSchema.safeParse(value);
+      if (!parseResult.success) {
+        throw new PrimitiveTypeError(`Invalid XxxClass.xxxxBooleanReq (${String(value)})`, parseResult.error);
+      }
+      this.xxxxBooleanReq = new BooleanType(parseResult.data);
+    }
+    return this;
+  }
+
+  /**
+   * @returns `true` if the `xxxxBooleanReq` property exists and has a value; `false` otherwise
+   */
+  public hasXxxxBooleanReq(): boolean {
+    return this.hasXxxxBooleanReqElement();
   }
   //endregion
 
@@ -296,7 +371,7 @@ export class TempTemplateTypeMethods {
   }
   //endregion
 
-  //region EnumCodeType
+  //region EnumCodeType - Optional
   // =====================================================================
   // EnumCodeType (xxxEnum // xxxxValue / XxxxValue)
   // =====================================================================
@@ -391,6 +466,106 @@ export class TempTemplateTypeMethods {
    */
   public hasXxxxValue(): boolean {
     return this.hasXxxxValueEnumType();
+  }
+  //endregion
+
+  //region EnumCodeType - Required
+  // =====================================================================
+  // EnumCodeType (xxxEnumReq // xxxxValueReq / XxxxValueReqReq)
+  // =====================================================================
+  private readonly xxxEnumReq: XxxxEnum = new XxxxEnum(); //code system Enum class initialized in constructor
+  protected xxxxValueReq: EnumCodeType | null = null;
+
+  /**
+   * @returns the `xxxxValueReq` property value as a EnumCodeType
+   */
+  public getXxxxValueReqEnumType(): EnumCodeType | null {
+    return this.xxxxValueReq;
+  }
+
+  /**
+   * Assigns the provided EnumCodeType value to the `xxxxValueReq` property.
+   *
+   * @param enumType - the `xxxxValueReq` value
+   * @returns this
+   */
+  public setXxxxValueReqEnumType(enumType: EnumCodeType): this {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (enumType !== null) {
+      this.xxxxValueReq = enumType;
+    }
+    return this;
+  }
+
+  /**
+   * @returns `true` if the `xxxxValueReq` property exists and has a value; `false` otherwise
+   */
+  public hasXxxxValueReqEnumType(): boolean {
+    return (
+      this.xxxxValueReq !== null && !this.xxxxValueReq.isEmpty() && this.xxxxValueReq.fhirCodeEnumeration.length > 0
+    );
+  }
+
+  /**
+   * @returns the `xxxxValueReq` property value as a PrimitiveType
+   */
+  public getXxxxValueReqElement(): CodeType | null {
+    if (this.xxxxValueReq === null) {
+      return null;
+    }
+    return this.xxxxValueReq as CodeType;
+  }
+
+  /**
+   * Assigns the provided PrimitiveType value to the `xxxxValueReq` property.
+   *
+   * @param element - the `xxxxValueReq` value
+   * @returns this
+   */
+  public setXxxxValueReqElement(element: CodeType): this {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (element !== null) {
+      this.xxxxValueReq = new EnumCodeType(element, this.xxxEnumReq);
+    }
+    return this;
+  }
+
+  /**
+   * @returns `true` if the `xxxxValueReq` property exists and has a value; `false` otherwise
+   */
+  public hasXxxxValueReqElement(): boolean {
+    return this.hasXxxxValueReqEnumType();
+  }
+
+  /**
+   * @returns the `xxxxValueReq` property value as a primitive value
+   */
+  public getXxxxValueReq(): fhirCode | null {
+    if (this.xxxxValueReq === null) {
+      return null;
+    }
+    return this.xxxxValueReq.fhirCode.code;
+  }
+
+  /**
+   * Assigns the provided primitive value to the `xxxxValueReq` property.
+   *
+   * @param value - the `xxxxValueReq` value
+   * @returns this
+   */
+  public setXxxxValueReq(value: fhirCode): this {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (value !== null) {
+      this.xxxxValueReq = new EnumCodeType(value, this.xxxEnumReq);
+    }
+    return this;
+  }
+
+  /**
+   * @returns `true` if the `xxxxValueReq` property exists and has a value; `false` otherwise
+   */
+  public hasXxxxValueReq(): boolean {
+    return this.hasXxxxValueReqEnumType();
   }
   //endregion
 
@@ -725,6 +900,73 @@ export class TempTemplateTypeMethods {
   }
   //endregion
 
+  //region UnsignedIntType
+  // =====================================================================
+  // XxxClass / UnsignedIntType (xxxxUnsignedInt / XxxxUnsignedInt)
+  // =====================================================================
+  protected xxxxUnsignedInt?: UnsignedIntType | undefined;
+
+  /**
+   * @returns the `xxxxUnsignedInt` property value as a PrimitiveType
+   */
+  public getXxxxUnsignedIntElement(): UnsignedIntType {
+    return this.xxxxUnsignedInt ?? new UnsignedIntType();
+  }
+
+  /**
+   * Assigns the provided PrimitiveType value to the `xxxxUnsignedInt` property.
+   *
+   * @param element - the `xxxxUnsignedInt` value
+   * @returns this
+   */
+  public setXxxxUnsignedIntElement(element: UnsignedIntType | undefined): this {
+    this.xxxxUnsignedInt = element;
+    return this;
+  }
+
+  /**
+   * @returns `true` if the `xxxxUnsignedInt` property exists and has a value; `false` otherwise
+   */
+  public hasXxxxUnsignedIntElement(): boolean {
+    return this.xxxxUnsignedInt !== undefined && !this.xxxxUnsignedInt.isEmpty();
+  }
+
+  /**
+   * @returns the `xxxxUnsignedInt` property value as a primitive value
+   */
+  public getXxxxUnsignedInt(): fhirUnsignedInt | undefined {
+    return this.xxxxUnsignedInt?.getValue();
+  }
+
+  /**
+   * Assigns the provided primitive value to the `xxxxUnsignedInt` property.
+   *
+   * @param value - the `xxxxUnsignedInt` value
+   * @returns this
+   * @throws PrimitiveTypeError for invalid primitive types
+   */
+  public setXxxxUnsignedInt(value: fhirUnsignedInt | undefined): this {
+    if (value === undefined) {
+      this.xxxxUnsignedInt = undefined;
+    } else {
+      const parseResult = fhirUnsignedIntSchema.safeParse(value);
+      if (!parseResult.success) {
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        throw new PrimitiveTypeError(`Invalid XxxClass.xxxxUnsignedInt (${value})`, parseResult.error);
+      }
+      this.xxxxUnsignedInt = new UnsignedIntType(parseResult.data);
+    }
+    return this;
+  }
+
+  /**
+   * @returns `true` if the `xxxxUnsignedInt` property exists and has a value; `false` otherwise
+   */
+  public hasXxxxUnsignedInt(): boolean {
+    return this.hasXxxxUnsignedIntElement();
+  }
+  //endregion
+
   //region UriType
   // =====================================================================
   // XxxClass / UriType (xxxxUri / XxxxUri)
@@ -857,17 +1099,17 @@ export class TempTemplateTypeMethods {
   }
   //endregion
 
-  //region Model
+  //region Model - Optional
   // =====================================================================
-  // Complex Model 0..1 / Coding (xxxxModel / XxxxModel)
+  // Complex Model 0..1 / MockFhirModel (xxxxModel / XxxxModel)
   // =====================================================================
-  protected xxxxModel?: Coding | undefined;
+  protected xxxxModel?: MockFhirModel | undefined;
 
   /**
    * @returns the `xxxxModel` property value as a Coding object
    */
-  public getXxxxModel(): Coding {
-    return this.xxxxModel ?? new Coding();
+  public getXxxxModel(): MockFhirModel {
+    return this.xxxxModel ?? new MockFhirModel();
   }
 
   /**
@@ -876,7 +1118,7 @@ export class TempTemplateTypeMethods {
    * @param value - the `xxxxModel` object value
    * @returns this
    */
-  public setXxxxModel(value: Coding | undefined): this {
+  public setXxxxModel(value: MockFhirModel | undefined): this {
     this.xxxxModel = value;
     return this;
   }
@@ -889,17 +1131,52 @@ export class TempTemplateTypeMethods {
   }
   //endregion
 
-  //region Model Array
+  //region Model - Required
   // =====================================================================
-  // Complex Model 0..* / Coding[] (xxxxModelArray / XxxxModelArray)
+  // Complex Model 0..1 / MockFhirModel (xxxxModelReq / XxxxModelReq)
   // =====================================================================
-  protected xxxxModelArray?: Coding[] | undefined;
+  protected xxxxModelReq: MockFhirModel | null = null;
+
+  /**
+   * @returns the `xxxxModelReq` property value as a Coding object
+   */
+  public getXxxxModelReq(): MockFhirModel | null {
+    return this.xxxxModelReq;
+  }
+
+  /**
+   * Assigns the provided Coding object value to the `xxxxModelReq` property.
+   *
+   * @param value - the `xxxxModelReq` object value
+   * @returns this
+   */
+  public setXxxxModelReq(value: MockFhirModel): this {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (value !== null) {
+      this.xxxxModelReq = value;
+    }
+    return this;
+  }
+
+  /**
+   * @returns `true` if the `xxxxModelReq` property exists and has a value; `false` otherwise
+   */
+  public hasXxxxModelReq(): boolean {
+    return this.xxxxModelReq !== null && !this.xxxxModelReq.isEmpty();
+  }
+  //endregion
+
+  //region Model Array - Optional
+  // =====================================================================
+  // Complex Model 0..* / MockFhirModel[] (xxxxModelArray / XxxxModelArray)
+  // =====================================================================
+  protected xxxxModelArray?: MockFhirModel[] | undefined;
 
   /**
    * @returns the `xxxxModelArray` property value as a Coding array
    */
-  public getXxxxModelArray(): Coding[] {
-    return this.xxxxModelArray ?? ([] as Coding[]);
+  public getXxxxModelArray(): MockFhirModel[] {
+    return this.xxxxModelArray ?? ([] as MockFhirModel[]);
   }
 
   /**
@@ -908,7 +1185,7 @@ export class TempTemplateTypeMethods {
    * @param value - the `xxxxModelArray` array value
    * @returns this
    */
-  public setXxxxModelArray(value: Coding[] | undefined): this {
+  public setXxxxModelArray(value: MockFhirModel[] | undefined): this {
     this.xxxxModelArray = value;
     return this;
   }
@@ -919,12 +1196,11 @@ export class TempTemplateTypeMethods {
    * @param value - the `xxxxModelArray` value
    * @returns this
    */
-  public addXxxxModelArray(value?: Coding): this {
-    if (value === undefined) {
-      return this;
+  public addXxxxModelArray(value?: MockFhirModel): this {
+    if (value !== undefined) {
+      this.initXxxxModelArray();
+      this.xxxxModelArray?.push(value);
     }
-    this.initXxxxModelArray();
-    this.xxxxModelArray?.push(value);
     return this;
   }
 
@@ -935,7 +1211,7 @@ export class TempTemplateTypeMethods {
     return (
       this.xxxxModelArray !== undefined &&
       this.xxxxModelArray.length > 0 &&
-      this.xxxxModelArray.some((item: Coding) => !item.isEmpty())
+      this.xxxxModelArray.some((item: MockFhirModel) => !item.isEmpty())
     );
   }
 
@@ -946,8 +1222,86 @@ export class TempTemplateTypeMethods {
    */
   private initXxxxModelArray(): void {
     if (this.xxxxModelArray === undefined) {
-      this.xxxxModelArray = [] as Coding[];
+      this.xxxxModelArray = [] as MockFhirModel[];
     }
   }
   //endregion
+
+  //region Model Array - Required
+  // =====================================================================
+  // Complex Model 0..* / MockFhirModel[] (xxxxModelArrayReq / XxxxModelArrayReq)
+  // =====================================================================
+  protected xxxxModelArrayReq: MockFhirModel[] | null = null;
+
+  /**
+   * @returns the `xxxxModelArrayReq` property value as a Coding array
+   */
+  public getXxxxModelArrayReq(): MockFhirModel[] | null {
+    return this.xxxxModelArrayReq;
+  }
+
+  /**
+   * Assigns the provided Coding array value to the `xxxxModelArrayReq` property.
+   *
+   * @param value - the `xxxxModelArrayReq` array value
+   * @returns this
+   */
+  public setXxxxModelArrayReq(value: MockFhirModel[]): this {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (value !== null) {
+      this.xxxxModelArrayReq = value;
+    }
+    return this;
+  }
+
+  /**
+   * Add the provided Coding value to the `xxxxModelArrayReq` array property.
+   *
+   * @param value - the `xxxxModelArrayReq` value
+   * @returns this
+   */
+  public addXxxxModelArrayReq(value: MockFhirModel): this {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (value !== null) {
+      this.initXxxxModelArrayReq();
+      this.xxxxModelArrayReq?.push(value);
+    }
+    return this;
+  }
+
+  /**
+   * @returns `true` if the `xxxxModelArrayReq` property exists and has a value; `false` otherwise
+   */
+  public hasXxxxModelArrayReq(): boolean {
+    return (
+      this.xxxxModelArrayReq !== null &&
+      this.xxxxModelArrayReq.length > 0 &&
+      this.xxxxModelArrayReq.some((item: MockFhirModel) => !item.isEmpty())
+    );
+  }
+
+  /**
+   * Initialize the `xxxxModelArrayReq` property
+   *
+   * @private
+   */
+  private initXxxxModelArrayReq(): void {
+    if (this.xxxxModelArrayReq === null) {
+      this.xxxxModelArrayReq = [] as MockFhirModel[];
+    }
+  }
+  //endregion
+}
+
+class MockFhirModel implements IBase {
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor,@typescript-eslint/no-empty-function
+  constructor() {}
+
+  public fhirType(): string {
+    return 'MockFhirModel';
+  }
+
+  public isEmpty(): boolean {
+    return true;
+  }
 }

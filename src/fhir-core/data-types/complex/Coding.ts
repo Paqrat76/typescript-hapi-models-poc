@@ -401,7 +401,7 @@ export class Coding extends DataType implements IBase {
    * @returns `true` if the `userSelected` property exists and has a value; `false` otherwise
    */
   public hasUserSelectedElement(): boolean {
-    return this.userSelected !== undefined;
+    return this.userSelected !== undefined && !this.userSelected.isEmpty();
   }
 
   /**

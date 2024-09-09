@@ -22,12 +22,12 @@
  */
 
 import { strict as assert } from 'node:assert';
-import { isEmpty } from 'lodash';
 import { Resource } from '@src/fhir-core/base-models/Resource';
 import { Narrative } from '@src/fhir-core/data-types/complex/Narrative';
 import { Extension, IBaseExtension, IBaseModifierExtension } from '@src/fhir-core/base-models/core-fhir-models';
 import { fhirUri } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty, validateUrl } from '@src/fhir-core/utility/element-util';
+import { IBase } from '@src/fhir-core/base-models/IBase';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -48,7 +48,7 @@ import { isElementEmpty, validateUrl } from '@src/fhir-core/utility/element-util
  * @category Base Models
  * @see [FHIR DomainResource](http://hl7.org/fhir/StructureDefinition/DomainResource)
  */
-export abstract class DomainResource extends Resource implements IBaseExtension, IBaseModifierExtension {
+export abstract class DomainResource extends Resource implements IBase, IBaseExtension, IBaseModifierExtension {
   protected constructor() {
     super();
   }
@@ -177,7 +177,11 @@ export abstract class DomainResource extends Resource implements IBaseExtension,
    * @returns `true` if the `contained` property exists and has a value; `false` otherwise
    */
   public hasContained(): boolean {
-    return this.contained !== undefined && !isEmpty(this.contained);
+    return (
+      this.contained !== undefined &&
+      this.contained.length > 0 &&
+      this.contained.some((item: Resource) => !item.isEmpty())
+    );
   }
 
   /**
@@ -237,12 +241,11 @@ export abstract class DomainResource extends Resource implements IBaseExtension,
    * {@inheritDoc IBaseExtension.addExtension}
    */
   public addExtension(extension?: Extension): this {
-    if (extension === undefined) {
-      return this;
+    if (extension !== undefined) {
+      this.initExtension();
+      // @ts-expect-error: initExtension() ensures this.extension exists
+      this.extension.push(extension);
     }
-    this.initExtension();
-    // @ts-expect-error: initExtension() ensures this.extension exists
-    this.extension.push(extension);
     return this;
   }
 
@@ -275,15 +278,11 @@ export abstract class DomainResource extends Resource implements IBaseExtension,
    * @private
    */
   private existsExtension(): boolean {
-    if (this.extension) {
-      for (const item of this.extension) {
-        if (!item.isEmpty()) {
-          return true;
-        }
-      }
-      return false;
-    }
-    return false;
+    return (
+      this.extension !== undefined &&
+      this.extension.length > 0 &&
+      this.extension.some((item: Extension) => !item.isEmpty())
+    );
   }
 
   /**
@@ -304,7 +303,7 @@ export abstract class DomainResource extends Resource implements IBaseExtension,
   /**
    * {@inheritDoc IBaseModifierExtension.hasModifierExtension}
    */
-  public hasModifierExtension(url?: fhirUri | undefined): boolean {
+  public hasModifierExtension(url?: fhirUri): boolean {
     if (url) {
       validateUrl(url);
       return this.getModifierExtension().some((ext) => ext.getUrl() && ext.getUrl() === url);
@@ -332,12 +331,11 @@ export abstract class DomainResource extends Resource implements IBaseExtension,
    * {@inheritDoc IBaseModifierExtension.addModifierExtension}
    */
   public addModifierExtension(extension: Extension | undefined): this {
-    if (extension === undefined) {
-      return this;
+    if (extension !== undefined) {
+      this.initModifierExtension();
+      // @ts-expect-error: initExtension() ensures this.extension exists
+      this.modifierExtension.push(extension);
     }
-    this.initModifierExtension();
-    // @ts-expect-error: initExtension() ensures this.extension exists
-    this.modifierExtension.push(extension);
     return this;
   }
 
@@ -372,15 +370,11 @@ export abstract class DomainResource extends Resource implements IBaseExtension,
    * @private
    */
   private existsModifierExtension(): boolean {
-    if (this.modifierExtension) {
-      for (const item of this.modifierExtension) {
-        if (!item.isEmpty()) {
-          return true;
-        }
-      }
-      return false;
-    }
-    return false;
+    return (
+      this.modifierExtension !== undefined &&
+      this.modifierExtension.length > 0 &&
+      this.modifierExtension.some((item: Extension) => !item.isEmpty())
+    );
   }
 
   /**

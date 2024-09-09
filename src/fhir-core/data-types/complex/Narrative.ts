@@ -66,7 +66,7 @@ export class Narrative extends DataType implements IBase {
     this.narrativeStatusEnum = new NarrativeStatusEnum();
 
     if (status === null) {
-      this.status = status;
+      this.status = null;
     } else if (status instanceof EnumCodeType) {
       this.status = status;
     } else {
@@ -87,7 +87,7 @@ export class Narrative extends DataType implements IBase {
     }
 
     if (div === null) {
-      this.div = div;
+      this.div = null;
     } else if (div instanceof XhtmlType) {
       this.div = div;
     } else {
@@ -145,10 +145,9 @@ export class Narrative extends DataType implements IBase {
    */
   public setStatueEnumType(enumType: EnumCodeType): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (enumType === null) {
-      return this;
+    if (enumType !== null) {
+      this.status = enumType;
     }
-    this.status = enumType;
     return this;
   }
 
@@ -177,10 +176,9 @@ export class Narrative extends DataType implements IBase {
    */
   public setStatusElement(element: CodeType): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (element === null) {
-      return this;
+    if (element !== null) {
+      this.status = new EnumCodeType(element, this.narrativeStatusEnum);
     }
-    this.status = new EnumCodeType(element, this.narrativeStatusEnum);
     return this;
   }
 
@@ -209,10 +207,9 @@ export class Narrative extends DataType implements IBase {
    */
   public setStatus(value: fhirCode): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (value === null) {
-      return this;
+    if (value !== null) {
+      this.status = new EnumCodeType(value, this.narrativeStatusEnum);
     }
-    this.status = new EnumCodeType(value, this.narrativeStatusEnum);
     return this;
   }
 
@@ -238,10 +235,9 @@ export class Narrative extends DataType implements IBase {
    */
   public setDivElement(element: XhtmlType): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (element === null) {
-      return this;
+    if (element !== null) {
+      this.div = element;
     }
-    this.div = element;
     return this;
   }
 
@@ -272,14 +268,13 @@ export class Narrative extends DataType implements IBase {
    */
   public setDiv(value: fhirXhtml): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (value === null) {
-      return this;
+    if (value !== null) {
+      const parseResult = fhirXhtmlSchema.safeParse(value);
+      if (!parseResult.success) {
+        throw new PrimitiveTypeError(`Invalid Narrative.div value`, parseResult.error);
+      }
+      this.div = new XhtmlType(parseResult.data);
     }
-    const parseResult = fhirXhtmlSchema.safeParse(value);
-    if (!parseResult.success) {
-      throw new PrimitiveTypeError(`Invalid Narrative.div value`, parseResult.error);
-    }
-    this.div = new XhtmlType(parseResult.data);
     return this;
   }
 

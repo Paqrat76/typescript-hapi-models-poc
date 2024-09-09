@@ -21,22 +21,21 @@
  *
  */
 
+/* istanbul ignore file */
+
 /**
- * Base interface to specify methods used by utilities, etc.
+ * Error thrown when an invalid type is requested for a polymorphic data type (e.g., `value[x]`).
  *
- * @category Base Models
- * @interface
+ * @category Errors
  */
-export interface IBase {
-  // TODO: Add/remove methods as needed
-
-  /**
-   * @returns the FHIR type defined in the FHIR standard
-   */
-  fhirType: () => string;
-
-  /**
-   * @returns `true` if the instance is empty; `false` otherwise
-   */
-  isEmpty: () => boolean;
+export class InvalidTypeError extends Error {
+  constructor(message: string, cause?: Error) {
+    if (cause) {
+      super(message, cause);
+      this.cause = cause;
+    } else {
+      super(message);
+    }
+    this.name = 'InvalidTypeError';
+  }
 }

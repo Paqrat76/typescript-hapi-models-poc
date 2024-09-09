@@ -142,7 +142,7 @@ describe('BackboneType', () => {
 });
 
 class MockBackboneType extends BackboneType {
-  constructor(modifierExtension?: Extension[] | undefined) {
+  constructor(modifierExtension?: Extension[]) {
     super();
     if (modifierExtension !== undefined) {
       this.modifierExtension = modifierExtension;

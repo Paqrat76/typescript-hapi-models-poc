@@ -142,7 +142,7 @@ describe('BackboneElement', () => {
 });
 
 class MockBackboneElement extends BackboneElement {
-  constructor(modifierExtension?: Extension[] | undefined) {
+  constructor(modifierExtension?: Extension[]) {
     super();
     if (modifierExtension !== undefined) {
       this.modifierExtension = modifierExtension;

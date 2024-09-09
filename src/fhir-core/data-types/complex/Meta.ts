@@ -21,7 +21,6 @@
  *
  */
 
-import { isEmpty } from 'lodash';
 import { DataType } from '@src/fhir-core/base-models/core-fhir-models';
 import { IBase } from '@src/fhir-core/base-models/IBase';
 import { CanonicalType } from '@src/fhir-core/data-types/primitive/CanonicalType';
@@ -359,11 +358,10 @@ export class Meta extends DataType implements IBase {
    * @returns this
    */
   public addProfileElement(value?: CanonicalType): this {
-    if (value === undefined) {
-      return this;
+    if (value !== undefined) {
+      this.initProfile();
+      this.profile?.push(value);
     }
-    this.initProfile();
-    this.profile?.push(value);
     return this;
   }
 
@@ -371,7 +369,11 @@ export class Meta extends DataType implements IBase {
    * @returns `true` if the `profile` property exists and has a value; `false` otherwise
    */
   public hasProfileElement(): boolean {
-    return this.profile !== undefined && !isEmpty(this.profile);
+    return (
+      this.profile !== undefined &&
+      this.profile.length > 0 &&
+      this.profile.some((item: CanonicalType) => !item.isEmpty())
+    );
   }
 
   /**
@@ -422,15 +424,14 @@ export class Meta extends DataType implements IBase {
    * @returns this
    */
   public addProfile(value?: fhirCanonical): this {
-    if (value === undefined) {
-      return this;
+    if (value !== undefined) {
+      const parseResult = fhirCanonicalSchema.safeParse(value);
+      if (!parseResult.success) {
+        throw new PrimitiveTypeError(`Invalid Meta.profile array item (${value})`, parseResult.error);
+      }
+      const element = new CanonicalType(parseResult.data);
+      this.addProfileElement(element);
     }
-    const parseResult = fhirCanonicalSchema.safeParse(value);
-    if (!parseResult.success) {
-      throw new PrimitiveTypeError(`Invalid Meta.profile array item (${value})`, parseResult.error);
-    }
-    const element = new CanonicalType(parseResult.data);
-    this.addProfileElement(element);
     return this;
   }
 
@@ -477,11 +478,10 @@ export class Meta extends DataType implements IBase {
    * @returns this
    */
   public addSecurity(value?: Coding): this {
-    if (value === undefined) {
-      return this;
+    if (value !== undefined) {
+      this.initSecurity();
+      this.security?.push(value);
     }
-    this.initSecurity();
-    this.security?.push(value);
     return this;
   }
 
@@ -530,11 +530,10 @@ export class Meta extends DataType implements IBase {
    * @returns this
    */
   public addTag(value?: Coding): this {
-    if (value === undefined) {
-      return this;
+    if (value !== undefined) {
+      this.initTag();
+      this.tag?.push(value);
     }
-    this.initTag();
-    this.tag?.push(value);
     return this;
   }
 

@@ -27,6 +27,28 @@ import { Period } from '@src/fhir-core/data-types/complex/Period';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 
 describe('Extension', () => {
+  it('should be properly instantiated as empty', () => {
+    const testUrl = null;
+    const testExtension = new Extension(testUrl);
+    expect(testExtension).toBeDefined();
+    expect(testExtension).toBeInstanceOf(Extension);
+    expect(testExtension).toBeInstanceOf(Element);
+    expect(testExtension.constructor.name).toStrictEqual('Extension');
+    expect(testExtension.fhirType()).toStrictEqual('Extension');
+    expect(testExtension.isEmpty()).toBe(true);
+
+    // inherited properties from Element
+    expect(testExtension.hasId()).toBe(false);
+    expect(testExtension.getId()).toBeUndefined();
+    expect(testExtension.hasExtension()).toBe(false);
+    expect(testExtension.getExtension()).toMatchObject([] as Extension[]);
+    // Extension properties
+    expect(testExtension.hasUrl()).toBe(false);
+    expect(testExtension.getUrl()).toBeNull();
+    expect(testExtension.hasValue()).toBe(false);
+    expect(testExtension.getValue()).toBeUndefined();
+  });
+
   it('should be properly instantiated', () => {
     const testUrl = 'testUrl';
     const testExtension = new Extension(testUrl);

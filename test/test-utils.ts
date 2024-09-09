@@ -22,6 +22,7 @@
  */
 
 import { FHIR_MAX_STRING_LENGTH } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { IBase } from '@src/fhir-core/base-models/IBase';
 
 export {
   FHIR_MIN_INTEGER,
@@ -45,4 +46,17 @@ export function getString(maxLength: number): string {
   }
 
   return str;
+}
+
+export class MockFhirModel implements IBase {
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor,@typescript-eslint/no-empty-function
+  constructor() {}
+
+  public fhirType(): string {
+    return 'MockFhirModel';
+  }
+
+  public isEmpty(): boolean {
+    return true;
+  }
 }

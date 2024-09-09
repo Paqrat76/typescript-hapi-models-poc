@@ -264,6 +264,30 @@ TypeDoc provides extensive configuration, but in my case, I only needed to inclu
  */
 ```
 
+#### Component (BackboneElement) Class Header Template
+
+The `<StructureDefinition.snapshot.element[i].path>` will be reformatted as follows:
+
+- The `path` value will be PascalCase
+- The `.` separator will be removed
+- 'Component' will be appended to the reformatted `path`
+
+```typescript
+/**
+ * <StructureDefinition.snapshot.element[i].path>Component Subclass
+ *
+ * @remarks
+ * **FHIR Specification**
+ * - **Short:** <StructureDefinition.snapshot.element[i]?.short>
+ * - **Definition:** <StructureDefinition.snapshot.element[i]?.definition>
+ * - **Comment:** <StructureDefinition.snapshot.element[i]?.comment>
+ * - **Requirements:** <StructureDefinition.snapshot.element[i]?.requirements>
+ *
+ * @category Resource Models
+ * @see [FHIR <StructureDefinition.type>](<StructureDefinition.url>)
+ */
+```
+
 #### Field Header Template
 
 ```typescript

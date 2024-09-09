@@ -112,11 +112,10 @@ export class CodeableConcept extends DataType implements IBase {
    * @returns this
    */
   public addCoding(value?: Coding): this {
-    if (value === undefined) {
-      return this;
+    if (value !== undefined) {
+      this.initCoding();
+      this.coding?.push(value);
     }
-    this.initCoding();
-    this.coding?.push(value);
     return this;
   }
 

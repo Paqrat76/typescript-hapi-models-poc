@@ -176,7 +176,7 @@ describe('Element', () => {
 });
 
 class MockElement extends Element {
-  constructor(id?: fhirString | undefined, extension?: Extension[] | undefined) {
+  constructor(id?: fhirString, extension?: Extension[]) {
     super();
     if (id !== undefined) {
       this.id = id;

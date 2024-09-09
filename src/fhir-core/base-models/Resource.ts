@@ -36,6 +36,7 @@ import {
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty } from '@src/fhir-core/utility/element-util';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { IBase } from '@src/fhir-core/base-models/IBase';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -64,7 +65,7 @@ import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
  * @category Base Models
  * @see [FHIR Resource](http://hl7.org/fhir/StructureDefinition/Resource)
  */
-export abstract class Resource extends Base {
+export abstract class Resource extends Base implements IBase {
   protected constructor() {
     super();
   }
