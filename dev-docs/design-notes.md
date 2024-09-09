@@ -9,7 +9,7 @@
 - [FHIR R4](https://hl7.org/fhir/R4)
 - [FHIR R4B](https://hl7.org/fhir/R4B)
 - [FHIR R5](https://hl7.org/fhir/R5)
-- [FHIR (6.0.0-ballot1)](https://hl7.org/fhir/6.0.0-ballot1)
+- [FHIR (6.0.0-ballot2)](https://hl7.org/fhir/6.0.0-ballot2)
 - [FHIR (CI-build)](https://build.fhir.org/index.html)
 
 ### HAPI FHIR
@@ -135,7 +135,7 @@ GitHub: [hapifhir/org.hl7.fhir.core](https://github.com/hapifhir/org.hl7.fhir.co
 - [typescript-json-serializer](https://www.npmjs.com/package/typescript-json-serializer) - uses experimentalDecorators
 - [ts-jackson](https://www.npmjs.com/package/ts-jackson) - uses experimentalDecorators
 - [ts-serializable](https://www.npmjs.com/package/ts-serializable) - uses experimentalDecorators
-- [mobxjs/serializr](https://github.com/mobxjs/serializr) - uses experimentalDecorators
+- [serializr](https://www.npmjs.com/package/serializr) - uses experimentalDecorators
 - [DeepKit Framework](https://deepkit.io/) - High-quality TypeScript libraries and next-gen backend framework; Perpetual "alpha" since 2020
   - [Documentation](https://deepkit.io/documentation)
   - [Deepkit Runtime Types](https://deepkit.io/library/type) - @deepkit/type; Rich runtime type system for TypeScript with reflection,
@@ -153,6 +153,12 @@ GitHub: [hapifhir/org.hl7.fhir.core](https://github.com/hapifhir/org.hl7.fhir.co
 - [Recreating advanced Enum types in Typescript](https://medium.com/swlh/recreating-advanced-enum-types-in-typescript-7a267a2a885)
 
 ## Design Decisions
+
+### Auto Create DataType Elements on `getXxxxElement`
+
+- **NOTE:** HAPI FHIR has been designed to "auto create" data type elements rather than to return `null`.
+  See class header content in [Configuration.java](https://github.com/hapifhir/org.hl7.fhir.core/blob/master/org.hl7.fhir.r4/src/main/java/org/hl7/fhir/r4/model/Configuration.java)
+- Therefore, we will follow suite and not return `undefined` for all `getXxxxElement` methods.
 
 ### TypeScript Runtime Data Validator for Primitives
 
@@ -190,6 +196,8 @@ The desire is to write all unit tests as these data models evolve into a final s
 across all hand-crafted derived classes.**
 
 ### Code Documentation
+
+#### Background
 
 Most Node-based projects make use of [JSDoc](https://jsdoc.app/) for documenting the code base and optionally
 generating project documentation.
@@ -231,3 +239,94 @@ I was thrilled when I discovered a plugin for Zod (described above).
 TypeDoc provides extensive configuration, but in my case, I only needed to included five (5) options!
 
 **Therefore, I am using TypeDoc to generate project documentation!**
+
+#### Class Header Template
+
+```typescript
+/**
+ * <StructureDefinition.type> Class
+ *
+ * @remarks
+ * <StructureDefinition.description>
+ *
+ * **FHIR Specification**
+ * - **Short:** <StructureDefinition.snapshot.element[0]?.short>
+ * - **Definition:** <StructureDefinition.snapshot.element[0]?.definition>
+ * - **Comment:** <StructureDefinition.snapshot.element[0]?.comment>
+ * - **Requirements:** <StructureDefinition.snapshot.element[0]?.requirements>
+ * - **FHIR Version:** <StructureDefinition.fhirVersion>
+ *
+ * @privateRemarks
+ * Loosely based on HAPI FHIR org.hl7.fhir-core.r4.model.<StructureDefinition.type>
+ *
+ * @category Resource Models | Datatypes: Complex
+ * @see [FHIR <StructureDefinition.type>](<StructureDefinition.url>)
+ */
+```
+
+#### Component (BackboneElement) Class Header Template
+
+The `<StructureDefinition.snapshot.element[i].path>` will be reformatted as follows:
+
+- The `path` value will be PascalCase
+- The `.` separator will be removed
+- 'Component' will be appended to the reformatted `path`
+
+```typescript
+/**
+ * <StructureDefinition.snapshot.element[i].path>Component Subclass
+ *
+ * @remarks
+ * **FHIR Specification**
+ * - **Short:** <StructureDefinition.snapshot.element[i]?.short>
+ * - **Definition:** <StructureDefinition.snapshot.element[i]?.definition>
+ * - **Comment:** <StructureDefinition.snapshot.element[i]?.comment>
+ * - **Requirements:** <StructureDefinition.snapshot.element[i]?.requirements>
+ *
+ * @category Resource Models
+ * @see [FHIR <StructureDefinition.type>](<StructureDefinition.url>)
+ */
+```
+
+#### Field Header Template
+
+```typescript
+/**
+ * <StructureDefinition.snapshot.element[i].path> Element
+ *
+ * @remarks
+ * **FHIR Specification**
+ * - **Short:** <StructureDefinition.snapshot.element[i]?.short>
+ * - **Definition:** <StructureDefinition.snapshot.element[i]?.definition>
+ * - **Comment:** <StructureDefinition.snapshot.element[i]?.comment>
+ * - **Requirements:** <StructureDefinition.snapshot.element[i]?.requirements>
+ * - **FHIR Type:** `<StructureDefinition.snapshot.element[i].type.code[0]>`
+ *   - _TargetProfiles_: [ <StructureDefinition.snapshot.element[i].type.code[0].taretProfile[?]> ]
+ * - **Cardinality:** <StructureDefinition.snapshot.element[i].min>..<StructureDefinition.snapshot.element[i].max>
+ * - **isModifier:** <StructureDefinition.snapshot.element[i].isModifier>
+ * - **isModifierReason:** <StructureDefinition.snapshot.element[i].isModifier?>
+ * - **isSummary:** <StructureDefinition.snapshot.element[i].isSummary>
+ */
+```
+
+#### Polymorphic Field Header Template
+
+```typescript
+/**
+ * <StructureDefinition.snapshot.element[i].path> Element
+ *
+ * @remarks
+ * **FHIR Specification**
+ * - **Short:** <StructureDefinition.snapshot.element[i]?.short>
+ * - **Definition:** <StructureDefinition.snapshot.element[i]?.definition>
+ * - **Comment:** <StructureDefinition.snapshot.element[i]?.comment>
+ * - **Requirements:** <StructureDefinition.snapshot.element[i]?.requirements>
+ * - **FHIR Types:**
+ *  - `<StructureDefinition.snapshot.element[i].type.code[j]>`
+ *    - _TargetProfiles_: [ <StructureDefinition.snapshot.element[i].type.code[0].taretProfile[?]> ]
+ * - **Cardinality:** <StructureDefinition.snapshot.element[i].min>..<StructureDefinition.snapshot.element[i].max>
+ * - **isModifier:** <StructureDefinition.snapshot.element[i].isModifier>
+ * - **isModifierReason:** <StructureDefinition.snapshot.element[i].isModifier?>
+ * - **isSummary:** <StructureDefinition.snapshot.element[i].isSummary>
+ */
+```

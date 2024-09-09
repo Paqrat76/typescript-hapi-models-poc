@@ -21,6 +21,65 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.6.0] - 2024-09-09
+
+### Changed
+
+- Filled out Group resource
+- Updated tempTemplateTypeMethods and ensure existing code is consistent with the templates
+
+
+## [0.5.3] - 2024-09-05
+
+### Added
+
+- Added following complex data types for FHIR Group
+  - CodeableConcept
+  - Identifier
+  - Quantity
+  - Range
+  - Reference
+  - SimpleQuantity
+- Added QuantityComparatorEnum code system
+
+### Changed
+
+- Reorganized the source and test directory structure
+
+### Fixed
+
+- Resolved circular dependencies
+
+
+## [0.5.2] - 2024-09-02
+
+### Added
+
+- Added stub class for Group
+- Added FHIR CodeSystem: GroupTypeEnum
+
+### Changed
+
+- Updated all class and property headers using new template headers
+- Renamed FHIR code interfaces and code definition object
+
+### Fixed
+
+- Fixed Narrative - properties are required (1..1)
+
+
+## [0.5.1] - 2024-08-30
+
+### Added
+
+- Added `public abstract resourceType(): string;` to Resource
+
+### Changed
+
+- Changed all `getXxxxElement` methods to "auto create" an empty `XxxxType` rather than returning undefined.
+  See "Auto Create DataType Elements on `getXxxxElement`" section under "Design Decisions" in [design-note.md](./dev-docs/design-notes.md)
+
+
 ## [0.5.0] - 2024-08-29
 
 ### Added

@@ -21,14 +21,15 @@
  *
  */
 
-import { FHIR_MAX_STRING_LENGTH } from '@src/fhir/data-types/primitive/primitive-types';
+import { FHIR_MAX_STRING_LENGTH } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { IBase } from '@src/fhir-core/base-models/IBase';
 
 export {
   FHIR_MIN_INTEGER,
   FHIR_MAX_INTEGER,
   FHIR_MIN_INTEGER64,
   FHIR_MAX_INTEGER64,
-} from '@src/fhir/data-types/primitive/primitive-types';
+} from '@src/fhir-core/data-types/primitive/primitive-types';
 
 export const TOO_BIG_STRING = getString(FHIR_MAX_STRING_LENGTH + 2);
 
@@ -45,4 +46,17 @@ export function getString(maxLength: number): string {
   }
 
   return str;
+}
+
+export class MockFhirModel implements IBase {
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor,@typescript-eslint/no-empty-function
+  constructor() {}
+
+  public fhirType(): string {
+    return 'MockFhirModel';
+  }
+
+  public isEmpty(): boolean {
+    return true;
+  }
 }
