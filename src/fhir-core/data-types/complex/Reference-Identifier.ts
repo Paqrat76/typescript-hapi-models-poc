@@ -39,15 +39,7 @@ import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConce
 import { Period } from '@src/fhir-core/data-types/complex/Period';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
-import {
-  fhirCode,
-  fhirCodeSchema,
-  fhirString,
-  fhirStringSchema,
-  fhirUri,
-  fhirUriSchema,
-} from '@src/fhir-core/data-types/primitive/primitive-types';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { fhirCode, fhirString, fhirUri } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty } from '@src/fhir-core/utility/element-util';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
@@ -176,15 +168,8 @@ export class Reference extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setReference(value: fhirString | undefined): this {
-    if (value === undefined) {
-      this.reference = undefined;
-    } else {
-      const parseResult = fhirStringSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Reference.reference (${value})`, parseResult.error);
-      }
-      this.reference = new StringType(parseResult.data);
-    }
+    const optErrMsg = `Invalid Reference.reference (${String(value)})`;
+    this.reference = value === undefined ? undefined : new StringType(StringType.parse(value, optErrMsg));
     return this;
   }
 
@@ -235,15 +220,8 @@ export class Reference extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setType(value: fhirUri | undefined): this {
-    if (value === undefined) {
-      this.type = undefined;
-    } else {
-      const parseResult = fhirUriSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Reference.type (${value})`, parseResult.error);
-      }
-      this.type = new UriType(parseResult.data);
-    }
+    const optErrMsg = `Invalid Reference.type (${String(value)})`;
+    this.type = value === undefined ? undefined : new UriType(UriType.parse(value, optErrMsg));
     return this;
   }
 
@@ -319,15 +297,8 @@ export class Reference extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setDisplay(value: fhirString | undefined): this {
-    if (value === undefined) {
-      this.display = undefined;
-    } else {
-      const parseResult = fhirStringSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Reference.display (${value})`, parseResult.error);
-      }
-      this.display = new StringType(parseResult.data);
-    }
+    const optErrMsg = `Invalid Reference.display (${String(value)})`;
+    this.display = value === undefined ? undefined : new StringType(StringType.parse(value, optErrMsg));
     return this;
   }
 
@@ -530,15 +501,8 @@ export class Identifier extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setUse(value: fhirCode | undefined): this {
-    if (value === undefined) {
-      this.use = undefined;
-    } else {
-      const parseResult = fhirCodeSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Identifier.use (${value})`, parseResult.error);
-      }
-      this.use = new CodeType(parseResult.data);
-    }
+    const optErrMsg = `Invalid Identifier.use (${String(value)})`;
+    this.use = value === undefined ? undefined : new CodeType(CodeType.parse(value, optErrMsg));
     return this;
   }
 
@@ -614,15 +578,8 @@ export class Identifier extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setSystem(value: fhirUri | undefined): this {
-    if (value === undefined) {
-      this.system = undefined;
-    } else {
-      const parseResult = fhirUriSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Identifier.system (${value})`, parseResult.error);
-      }
-      this.system = new UriType(parseResult.data);
-    }
+    const optErrMsg = `Invalid Identifier.system (${String(value)})`;
+    this.system = value === undefined ? undefined : new UriType(UriType.parse(value, optErrMsg));
     return this;
   }
 
@@ -673,15 +630,8 @@ export class Identifier extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setValue(value: fhirString | undefined): this {
-    if (value === undefined) {
-      this.value = undefined;
-    } else {
-      const parseResult = fhirStringSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Identifier.value (${value})`, parseResult.error);
-      }
-      this.value = new StringType(parseResult.data);
-    }
+    const optErrMsg = `Invalid Identifier.value (${String(value)})`;
+    this.value = value === undefined ? undefined : new StringType(StringType.parse(value, optErrMsg));
     return this;
   }
 

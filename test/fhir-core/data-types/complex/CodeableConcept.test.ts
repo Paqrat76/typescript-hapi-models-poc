@@ -137,7 +137,7 @@ describe('CodeableConcept', () => {
       testCodeableConcept.setText(INVALID_STRING);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid CodeableConcept.text (${INVALID_STRING})`);
+    expect(t).toThrow(`Invalid CodeableConcept.text`);
   });
 
   it('should be properly reset by modifying all properties with primitive values', () => {

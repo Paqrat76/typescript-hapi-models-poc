@@ -160,29 +160,29 @@ describe('XhtmlType', () => {
     expect(t).toThrow(`Invalid value for XhtmlType`);
   });
 
-  it('should properly encode with correct values', () => {
+  it('should properly encodeToString with correct values', () => {
     const testXhtmlType = new XhtmlType(VALID_XHTML);
-    expect(testXhtmlType.encode(VALID_XHTML)).toStrictEqual(VALID_XHTML);
+    expect(testXhtmlType.encodeToString(VALID_XHTML)).toStrictEqual(VALID_XHTML);
   });
 
-  it('should throw PrimitiveTypeError when encode() with invalid value', () => {
+  it('should throw PrimitiveTypeError when encodeToString() with invalid value', () => {
     const testXhtmlType = new XhtmlType();
     const t = () => {
-      testXhtmlType.encode(INVALID_XHTML);
+      testXhtmlType.encodeToString(INVALID_XHTML);
     };
     expect(t).toThrow(PrimitiveTypeError);
     expect(t).toThrow(`Invalid value for XhtmlType`);
   });
 
-  it('should properly parse with correct values', () => {
+  it('should properly parseToPrimitive with correct values', () => {
     const testXhtmlType = new XhtmlType();
-    expect(testXhtmlType.parse(VALID_XHTML)).toStrictEqual(VALID_XHTML);
+    expect(testXhtmlType.parseToPrimitive(VALID_XHTML)).toStrictEqual(VALID_XHTML);
   });
 
-  it('should throw PrimitiveTypeError when parse() with invalid value', () => {
+  it('should throw PrimitiveTypeError when parseToPrimitive() with invalid value', () => {
     const testXhtmlType = new XhtmlType();
     const t = () => {
-      testXhtmlType.parse(INVALID_XHTML);
+      testXhtmlType.parseToPrimitive(INVALID_XHTML);
     };
     expect(t).toThrow(PrimitiveTypeError);
     expect(t).toThrow(`Invalid value for XhtmlType`);

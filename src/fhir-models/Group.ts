@@ -22,6 +22,7 @@
  */
 
 import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
+import { IBase } from '@src/fhir-core/base-models/IBase';
 import { BackboneElement, DataType } from '@src/fhir-core/base-models/core-fhir-models';
 import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
 import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
@@ -35,19 +36,14 @@ import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UnsignedIntType } from '@src/fhir-core/data-types/primitive/UnsignedIntType';
 import {
   fhirBoolean,
-  fhirBooleanSchema,
   fhirCode,
   fhirString,
-  fhirStringSchema,
   fhirUnsignedInt,
-  fhirUnsignedIntSchema,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { GroupTypeEnum } from '@src/fhir-models/code-systems/GroupTypeEnum';
 import { isElementEmpty } from '@src/fhir-core/utility/element-util';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { IBase } from '@src/fhir-core/base-models/IBase';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -90,14 +86,14 @@ export class Group extends DomainResource implements IBase {
         // fromCode() in EnumCodeType() will throw InvalidCodeError
         // if the provided code is undefined or is unknown
         if (err instanceof InvalidCodeError) {
-          const errMsg = `Invalid Group.type: ${err.message}`;
+          const errMsg = `Invalid Group.type parameter: ${err.message}`;
           throw new InvalidCodeError(errMsg, err);
         } else {
-          let errMsg = `Invalid Group.type: Unexpected Error`;
+          let errMsg: string;
           if (typeof type === 'string') {
-            errMsg = `Invalid Group.type (${type})`;
+            errMsg = `Invalid Group.type parameter (${type})`;
           } else {
-            errMsg = `Invalid Group.type: Unexpected error`;
+            errMsg = `Invalid Group.type parameter: Unexpected error`;
           }
           throw new InvalidCodeError(errMsg, err as Error);
         }
@@ -109,11 +105,8 @@ export class Group extends DomainResource implements IBase {
     } else if (actual instanceof BooleanType) {
       this.actual = actual;
     } else {
-      const parseResult = fhirBooleanSchema.safeParse(actual);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Group.actual (${String(actual)})`, parseResult.error);
-      }
-      this.actual = new BooleanType(parseResult.data);
+      const optErrMsg = `Invalid Group.actual parameter (${String(actual)})`;
+      this.actual = new BooleanType(BooleanType.parse(actual, optErrMsg));
     }
   }
 
@@ -373,15 +366,8 @@ export class Group extends DomainResource implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setActive(value: fhirBoolean | undefined): this {
-    if (value === undefined) {
-      this.active = undefined;
-    } else {
-      const parseResult = fhirBooleanSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Group.active (${String(value)})`, parseResult.error);
-      }
-      this.active = new BooleanType(parseResult.data);
-    }
+    const optErrMsg = `Invalid Group.active (${String(value)}))`;
+    this.active = value === undefined ? undefined : new BooleanType(BooleanType.parse(value, optErrMsg));
     return this;
   }
 
@@ -531,11 +517,8 @@ export class Group extends DomainResource implements IBase {
   public setActual(value: fhirBoolean): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (value !== null) {
-      const parseResult = fhirBooleanSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Group.actual (${String(value)})`, parseResult.error);
-      }
-      this.actual = new BooleanType(parseResult.data);
+      const optErrMsg = `Invalid Group.actual (${String(value)})`;
+      this.actual = new BooleanType(BooleanType.parse(value, optErrMsg));
     }
     return this;
   }
@@ -612,15 +595,8 @@ export class Group extends DomainResource implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setName(value: fhirString | undefined): this {
-    if (value === undefined) {
-      this.name = undefined;
-    } else {
-      const parseResult = fhirStringSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Group.name (${value})`, parseResult.error);
-      }
-      this.name = new StringType(parseResult.data);
-    }
+    const optErrMsg = `Invalid Group.name (${String(value)})`;
+    this.name = value === undefined ? undefined : new StringType(StringType.parse(value, optErrMsg));
     return this;
   }
 
@@ -671,16 +647,8 @@ export class Group extends DomainResource implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setQuantity(value: fhirUnsignedInt | undefined): this {
-    if (value === undefined) {
-      this.quantity = undefined;
-    } else {
-      const parseResult = fhirUnsignedIntSchema.safeParse(value);
-      if (!parseResult.success) {
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        throw new PrimitiveTypeError(`Invalid Group.quantity (${value})`, parseResult.error);
-      }
-      this.quantity = new UnsignedIntType(parseResult.data);
-    }
+    const optErrMsg = `Invalid Group.quantity (${String(value)})`;
+    this.quantity = value === undefined ? undefined : new UnsignedIntType(UnsignedIntType.parse(value, optErrMsg));
     return this;
   }
 
@@ -913,14 +881,8 @@ export class GroupCharacteristicComponent extends BackboneElement {
     } else if (exclude instanceof BooleanType) {
       this.exclude = exclude;
     } else {
-      const parseResult = fhirBooleanSchema.safeParse(exclude);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(
-          `Invalid GroupCharacteristicComponent.exclude (${String(exclude)})`,
-          parseResult.error,
-        );
-      }
-      this.exclude = new BooleanType(parseResult.data);
+      const optErrMsg = `Invalid GroupCharacteristicComponent.exclude parameter (${String(exclude)})`;
+      this.exclude = new BooleanType(BooleanType.parse(exclude, optErrMsg));
     }
   }
 
@@ -1228,14 +1190,8 @@ export class GroupCharacteristicComponent extends BackboneElement {
   public setExclude(value: fhirBoolean): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (value !== null) {
-      const parseResult = fhirBooleanSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(
-          `Invalid GroupCharacteristicComponent.exclude (${String(value)})`,
-          parseResult.error,
-        );
-      }
-      this.exclude = new BooleanType(parseResult.data);
+      const optErrMsg = `Invalid GroupCharacteristicComponent.exclude (${String(value)})`;
+      this.exclude = new BooleanType(BooleanType.parse(value, optErrMsg));
     }
     return this;
   }
@@ -1467,15 +1423,8 @@ export class GroupMemberComponent extends BackboneElement {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setInactive(value: fhirBoolean | undefined): this {
-    if (value === undefined) {
-      this.inactive = undefined;
-    } else {
-      const parseResult = fhirBooleanSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid GroupMemberComponent.inactive (${String(value)})`, parseResult.error);
-      }
-      this.inactive = new BooleanType(parseResult.data);
-    }
+    const optErrMsg = `Invalid GroupMemberComponent.inactive (${String(value)}))`;
+    this.inactive = value === undefined ? undefined : new BooleanType(BooleanType.parse(value, optErrMsg));
     return this;
   }
 

@@ -69,7 +69,7 @@ describe('CodeType', () => {
       new CodeType(INVALID_CODE);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_CODE}) for CodeType`);
+    expect(t).toThrow(`Invalid value for CodeType (${INVALID_CODE})`);
   });
 
   it('should be properly reset by setValue()', () => {
@@ -100,7 +100,7 @@ describe('CodeType', () => {
       testCodeType.setValue(INVALID_CODE);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_CODE}) for CodeType`);
+    expect(t).toThrow(`Invalid value for CodeType (${INVALID_CODE})`);
   });
 
   it('should properly setValueAsString() with correct values', () => {
@@ -117,35 +117,35 @@ describe('CodeType', () => {
       testCodeType.setValueAsString(INVALID_CODE);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_CODE}) for CodeType`);
+    expect(t).toThrow(`Invalid value for CodeType (${INVALID_CODE})`);
   });
 
-  it('should properly encode with correct values', () => {
+  it('should properly encodeToString with correct values', () => {
     const testCodeType = new CodeType(VALID_CODE);
-    expect(testCodeType.encode(VALID_CODE)).toStrictEqual(VALID_CODE);
+    expect(testCodeType.encodeToString(VALID_CODE)).toStrictEqual(VALID_CODE);
   });
 
-  it('should throw PrimitiveTypeError when encode() with invalid value', () => {
+  it('should throw PrimitiveTypeError when encodeToString() with invalid value', () => {
     const testCodeType = new CodeType();
     const t = () => {
-      testCodeType.encode(INVALID_CODE);
+      testCodeType.encodeToString(INVALID_CODE);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_CODE}) for CodeType`);
+    expect(t).toThrow(`Invalid value for CodeType (${INVALID_CODE})`);
   });
 
-  it('should properly parse with correct values', () => {
+  it('should properly parseToPrimitive with correct values', () => {
     const testCodeType = new CodeType();
-    expect(testCodeType.parse(VALID_CODE)).toStrictEqual(VALID_CODE);
+    expect(testCodeType.parseToPrimitive(VALID_CODE)).toStrictEqual(VALID_CODE);
   });
 
-  it('should throw PrimitiveTypeError when parse() with invalid value', () => {
+  it('should throw PrimitiveTypeError when parseToPrimitive() with invalid value', () => {
     const testCodeType = new CodeType();
     const t = () => {
-      testCodeType.parse(INVALID_CODE);
+      testCodeType.parseToPrimitive(INVALID_CODE);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_CODE}) for CodeType`);
+    expect(t).toThrow(`Invalid value for CodeType (${INVALID_CODE})`);
   });
 
   it('should properly copy()', () => {

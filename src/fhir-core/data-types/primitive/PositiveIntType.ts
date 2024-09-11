@@ -21,9 +21,9 @@
  *
  */
 
-import { fhirPositiveInt, fhirPositiveIntSchema } from './primitive-types';
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { fhirPositiveInt, fhirPositiveIntSchema } from './primitive-types';
 
 /**
  * PositiveInt Class
@@ -49,28 +49,36 @@ export class PositiveIntType extends PrimitiveType<fhirPositiveInt> {
     this.assignValue(value);
   }
 
+  /**
+   * Parses the provided value and returns the desired FHIR primitive value.
+   *
+   * @param value - value to be parsed
+   * @param errMessage - optional error message to override the default
+   * @returns the FHIR primitive value
+   * @throws PrimitiveTypeError for invalid value
+   */
+  static parse(value: string | number, errMessage?: string): fhirPositiveInt {
+    const valueNumber = typeof value === 'number' ? value : Number.parseInt(value);
+    const parseResult = fhirPositiveIntSchema.safeParse(valueNumber);
+    if (parseResult.success) {
+      return parseResult.data;
+    } else {
+      const errMsg = errMessage ?? `Invalid value for PositiveIntType (${String(value)})`;
+      throw new PrimitiveTypeError(errMsg, parseResult.error);
+    }
+  }
+
   public override setValue(value?: fhirPositiveInt): this {
     this.assignValue(value);
     return this;
   }
 
-  public encode(value: fhirPositiveInt): string {
-    const parseResult = fhirPositiveIntSchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data.toString();
-    } else {
-      throw new PrimitiveTypeError(`Invalid value for PositiveIntType`, parseResult.error);
-    }
+  public encodeToString(value: fhirPositiveInt): string {
+    return PositiveIntType.parse(value).toString();
   }
 
-  public parse(value: string): fhirPositiveInt {
-    const valueNumber = Number.parseInt(value);
-    const parseResult = fhirPositiveIntSchema.safeParse(valueNumber);
-    if (parseResult.success) {
-      return parseResult.data;
-    } else {
-      throw new PrimitiveTypeError(`Invalid value for PositiveIntType`, parseResult.error);
-    }
+  public parseToPrimitive(value: string): fhirPositiveInt {
+    return PositiveIntType.parse(value);
   }
 
   public override fhirType(): string {
@@ -90,12 +98,7 @@ export class PositiveIntType extends PrimitiveType<fhirPositiveInt> {
 
   private assignValue(value: fhirPositiveInt | undefined): void {
     if (value !== undefined) {
-      const parseResult = fhirPositiveIntSchema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value for PositiveIntType`, parseResult.error);
-      }
+      super.setValue(PositiveIntType.parse(value));
     } else {
       super.setValue(undefined);
     }

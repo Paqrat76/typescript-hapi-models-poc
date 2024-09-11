@@ -27,18 +27,8 @@ import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
-import {
-  fhirBoolean,
-  fhirBooleanSchema,
-  fhirCode,
-  fhirCodeSchema,
-  fhirString,
-  fhirStringSchema,
-  fhirUri,
-  fhirUriSchema,
-} from '@src/fhir-core/data-types/primitive/primitive-types';
+import { fhirBoolean, fhirCode, fhirString, fhirUri } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty } from '@src/fhir-core/utility/element-util';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -183,15 +173,8 @@ export class Coding extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setSystem(value: fhirUri | undefined): this {
-    if (value === undefined) {
-      this.system = undefined;
-    } else {
-      const parseResult = fhirUriSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Coding.system (${value})`, parseResult.error);
-      }
-      this.system = new UriType(parseResult.data);
-    }
+    const optErrMsg = `Invalid Coding.system (${String(value)})`;
+    this.system = value === undefined ? undefined : new UriType(UriType.parse(value, optErrMsg));
     return this;
   }
 
@@ -242,15 +225,8 @@ export class Coding extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setVersion(value: fhirString | undefined): this {
-    if (value === undefined) {
-      this.version = undefined;
-    } else {
-      const parseResult = fhirStringSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Coding.version (${value})`, parseResult.error);
-      }
-      this.version = new StringType(parseResult.data);
-    }
+    const optErrMsg = `Invalid Coding.version (${String(value)})`;
+    this.version = value === undefined ? undefined : new StringType(StringType.parse(value, optErrMsg));
     return this;
   }
 
@@ -301,15 +277,8 @@ export class Coding extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setCode(value: fhirCode | undefined): this {
-    if (value === undefined) {
-      this.code = undefined;
-    } else {
-      const parseResult = fhirCodeSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Coding.code (${value})`, parseResult.error);
-      }
-      this.code = new CodeType(parseResult.data);
-    }
+    const optErrMsg = `Invalid Coding.code (${String(value)})`;
+    this.code = value === undefined ? undefined : new CodeType(CodeType.parse(value, optErrMsg));
     return this;
   }
 
@@ -360,15 +329,8 @@ export class Coding extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setDisplay(value: fhirString | undefined): this {
-    if (value === undefined) {
-      this.display = undefined;
-    } else {
-      const parseResult = fhirStringSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Coding.display (${value})`, parseResult.error);
-      }
-      this.display = new StringType(parseResult.data);
-    }
+    const optErrMsg = `Invalid Coding.display (${String(value)})`;
+    this.display = value === undefined ? undefined : new StringType(StringType.parse(value, optErrMsg));
     return this;
   }
 
@@ -419,15 +381,8 @@ export class Coding extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setUserSelected(value: fhirBoolean | undefined): this {
-    if (value === undefined) {
-      this.userSelected = undefined;
-    } else {
-      const parseResult = fhirBooleanSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Coding.userSelected (${String(value)})`, parseResult.error);
-      }
-      this.userSelected = new BooleanType(parseResult.data);
-    }
+    const optErrMsg = `Invalid Coding.userSelected (${String(value)}))`;
+    this.userSelected = value === undefined ? undefined : new BooleanType(BooleanType.parse(value, optErrMsg));
     return this;
   }
 

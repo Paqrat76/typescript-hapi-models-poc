@@ -70,7 +70,7 @@ describe('UrlType', () => {
       new UrlType(INVALID_URL);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_URL}) for UrlType`);
+    expect(t).toThrow(`Invalid value for UrlType (${INVALID_URL})`);
   });
 
   it('should be properly reset by setValue()', () => {
@@ -101,7 +101,7 @@ describe('UrlType', () => {
       testUrlType.setValue(INVALID_URL);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_URL}) for UrlType`);
+    expect(t).toThrow(`Invalid value for UrlType (${INVALID_URL})`);
   });
 
   it('should properly setValueAsString() with correct values', () => {
@@ -118,35 +118,35 @@ describe('UrlType', () => {
       testUrlType.setValueAsString(INVALID_URL);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_URL}) for UrlType`);
+    expect(t).toThrow(`Invalid value for UrlType (${INVALID_URL})`);
   });
 
-  it('should properly encode with correct values', () => {
+  it('should properly encodeToString with correct values', () => {
     const testUrlType = new UrlType(VALID_URL);
-    expect(testUrlType.encode(VALID_URL)).toStrictEqual(VALID_URL);
+    expect(testUrlType.encodeToString(VALID_URL)).toStrictEqual(VALID_URL);
   });
 
-  it('should throw PrimitiveTypeError when encode() with invalid value', () => {
+  it('should throw PrimitiveTypeError when encodeToString() with invalid value', () => {
     const testUrlType = new UrlType();
     const t = () => {
-      testUrlType.encode(INVALID_URL);
+      testUrlType.encodeToString(INVALID_URL);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_URL}) for UrlType`);
+    expect(t).toThrow(`Invalid value for UrlType (${INVALID_URL})`);
   });
 
-  it('should properly parse with correct values', () => {
+  it('should properly parseToPrimitive with correct values', () => {
     const testUrlType = new UrlType();
-    expect(testUrlType.parse(VALID_URL)).toStrictEqual(VALID_URL);
+    expect(testUrlType.parseToPrimitive(VALID_URL)).toStrictEqual(VALID_URL);
   });
 
-  it('should throw PrimitiveTypeError when parse() with invalid value', () => {
+  it('should throw PrimitiveTypeError when parseToPrimitive() with invalid value', () => {
     const testUrlType = new UrlType();
     const t = () => {
-      testUrlType.parse(INVALID_URL);
+      testUrlType.parseToPrimitive(INVALID_URL);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_URL}) for UrlType`);
+    expect(t).toThrow(`Invalid value for UrlType (${INVALID_URL})`);
   });
 
   it('should properly copy()', () => {

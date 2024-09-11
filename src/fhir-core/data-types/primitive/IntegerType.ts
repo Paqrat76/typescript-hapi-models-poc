@@ -21,9 +21,9 @@
  *
  */
 
-import { fhirInteger, fhirIntegerSchema } from './primitive-types';
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { fhirInteger, fhirIntegerSchema } from './primitive-types';
 
 /**
  * Integer Class
@@ -50,28 +50,36 @@ export class IntegerType extends PrimitiveType<fhirInteger> {
     this.assignValue(value);
   }
 
+  /**
+   * Parses the provided value and returns the desired FHIR primitive value.
+   *
+   * @param value - value to be parsed
+   * @param errMessage - optional error message to override the default
+   * @returns the FHIR primitive value
+   * @throws PrimitiveTypeError for invalid value
+   */
+  static parse(value: string | number, errMessage?: string): fhirInteger {
+    const valueNumber = typeof value === 'number' ? value : Number.parseInt(value);
+    const parseResult = fhirIntegerSchema.safeParse(valueNumber);
+    if (parseResult.success) {
+      return parseResult.data;
+    } else {
+      const errMsg = errMessage ?? `Invalid value for IntegerType (${String(value)})`;
+      throw new PrimitiveTypeError(errMsg, parseResult.error);
+    }
+  }
+
   public override setValue(value?: fhirInteger): this {
     this.assignValue(value);
     return this;
   }
 
-  public encode(value: fhirInteger): string {
-    const parseResult = fhirIntegerSchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data.toString();
-    } else {
-      throw new PrimitiveTypeError(`Invalid value for IntegerType`, parseResult.error);
-    }
+  public encodeToString(value: fhirInteger): string {
+    return IntegerType.parse(value).toString();
   }
 
-  public parse(value: string): fhirInteger {
-    const valueNumber = Number.parseInt(value);
-    const parseResult = fhirIntegerSchema.safeParse(valueNumber);
-    if (parseResult.success) {
-      return parseResult.data;
-    } else {
-      throw new PrimitiveTypeError(`Invalid value for IntegerType`, parseResult.error);
-    }
+  public parseToPrimitive(value: string): fhirInteger {
+    return IntegerType.parse(value);
   }
 
   public override fhirType(): string {
@@ -91,12 +99,7 @@ export class IntegerType extends PrimitiveType<fhirInteger> {
 
   private assignValue(value: fhirInteger | undefined): void {
     if (value !== undefined) {
-      const parseResult = fhirIntegerSchema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value for IntegerType`, parseResult.error);
-      }
+      super.setValue(IntegerType.parse(value));
     } else {
       super.setValue(undefined);
     }

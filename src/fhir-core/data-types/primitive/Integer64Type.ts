@@ -21,9 +21,9 @@
  *
  */
 
-import { fhirInteger64, fhirInteger64Schema } from './primitive-types';
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { fhirInteger64, fhirInteger64Schema } from './primitive-types';
 
 /**
  * Integer64 Class
@@ -50,28 +50,36 @@ export class Integer64Type extends PrimitiveType<fhirInteger64> {
     this.assignValue(value);
   }
 
+  /**
+   * Parses the provided value and returns the desired FHIR primitive value.
+   *
+   * @param value - value to be parsed
+   * @param errMessage - optional error message to override the default
+   * @returns the FHIR primitive value
+   * @throws PrimitiveTypeError for invalid value
+   */
+  static parse(value: string | bigint, errMessage?: string): fhirInteger64 {
+    const valueNumber = typeof value === 'bigint' ? value : BigInt(value);
+    const parseResult = fhirInteger64Schema.safeParse(valueNumber);
+    if (parseResult.success) {
+      return parseResult.data;
+    } else {
+      const errMsg = errMessage ?? `Invalid value for Integer64Type (${String(valueNumber)})`;
+      throw new PrimitiveTypeError(errMsg, parseResult.error);
+    }
+  }
+
   public override setValue(value?: fhirInteger64): this {
     this.assignValue(value);
     return this;
   }
 
-  public encode(value: fhirInteger64): string {
-    const parseResult = fhirInteger64Schema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data.toString();
-    } else {
-      throw new PrimitiveTypeError(`Invalid value for Integer64Type`, parseResult.error);
-    }
+  public encodeToString(value: fhirInteger64): string {
+    return Integer64Type.parse(value).toString();
   }
 
-  public parse(value: string): fhirInteger64 {
-    const valueNumber = BigInt(value);
-    const parseResult = fhirInteger64Schema.safeParse(valueNumber);
-    if (parseResult.success) {
-      return parseResult.data;
-    } else {
-      throw new PrimitiveTypeError(`Invalid value for Integer64Type`, parseResult.error);
-    }
+  public parseToPrimitive(value: string): fhirInteger64 {
+    return Integer64Type.parse(value);
   }
 
   public override fhirType(): string {
@@ -91,12 +99,7 @@ export class Integer64Type extends PrimitiveType<fhirInteger64> {
 
   private assignValue(value: fhirInteger64 | undefined): void {
     if (value !== undefined) {
-      const parseResult = fhirInteger64Schema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value for Integer64Type`, parseResult.error);
-      }
+      super.setValue(Integer64Type.parse(value));
     } else {
       super.setValue(undefined);
     }

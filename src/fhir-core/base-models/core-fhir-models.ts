@@ -815,7 +815,7 @@ export abstract class PrimitiveType<T> extends DataType implements IBase {
   public setValueAsString(value?: string): void {
     this.stringValue = value;
     if (value !== undefined) {
-      this.coercedValue = this.parse(value);
+      this.coercedValue = this.parseToPrimitive(value);
     } else {
       this.coercedValue = undefined;
     }
@@ -829,7 +829,7 @@ export abstract class PrimitiveType<T> extends DataType implements IBase {
    */
   private updateStringValue(): void {
     if (this.coercedValue !== undefined) {
-      this.stringValue = this.encode(this.coercedValue);
+      this.stringValue = this.encodeToString(this.coercedValue);
     } else {
       this.stringValue = undefined;
     }
@@ -842,7 +842,7 @@ export abstract class PrimitiveType<T> extends DataType implements IBase {
    * @returns the `string` representation of T
    * @throws PrimitiveTypeError for invalid value
    */
-  public abstract encode(value: T): string;
+  public abstract encodeToString(value: T): string;
 
   /**
    * Parses the provided `string` value and coerces it into the generic T value.
@@ -851,7 +851,7 @@ export abstract class PrimitiveType<T> extends DataType implements IBase {
    * @returns the generic T value
    * @throws PrimitiveTypeError for invalid value
    */
-  public abstract parse(value: string): T;
+  public abstract parseToPrimitive(value: string): T;
 
   /**
    * {@inheritDoc Base.isEmpty}

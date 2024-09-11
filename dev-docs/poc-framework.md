@@ -78,8 +78,8 @@ classDiagram
     PrimitiveType : +hasValue() bool
     PrimitiveType : +getValueAsString() string
     PrimitiveType : +setValueAsString(string)
-    PrimitiveType : +encode(T) string*
-    PrimitiveType : +parse(string) T*
+    PrimitiveType : +encodeToString(T) string*
+    PrimitiveType : +parseToPrimitive(string) T*
   PrimitiveType --|> DataType
 
   class Resource["Resource (F)"]

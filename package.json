@@ -1,6 +1,6 @@
 {
   "name": "typescript-hapi-models-poc",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "POC project for TypeScript FHIR data models inspired by HAPI FHIR",
   "keywords": [
     "node",

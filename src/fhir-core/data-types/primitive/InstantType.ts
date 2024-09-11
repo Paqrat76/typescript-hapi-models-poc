@@ -21,9 +21,9 @@
  *
  */
 
-import { fhirInstant, fhirInstantSchema } from './primitive-types';
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { fhirInstant, fhirInstantSchema } from './primitive-types';
 
 /**
  * Instant Class
@@ -50,27 +50,35 @@ export class InstantType extends PrimitiveType<fhirInstant> {
     this.assignValue(value);
   }
 
+  /**
+   * Parses the provided value and returns the desired FHIR primitive value.
+   *
+   * @param value - value to be parsed
+   * @param errMessage - optional error message to override the default
+   * @returns the FHIR primitive value
+   * @throws PrimitiveTypeError for invalid value
+   */
+  static parse(value: string, errMessage?: string): fhirInstant {
+    const parseResult = fhirInstantSchema.safeParse(value);
+    if (parseResult.success) {
+      return parseResult.data;
+    } else {
+      const errMsg = errMessage ?? `Invalid value for InstantType (${String(value)})`;
+      throw new PrimitiveTypeError(errMsg, parseResult.error);
+    }
+  }
+
   public override setValue(value?: fhirInstant): this {
     this.assignValue(value);
     return this;
   }
 
-  public encode(value: fhirInstant): string {
-    const parseResult = fhirInstantSchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data.toString();
-    } else {
-      throw new PrimitiveTypeError(`Invalid value (${value}) for InstantType`, parseResult.error);
-    }
+  public encodeToString(value: fhirInstant): string {
+    return InstantType.parse(value).toString();
   }
 
-  public parse(value: string): fhirInstant {
-    const parseResult = fhirInstantSchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data;
-    } else {
-      throw new PrimitiveTypeError(`Invalid value (${value}) for InstantType`, parseResult.error);
-    }
+  public parseToPrimitive(value: string): fhirInstant {
+    return InstantType.parse(value);
   }
 
   public override fhirType(): string {
@@ -90,12 +98,7 @@ export class InstantType extends PrimitiveType<fhirInstant> {
 
   private assignValue(value: fhirInstant | undefined): void {
     if (value !== undefined) {
-      const parseResult = fhirInstantSchema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value (${value}) for InstantType`, parseResult.error);
-      }
+      super.setValue(InstantType.parse(value));
     } else {
       super.setValue(undefined);
     }

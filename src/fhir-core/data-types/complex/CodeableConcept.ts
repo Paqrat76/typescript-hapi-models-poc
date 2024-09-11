@@ -25,9 +25,8 @@ import { DataType } from '@src/fhir-core/base-models/core-fhir-models';
 import { IBase } from '@src/fhir-core/base-models/IBase';
 import { Coding } from '@src/fhir-core/data-types/complex/Coding';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
-import { fhirString, fhirStringSchema } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { fhirString } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty } from '@src/fhir-core/utility/element-util';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -177,15 +176,8 @@ export class CodeableConcept extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setText(value: fhirString | undefined): this {
-    if (value === undefined) {
-      this.text = undefined;
-    } else {
-      const parseResult = fhirStringSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid CodeableConcept.text (${value})`, parseResult.error);
-      }
-      this.text = new StringType(parseResult.data);
-    }
+    const optErrMsg = `Invalid CodeableConcept.text`;
+    this.text = value === undefined ? undefined : new StringType(StringType.parse(value, optErrMsg));
     return this;
   }
 

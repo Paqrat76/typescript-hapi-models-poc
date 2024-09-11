@@ -147,47 +147,47 @@ describe('StringType', () => {
     expect(t).toThrow('Invalid value for StringType');
   });
 
-  it('should properly encode with correct values', () => {
+  it('should properly encodeToString with correct values', () => {
     const testStringType = new StringType();
-    expect(testStringType.encode(VALID_STRING)).toStrictEqual(VALID_STRING);
+    expect(testStringType.encodeToString(VALID_STRING)).toStrictEqual(VALID_STRING);
   });
 
-  it('should throw PrimitiveTypeError when encode() with empty value', () => {
+  it('should throw PrimitiveTypeError when encodeToString() with empty value', () => {
     const testStringType = new StringType();
     const t = () => {
-      testStringType.encode(EMPTY_STRING);
+      testStringType.encodeToString(EMPTY_STRING);
     };
     expect(t).toThrow(PrimitiveTypeError);
     expect(t).toThrow('Invalid value for StringType');
   });
 
-  it('should throw PrimitiveTypeError when encode() with too big value', () => {
+  it('should throw PrimitiveTypeError when encodeToString() with too big value', () => {
     const testStringType = new StringType();
     const t = () => {
-      testStringType.encode(TOO_BIG_STRING);
+      testStringType.encodeToString(TOO_BIG_STRING);
     };
     expect(t).toThrow(PrimitiveTypeError);
     expect(t).toThrow('Invalid value for StringType');
   });
 
-  it('should properly parse with correct values', () => {
+  it('should properly parseToPrimitive with correct values', () => {
     const testStringType = new StringType();
-    expect(testStringType.parse(VALID_STRING)).toStrictEqual(VALID_STRING);
+    expect(testStringType.parseToPrimitive(VALID_STRING)).toStrictEqual(VALID_STRING);
   });
 
-  it('should throw PrimitiveTypeError when parse() with empty value', () => {
+  it('should throw PrimitiveTypeError when parseToPrimitive() with empty value', () => {
     const testStringType = new StringType();
     const t = () => {
-      testStringType.parse(EMPTY_STRING);
+      testStringType.parseToPrimitive(EMPTY_STRING);
     };
     expect(t).toThrow(PrimitiveTypeError);
     expect(t).toThrow('Invalid value for StringType');
   });
 
-  it('should throw PrimitiveTypeError when parse() with too big value', () => {
+  it('should throw PrimitiveTypeError when parseToPrimitive() with too big value', () => {
     const testStringType = new StringType();
     const t = () => {
-      testStringType.parse(TOO_BIG_STRING);
+      testStringType.parseToPrimitive(TOO_BIG_STRING);
     };
     expect(t).toThrow(PrimitiveTypeError);
     expect(t).toThrow('Invalid value for StringType');

@@ -69,7 +69,7 @@ describe('OidType', () => {
       new OidType(INVALID_OID);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_OID}) for OidType`);
+    expect(t).toThrow(`Invalid value for OidType (${INVALID_OID})`);
   });
 
   it('should be properly reset by setValue()', () => {
@@ -100,7 +100,7 @@ describe('OidType', () => {
       testOidType.setValue(INVALID_OID);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_OID}) for OidType`);
+    expect(t).toThrow(`Invalid value for OidType (${INVALID_OID})`);
   });
 
   it('should properly setValueAsString() with correct values', () => {
@@ -117,35 +117,35 @@ describe('OidType', () => {
       testOidType.setValueAsString(INVALID_OID);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_OID}) for OidType`);
+    expect(t).toThrow(`Invalid value for OidType (${INVALID_OID})`);
   });
 
-  it('should properly encode with correct values', () => {
+  it('should properly encodeToString with correct values', () => {
     const testOidType = new OidType(VALID_OID);
-    expect(testOidType.encode(VALID_OID)).toStrictEqual(VALID_OID);
+    expect(testOidType.encodeToString(VALID_OID)).toStrictEqual(VALID_OID);
   });
 
-  it('should throw PrimitiveTypeError when encode() with invalid value', () => {
+  it('should throw PrimitiveTypeError when encodeToString() with invalid value', () => {
     const testOidType = new OidType();
     const t = () => {
-      testOidType.encode(INVALID_OID);
+      testOidType.encodeToString(INVALID_OID);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_OID}) for OidType`);
+    expect(t).toThrow(`Invalid value for OidType (${INVALID_OID})`);
   });
 
-  it('should properly parse with correct values', () => {
+  it('should properly parseToPrimitive with correct values', () => {
     const testOidType = new OidType();
-    expect(testOidType.parse(VALID_OID)).toStrictEqual(VALID_OID);
+    expect(testOidType.parseToPrimitive(VALID_OID)).toStrictEqual(VALID_OID);
   });
 
-  it('should throw PrimitiveTypeError when parse() with invalid value', () => {
+  it('should throw PrimitiveTypeError when parseToPrimitive() with invalid value', () => {
     const testOidType = new OidType();
     const t = () => {
-      testOidType.parse(INVALID_OID);
+      testOidType.parseToPrimitive(INVALID_OID);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_OID}) for OidType`);
+    expect(t).toThrow(`Invalid value for OidType (${INVALID_OID})`);
   });
 
   it('should properly copy()', () => {

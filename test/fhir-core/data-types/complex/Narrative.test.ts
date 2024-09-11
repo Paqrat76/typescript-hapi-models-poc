@@ -214,7 +214,7 @@ describe('Narrative', () => {
       new Narrative(new CodeType(INVALID_CODE), VALID_XHTML);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_CODE}) for CodeType`);
+    expect(t).toThrow(`Invalid value for CodeType (${INVALID_CODE})`);
   });
 
   it('should throw PrimitiveTypeError when initialized with invalid EnumCodeType Narrative.status value', () => {
@@ -222,7 +222,7 @@ describe('Narrative', () => {
       new Narrative(new EnumCodeType(INVALID_CODE, narrativeStatusEnum), VALID_XHTML);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_CODE}) for CodeType`);
+    expect(t).toThrow(`Invalid value for CodeType (${INVALID_CODE})`);
   });
 
   it('should throw PrimitiveTypeError when reset with invalid primitive Narrative.status value', () => {
@@ -231,7 +231,7 @@ describe('Narrative', () => {
       testNarrative.setStatus(INVALID_CODE);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_CODE}) for CodeType`);
+    expect(t).toThrow(`Invalid value for CodeType (${INVALID_CODE})`);
   });
 
   it('should throw PrimitiveTypeError when reset with invalid PrimitiveType Narrative.status value', () => {
@@ -240,7 +240,7 @@ describe('Narrative', () => {
       testNarrative.setStatusElement(new CodeType(INVALID_CODE));
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_CODE}) for CodeType`);
+    expect(t).toThrow(`Invalid value for CodeType (${INVALID_CODE})`);
   });
 
   it('should throw PrimitiveTypeError when reset with invalid EnumCodeType Narrative.status value', () => {
@@ -249,7 +249,7 @@ describe('Narrative', () => {
       testNarrative.setStatueEnumType(new EnumCodeType(INVALID_CODE, narrativeStatusEnum));
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_CODE}) for CodeType`);
+    expect(t).toThrow(`Invalid value for CodeType (${INVALID_CODE})`);
   });
 
   it('should throw PrimitiveTypeError when initialized with invalid primitive Narrative.div value', () => {
@@ -257,7 +257,7 @@ describe('Narrative', () => {
       new Narrative(VALID_CODE_GENERATED, INVALID_XHTML);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid Narrative.div (${INVALID_XHTML})`);
+    expect(t).toThrow(`Invalid Narrative.div`);
   });
 
   it('should throw PrimitiveTypeError when initialized with invalid PrimitiveType Narrative.div value', () => {
@@ -457,7 +457,7 @@ describe('Narrative', () => {
       testNarrative.setDiv(INVALID_XHTML);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid Narrative.div value`);
+    expect(t).toThrow(`Invalid Narrative.div`);
   });
 
   it('should throw PrimitiveTypeError when reset with invalid PrimitiveType Narrative.div value', () => {

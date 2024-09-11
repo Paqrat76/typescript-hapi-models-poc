@@ -30,17 +30,7 @@ import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { isElementEmpty } from '@src/fhir-core/utility/element-util';
 import { QuantityComparatorEnum } from '@src/fhir-core/data-types/complex/code-systems/QuantityComparatorEnum';
-import {
-  fhirCode,
-  fhirCodeSchema,
-  fhirDecimal,
-  fhirDecimalSchema,
-  fhirString,
-  fhirStringSchema,
-  fhirUri,
-  fhirUriSchema,
-} from '@src/fhir-core/data-types/primitive/primitive-types';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { fhirCode, fhirDecimal, fhirString, fhirUri } from '@src/fhir-core/data-types/primitive/primitive-types';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -188,16 +178,8 @@ export class Quantity extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setValue(value: fhirDecimal | undefined): this {
-    if (value === undefined) {
-      this.value = undefined;
-    } else {
-      const parseResult = fhirDecimalSchema.safeParse(value);
-      if (!parseResult.success) {
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        throw new PrimitiveTypeError(`Invalid Quantity.value (${value})`, parseResult.error);
-      }
-      this.value = new DecimalType(parseResult.data);
-    }
+    const optErrMsg = `Invalid Quantity.value (${String(value)})`;
+    this.value = value === undefined ? undefined : new DecimalType(DecimalType.parse(value, optErrMsg));
     return this;
   }
 
@@ -339,15 +321,8 @@ export class Quantity extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setUnit(value: fhirString | undefined): this {
-    if (value === undefined) {
-      this.unit = undefined;
-    } else {
-      const parseResult = fhirStringSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Quantity.unit (${value})`, parseResult.error);
-      }
-      this.unit = new StringType(parseResult.data);
-    }
+    const optErrMsg = `Invalid Quantity.unit (${String(value)})`;
+    this.unit = value === undefined ? undefined : new StringType(StringType.parse(value, optErrMsg));
     return this;
   }
 
@@ -398,15 +373,8 @@ export class Quantity extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setSystem(value: fhirUri | undefined): this {
-    if (value === undefined) {
-      this.system = undefined;
-    } else {
-      const parseResult = fhirUriSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Quantity.system (${value})`, parseResult.error);
-      }
-      this.system = new UriType(parseResult.data);
-    }
+    const optErrMsg = `Invalid Quantity.system (${String(value)})`;
+    this.system = value === undefined ? undefined : new UriType(UriType.parse(value, optErrMsg));
     return this;
   }
 
@@ -457,15 +425,8 @@ export class Quantity extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setCode(value: fhirCode | undefined): this {
-    if (value === undefined) {
-      this.code = undefined;
-    } else {
-      const parseResult = fhirCodeSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Quantity.code (${value})`, parseResult.error);
-      }
-      this.code = new CodeType(parseResult.data);
-    }
+    const optErrMsg = `Invalid Quantity.code (${String(value)})`;
+    this.code = value === undefined ? undefined : new CodeType(CodeType.parse(value, optErrMsg));
     return this;
   }
 

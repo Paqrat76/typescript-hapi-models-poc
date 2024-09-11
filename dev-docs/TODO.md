@@ -2,8 +2,6 @@
 
 ## POC Feature Set
 
-- Make PrimitiveType `encode()` and `decode()` static methods. Use these static methods to replace
-  existing primitive handling code in constructors and primitive methods.
 - Decide on whether `resourceType()` should return a string based on `fhirType()` or an `enum ResourceType`.
 - Investigate and implement approach to ensure `Reference.reference` only accepts target references.
 - Investigate and implement approach to runtime parameter assertions (e.g., not null, not undefined, not empty,

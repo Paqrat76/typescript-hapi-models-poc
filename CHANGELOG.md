@@ -21,6 +21,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.7.0] - 2024-09-11
+
+### Added
+
+- Added static parse method to all PrimitiveType classes; Used new parse method to replace redundant code
+
+
 ## [0.6.0] - 2024-09-09
 
 ### Changed

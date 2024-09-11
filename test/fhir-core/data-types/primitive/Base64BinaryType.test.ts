@@ -120,29 +120,29 @@ describe('Base64BinaryType', () => {
     expect(t).toThrow(`Invalid value for Base64BinaryType`);
   });
 
-  it('should properly encode with correct values', () => {
+  it('should properly encodeToString() with correct values', () => {
     const testBase64BinaryType = new Base64BinaryType(VALID_BASE64BINARY);
-    expect(testBase64BinaryType.encode(VALID_BASE64BINARY)).toStrictEqual(VALID_BASE64BINARY);
+    expect(testBase64BinaryType.encodeToString(VALID_BASE64BINARY)).toStrictEqual(VALID_BASE64BINARY);
   });
 
-  it('should throw PrimitiveTypeError when encode() with invalid value', () => {
+  it('should throw PrimitiveTypeError when encodeToString() with invalid value', () => {
     const testBase64BinaryType = new Base64BinaryType();
     const t = () => {
-      testBase64BinaryType.encode(INVALID_BASE64BINARY);
+      testBase64BinaryType.encodeToString(INVALID_BASE64BINARY);
     };
     expect(t).toThrow(PrimitiveTypeError);
     expect(t).toThrow(`Invalid value for Base64BinaryType`);
   });
 
-  it('should properly parse with correct values', () => {
+  it('should properly parseToPrimitive() with correct values', () => {
     const testBase64BinaryType = new Base64BinaryType();
-    expect(testBase64BinaryType.parse(VALID_BASE64BINARY)).toStrictEqual(VALID_BASE64BINARY);
+    expect(testBase64BinaryType.parseToPrimitive(VALID_BASE64BINARY)).toStrictEqual(VALID_BASE64BINARY);
   });
 
-  it('should throw PrimitiveTypeError when parse() with invalid value', () => {
+  it('should throw PrimitiveTypeError when parseToPrimitive() with invalid value', () => {
     const testBase64BinaryType = new Base64BinaryType();
     const t = () => {
-      testBase64BinaryType.parse(INVALID_BASE64BINARY);
+      testBase64BinaryType.parseToPrimitive(INVALID_BASE64BINARY);
     };
     expect(t).toThrow(PrimitiveTypeError);
     expect(t).toThrow(`Invalid value for Base64BinaryType`);

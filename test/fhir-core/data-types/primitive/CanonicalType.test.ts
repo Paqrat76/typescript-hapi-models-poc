@@ -70,7 +70,7 @@ describe('CanonicalType', () => {
       new CanonicalType(INVALID_CANONICAL);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_CANONICAL}) for CanonicalType`);
+    expect(t).toThrow(`Invalid value for CanonicalType (${INVALID_CANONICAL})`);
   });
 
   it('should be properly reset by setValue()', () => {
@@ -101,7 +101,7 @@ describe('CanonicalType', () => {
       testCanonicalType.setValue(INVALID_CANONICAL);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_CANONICAL}) for CanonicalType`);
+    expect(t).toThrow(`Invalid value for CanonicalType (${INVALID_CANONICAL})`);
   });
 
   it('should properly setValueAsString() with correct values', () => {
@@ -118,35 +118,35 @@ describe('CanonicalType', () => {
       testCanonicalType.setValueAsString(INVALID_CANONICAL);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_CANONICAL}) for CanonicalType`);
+    expect(t).toThrow(`Invalid value for CanonicalType (${INVALID_CANONICAL})`);
   });
 
-  it('should properly encode with correct values', () => {
+  it('should properly encodeToString with correct values', () => {
     const testCanonicalType = new CanonicalType(VALID_CANONICAL);
-    expect(testCanonicalType.encode(VALID_CANONICAL)).toStrictEqual(VALID_CANONICAL);
+    expect(testCanonicalType.encodeToString(VALID_CANONICAL)).toStrictEqual(VALID_CANONICAL);
   });
 
-  it('should throw PrimitiveTypeError when encode() with invalid value', () => {
+  it('should throw PrimitiveTypeError when encodeToString() with invalid value', () => {
     const testCanonicalType = new CanonicalType();
     const t = () => {
-      testCanonicalType.encode(INVALID_CANONICAL);
+      testCanonicalType.encodeToString(INVALID_CANONICAL);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_CANONICAL}) for CanonicalType`);
+    expect(t).toThrow(`Invalid value for CanonicalType (${INVALID_CANONICAL})`);
   });
 
-  it('should properly parse with correct values', () => {
+  it('should properly parseToPrimitive with correct values', () => {
     const testCanonicalType = new CanonicalType();
-    expect(testCanonicalType.parse(VALID_CANONICAL)).toStrictEqual(VALID_CANONICAL);
+    expect(testCanonicalType.parseToPrimitive(VALID_CANONICAL)).toStrictEqual(VALID_CANONICAL);
   });
 
-  it('should throw PrimitiveTypeError when parse() with invalid value', () => {
+  it('should throw PrimitiveTypeError when parseToPrimitive() with invalid value', () => {
     const testCanonicalType = new CanonicalType();
     const t = () => {
-      testCanonicalType.parse(INVALID_CANONICAL);
+      testCanonicalType.parseToPrimitive(INVALID_CANONICAL);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_CANONICAL}) for CanonicalType`);
+    expect(t).toThrow(`Invalid value for CanonicalType (${INVALID_CANONICAL})`);
   });
 
   it('should properly copy()', () => {
