@@ -69,7 +69,7 @@ describe('TimeType', () => {
       new TimeType(INVALID_TIME);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_TIME}) for TimeType`);
+    expect(t).toThrow(`Invalid value for TimeType (${INVALID_TIME})`);
   });
 
   it('should be properly reset by setValue()', () => {
@@ -100,7 +100,7 @@ describe('TimeType', () => {
       testTimeType.setValue(INVALID_TIME);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_TIME}) for TimeType`);
+    expect(t).toThrow(`Invalid value for TimeType (${INVALID_TIME})`);
   });
 
   it('should properly setValueAsString() with correct values', () => {
@@ -117,35 +117,35 @@ describe('TimeType', () => {
       testTimeType.setValueAsString(INVALID_TIME);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_TIME}) for TimeType`);
+    expect(t).toThrow(`Invalid value for TimeType (${INVALID_TIME})`);
   });
 
-  it('should properly encode with correct values', () => {
+  it('should properly encodeToString with correct values', () => {
     const testTimeType = new TimeType();
-    expect(testTimeType.encode(VALID_TIME)).toStrictEqual(VALID_TIME);
+    expect(testTimeType.encodeToString(VALID_TIME)).toStrictEqual(VALID_TIME);
   });
 
-  it('should throw PrimitiveTypeError when encode() with invalid value', () => {
-    const testTimeType = new TimeType();
-    const t = () => {
-      testTimeType.encode(INVALID_TIME);
-    };
-    expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_TIME}) for TimeType`);
-  });
-
-  it('should properly parse with correct values', () => {
-    const testTimeType = new TimeType();
-    expect(testTimeType.parse(VALID_TIME)).toStrictEqual(VALID_TIME);
-  });
-
-  it('should throw PrimitiveTypeError when parse() with invalid value', () => {
+  it('should throw PrimitiveTypeError when encodeToString() with invalid value', () => {
     const testTimeType = new TimeType();
     const t = () => {
-      testTimeType.parse(INVALID_TIME);
+      testTimeType.encodeToString(INVALID_TIME);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_TIME}) for TimeType`);
+    expect(t).toThrow(`Invalid value for TimeType (${INVALID_TIME})`);
+  });
+
+  it('should properly parseToPrimitive with correct values', () => {
+    const testTimeType = new TimeType();
+    expect(testTimeType.parseToPrimitive(VALID_TIME)).toStrictEqual(VALID_TIME);
+  });
+
+  it('should throw PrimitiveTypeError when parseToPrimitive() with invalid value', () => {
+    const testTimeType = new TimeType();
+    const t = () => {
+      testTimeType.parseToPrimitive(INVALID_TIME);
+    };
+    expect(t).toThrow(PrimitiveTypeError);
+    expect(t).toThrow(`Invalid value for TimeType (${INVALID_TIME})`);
   });
 
   it('should properly copy()', () => {

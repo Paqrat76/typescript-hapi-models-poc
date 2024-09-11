@@ -118,7 +118,7 @@ describe('BooleanType', () => {
   });
 
   it('should properly setValueAsString() with correct values', () => {
-    // NOTE: setValueAsString() uses parse() tested below
+    // NOTE: setValueAsString() uses parseToPrimitive() tested below
     const testBooleanType = new BooleanType();
     testBooleanType.setValueAsString('true');
     expect(testBooleanType.getValue()).toBe(true);
@@ -137,36 +137,36 @@ describe('BooleanType', () => {
     expect(t).toThrow('Invalid value for BooleanType');
   });
 
-  it('should properly encode with correct values', () => {
+  it('should properly encodeToString with correct values', () => {
     const testBooleanType = new BooleanType();
-    expect(testBooleanType.encode(true)).toStrictEqual('true');
-    expect(testBooleanType.encode(false)).toStrictEqual('false');
+    expect(testBooleanType.encodeToString(true)).toStrictEqual('true');
+    expect(testBooleanType.encodeToString(false)).toStrictEqual('false');
   });
 
-  it('should throw PrimitiveTypeError when encode() with non-boolean value', () => {
+  it('should throw PrimitiveTypeError when encodeToString() with non-boolean value', () => {
     const testBooleanType = new BooleanType();
     const t = () => {
       // @ts-expect-error: allow non-boolean to test error handling
-      testBooleanType.encode(INVALID_BOOLEAN);
+      testBooleanType.encodeToString(INVALID_BOOLEAN);
     };
     expect(t).toThrow(PrimitiveTypeError);
     expect(t).toThrow('Invalid value for BooleanType');
   });
 
-  it('should properly parse with correct values', () => {
+  it('should properly parseToPrimitive with correct values', () => {
     const testBooleanType = new BooleanType();
-    expect(testBooleanType.parse('true')).toBe(true);
-    expect(testBooleanType.parse('TRUE')).toBe(true);
-    expect(testBooleanType.parse(' TrUe ')).toBe(true);
-    expect(testBooleanType.parse('false')).toBe(false);
-    expect(testBooleanType.parse('FALSE')).toBe(false);
-    expect(testBooleanType.parse(' FaLsE ')).toBe(false);
+    expect(testBooleanType.parseToPrimitive('true')).toBe(true);
+    expect(testBooleanType.parseToPrimitive('TRUE')).toBe(true);
+    expect(testBooleanType.parseToPrimitive(' TrUe ')).toBe(true);
+    expect(testBooleanType.parseToPrimitive('false')).toBe(false);
+    expect(testBooleanType.parseToPrimitive('FALSE')).toBe(false);
+    expect(testBooleanType.parseToPrimitive(' FaLsE ')).toBe(false);
   });
 
-  it('should throw PrimitiveTypeError when parse() with non-boolean value', () => {
+  it('should throw PrimitiveTypeError when parseToPrimitive() with non-boolean value', () => {
     const testBooleanType = new BooleanType();
     const t = () => {
-      testBooleanType.parse(INVALID_BOOLEAN);
+      testBooleanType.parseToPrimitive(INVALID_BOOLEAN);
     };
     expect(t).toThrow(PrimitiveTypeError);
     expect(t).toThrow('Invalid value for BooleanType');

@@ -69,7 +69,7 @@ describe('DateTimeType', () => {
       new DateTimeType(INVALID_DATETIME);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_DATETIME}) for DateTimeType`);
+    expect(t).toThrow(`Invalid value for DateTimeType (${INVALID_DATETIME})`);
   });
 
   it('should be properly reset by setValue()', () => {
@@ -100,7 +100,7 @@ describe('DateTimeType', () => {
       testDateTimeType.setValue(INVALID_DATETIME);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_DATETIME}) for DateTimeType`);
+    expect(t).toThrow(`Invalid value for DateTimeType (${INVALID_DATETIME})`);
   });
 
   it('should properly setValueAsString() with correct values', () => {
@@ -117,35 +117,35 @@ describe('DateTimeType', () => {
       testDateTimeType.setValueAsString(INVALID_DATETIME);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_DATETIME}) for DateTimeType`);
+    expect(t).toThrow(`Invalid value for DateTimeType (${INVALID_DATETIME})`);
   });
 
-  it('should properly encode with correct values', () => {
+  it('should properly encodeToString with correct values', () => {
     const testDateTimeType = new DateTimeType();
-    expect(testDateTimeType.encode(VALID_DATETIME)).toStrictEqual(VALID_DATETIME);
+    expect(testDateTimeType.encodeToString(VALID_DATETIME)).toStrictEqual(VALID_DATETIME);
   });
 
-  it('should throw PrimitiveTypeError when encode() with invalid value', () => {
-    const testDateTimeType = new DateTimeType();
-    const t = () => {
-      testDateTimeType.encode(INVALID_DATETIME);
-    };
-    expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_DATETIME}) for DateTimeType`);
-  });
-
-  it('should properly parse with correct values', () => {
-    const testDateTimeType = new DateTimeType();
-    expect(testDateTimeType.parse(VALID_DATETIME)).toStrictEqual(VALID_DATETIME);
-  });
-
-  it('should throw PrimitiveTypeError when parse() with invalid value', () => {
+  it('should throw PrimitiveTypeError when encodeToString() with invalid value', () => {
     const testDateTimeType = new DateTimeType();
     const t = () => {
-      testDateTimeType.parse(INVALID_DATETIME);
+      testDateTimeType.encodeToString(INVALID_DATETIME);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_DATETIME}) for DateTimeType`);
+    expect(t).toThrow(`Invalid value for DateTimeType (${INVALID_DATETIME})`);
+  });
+
+  it('should properly parseToPrimitive with correct values', () => {
+    const testDateTimeType = new DateTimeType();
+    expect(testDateTimeType.parseToPrimitive(VALID_DATETIME)).toStrictEqual(VALID_DATETIME);
+  });
+
+  it('should throw PrimitiveTypeError when parseToPrimitive() with invalid value', () => {
+    const testDateTimeType = new DateTimeType();
+    const t = () => {
+      testDateTimeType.parseToPrimitive(INVALID_DATETIME);
+    };
+    expect(t).toThrow(PrimitiveTypeError);
+    expect(t).toThrow(`Invalid value for DateTimeType (${INVALID_DATETIME})`);
   });
 
   it('should properly copy()', () => {

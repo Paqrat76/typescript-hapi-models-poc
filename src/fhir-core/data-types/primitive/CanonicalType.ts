@@ -21,9 +21,9 @@
  *
  */
 
-import { fhirCanonical, fhirCanonicalSchema } from './primitive-types';
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { fhirCanonical, fhirCanonicalSchema } from './primitive-types';
 
 /**
  * Canonical Class
@@ -49,27 +49,35 @@ export class CanonicalType extends PrimitiveType<fhirCanonical> {
     this.assignValue(value);
   }
 
+  /**
+   * Parses the provided value and returns the desired FHIR primitive value.
+   *
+   * @param value - value to be parsed
+   * @param errMessage - optional error message to override the default
+   * @returns the FHIR primitive value
+   * @throws PrimitiveTypeError for invalid value
+   */
+  static parse(value: string, errMessage?: string): fhirCanonical {
+    const parseResult = fhirCanonicalSchema.safeParse(value);
+    if (parseResult.success) {
+      return parseResult.data;
+    } else {
+      const errMsg = errMessage ?? `Invalid value for CanonicalType (${String(value)})`;
+      throw new PrimitiveTypeError(errMsg, parseResult.error);
+    }
+  }
+
   public override setValue(value?: fhirCanonical): this {
     this.assignValue(value);
     return this;
   }
 
-  public encode(value: fhirCanonical): string {
-    const parseResult = fhirCanonicalSchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data.toString();
-    } else {
-      throw new PrimitiveTypeError(`Invalid value (${value}) for CanonicalType`, parseResult.error);
-    }
+  public encodeToString(value: fhirCanonical): string {
+    return CanonicalType.parse(value).toString();
   }
 
-  public parse(value: string): fhirCanonical {
-    const parseResult = fhirCanonicalSchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data;
-    } else {
-      throw new PrimitiveTypeError(`Invalid value (${value}) for CanonicalType`, parseResult.error);
-    }
+  public parseToPrimitive(value: string): fhirCanonical {
+    return CanonicalType.parse(value);
   }
 
   public override fhirType(): string {
@@ -89,12 +97,7 @@ export class CanonicalType extends PrimitiveType<fhirCanonical> {
 
   private assignValue(value: fhirCanonical | undefined): void {
     if (value !== undefined) {
-      const parseResult = fhirCanonicalSchema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value (${value}) for CanonicalType`, parseResult.error);
-      }
+      super.setValue(CanonicalType.parse(value));
     } else {
       super.setValue(undefined);
     }

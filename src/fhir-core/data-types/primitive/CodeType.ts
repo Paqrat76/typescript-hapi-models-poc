@@ -21,9 +21,9 @@
  *
  */
 
-import { fhirCode, fhirCodeSchema } from './primitive-types';
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { fhirCode, fhirCodeSchema } from './primitive-types';
 
 /**
  * Code Class
@@ -49,27 +49,35 @@ export class CodeType extends PrimitiveType<fhirCode> {
     this.assignValue(value);
   }
 
+  /**
+   * Parses the provided value and returns the desired FHIR primitive value.
+   *
+   * @param value - value to be parsed
+   * @param errMessage - optional error message to override the default
+   * @returns the FHIR primitive value
+   * @throws PrimitiveTypeError for invalid value
+   */
+  static parse(value: string, errMessage?: string): fhirCode {
+    const parseResult = fhirCodeSchema.safeParse(value);
+    if (parseResult.success) {
+      return parseResult.data;
+    } else {
+      const errMsg = errMessage ?? `Invalid value for CodeType (${String(value)})`;
+      throw new PrimitiveTypeError(errMsg, parseResult.error);
+    }
+  }
+
   public override setValue(value?: fhirCode): this {
     this.assignValue(value);
     return this;
   }
 
-  public encode(value: fhirCode): string {
-    const parseResult = fhirCodeSchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data.toString();
-    } else {
-      throw new PrimitiveTypeError(`Invalid value (${value}) for CodeType`, parseResult.error);
-    }
+  public encodeToString(value: fhirCode): string {
+    return CodeType.parse(value).toString();
   }
 
-  public parse(value: string): fhirCode {
-    const parseResult = fhirCodeSchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data;
-    } else {
-      throw new PrimitiveTypeError(`Invalid value (${value}) for CodeType`, parseResult.error);
-    }
+  public parseToPrimitive(value: string): fhirCode {
+    return CodeType.parse(value);
   }
 
   public override fhirType(): string {
@@ -89,12 +97,7 @@ export class CodeType extends PrimitiveType<fhirCode> {
 
   private assignValue(value: fhirCode | undefined): void {
     if (value !== undefined) {
-      const parseResult = fhirCodeSchema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value (${value}) for CodeType`, parseResult.error);
-      }
+      super.setValue(CodeType.parse(value));
     } else {
       super.setValue(undefined);
     }

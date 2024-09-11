@@ -69,7 +69,7 @@ describe('InstantType', () => {
       new InstantType(INVALID_INSTANT);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_INSTANT}) for InstantType`);
+    expect(t).toThrow(`Invalid value for InstantType (${INVALID_INSTANT})`);
   });
 
   it('should be properly reset by setValue()', () => {
@@ -100,7 +100,7 @@ describe('InstantType', () => {
       testInstantType.setValue(INVALID_INSTANT);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_INSTANT}) for InstantType`);
+    expect(t).toThrow(`Invalid value for InstantType (${INVALID_INSTANT})`);
   });
 
   it('should properly setValueAsString() with correct values', () => {
@@ -117,35 +117,35 @@ describe('InstantType', () => {
       testInstantType.setValueAsString(INVALID_INSTANT);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_INSTANT}) for InstantType`);
+    expect(t).toThrow(`Invalid value for InstantType (${INVALID_INSTANT})`);
   });
 
-  it('should properly encode with correct values', () => {
+  it('should properly encodeToString with correct values', () => {
     const testInstantType = new InstantType();
-    expect(testInstantType.encode(VALID_INSTANT)).toStrictEqual(VALID_INSTANT);
+    expect(testInstantType.encodeToString(VALID_INSTANT)).toStrictEqual(VALID_INSTANT);
   });
 
-  it('should throw PrimitiveTypeError when encode() with invalid value', () => {
-    const testInstantType = new InstantType();
-    const t = () => {
-      testInstantType.encode(INVALID_INSTANT);
-    };
-    expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_INSTANT}) for InstantType`);
-  });
-
-  it('should properly parse with correct values', () => {
-    const testInstantType = new InstantType();
-    expect(testInstantType.parse(VALID_INSTANT)).toStrictEqual(VALID_INSTANT);
-  });
-
-  it('should throw PrimitiveTypeError when parse() with invalid value', () => {
+  it('should throw PrimitiveTypeError when encodeToString() with invalid value', () => {
     const testInstantType = new InstantType();
     const t = () => {
-      testInstantType.parse(INVALID_INSTANT);
+      testInstantType.encodeToString(INVALID_INSTANT);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_INSTANT}) for InstantType`);
+    expect(t).toThrow(`Invalid value for InstantType (${INVALID_INSTANT})`);
+  });
+
+  it('should properly parseToPrimitive with correct values', () => {
+    const testInstantType = new InstantType();
+    expect(testInstantType.parseToPrimitive(VALID_INSTANT)).toStrictEqual(VALID_INSTANT);
+  });
+
+  it('should throw PrimitiveTypeError when parseToPrimitive() with invalid value', () => {
+    const testInstantType = new InstantType();
+    const t = () => {
+      testInstantType.parseToPrimitive(INVALID_INSTANT);
+    };
+    expect(t).toThrow(PrimitiveTypeError);
+    expect(t).toThrow(`Invalid value for InstantType (${INVALID_INSTANT})`);
   });
 
   it('should properly copy()', () => {

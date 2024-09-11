@@ -21,9 +21,9 @@
  *
  */
 
-import { fhirUri, fhirUriSchema } from './primitive-types';
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { fhirUri, fhirUriSchema } from './primitive-types';
 
 /**
  * Uri Class
@@ -50,27 +50,35 @@ export class UriType extends PrimitiveType<fhirUri> {
     this.assignValue(value);
   }
 
+  /**
+   * Parses the provided value and returns the desired FHIR primitive value.
+   *
+   * @param value - value to be parsed
+   * @param errMessage - optional error message to override the default
+   * @returns the FHIR primitive value
+   * @throws PrimitiveTypeError for invalid value
+   */
+  static parse(value: string, errMessage?: string): fhirUri {
+    const parseResult = fhirUriSchema.safeParse(value);
+    if (parseResult.success) {
+      return parseResult.data;
+    } else {
+      const errMsg = errMessage ?? `Invalid value for UriType (${String(value)})`;
+      throw new PrimitiveTypeError(errMsg, parseResult.error);
+    }
+  }
+
   public override setValue(value?: fhirUri): this {
     this.assignValue(value);
     return this;
   }
 
-  public encode(value: fhirUri): string {
-    const parseResult = fhirUriSchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data.toString();
-    } else {
-      throw new PrimitiveTypeError(`Invalid value (${value}) for UriType`, parseResult.error);
-    }
+  public encodeToString(value: fhirUri): string {
+    return UriType.parse(value).toString();
   }
 
-  public parse(value: string): fhirUri {
-    const parseResult = fhirUriSchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data;
-    } else {
-      throw new PrimitiveTypeError(`Invalid value (${value}) for UriType`, parseResult.error);
-    }
+  public parseToPrimitive(value: string): fhirUri {
+    return UriType.parse(value);
   }
 
   public override fhirType(): string {
@@ -90,12 +98,7 @@ export class UriType extends PrimitiveType<fhirUri> {
 
   private assignValue(value: fhirUri | undefined): void {
     if (value !== undefined) {
-      const parseResult = fhirUriSchema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value (${value}) for UriType`, parseResult.error);
-      }
+      super.setValue(UriType.parse(value));
     } else {
       super.setValue(undefined);
     }

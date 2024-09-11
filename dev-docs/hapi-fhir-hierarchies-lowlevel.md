@@ -127,9 +127,9 @@ classDiagram
     PrimitiveType : -T myCoercedValue
     PrimitiveType : -string myStringValue
     PrimitiveType : +getValueAsString() string
-    PrimitiveType : #encode(T)* string
+    PrimitiveType : #encodeToString(T)* string
     PrimitiveType : +setValueAsString(string)
-    PrimitiveType : #parse(string)* T
+    PrimitiveType : #parseToPrimitive(string)* T
     PrimitiveType : #updateStringValue()
     PrimitiveType : +toString() string
   PrimitiveType --|> Type

@@ -121,29 +121,29 @@ describe('UnsignedIntType', () => {
     expect(t).toThrow('Invalid value for UnsignedIntType');
   });
 
-  it('should properly encode with correct values', () => {
+  it('should properly encodeToString with correct values', () => {
     const testUnsignedIntType = new UnsignedIntType();
-    expect(testUnsignedIntType.encode(VALID_INTEGER)).toStrictEqual(VALID_INTEGER.toString());
+    expect(testUnsignedIntType.encodeToString(VALID_INTEGER)).toStrictEqual(VALID_INTEGER.toString());
   });
 
-  it('should throw PrimitiveTypeError when encode() with an invalid value', () => {
+  it('should throw PrimitiveTypeError when encodeToString() with an invalid value', () => {
     const testUnsignedIntType = new UnsignedIntType();
     const t = () => {
-      testUnsignedIntType.encode(INVALID_INTEGER);
+      testUnsignedIntType.encodeToString(INVALID_INTEGER);
     };
     expect(t).toThrow(PrimitiveTypeError);
     expect(t).toThrow('Invalid value for UnsignedIntType');
   });
 
-  it('should properly parse with correct values', () => {
+  it('should properly parseToPrimitive with correct values', () => {
     const testUnsignedIntType = new UnsignedIntType();
-    expect(testUnsignedIntType.parse(VALID_INTEGER.toString())).toStrictEqual(VALID_INTEGER);
+    expect(testUnsignedIntType.parseToPrimitive(VALID_INTEGER.toString())).toStrictEqual(VALID_INTEGER);
   });
 
-  it('should throw PrimitiveTypeError when parse() with an invalid value', () => {
+  it('should throw PrimitiveTypeError when parseToPrimitive() with an invalid value', () => {
     const testUnsignedIntType = new UnsignedIntType();
     const t = () => {
-      testUnsignedIntType.parse(INVALID_INTEGER.toString());
+      testUnsignedIntType.parseToPrimitive(INVALID_INTEGER.toString());
     };
     expect(t).toThrow(PrimitiveTypeError);
     expect(t).toThrow('Invalid value for UnsignedIntType');

@@ -21,9 +21,9 @@
  *
  */
 
-import { fhirBase64Binary, fhirBase64BinarySchema } from './primitive-types';
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { fhirBase64Binary, fhirBase64BinarySchema } from './primitive-types';
 
 /**
  * Base64Binary Class
@@ -50,27 +50,35 @@ export class Base64BinaryType extends PrimitiveType<fhirBase64Binary> {
     this.assignValue(value);
   }
 
+  /**
+   * Parses the provided value and returns the desired FHIR primitive value.
+   *
+   * @param value - value to be parsed
+   * @param errMessage - optional error message to override the default
+   * @returns the FHIR primitive value
+   * @throws PrimitiveTypeError for invalid value
+   */
+  static parse(value: string, errMessage?: string): fhirBase64Binary {
+    const parseResult = fhirBase64BinarySchema.safeParse(value);
+    if (parseResult.success) {
+      return parseResult.data;
+    } else {
+      const errMsg = errMessage ?? `Invalid value for Base64BinaryType`;
+      throw new PrimitiveTypeError(errMsg, parseResult.error);
+    }
+  }
+
   public override setValue(value?: fhirBase64Binary): this {
     this.assignValue(value);
     return this;
   }
 
-  public encode(value: fhirBase64Binary): string {
-    const parseResult = fhirBase64BinarySchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data.toString();
-    } else {
-      throw new PrimitiveTypeError(`Invalid value for Base64BinaryType`, parseResult.error);
-    }
+  public encodeToString(value: fhirBase64Binary): string {
+    return Base64BinaryType.parse(value).toString();
   }
 
-  public parse(value: string): fhirBase64Binary {
-    const parseResult = fhirBase64BinarySchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data;
-    } else {
-      throw new PrimitiveTypeError(`Invalid value for Base64BinaryType`, parseResult.error);
-    }
+  public parseToPrimitive(value: string): fhirBase64Binary {
+    return Base64BinaryType.parse(value);
   }
 
   public override fhirType(): string {
@@ -90,12 +98,7 @@ export class Base64BinaryType extends PrimitiveType<fhirBase64Binary> {
 
   private assignValue(value: fhirBase64Binary | undefined): void {
     if (value !== undefined) {
-      const parseResult = fhirBase64BinarySchema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value for Base64BinaryType`, parseResult.error);
-      }
+      super.setValue(Base64BinaryType.parse(value));
     } else {
       super.setValue(undefined);
     }

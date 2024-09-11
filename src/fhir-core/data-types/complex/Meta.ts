@@ -28,18 +28,8 @@ import { Coding } from '@src/fhir-core/data-types/complex/Coding';
 import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
 import { InstantType } from '@src/fhir-core/data-types/primitive/InstantType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
-import {
-  fhirCanonical,
-  fhirCanonicalSchema,
-  fhirId,
-  fhirIdSchema,
-  fhirInstant,
-  fhirInstantSchema,
-  fhirUri,
-  fhirUriSchema,
-} from '@src/fhir-core/data-types/primitive/primitive-types';
+import { fhirCanonical, fhirId, fhirInstant, fhirUri } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty } from '@src/fhir-core/utility/element-util';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -196,15 +186,8 @@ export class Meta extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setVersionId(value: fhirId | undefined): this {
-    if (value === undefined) {
-      this.versionId = undefined;
-    } else {
-      const parseResult = fhirIdSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Meta.versionId (${value})`, parseResult.error);
-      }
-      this.versionId = new IdType(parseResult.data);
-    }
+    const optErrMsg = `Invalid Meta.versionId (${String(value)})`;
+    this.versionId = value === undefined ? undefined : new IdType(IdType.parse(value, optErrMsg));
     return this;
   }
 
@@ -255,15 +238,8 @@ export class Meta extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setLastUpdated(value: fhirInstant | undefined): this {
-    if (value === undefined) {
-      this.lastUpdated = undefined;
-    } else {
-      const parseResult = fhirInstantSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Meta.lastUpdated (${value})`, parseResult.error);
-      }
-      this.lastUpdated = new InstantType(parseResult.data);
-    }
+    const optErrMsg = `Invalid Meta.lastUpdated (${String(value)})`;
+    this.lastUpdated = value === undefined ? undefined : new InstantType(InstantType.parse(value, optErrMsg));
     return this;
   }
 
@@ -314,15 +290,8 @@ export class Meta extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setSource(value: fhirUri | undefined): this {
-    if (value === undefined) {
-      this.source = undefined;
-    } else {
-      const parseResult = fhirUriSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Meta.source (${value})`, parseResult.error);
-      }
-      this.source = new UriType(parseResult.data);
-    }
+    const optErrMsg = `Invalid Meta.source (${String(value)})`;
+    this.source = value === undefined ? undefined : new UriType(UriType.parse(value, optErrMsg));
     return this;
   }
 
@@ -403,11 +372,8 @@ export class Meta extends DataType implements IBase {
     if (value !== undefined) {
       const profileElements = [] as CanonicalType[];
       for (const profileValue of value) {
-        const parseResult = fhirCanonicalSchema.safeParse(profileValue);
-        if (!parseResult.success) {
-          throw new PrimitiveTypeError(`Invalid Meta.profile array item (${profileValue})`, parseResult.error);
-        }
-        const element = new CanonicalType(parseResult.data);
+        const optErrMsg = `Invalid Meta.profile array item (${String(profileValue)})`;
+        const element = new CanonicalType(CanonicalType.parse(profileValue, optErrMsg));
         profileElements.push(element);
       }
       this.profile = profileElements;
@@ -425,11 +391,8 @@ export class Meta extends DataType implements IBase {
    */
   public addProfile(value?: fhirCanonical): this {
     if (value !== undefined) {
-      const parseResult = fhirCanonicalSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Meta.profile array item (${value})`, parseResult.error);
-      }
-      const element = new CanonicalType(parseResult.data);
+      const optErrMsg = `Invalid Meta.profile array item (${String(value)})`;
+      const element = new CanonicalType(CanonicalType.parse(value, optErrMsg));
       this.addProfileElement(element);
     }
     return this;

@@ -69,7 +69,7 @@ describe('UuidType', () => {
       new UuidType(INVALID_UUID);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_UUID}) for UuidType`);
+    expect(t).toThrow(`Invalid value for UuidType (${INVALID_UUID})`);
   });
 
   it('should be properly reset by setValue()', () => {
@@ -100,7 +100,7 @@ describe('UuidType', () => {
       testUuidType.setValue(INVALID_UUID);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_UUID}) for UuidType`);
+    expect(t).toThrow(`Invalid value for UuidType (${INVALID_UUID})`);
   });
 
   it('should properly setValueAsString() with correct values', () => {
@@ -117,35 +117,35 @@ describe('UuidType', () => {
       testUuidType.setValueAsString(INVALID_UUID);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_UUID}) for UuidType`);
+    expect(t).toThrow(`Invalid value for UuidType (${INVALID_UUID})`);
   });
 
-  it('should properly encode with correct values', () => {
+  it('should properly encodeToString with correct values', () => {
     const testUuidType = new UuidType(VALID_UUID);
-    expect(testUuidType.encode(VALID_UUID)).toStrictEqual(VALID_UUID);
+    expect(testUuidType.encodeToString(VALID_UUID)).toStrictEqual(VALID_UUID);
   });
 
-  it('should throw PrimitiveTypeError when encode() with invalid value', () => {
+  it('should throw PrimitiveTypeError when encodeToString() with invalid value', () => {
     const testUuidType = new UuidType();
     const t = () => {
-      testUuidType.encode(INVALID_UUID);
+      testUuidType.encodeToString(INVALID_UUID);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_UUID}) for UuidType`);
+    expect(t).toThrow(`Invalid value for UuidType (${INVALID_UUID})`);
   });
 
-  it('should properly parse with correct values', () => {
+  it('should properly parseToPrimitive with correct values', () => {
     const testUuidType = new UuidType();
-    expect(testUuidType.parse(VALID_UUID)).toStrictEqual(VALID_UUID);
+    expect(testUuidType.parseToPrimitive(VALID_UUID)).toStrictEqual(VALID_UUID);
   });
 
-  it('should throw PrimitiveTypeError when parse() with invalid value', () => {
+  it('should throw PrimitiveTypeError when parseToPrimitive() with invalid value', () => {
     const testUuidType = new UuidType();
     const t = () => {
-      testUuidType.parse(INVALID_UUID);
+      testUuidType.parseToPrimitive(INVALID_UUID);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_UUID}) for UuidType`);
+    expect(t).toThrow(`Invalid value for UuidType (${INVALID_UUID})`);
   });
 
   it('should properly copy()', () => {

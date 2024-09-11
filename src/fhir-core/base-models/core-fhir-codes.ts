@@ -20,8 +20,9 @@
  * SOFTWARE.
  *
  */
-import { fhirCode, fhirCodeSchema } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+
+import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { fhirCode } from '@src/fhir-core/data-types/primitive/primitive-types';
 
 /**
  * Base FHIR code system definition for a particular code defined in an implementation of IFhirCodeEnum.
@@ -80,12 +81,7 @@ export class FhirCodeDefinition implements IFhirCodeDefinition {
    */
   constructor(name: string, code: fhirCode, system?: string, display?: string, definition?: string) {
     // Ensure the code value is a valid fhirCode
-    const parseResult = fhirCodeSchema.safeParse(code);
-    if (parseResult.success) {
-      this.code = parseResult.data;
-    } else {
-      throw new PrimitiveTypeError(`Invalid code (${code})`, parseResult.error);
-    }
+    this.code = CodeType.parse(code);
 
     this.name = name;
     this.display = display;

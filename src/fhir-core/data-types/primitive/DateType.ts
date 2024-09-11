@@ -21,9 +21,9 @@
  *
  */
 
-import { fhirDate, fhirDateSchema } from './primitive-types';
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { fhirDate, fhirDateSchema } from './primitive-types';
 
 /**
  * Date Class
@@ -49,27 +49,35 @@ export class DateType extends PrimitiveType<fhirDate> {
     this.assignValue(value);
   }
 
+  /**
+   * Parses the provided value and returns the desired FHIR primitive value.
+   *
+   * @param value - value to be parsed
+   * @param errMessage - optional error message to override the default
+   * @returns the FHIR primitive value
+   * @throws PrimitiveTypeError for invalid value
+   */
+  static parse(value: string, errMessage?: string): fhirDate {
+    const parseResult = fhirDateSchema.safeParse(value);
+    if (parseResult.success) {
+      return parseResult.data;
+    } else {
+      const errMsg = errMessage ?? `Invalid value for DateType (${String(value)})`;
+      throw new PrimitiveTypeError(errMsg, parseResult.error);
+    }
+  }
+
   public override setValue(value?: fhirDate): this {
     this.assignValue(value);
     return this;
   }
 
-  public encode(value: fhirDate): string {
-    const parseResult = fhirDateSchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data.toString();
-    } else {
-      throw new PrimitiveTypeError(`Invalid value (${value}) for DateType`, parseResult.error);
-    }
+  public encodeToString(value: fhirDate): string {
+    return DateType.parse(value).toString();
   }
 
-  public parse(value: string): fhirDate {
-    const parseResult = fhirDateSchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data;
-    } else {
-      throw new PrimitiveTypeError(`Invalid value (${value}) for DateType`, parseResult.error);
-    }
+  public parseToPrimitive(value: string): fhirDate {
+    return DateType.parse(value);
   }
 
   public override fhirType(): string {
@@ -89,12 +97,7 @@ export class DateType extends PrimitiveType<fhirDate> {
 
   private assignValue(value: fhirDate | undefined): void {
     if (value !== undefined) {
-      const parseResult = fhirDateSchema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value (${value}) for DateType`, parseResult.error);
-      }
+      super.setValue(DateType.parse(value));
     } else {
       super.setValue(undefined);
     }

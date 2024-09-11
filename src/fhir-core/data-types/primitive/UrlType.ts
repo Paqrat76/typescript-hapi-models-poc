@@ -21,9 +21,9 @@
  *
  */
 
-import { fhirUrl, fhirUrlSchema } from './primitive-types';
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { fhirUrl, fhirUrlSchema } from './primitive-types';
 
 /**
  * Url Class
@@ -49,27 +49,35 @@ export class UrlType extends PrimitiveType<fhirUrl> {
     this.assignValue(value);
   }
 
+  /**
+   * Parses the provided value and returns the desired FHIR primitive value.
+   *
+   * @param value - value to be parsed
+   * @param errMessage - optional error message to override the default
+   * @returns the FHIR primitive value
+   * @throws PrimitiveTypeError for invalid value
+   */
+  static parse(value: string, errMessage?: string): fhirUrl {
+    const parseResult = fhirUrlSchema.safeParse(value);
+    if (parseResult.success) {
+      return parseResult.data;
+    } else {
+      const errMsg = errMessage ?? `Invalid value for UrlType (${String(value)})`;
+      throw new PrimitiveTypeError(errMsg, parseResult.error);
+    }
+  }
+
   public override setValue(value?: fhirUrl): this {
     this.assignValue(value);
     return this;
   }
 
-  public encode(value: fhirUrl): string {
-    const parseResult = fhirUrlSchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data.toString();
-    } else {
-      throw new PrimitiveTypeError(`Invalid value (${value}) for UrlType`, parseResult.error);
-    }
+  public encodeToString(value: fhirUrl): string {
+    return UrlType.parse(value).toString();
   }
 
-  public parse(value: string): fhirUrl {
-    const parseResult = fhirUrlSchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data;
-    } else {
-      throw new PrimitiveTypeError(`Invalid value (${value}) for UrlType`, parseResult.error);
-    }
+  public parseToPrimitive(value: string): fhirUrl {
+    return UrlType.parse(value);
   }
 
   public override fhirType(): string {
@@ -89,12 +97,7 @@ export class UrlType extends PrimitiveType<fhirUrl> {
 
   private assignValue(value: fhirUrl | undefined): void {
     if (value !== undefined) {
-      const parseResult = fhirUrlSchema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value (${value}) for UrlType`, parseResult.error);
-      }
+      super.setValue(UrlType.parse(value));
     } else {
       super.setValue(undefined);
     }

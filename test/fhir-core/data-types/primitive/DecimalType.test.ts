@@ -130,41 +130,41 @@ describe('DecimalType', () => {
     expect(t).toThrow('Invalid value for DecimalType');
   });
 
-  it('should properly encode with correct values', () => {
+  it('should properly encodeToString with correct values', () => {
     const testDecimalType = new DecimalType();
-    expect(testDecimalType.encode(VALID_DECIMAL)).toStrictEqual(VALID_DECIMAL.toString());
+    expect(testDecimalType.encodeToString(VALID_DECIMAL)).toStrictEqual(VALID_DECIMAL.toString());
   });
 
-  it('should throw PrimitiveTypeError when encode() with an invalid value', () => {
+  it('should throw PrimitiveTypeError when encodeToString() with an invalid value', () => {
     const testDecimalType = new DecimalType();
     const t = () => {
-      testDecimalType.encode(INVALID_DECIMAL);
+      testDecimalType.encodeToString(INVALID_DECIMAL);
     };
     expect(t).toThrow(PrimitiveTypeError);
     expect(t).toThrow('Invalid value for DecimalType');
   });
 
-  it('should properly parse with correct values', () => {
+  it('should properly parseToPrimitive with correct values', () => {
     const testDecimalType = new DecimalType();
-    expect(testDecimalType.parse(VALID_DECIMAL.toString())).toStrictEqual(VALID_DECIMAL);
+    expect(testDecimalType.parseToPrimitive(VALID_DECIMAL.toString())).toStrictEqual(VALID_DECIMAL);
   });
 
-  it('should throw PrimitiveTypeError when parse() with an invalid value', () => {
+  it('should throw PrimitiveTypeError when parseToPrimitive() with an invalid value', () => {
     const testDecimalType = new DecimalType();
     const t = () => {
-      testDecimalType.parse(INVALID_DECIMAL.toString());
+      testDecimalType.parseToPrimitive(INVALID_DECIMAL.toString());
     };
     expect(t).toThrow(PrimitiveTypeError);
     expect(t).toThrow('Invalid value for DecimalType');
   });
 
-  it('should throw TypeError when parse() with a NaN', () => {
+  it('should throw TypeError when parseToPrimitive() with a NaN', () => {
     const testDecimalType = new DecimalType();
     const t = () => {
-      testDecimalType.parse('not_a_number');
+      testDecimalType.parseToPrimitive('not_a_number');
     };
-    expect(t).toThrow(TypeError);
-    expect(t).toThrow('Invalid value (not_a_number) is not a number');
+    expect(t).toThrow(PrimitiveTypeError);
+    expect(t).toThrow('Invalid value for DecimalType (not_a_number)');
   });
 
   it('should properly copy()', () => {

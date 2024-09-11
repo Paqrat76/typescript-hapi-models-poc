@@ -148,47 +148,47 @@ describe('MarkdownType', () => {
     expect(t).toThrow('Invalid value for MarkdownType');
   });
 
-  it('should properly encode with correct values', () => {
+  it('should properly encodeToString with correct values', () => {
     const testMarkdownType = new MarkdownType();
-    expect(testMarkdownType.encode(VALID_MARKDOWN)).toStrictEqual(VALID_MARKDOWN);
+    expect(testMarkdownType.encodeToString(VALID_MARKDOWN)).toStrictEqual(VALID_MARKDOWN);
   });
 
-  it('should throw PrimitiveTypeError when encode() with empty value', () => {
+  it('should throw PrimitiveTypeError when encodeToString() with empty value', () => {
     const testMarkdownType = new MarkdownType();
     const t = () => {
-      testMarkdownType.encode(EMPTY_STRING);
+      testMarkdownType.encodeToString(EMPTY_STRING);
     };
     expect(t).toThrow(PrimitiveTypeError);
     expect(t).toThrow('Invalid value for MarkdownType');
   });
 
-  it('should throw PrimitiveTypeError when encode() with too big value', () => {
+  it('should throw PrimitiveTypeError when encodeToString() with too big value', () => {
     const testMarkdownType = new MarkdownType();
     const t = () => {
-      testMarkdownType.encode(TOO_BIG_STRING as fhirMarkdown);
+      testMarkdownType.encodeToString(TOO_BIG_STRING as fhirMarkdown);
     };
     expect(t).toThrow(PrimitiveTypeError);
     expect(t).toThrow('Invalid value for MarkdownType');
   });
 
-  it('should properly parse with correct values', () => {
+  it('should properly parseToPrimitive with correct values', () => {
     const testMarkdownType = new MarkdownType();
-    expect(testMarkdownType.parse(VALID_MARKDOWN)).toStrictEqual(VALID_MARKDOWN);
+    expect(testMarkdownType.parseToPrimitive(VALID_MARKDOWN)).toStrictEqual(VALID_MARKDOWN);
   });
 
-  it('should throw PrimitiveTypeError when parse() with empty value', () => {
+  it('should throw PrimitiveTypeError when parseToPrimitive() with empty value', () => {
     const testMarkdownType = new MarkdownType();
     const t = () => {
-      testMarkdownType.parse(EMPTY_STRING);
+      testMarkdownType.parseToPrimitive(EMPTY_STRING);
     };
     expect(t).toThrow(PrimitiveTypeError);
     expect(t).toThrow('Invalid value for MarkdownType');
   });
 
-  it('should throw PrimitiveTypeError when parse() with too big value', () => {
+  it('should throw PrimitiveTypeError when parseToPrimitive() with too big value', () => {
     const testMarkdownType = new MarkdownType();
     const t = () => {
-      testMarkdownType.parse(TOO_BIG_STRING);
+      testMarkdownType.parseToPrimitive(TOO_BIG_STRING);
     };
     expect(t).toThrow(PrimitiveTypeError);
     expect(t).toThrow('Invalid value for MarkdownType');

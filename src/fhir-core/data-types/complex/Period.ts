@@ -25,9 +25,8 @@ import { DateTime } from 'luxon';
 import { DataType } from '@src/fhir-core/base-models/core-fhir-models';
 import { IBase } from '@src/fhir-core/base-models/IBase';
 import { DateTimeType } from '@src/fhir-core/data-types/primitive/DateTimeType';
-import { fhirDateTime, fhirDateTimeSchema } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { fhirDateTime } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty } from '@src/fhir-core/utility/element-util';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -130,15 +129,8 @@ export class Period extends DataType implements IBase {
    * @throws TypeError when Period.start > Period.end
    */
   public setStart(value: fhirDateTime | undefined): this {
-    if (value === undefined) {
-      this.start = undefined;
-    } else {
-      const parseResult = fhirDateTimeSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Period.start (${value})`, parseResult.error);
-      }
-      this.start = new DateTimeType(parseResult.data);
-    }
+    const optErrMsg = `Invalid Period.start (${String(value)})`;
+    this.start = value === undefined ? undefined : new DateTimeType(DateTimeType.parse(value, optErrMsg));
     if (!this.validateStartBeforeEnd()) {
       throw new TypeError('Invalid Period; Period.start is not before or the same as Period.end');
     }
@@ -197,15 +189,8 @@ export class Period extends DataType implements IBase {
    * @throws TypeError when Period.start > Period.end
    */
   public setEnd(value: fhirDateTime | undefined): this {
-    if (value === undefined) {
-      this.end = undefined;
-    } else {
-      const parseResult = fhirDateTimeSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Period.end (${value})`, parseResult.error);
-      }
-      this.end = new DateTimeType(parseResult.data);
-    }
+    const optErrMsg = `Invalid Period.end (${String(value)})`;
+    this.end = value === undefined ? undefined : new DateTimeType(DateTimeType.parse(value, optErrMsg));
     if (!this.validateStartBeforeEnd()) {
       throw new TypeError('Invalid Period; Period.start is not before or the same as Period.end');
     }

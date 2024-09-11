@@ -662,26 +662,28 @@ describe('Group Suite', () => {
         new Group(UNSUPPORTED_ENUM_CODE, null);
       };
       expect(t).toThrow(InvalidCodeError);
-      expect(t).toThrow(`Invalid Group.type: Unknown GroupTypeEnum 'code' value '${UNSUPPORTED_ENUM_CODE}'`);
+      expect(t).toThrow(`Invalid Group.type parameter: Unknown GroupTypeEnum 'code' value '${UNSUPPORTED_ENUM_CODE}'`);
 
       t = () => {
         new Group(UNDEFINED_ENUM_CODE_VALUE, null);
       };
       expect(t).toThrow(InvalidCodeError);
-      expect(t).toThrow(`Invalid Group.type: Unknown GroupTypeEnum 'code' value '${UNDEFINED_ENUM_CODE_VALUE}'`);
+      expect(t).toThrow(
+        `Invalid Group.type parameter: Unknown GroupTypeEnum 'code' value '${UNDEFINED_ENUM_CODE_VALUE}'`,
+      );
 
       t = () => {
         new Group(INVALID_CODE, null);
       };
       expect(t).toThrow(InvalidCodeError);
-      expect(t).toThrow(`Invalid Group.type (${INVALID_CODE})`);
+      expect(t).toThrow(`Invalid Group.type parameter (${INVALID_CODE})`);
 
       t = () => {
         // @ts-expect-error: allow for testing
         new Group(null, INVALID_BOOLEAN);
       };
       expect(t).toThrow(PrimitiveTypeError);
-      expect(t).toThrow(`Invalid Group.actual (${INVALID_BOOLEAN})`);
+      expect(t).toThrow(`Invalid Group.actual parameter (${INVALID_BOOLEAN})`);
     });
 
     // Tests using DataType elements
@@ -1786,7 +1788,7 @@ describe('Group Suite', () => {
         new GroupCharacteristicComponent(null, null, INVALID_BOOLEAN);
       };
       expect(t).toThrow(PrimitiveTypeError);
-      expect(t).toThrow(`Invalid GroupCharacteristicComponent.exclude (${INVALID_BOOLEAN})`);
+      expect(t).toThrow(`Invalid GroupCharacteristicComponent.exclude parameter (${INVALID_BOOLEAN})`);
     });
 
     it('should throw PrimitiveTypeError when setExclude() with non-boolean value', () => {

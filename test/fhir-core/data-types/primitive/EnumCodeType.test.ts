@@ -142,7 +142,7 @@ describe('EnumCodeType', () => {
       new EnumCodeType(INVALID_CODE, new MockCodeEnum());
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_CODE}) for CodeType`);
+    expect(t).toThrow(`Invalid value for CodeType (${INVALID_CODE})`);
   });
 
   it('should throw InvalidCodeError from super constructor when initialized with empty CodeType', () => {
@@ -174,7 +174,7 @@ describe('EnumCodeType', () => {
       testEnumCodeType.setValue(INVALID_CODE);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value ( invalid CodeType ) for CodeType`);
+    expect(t).toThrow(`Invalid value for CodeType ( invalid CodeType )`);
 
     t = () => {
       testEnumCodeType.setValue(UNDEFINED_CODE);

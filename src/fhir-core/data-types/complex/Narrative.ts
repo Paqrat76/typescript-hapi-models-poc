@@ -27,8 +27,7 @@ import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { EnumCodeType } from '@src/fhir-core/data-types/primitive/EnumCodeType';
 import { NarrativeStatusEnum } from '@src/fhir-core/data-types/complex/code-systems/NarrativeStatusEnum';
 import { XhtmlType } from '@src/fhir-core/data-types/primitive/XhtmlType';
-import { fhirCode, fhirXhtml, fhirXhtmlSchema } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { fhirCode, fhirXhtml } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty } from '@src/fhir-core/utility/element-util';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 
@@ -91,11 +90,8 @@ export class Narrative extends DataType implements IBase {
     } else if (div instanceof XhtmlType) {
       this.div = div;
     } else {
-      const parseResult = fhirXhtmlSchema.safeParse(div);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Narrative.div (${div})`, parseResult.error);
-      }
-      this.div = new XhtmlType(parseResult.data);
+      const optErrMsg = `Invalid Narrative.div`;
+      this.div = new XhtmlType(XhtmlType.parse(div, optErrMsg));
     }
   }
 
@@ -269,11 +265,8 @@ export class Narrative extends DataType implements IBase {
   public setDiv(value: fhirXhtml): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (value !== null) {
-      const parseResult = fhirXhtmlSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Narrative.div value`, parseResult.error);
-      }
-      this.div = new XhtmlType(parseResult.data);
+      const optErrMsg = `Invalid Narrative.div`;
+      this.div = new XhtmlType(XhtmlType.parse(value, optErrMsg));
     }
     return this;
   }

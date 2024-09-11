@@ -18,29 +18,17 @@ import { XhtmlType } from '@src/fhir-core/data-types/primitive/XhtmlType';
 import { FhirCodeDefinition, IFhirCodeDefinition, IFhirCodeEnum } from '@src/fhir-core/base-models/core-fhir-codes';
 import {
   fhirBoolean,
-  fhirBooleanSchema,
   fhirCanonical,
-  fhirCanonicalSchema,
   fhirCode,
-  fhirCodeSchema,
   fhirDateTime,
-  fhirDateTimeSchema,
   fhirDecimal,
-  fhirDecimalSchema,
   fhirId,
-  fhirIdSchema,
   fhirInstant,
-  fhirInstantSchema,
   fhirString,
-  fhirStringSchema,
   fhirUnsignedInt,
-  fhirUnsignedIntSchema,
   fhirUri,
-  fhirUriSchema,
   fhirXhtml,
-  fhirXhtmlSchema,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 
 //region FhirCodeEnum
@@ -147,15 +135,8 @@ export class TempTemplateTypeMethods {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setXxxxBoolean(value: fhirBoolean | undefined): this {
-    if (value === undefined) {
-      this.xxxxBoolean = undefined;
-    } else {
-      const parseResult = fhirBooleanSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid XxxClass.xxxxBoolean (${String(value)})`, parseResult.error);
-      }
-      this.xxxxBoolean = new BooleanType(parseResult.data);
-    }
+    const optErrMsg = `Invalid XxxClass.xxxxBoolean (${String(value)}))`;
+    this.xxxxBoolean = value === undefined ? undefined : new BooleanType(BooleanType.parse(value, optErrMsg));
     return this;
   }
 
@@ -222,11 +203,8 @@ export class TempTemplateTypeMethods {
   public setXxxxBooleanReq(value: fhirBoolean): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (value !== null) {
-      const parseResult = fhirBooleanSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid XxxClass.xxxxBooleanReq (${String(value)})`, parseResult.error);
-      }
-      this.xxxxBooleanReq = new BooleanType(parseResult.data);
+      const optErrMsg = `Invalid XxxClass.xxxxBooleanReq (${String(value)})`;
+      this.xxxxBooleanReq = new BooleanType(BooleanType.parse(value, optErrMsg));
     }
     return this;
   }
@@ -285,15 +263,8 @@ export class TempTemplateTypeMethods {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setXxxxCanonical(value: fhirCanonical | undefined): this {
-    if (value === undefined) {
-      this.xxxxCanonical = undefined;
-    } else {
-      const parseResult = fhirCanonicalSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid XxxClass.xxxxCanonical (${value})`, parseResult.error);
-      }
-      this.xxxxCanonical = new CanonicalType(parseResult.data);
-    }
+    const optErrMsg = `Invalid XxxClass.xxxxCanonical (${String(value)})`;
+    this.xxxxCanonical = value === undefined ? undefined : new CanonicalType(CanonicalType.parse(value, optErrMsg));
     return this;
   }
 
@@ -351,15 +322,8 @@ export class TempTemplateTypeMethods {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setXxxxCode(value: fhirCode | undefined): this {
-    if (value === undefined) {
-      this.xxxxCode = undefined;
-    } else {
-      const parseResult = fhirCodeSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid XxxClass.xxxxCode (${value})`, parseResult.error);
-      }
-      this.xxxxCode = new CodeType(parseResult.data);
-    }
+    const optErrMsg = `Invalid XxxClass.xxxxCode (${String(value)})`;
+    this.xxxxCode = value === undefined ? undefined : new CodeType(CodeType.parse(value, optErrMsg));
     return this;
   }
 
@@ -615,15 +579,8 @@ export class TempTemplateTypeMethods {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setXxxxDataTime(value: fhirDateTime | undefined): this {
-    if (value === undefined) {
-      this.xxxxDataTime = undefined;
-    } else {
-      const parseResult = fhirDateTimeSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid XxxClass.xxxxDataTime (${value})`, parseResult.error);
-      }
-      this.xxxxDataTime = new DateTimeType(parseResult.data);
-    }
+    const optErrMsg = `Invalid XxxClass.xxxxDataTime (${String(value)})`;
+    this.xxxxDataTime = value === undefined ? undefined : new DateTimeType(DateTimeType.parse(value, optErrMsg));
     return this;
   }
 
@@ -681,16 +638,8 @@ export class TempTemplateTypeMethods {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setXxxxDecimal(value: fhirDecimal | undefined): this {
-    if (value === undefined) {
-      this.xxxxDecimal = undefined;
-    } else {
-      const parseResult = fhirDecimalSchema.safeParse(value);
-      if (!parseResult.success) {
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        throw new PrimitiveTypeError(`Invalid XxxClass.xxxxDecimal (${value})`, parseResult.error);
-      }
-      this.xxxxDecimal = new DecimalType(parseResult.data);
-    }
+    const optErrMsg = `Invalid XxxClass.xxxxDecimal (${String(value)})`;
+    this.xxxxDecimal = value === undefined ? undefined : new DecimalType(DecimalType.parse(value, optErrMsg));
     return this;
   }
 
@@ -748,15 +697,8 @@ export class TempTemplateTypeMethods {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setXxxxId(value: fhirId | undefined): this {
-    if (value === undefined) {
-      this.xxxxId = undefined;
-    } else {
-      const parseResult = fhirIdSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid XxxClass.xxxxId (${value})`, parseResult.error);
-      }
-      this.xxxxId = new IdType(parseResult.data);
-    }
+    const optErrMsg = `Invalid XxxClass.xxxxId (${String(value)})`;
+    this.xxxxId = value === undefined ? undefined : new IdType(IdType.parse(value, optErrMsg));
     return this;
   }
 
@@ -814,15 +756,8 @@ export class TempTemplateTypeMethods {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setXxxxInstant(value: fhirInstant | undefined): this {
-    if (value === undefined) {
-      this.xxxxInstant = undefined;
-    } else {
-      const parseResult = fhirInstantSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid XxxClass.xxxxInstant (${value})`, parseResult.error);
-      }
-      this.xxxxInstant = new InstantType(parseResult.data);
-    }
+    const optErrMsg = `Invalid XxxClass.xxxxInstant (${String(value)})`;
+    this.xxxxInstant = value === undefined ? undefined : new InstantType(InstantType.parse(value, optErrMsg));
     return this;
   }
 
@@ -880,15 +815,8 @@ export class TempTemplateTypeMethods {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setXxxxString(value: fhirString | undefined): this {
-    if (value === undefined) {
-      this.xxxxString = undefined;
-    } else {
-      const parseResult = fhirStringSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid XxxClass.xxxxString (${value})`, parseResult.error);
-      }
-      this.xxxxString = new StringType(parseResult.data);
-    }
+    const optErrMsg = `Invalid XxxClass.xxxxString`;
+    this.xxxxString = value === undefined ? undefined : new StringType(StringType.parse(value, optErrMsg));
     return this;
   }
 
@@ -946,16 +874,9 @@ export class TempTemplateTypeMethods {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setXxxxUnsignedInt(value: fhirUnsignedInt | undefined): this {
-    if (value === undefined) {
-      this.xxxxUnsignedInt = undefined;
-    } else {
-      const parseResult = fhirUnsignedIntSchema.safeParse(value);
-      if (!parseResult.success) {
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        throw new PrimitiveTypeError(`Invalid XxxClass.xxxxUnsignedInt (${value})`, parseResult.error);
-      }
-      this.xxxxUnsignedInt = new UnsignedIntType(parseResult.data);
-    }
+    const optErrMsg = `Invalid XxxClass.xxxxUnsignedInt (${String(value)})`;
+    this.xxxxUnsignedInt =
+      value === undefined ? undefined : new UnsignedIntType(UnsignedIntType.parse(value, optErrMsg));
     return this;
   }
 
@@ -1013,15 +934,8 @@ export class TempTemplateTypeMethods {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setXxxxUri(value: fhirUri | undefined): this {
-    if (value === undefined) {
-      this.xxxxUri = undefined;
-    } else {
-      const parseResult = fhirUriSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid XxxClass.xxxxUri (${value})`, parseResult.error);
-      }
-      this.xxxxUri = new UriType(parseResult.data);
-    }
+    const optErrMsg = `Invalid XxxClass.xxxxUri (${String(value)})`;
+    this.xxxxUri = value === undefined ? undefined : new UriType(UriType.parse(value, optErrMsg));
     return this;
   }
 
@@ -1033,7 +947,7 @@ export class TempTemplateTypeMethods {
   }
   //endregion
 
-  //region XhtmlType
+  //region XhtmlType - Optional
   // =====================================================================
   // XxxClass / XhtmlType (xxxxXhtml / XxxxXhtml)
   // =====================================================================
@@ -1079,15 +993,8 @@ export class TempTemplateTypeMethods {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setXxxxXhtml(value: fhirXhtml | undefined): this {
-    if (value === undefined) {
-      this.xxxxXhtml = undefined;
-    } else {
-      const parseResult = fhirXhtmlSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid XxxClass.xxxxXhtml (${value})`, parseResult.error);
-      }
-      this.xxxxXhtml = new XhtmlType(parseResult.data);
-    }
+    const optErrMsg = `Invalid XxxClass.xxxxXhtml`;
+    this.xxxxXhtml = value === undefined ? undefined : new XhtmlType(XhtmlType.parse(value, optErrMsg));
     return this;
   }
 
@@ -1096,6 +1003,75 @@ export class TempTemplateTypeMethods {
    */
   public hasXxxxXhtml(): boolean {
     return this.hasXxxxXhtmlElement();
+  }
+  //endregion
+
+  //region XhtmlType - Required
+  // =====================================================================
+  // XxxClass / XhtmlType (xxxxXhtmlReq / XxxxXhtmlReq)
+  // =====================================================================
+  protected xxxxXhtmlReq: XhtmlType | null = null;
+
+  /**
+   * @returns the `xxxxXhtmlReq` property value as a PrimitiveType
+   */
+  public getXxxxXhtmlReqElement(): XhtmlType | null {
+    return this.xxxxXhtmlReq;
+  }
+
+  /**
+   * Assigns the provided PrimitiveType value to the `xxxxXhtmlReq` property.
+   *
+   * @param element - the `xxxxXhtmlReq` value
+   * @returns this
+   */
+  public setXxxxXhtmlReqElement(element: XhtmlType): this {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (element !== null) {
+      this.xxxxXhtmlReq = element;
+    }
+    return this;
+  }
+
+  /**
+   * @returns `true` if the `xxxxXhtmlReq` property exists and has a value; `false` otherwise
+   */
+  public hasXxxxXhtmlReqElement(): boolean {
+    return this.xxxxXhtmlReq !== null && !this.xxxxXhtmlReq.isEmpty();
+  }
+
+  /**
+   * @returns the `xxxxXhtmlReq` property value as a primitive value
+   */
+  public getXxxxXhtmlReq(): fhirXhtml | null {
+    if (this.xxxxXhtmlReq?.getValue() === undefined) {
+      return null;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return this.xxxxXhtmlReq.getValue()!;
+  }
+
+  /**
+   * Assigns the provided primitive value to the `xxxxXhtmlReq` property.
+   *
+   * @param value - the `xxxxXhtmlReq` value
+   * @returns this
+   * @throws PrimitiveTypeError for invalid primitive types
+   */
+  public setXxxxXhtmlReq(value: fhirXhtml): this {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (value !== null) {
+      const optErrMsg = `Invalid XxxClass.xxxxXhtmlReq`;
+      this.xxxxXhtmlReq = new XhtmlType(XhtmlType.parse(value, optErrMsg));
+    }
+    return this;
+  }
+
+  /**
+   * @returns `true` if the `xxxxXhtmlReq` property exists and has a value; `false` otherwise
+   */
+  public hasXxxxXhtmlReq(): boolean {
+    return this.hasXxxxXhtmlReqElement();
   }
   //endregion
 

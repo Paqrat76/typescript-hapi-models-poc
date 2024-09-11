@@ -131,29 +131,29 @@ describe('Integer64Type', () => {
     expect(t).toThrow('Invalid value for Integer64Type');
   });
 
-  it('should properly encode with correct values', () => {
+  it('should properly encodeToString with correct values', () => {
     const testInteger64Type = new Integer64Type();
-    expect(testInteger64Type.encode(VALID_INTEGER64)).toStrictEqual(VALID_INTEGER64.toString());
+    expect(testInteger64Type.encodeToString(VALID_INTEGER64)).toStrictEqual(VALID_INTEGER64.toString());
   });
 
-  it('should throw PrimitiveTypeError when encode() with an invalid value', () => {
+  it('should throw PrimitiveTypeError when encodeToString() with an invalid value', () => {
     const testInteger64Type = new Integer64Type();
     const t = () => {
-      testInteger64Type.encode(INVALID_INTEGER64);
+      testInteger64Type.encodeToString(INVALID_INTEGER64);
     };
     expect(t).toThrow(PrimitiveTypeError);
     expect(t).toThrow('Invalid value for Integer64Type');
   });
 
-  it('should properly parse with correct values', () => {
+  it('should properly parseToPrimitive with correct values', () => {
     const testInteger64Type = new Integer64Type();
-    expect(testInteger64Type.parse(VALID_INTEGER64.toString())).toStrictEqual(VALID_INTEGER64);
+    expect(testInteger64Type.parseToPrimitive(VALID_INTEGER64.toString())).toStrictEqual(VALID_INTEGER64);
   });
 
-  it('should throw PrimitiveTypeError when parse() with an invalid value', () => {
+  it('should throw PrimitiveTypeError when parseToPrimitive() with an invalid value', () => {
     const testInteger64Type = new Integer64Type();
     const t = () => {
-      testInteger64Type.parse(INVALID_INTEGER64.toString());
+      testInteger64Type.parseToPrimitive(INVALID_INTEGER64.toString());
     };
     expect(t).toThrow(PrimitiveTypeError);
     expect(t).toThrow('Invalid value for Integer64Type');

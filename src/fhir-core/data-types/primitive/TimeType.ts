@@ -21,9 +21,9 @@
  *
  */
 
-import { fhirTime, fhirTimeSchema } from './primitive-types';
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { fhirTime, fhirTimeSchema } from './primitive-types';
 
 /**
  * Time Class
@@ -49,27 +49,35 @@ export class TimeType extends PrimitiveType<fhirTime> {
     this.assignValue(value);
   }
 
+  /**
+   * Parses the provided value and returns the desired FHIR primitive value.
+   *
+   * @param value - value to be parsed
+   * @param errMessage - optional error message to override the default
+   * @returns the FHIR primitive value
+   * @throws PrimitiveTypeError for invalid value
+   */
+  static parse(value: string, errMessage?: string): fhirTime {
+    const parseResult = fhirTimeSchema.safeParse(value);
+    if (parseResult.success) {
+      return parseResult.data;
+    } else {
+      const errMsg = errMessage ?? `Invalid value for TimeType (${String(value)})`;
+      throw new PrimitiveTypeError(errMsg, parseResult.error);
+    }
+  }
+
   public override setValue(value?: fhirTime): this {
     this.assignValue(value);
     return this;
   }
 
-  public encode(value: fhirTime): string {
-    const parseResult = fhirTimeSchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data.toString();
-    } else {
-      throw new PrimitiveTypeError(`Invalid value (${value}) for TimeType`, parseResult.error);
-    }
+  public encodeToString(value: fhirTime): string {
+    return TimeType.parse(value).toString();
   }
 
-  public parse(value: string): fhirTime {
-    const parseResult = fhirTimeSchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data;
-    } else {
-      throw new PrimitiveTypeError(`Invalid value (${value}) for TimeType`, parseResult.error);
-    }
+  public parseToPrimitive(value: string): fhirTime {
+    return TimeType.parse(value);
   }
 
   public override fhirType(): string {
@@ -89,12 +97,7 @@ export class TimeType extends PrimitiveType<fhirTime> {
 
   private assignValue(value: fhirTime | undefined): void {
     if (value !== undefined) {
-      const parseResult = fhirTimeSchema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value (${value}) for TimeType`, parseResult.error);
-      }
+      super.setValue(TimeType.parse(value));
     } else {
       super.setValue(undefined);
     }

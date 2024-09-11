@@ -21,9 +21,9 @@
  *
  */
 
-import { fhirMarkdown, fhirMarkdownSchema } from './primitive-types';
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { fhirMarkdown, fhirMarkdownSchema } from './primitive-types';
 
 /**
  * Markdown Class
@@ -50,27 +50,35 @@ export class MarkdownType extends PrimitiveType<fhirMarkdown> {
     this.assignValue(value);
   }
 
+  /**
+   * Parses the provided value and returns the desired FHIR primitive value.
+   *
+   * @param value - value to be parsed
+   * @param errMessage - optional error message to override the default
+   * @returns the FHIR primitive value
+   * @throws PrimitiveTypeError for invalid value
+   */
+  static parse(value: string, errMessage?: string): fhirMarkdown {
+    const parseResult = fhirMarkdownSchema.safeParse(value);
+    if (parseResult.success) {
+      return parseResult.data;
+    } else {
+      const errMsg = errMessage ?? `Invalid value for MarkdownType`;
+      throw new PrimitiveTypeError(errMsg, parseResult.error);
+    }
+  }
+
   public override setValue(value?: fhirMarkdown): this {
     this.assignValue(value);
     return this;
   }
 
-  public encode(value: fhirMarkdown): string {
-    const parseResult = fhirMarkdownSchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data.toString();
-    } else {
-      throw new PrimitiveTypeError(`Invalid value for MarkdownType`, parseResult.error);
-    }
+  public encodeToString(value: fhirMarkdown): string {
+    return MarkdownType.parse(value).toString();
   }
 
-  public parse(value: string): fhirMarkdown {
-    const parseResult = fhirMarkdownSchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data;
-    } else {
-      throw new PrimitiveTypeError(`Invalid value for MarkdownType`, parseResult.error);
-    }
+  public parseToPrimitive(value: string): fhirMarkdown {
+    return MarkdownType.parse(value);
   }
 
   public override fhirType(): string {
@@ -90,12 +98,7 @@ export class MarkdownType extends PrimitiveType<fhirMarkdown> {
 
   private assignValue(value: fhirMarkdown | undefined): void {
     if (value !== undefined) {
-      const parseResult = fhirMarkdownSchema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value for MarkdownType`, parseResult.error);
-      }
+      super.setValue(MarkdownType.parse(value));
     } else {
       super.setValue(undefined);
     }

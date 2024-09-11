@@ -21,9 +21,9 @@
  *
  */
 
-import { fhirId, fhirIdSchema } from './primitive-types';
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { fhirId, fhirIdSchema } from './primitive-types';
 
 /**
  * Id Class
@@ -50,27 +50,35 @@ export class IdType extends PrimitiveType<fhirId> {
     this.assignValue(value);
   }
 
+  /**
+   * Parses the provided value and returns the desired FHIR primitive value.
+   *
+   * @param value - value to be parsed
+   * @param errMessage - optional error message to override the default
+   * @returns the FHIR primitive value
+   * @throws PrimitiveTypeError for invalid value
+   */
+  static parse(value: string, errMessage?: string): fhirId {
+    const parseResult = fhirIdSchema.safeParse(value);
+    if (parseResult.success) {
+      return parseResult.data;
+    } else {
+      const errMsg = errMessage ?? `Invalid value for IdType (${String(value)})`;
+      throw new PrimitiveTypeError(errMsg, parseResult.error);
+    }
+  }
+
   public override setValue(value?: fhirId): this {
     this.assignValue(value);
     return this;
   }
 
-  public encode(value: fhirId): string {
-    const parseResult = fhirIdSchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data.toString();
-    } else {
-      throw new PrimitiveTypeError(`Invalid value (${value}) for IdType`, parseResult.error);
-    }
+  public encodeToString(value: fhirId): string {
+    return IdType.parse(value).toString();
   }
 
-  public parse(value: string): fhirId {
-    const parseResult = fhirIdSchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data;
-    } else {
-      throw new PrimitiveTypeError(`Invalid value (${value}) for IdType`, parseResult.error);
-    }
+  public parseToPrimitive(value: string): fhirId {
+    return IdType.parse(value);
   }
 
   public override fhirType(): string {
@@ -90,12 +98,7 @@ export class IdType extends PrimitiveType<fhirId> {
 
   private assignValue(value: fhirId | undefined): void {
     if (value !== undefined) {
-      const parseResult = fhirIdSchema.safeParse(value);
-      if (parseResult.success) {
-        super.setValue(parseResult.data);
-      } else {
-        throw new PrimitiveTypeError(`Invalid value (${value}) for IdType`, parseResult.error);
-      }
+      super.setValue(IdType.parse(value));
     } else {
       super.setValue(undefined);
     }

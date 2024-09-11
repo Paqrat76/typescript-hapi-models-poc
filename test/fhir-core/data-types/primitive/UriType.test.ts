@@ -69,7 +69,7 @@ describe('UriType', () => {
       new UriType(INVALID_URI);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_URI}) for UriType`);
+    expect(t).toThrow(`Invalid value for UriType (${INVALID_URI})`);
   });
 
   it('should be properly reset by setValue()', () => {
@@ -100,7 +100,7 @@ describe('UriType', () => {
       testUriType.setValue(INVALID_URI);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_URI}) for UriType`);
+    expect(t).toThrow(`Invalid value for UriType (${INVALID_URI})`);
   });
 
   it('should properly setValueAsString() with correct values', () => {
@@ -117,35 +117,35 @@ describe('UriType', () => {
       testUriType.setValueAsString(INVALID_URI);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_URI}) for UriType`);
+    expect(t).toThrow(`Invalid value for UriType (${INVALID_URI})`);
   });
 
-  it('should properly encode with correct values', () => {
+  it('should properly encodeToString with correct values', () => {
     const testUriType = new UriType(VALID_URI);
-    expect(testUriType.encode(VALID_URI)).toStrictEqual(VALID_URI);
+    expect(testUriType.encodeToString(VALID_URI)).toStrictEqual(VALID_URI);
   });
 
-  it('should throw PrimitiveTypeError when encode() with invalid value', () => {
+  it('should throw PrimitiveTypeError when encodeToString() with invalid value', () => {
     const testUriType = new UriType();
     const t = () => {
-      testUriType.encode(INVALID_URI);
+      testUriType.encodeToString(INVALID_URI);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_URI}) for UriType`);
+    expect(t).toThrow(`Invalid value for UriType (${INVALID_URI})`);
   });
 
-  it('should properly parse with correct values', () => {
+  it('should properly parseToPrimitive with correct values', () => {
     const testUriType = new UriType();
-    expect(testUriType.parse(VALID_URI)).toStrictEqual(VALID_URI);
+    expect(testUriType.parseToPrimitive(VALID_URI)).toStrictEqual(VALID_URI);
   });
 
-  it('should throw PrimitiveTypeError when parse() with invalid value', () => {
+  it('should throw PrimitiveTypeError when parseToPrimitive() with invalid value', () => {
     const testUriType = new UriType();
     const t = () => {
-      testUriType.parse(INVALID_URI);
+      testUriType.parseToPrimitive(INVALID_URI);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_URI}) for UriType`);
+    expect(t).toThrow(`Invalid value for UriType (${INVALID_URI})`);
   });
 
   it('should properly copy()', () => {

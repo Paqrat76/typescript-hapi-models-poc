@@ -69,7 +69,7 @@ describe('IdType', () => {
       new IdType(INVALID_ID);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_ID}) for IdType`);
+    expect(t).toThrow(`Invalid value for IdType (${INVALID_ID})`);
   });
 
   it('should be properly reset by setValue()', () => {
@@ -100,7 +100,7 @@ describe('IdType', () => {
       testIdType.setValue(INVALID_ID);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_ID}) for IdType`);
+    expect(t).toThrow(`Invalid value for IdType (${INVALID_ID})`);
   });
 
   it('should properly setValueAsString() with correct values', () => {
@@ -117,35 +117,35 @@ describe('IdType', () => {
       testIdType.setValueAsString(INVALID_ID);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_ID}) for IdType`);
+    expect(t).toThrow(`Invalid value for IdType (${INVALID_ID})`);
   });
 
-  it('should properly encode with correct values', () => {
+  it('should properly encodeToString with correct values', () => {
     const testIdType = new IdType(VALID_ID);
-    expect(testIdType.encode(VALID_ID)).toStrictEqual(VALID_ID);
+    expect(testIdType.encodeToString(VALID_ID)).toStrictEqual(VALID_ID);
   });
 
-  it('should throw PrimitiveTypeError when encode() with invalid value', () => {
+  it('should throw PrimitiveTypeError when encodeToString() with invalid value', () => {
     const testIdType = new IdType();
     const t = () => {
-      testIdType.encode(INVALID_ID);
+      testIdType.encodeToString(INVALID_ID);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_ID}) for IdType`);
+    expect(t).toThrow(`Invalid value for IdType (${INVALID_ID})`);
   });
 
-  it('should properly parse with correct values', () => {
+  it('should properly parseToPrimitive with correct values', () => {
     const testIdType = new IdType();
-    expect(testIdType.parse(VALID_ID)).toStrictEqual(VALID_ID);
+    expect(testIdType.parseToPrimitive(VALID_ID)).toStrictEqual(VALID_ID);
   });
 
-  it('should throw PrimitiveTypeError when parse() with invalid value', () => {
+  it('should throw PrimitiveTypeError when parseToPrimitive() with invalid value', () => {
     const testIdType = new IdType();
     const t = () => {
-      testIdType.parse(INVALID_ID);
+      testIdType.parseToPrimitive(INVALID_ID);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value (${INVALID_ID}) for IdType`);
+    expect(t).toThrow(`Invalid value for IdType (${INVALID_ID})`);
   });
 
   it('should properly copy()', () => {
