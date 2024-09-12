@@ -23,6 +23,8 @@
 
 import { FHIR_MAX_STRING_LENGTH } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { IBase } from '@src/fhir-core/base-models/IBase';
+import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
+import { ResourceType } from '@src/fhir-core/base-models/ResourceType';
 
 export {
   FHIR_MIN_INTEGER,
@@ -58,5 +60,26 @@ export class MockFhirModel implements IBase {
 
   public isEmpty(): boolean {
     return true;
+  }
+}
+
+export class MockTask extends DomainResource {
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
+  constructor() {
+    super();
+  }
+
+  public resourceType(): ResourceType {
+    return 'Task';
+  }
+
+  public override fhirType(): string {
+    return 'MockTask';
+  }
+
+  public copy(): MockTask {
+    const dest = new MockTask();
+    this.copyValues(dest);
+    return dest;
   }
 }

@@ -44,6 +44,8 @@ import { GroupTypeEnum } from '@src/fhir-models/code-systems/GroupTypeEnum';
 import { isElementEmpty } from '@src/fhir-core/utility/element-util';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { ResourceType } from '@src/fhir-core/base-models/ResourceType';
+import { ReferenceTargets } from '@src/fhir-core/decorators/ReferenceTargets';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -268,8 +270,8 @@ export class Group extends DomainResource implements IBase {
   /**
    * {@inheritDoc Resource.resourceType}
    */
-  public resourceType(): string {
-    return this.fhirType();
+  public resourceType(): ResourceType {
+    return this.fhirType() as ResourceType;
   }
 
   /**
@@ -672,6 +674,7 @@ export class Group extends DomainResource implements IBase {
    * @param value - the `managingEntity` object value
    * @returns this
    */
+  @ReferenceTargets(['Organization', 'RelatedPerson', 'Practitioner', 'PractitionerRole'])
   public setManagingEntity(value: Reference | undefined): this {
     this.managingEntity = value;
     return this;
@@ -1343,6 +1346,7 @@ export class GroupMemberComponent extends BackboneElement {
    * @param value - the `entity` object value
    * @returns this
    */
+  @ReferenceTargets(['Patient', 'Practitioner', 'PractitionerRole', 'Device', 'Medication', 'Substance', 'Group'])
   public setEntity(value: Reference): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (value !== null) {

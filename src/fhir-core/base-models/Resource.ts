@@ -22,6 +22,8 @@
  */
 
 import { Base } from '@src/fhir-core/base-models/Base';
+import { IBase } from '@src/fhir-core/base-models/IBase';
+import { ResourceType } from '@src/fhir-core/base-models/ResourceType';
 import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
@@ -36,7 +38,6 @@ import {
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty } from '@src/fhir-core/utility/element-util';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { IBase } from '@src/fhir-core/base-models/IBase';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -73,7 +74,7 @@ export abstract class Resource extends Base implements IBase {
   /**
    * @returns the FHIR resource type as defined by the FHIR specification
    */
-  public abstract resourceType(): string;
+  public abstract resourceType(): ResourceType;
 
   /**
    * Resource.id Element
@@ -340,9 +341,7 @@ export abstract class Resource extends Base implements IBase {
   /**
    * {@inheritDoc Base.fhirType}
    */
-  public fhirType(): string {
-    return 'Resource';
-  }
+  public abstract override fhirType(): string;
 
   /**
    * {@inheritDoc Base.isEmpty}

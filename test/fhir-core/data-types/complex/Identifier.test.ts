@@ -29,6 +29,7 @@ import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
 import { Period } from '@src/fhir-core/data-types/complex/Period';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
 describe('Identifier Tests', () => {
   const VALID_CODE = `testCodeType`;
@@ -65,13 +66,17 @@ describe('Identifier Tests', () => {
   const VALID_PERIOD_VALUE_2 = new Period();
   VALID_PERIOD_VALUE_2.setStart(VALID_PERIOD_START_2);
 
-  const VALID_REFERENCE_1 = 'Patient/13579';
+  const VALID_REFERENCE_1 = 'Organization/13579';
   const VALID_REFERENCE_VALUE_1 = new Reference();
   VALID_REFERENCE_VALUE_1.setReference(VALID_REFERENCE_1);
 
-  const VALID_REFERENCE_2 = 'Patient/24680';
+  const VALID_REFERENCE_2 = 'Organization/24680';
   const VALID_REFERENCE_VALUE_2 = new Reference();
   VALID_REFERENCE_VALUE_2.setReference(VALID_REFERENCE_2);
+
+  const INVALID_REFERENCE = 'Location/98765';
+  const INVALID_REFERENCE_VALUE = new Reference();
+  INVALID_REFERENCE_VALUE.setReference(INVALID_REFERENCE);
 
   const UNDEFINED_VALUE = undefined;
 
@@ -355,6 +360,15 @@ describe('Identifier Tests', () => {
     };
     expect(t).toThrow(PrimitiveTypeError);
     expect(t).toThrow(`Invalid Identifier.value (${INVALID_STRING})`);
+  });
+
+  it('should throw InvalidTypeError when reset with invalid Identifier.assigner reference type', () => {
+    const testIdentifier = new Identifier();
+    const t = () => {
+      testIdentifier.setAssigner(INVALID_REFERENCE_VALUE);
+    };
+    expect(t).toThrow(InvalidTypeError);
+    expect(t).toThrow(`setAssigner: 'value' argument (${INVALID_REFERENCE}) is not for a valid resource type`);
   });
 
   // Tests using DataType elements

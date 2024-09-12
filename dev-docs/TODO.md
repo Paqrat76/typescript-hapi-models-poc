@@ -2,8 +2,8 @@
 
 ## POC Feature Set
 
-- Decide on whether `resourceType()` should return a string based on `fhirType()` or an `enum ResourceType`.
-- Investigate and implement approach to ensure `Reference.reference` only accepts target references.
+- D~~ecide on whether `resourceType()` should return a string based on `fhirType()` or an `enum ResourceType`.~~
+- ~~Investigate and implement approach to ensure `Reference.reference` only accepts target references.~~
 - Investigate and implement approach to runtime parameter assertions (e.g., not null, not undefined, not empty,
   appropriate type, etc.)
 - Add Date handling for FHIR `date`/`dateTime`/`time`/`instant` using [Luxon](https://moment.github.io/luxon/#/?id=luxon)

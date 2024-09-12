@@ -380,9 +380,7 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
   /**
    * {@inheritDoc Base.fhirType}
    */
-  public override fhirType(): string {
-    return 'DomainResource';
-  }
+  public abstract override fhirType(): string;
 
   /**
    * {@inheritDoc Base.isEmpty}

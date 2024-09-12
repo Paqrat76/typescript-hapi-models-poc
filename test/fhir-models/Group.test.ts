@@ -86,11 +86,21 @@ describe('Group Suite', () => {
   VALID_RANGE.setLow(SIMPLE_QUANTITY_1);
   VALID_RANGE.setHigh(SIMPLE_QUANTITY_2);
 
-  const VALID_REFERENCE_1 = new Reference();
-  VALID_REFERENCE_1.setReference(VALID_STRING_1);
+  const VALID_REFERENCE_1 = 'Organization/13579';
+  const VALID_REFERENCE_VALUE_1 = new Reference();
+  VALID_REFERENCE_VALUE_1.setReference(VALID_REFERENCE_1);
 
-  const VALID_REFERENCE_2 = new Reference();
-  VALID_REFERENCE_2.setReference(VALID_STRING_2);
+  const VALID_REFERENCE_2 = 'Organization/24680';
+  const VALID_REFERENCE_VALUE_2 = new Reference();
+  VALID_REFERENCE_VALUE_2.setReference(VALID_REFERENCE_2);
+
+  const VALID_REFERENCE_3 = 'Patient/98765';
+  const VALID_REFERENCE_VALUE_3 = new Reference();
+  VALID_REFERENCE_VALUE_3.setReference(VALID_REFERENCE_3);
+
+  const INVALID_REFERENCE = 'Location/98765';
+  const INVALID_REFERENCE_VALUE = new Reference();
+  INVALID_REFERENCE_VALUE.setReference(INVALID_REFERENCE);
 
   const VALID_START_DATETIME = `2017-01-01T00:00:00.000Z`;
   const VALID_END_DATETIME = `2017-01-01T01:00:00.000Z`;
@@ -205,14 +215,14 @@ describe('Group Suite', () => {
       group.setCode(VALID_CODEABLECONCEPT_1);
       group.setName(VALID_STRING_1);
       group.setQuantity(VALID_UNSIGNED_INT_1);
-      group.setManagingEntity(VALID_REFERENCE_1);
+      group.setManagingEntity(VALID_REFERENCE_VALUE_1);
       const groupCharacteristicComponent1 = new GroupCharacteristicComponent(
         VALID_CODEABLECONCEPT_1,
         new BooleanType(VALID_BOOLEAN_FALSE),
         VALID_BOOLEAN_TRUE,
       );
       group.setCharacteristic([groupCharacteristicComponent1]);
-      const testGroupMemberComponent1 = new GroupMemberComponent(VALID_REFERENCE_1);
+      const testGroupMemberComponent1 = new GroupMemberComponent(VALID_REFERENCE_VALUE_1);
       group.setMember([testGroupMemberComponent1]);
 
       let testGroup = group.copy();
@@ -281,7 +291,7 @@ describe('Group Suite', () => {
       expect(testGroup.hasQuantity()).toBe(true);
       expect(testGroup.getQuantity()).toStrictEqual(VALID_UNSIGNED_INT_1);
       expect(testGroup.hasManagingEntity()).toBe(true);
-      expect(testGroup.getManagingEntity()).toMatchObject(VALID_REFERENCE_1);
+      expect(testGroup.getManagingEntity()).toMatchObject(VALID_REFERENCE_VALUE_1);
       expect(testGroup.hasCharacteristic()).toBe(true);
       expect(testGroup.getCharacteristic()).toMatchObject([groupCharacteristicComponent1]);
       expect(testGroup.hasMember()).toBe(true);
@@ -391,7 +401,7 @@ describe('Group Suite', () => {
       expect(testGroup.hasCharacteristic()).toBe(true);
       expect(testGroup.getCharacteristic()).toMatchObject([groupCharacteristicComponent1]);
 
-      const testGroupMemberComponent1 = new GroupMemberComponent(VALID_REFERENCE_1);
+      const testGroupMemberComponent1 = new GroupMemberComponent(VALID_REFERENCE_VALUE_1);
       testGroup.addMember(testGroupMemberComponent1);
       expect(testGroup.hasMember()).toBe(true);
       expect(testGroup.getMember()).toMatchObject([testGroupMemberComponent1]);
@@ -482,14 +492,14 @@ describe('Group Suite', () => {
       group.setCode(VALID_CODEABLECONCEPT_1);
       group.setName(VALID_STRING_1);
       group.setQuantity(VALID_UNSIGNED_INT_1);
-      group.setManagingEntity(VALID_REFERENCE_1);
+      group.setManagingEntity(VALID_REFERENCE_VALUE_1);
       const groupCharacteristicComponent1 = new GroupCharacteristicComponent(
         VALID_CODEABLECONCEPT_1,
         new BooleanType(VALID_BOOLEAN_FALSE),
         VALID_BOOLEAN_TRUE,
       );
       group.setCharacteristic([groupCharacteristicComponent1]);
-      const testGroupMemberComponent1 = new GroupMemberComponent(VALID_REFERENCE_1);
+      const testGroupMemberComponent1 = new GroupMemberComponent(VALID_REFERENCE_VALUE_1);
       group.setMember([testGroupMemberComponent1]);
 
       let testGroup = group.copy();
@@ -558,7 +568,7 @@ describe('Group Suite', () => {
       expect(testGroup.hasQuantity()).toBe(true);
       expect(testGroup.getQuantity()).toStrictEqual(VALID_UNSIGNED_INT_1);
       expect(testGroup.hasManagingEntity()).toBe(true);
-      expect(testGroup.getManagingEntity()).toMatchObject(VALID_REFERENCE_1);
+      expect(testGroup.getManagingEntity()).toMatchObject(VALID_REFERENCE_VALUE_1);
       expect(testGroup.hasCharacteristic()).toBe(true);
       expect(testGroup.getCharacteristic()).toMatchObject([groupCharacteristicComponent1]);
       expect(testGroup.hasMember()).toBe(true);
@@ -571,14 +581,14 @@ describe('Group Suite', () => {
       group.setCode(VALID_CODEABLECONCEPT_2);
       group.setName(VALID_STRING_2);
       group.setQuantity(VALID_UNSIGNED_INT_2);
-      group.setManagingEntity(VALID_REFERENCE_2);
+      group.setManagingEntity(VALID_REFERENCE_VALUE_2);
       const groupCharacteristicComponent2 = new GroupCharacteristicComponent(
         VALID_CODEABLECONCEPT_2,
         new BooleanType(VALID_BOOLEAN_TRUE),
         VALID_BOOLEAN_FALSE,
       );
       group.addCharacteristic(groupCharacteristicComponent2);
-      const testGroupMemberComponent2 = new GroupMemberComponent(VALID_REFERENCE_2);
+      const testGroupMemberComponent2 = new GroupMemberComponent(VALID_REFERENCE_VALUE_2);
       group.addMember(testGroupMemberComponent2);
 
       testGroup = group.copy();
@@ -647,7 +657,7 @@ describe('Group Suite', () => {
       expect(testGroup.hasQuantity()).toBe(true);
       expect(testGroup.getQuantity()).toStrictEqual(VALID_UNSIGNED_INT_2);
       expect(testGroup.hasManagingEntity()).toBe(true);
-      expect(testGroup.getManagingEntity()).toMatchObject(VALID_REFERENCE_2);
+      expect(testGroup.getManagingEntity()).toMatchObject(VALID_REFERENCE_VALUE_2);
       expect(testGroup.hasCharacteristic()).toBe(true);
       expect(testGroup.getCharacteristic()).toMatchObject([
         groupCharacteristicComponent1,
@@ -846,14 +856,14 @@ describe('Group Suite', () => {
       group.setCode(VALID_CODEABLECONCEPT_1);
       group.setNameElement(new StringType(VALID_STRING_1));
       group.setQuantityElement(new UnsignedIntType(VALID_UNSIGNED_INT_1));
-      group.setManagingEntity(VALID_REFERENCE_1);
+      group.setManagingEntity(VALID_REFERENCE_VALUE_1);
       const groupCharacteristicComponent1 = new GroupCharacteristicComponent(
         VALID_CODEABLECONCEPT_1,
         new BooleanType(VALID_BOOLEAN_FALSE),
         new BooleanType(VALID_BOOLEAN_TRUE),
       );
       group.setCharacteristic([groupCharacteristicComponent1]);
-      const testGroupMemberComponent1 = new GroupMemberComponent(VALID_REFERENCE_1);
+      const testGroupMemberComponent1 = new GroupMemberComponent(VALID_REFERENCE_VALUE_1);
       group.setMember([testGroupMemberComponent1]);
 
       let testGroup = group.copy();
@@ -922,7 +932,7 @@ describe('Group Suite', () => {
       expect(testGroup.hasQuantity()).toBe(true);
       expect(testGroup.getQuantity()).toStrictEqual(VALID_UNSIGNED_INT_1);
       expect(testGroup.hasManagingEntity()).toBe(true);
-      expect(testGroup.getManagingEntity()).toMatchObject(VALID_REFERENCE_1);
+      expect(testGroup.getManagingEntity()).toMatchObject(VALID_REFERENCE_VALUE_1);
       expect(testGroup.hasCharacteristic()).toBe(true);
       expect(testGroup.getCharacteristic()).toMatchObject([groupCharacteristicComponent1]);
       expect(testGroup.hasMember()).toBe(true);
@@ -935,14 +945,14 @@ describe('Group Suite', () => {
       group.setCode(VALID_CODEABLECONCEPT_2);
       group.setNameElement(new StringType(VALID_STRING_2));
       group.setQuantityElement(new UnsignedIntType(VALID_UNSIGNED_INT_2));
-      group.setManagingEntity(VALID_REFERENCE_2);
+      group.setManagingEntity(VALID_REFERENCE_VALUE_2);
       const groupCharacteristicComponent2 = new GroupCharacteristicComponent(
         VALID_CODEABLECONCEPT_2,
         new BooleanType(VALID_BOOLEAN_TRUE),
         new BooleanType(VALID_BOOLEAN_FALSE),
       );
       group.addCharacteristic(groupCharacteristicComponent2);
-      const testGroupMemberComponent2 = new GroupMemberComponent(VALID_REFERENCE_2);
+      const testGroupMemberComponent2 = new GroupMemberComponent(VALID_REFERENCE_VALUE_2);
       group.addMember(testGroupMemberComponent2);
 
       testGroup = group.copy();
@@ -1011,7 +1021,7 @@ describe('Group Suite', () => {
       expect(testGroup.hasQuantity()).toBe(true);
       expect(testGroup.getQuantity()).toStrictEqual(VALID_UNSIGNED_INT_2);
       expect(testGroup.hasManagingEntity()).toBe(true);
-      expect(testGroup.getManagingEntity()).toMatchObject(VALID_REFERENCE_2);
+      expect(testGroup.getManagingEntity()).toMatchObject(VALID_REFERENCE_VALUE_2);
       expect(testGroup.hasCharacteristic()).toBe(true);
       expect(testGroup.getCharacteristic()).toMatchObject([
         groupCharacteristicComponent1,
@@ -1033,14 +1043,14 @@ describe('Group Suite', () => {
       group.setCode(VALID_CODEABLECONCEPT_1);
       group.setNameElement(new StringType(VALID_STRING_1));
       group.setQuantityElement(new UnsignedIntType(VALID_UNSIGNED_INT_1));
-      group.setManagingEntity(VALID_REFERENCE_1);
+      group.setManagingEntity(VALID_REFERENCE_VALUE_1);
       const groupCharacteristicComponent1 = new GroupCharacteristicComponent(
         VALID_CODEABLECONCEPT_1,
         new BooleanType(VALID_BOOLEAN_FALSE),
         new BooleanType(VALID_BOOLEAN_TRUE),
       );
       group.setCharacteristic([groupCharacteristicComponent1]);
-      const testGroupMemberComponent1 = new GroupMemberComponent(VALID_REFERENCE_1);
+      const testGroupMemberComponent1 = new GroupMemberComponent(VALID_REFERENCE_VALUE_1);
       group.setMember([testGroupMemberComponent1]);
 
       let testGroup = group.copy();
@@ -1109,7 +1119,7 @@ describe('Group Suite', () => {
       expect(testGroup.hasQuantity()).toBe(true);
       expect(testGroup.getQuantity()).toStrictEqual(VALID_UNSIGNED_INT_1);
       expect(testGroup.hasManagingEntity()).toBe(true);
-      expect(testGroup.getManagingEntity()).toMatchObject(VALID_REFERENCE_1);
+      expect(testGroup.getManagingEntity()).toMatchObject(VALID_REFERENCE_VALUE_1);
       expect(testGroup.hasCharacteristic()).toBe(true);
       expect(testGroup.getCharacteristic()).toMatchObject([groupCharacteristicComponent1]);
       expect(testGroup.hasMember()).toBe(true);
@@ -1122,14 +1132,14 @@ describe('Group Suite', () => {
       group.setCode(VALID_CODEABLECONCEPT_2);
       group.setNameElement(new StringType(VALID_STRING_2));
       group.setQuantityElement(new UnsignedIntType(VALID_UNSIGNED_INT_2));
-      group.setManagingEntity(VALID_REFERENCE_2);
+      group.setManagingEntity(VALID_REFERENCE_VALUE_2);
       const groupCharacteristicComponent2 = new GroupCharacteristicComponent(
         VALID_CODEABLECONCEPT_2,
         new BooleanType(VALID_BOOLEAN_TRUE),
         new BooleanType(VALID_BOOLEAN_FALSE),
       );
       group.addCharacteristic(groupCharacteristicComponent2);
-      const testGroupMemberComponent2 = new GroupMemberComponent(VALID_REFERENCE_2);
+      const testGroupMemberComponent2 = new GroupMemberComponent(VALID_REFERENCE_VALUE_2);
       group.addMember(testGroupMemberComponent2);
 
       testGroup = group.copy();
@@ -1198,7 +1208,7 @@ describe('Group Suite', () => {
       expect(testGroup.hasQuantity()).toBe(true);
       expect(testGroup.getQuantity()).toStrictEqual(VALID_UNSIGNED_INT_2);
       expect(testGroup.hasManagingEntity()).toBe(true);
-      expect(testGroup.getManagingEntity()).toMatchObject(VALID_REFERENCE_2);
+      expect(testGroup.getManagingEntity()).toMatchObject(VALID_REFERENCE_VALUE_2);
       expect(testGroup.hasCharacteristic()).toBe(true);
       expect(testGroup.getCharacteristic()).toMatchObject([
         groupCharacteristicComponent1,
@@ -1235,6 +1245,15 @@ describe('Group Suite', () => {
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid Group.quantity (${String(INVALID_UNSIGNED_INT)})`);
+    });
+
+    it('should throw InvalidTypeError when setManagingEntity() with invalid reference type', () => {
+      const testGroup = new Group(null, null);
+      const t = () => {
+        testGroup.setManagingEntity(INVALID_REFERENCE_VALUE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`setManagingEntity: 'value' argument (${INVALID_REFERENCE}) is not for a valid resource type`);
     });
   });
 
@@ -1629,11 +1648,11 @@ describe('Group Suite', () => {
         expect(testGroupCharacteristicComponent.hasValueReference()).toBe(false);
         expect(testGroupCharacteristicComponent.getValueReference()).toBeNull();
 
-        testGroupCharacteristicComponent.setValue(VALID_REFERENCE_1);
+        testGroupCharacteristicComponent.setValue(VALID_REFERENCE_VALUE_1);
         expect(testGroupCharacteristicComponent.hasValue()).toBe(true);
-        expect(testGroupCharacteristicComponent.getValue()).toMatchObject(VALID_REFERENCE_1);
+        expect(testGroupCharacteristicComponent.getValue()).toMatchObject(VALID_REFERENCE_VALUE_1);
         expect(testGroupCharacteristicComponent.hasValueReference()).toBe(true);
-        expect(testGroupCharacteristicComponent.getValueReference()).toMatchObject(VALID_REFERENCE_1);
+        expect(testGroupCharacteristicComponent.getValueReference()).toMatchObject(VALID_REFERENCE_VALUE_1);
 
         expect(testGroupCharacteristicComponent.hasValueCodeableConcept()).toBe(false);
         expect(testGroupCharacteristicComponent.hasValueBooleanType()).toBe(false);
@@ -1645,7 +1664,7 @@ describe('Group Suite', () => {
         };
         expect(t).toThrow(InvalidTypeError);
         expect(t).toThrow(
-          `DataType mismatch for Group.characteristic.value[x]: Expected CodeableConcept but encountered ${VALID_REFERENCE_1.fhirType()}`,
+          `DataType mismatch for Group.characteristic.value[x]: Expected CodeableConcept but encountered ${VALID_REFERENCE_VALUE_1.fhirType()}`,
         );
 
         t = () => {
@@ -1653,7 +1672,7 @@ describe('Group Suite', () => {
         };
         expect(t).toThrow(InvalidTypeError);
         expect(t).toThrow(
-          `DataType mismatch for Group.characteristic.value[x]: Expected BooleanType but encountered ${VALID_REFERENCE_1.fhirType()}`,
+          `DataType mismatch for Group.characteristic.value[x]: Expected BooleanType but encountered ${VALID_REFERENCE_VALUE_1.fhirType()}`,
         );
 
         t = () => {
@@ -1661,7 +1680,7 @@ describe('Group Suite', () => {
         };
         expect(t).toThrow(InvalidTypeError);
         expect(t).toThrow(
-          `DataType mismatch for Group.characteristic.value[x]: Expected Quantity but encountered ${VALID_REFERENCE_1.fhirType()}`,
+          `DataType mismatch for Group.characteristic.value[x]: Expected Quantity but encountered ${VALID_REFERENCE_VALUE_1.fhirType()}`,
         );
 
         t = () => {
@@ -1669,7 +1688,7 @@ describe('Group Suite', () => {
         };
         expect(t).toThrow(InvalidTypeError);
         expect(t).toThrow(
-          `DataType mismatch for Group.characteristic.value[x]: Expected Range but encountered ${VALID_REFERENCE_1.fhirType()}`,
+          `DataType mismatch for Group.characteristic.value[x]: Expected Range but encountered ${VALID_REFERENCE_VALUE_1.fhirType()}`,
         );
       });
     });
@@ -1943,7 +1962,7 @@ describe('Group Suite', () => {
     });
 
     it('should be properly instantiated', () => {
-      const testGroupMemberComponent = new GroupMemberComponent(VALID_REFERENCE_1);
+      const testGroupMemberComponent = new GroupMemberComponent(VALID_REFERENCE_VALUE_1);
 
       expect(testGroupMemberComponent).toBeDefined();
       expect(testGroupMemberComponent).toBeInstanceOf(GroupMemberComponent);
@@ -1964,7 +1983,7 @@ describe('Group Suite', () => {
 
       // GroupMemberComponent properties
       expect(testGroupMemberComponent.hasEntity()).toBe(true);
-      expect(testGroupMemberComponent.getEntity()).toMatchObject(VALID_REFERENCE_1);
+      expect(testGroupMemberComponent.getEntity()).toMatchObject(VALID_REFERENCE_VALUE_1);
       expect(testGroupMemberComponent.hasPeriod()).toBe(false);
       expect(testGroupMemberComponent.getPeriod()).toMatchObject(new Period());
       expect(testGroupMemberComponent.hasInactiveElement()).toBe(false);
@@ -1975,7 +1994,7 @@ describe('Group Suite', () => {
 
     it('should properly copy()', () => {
       const groupMemberComponent = new GroupMemberComponent(null);
-      groupMemberComponent.setEntity(VALID_REFERENCE_1);
+      groupMemberComponent.setEntity(VALID_REFERENCE_VALUE_3);
       groupMemberComponent.setPeriod(VALID_PERIOD);
       groupMemberComponent.setInactiveElement(new BooleanType(VALID_BOOLEAN_TRUE));
       let testGroupMemberComponent = groupMemberComponent.copy();
@@ -1999,7 +2018,7 @@ describe('Group Suite', () => {
 
       // GroupMemberComponent properties
       expect(testGroupMemberComponent.hasEntity()).toBe(true);
-      expect(testGroupMemberComponent.getEntity()).toMatchObject(VALID_REFERENCE_1);
+      expect(testGroupMemberComponent.getEntity()).toMatchObject(VALID_REFERENCE_VALUE_3);
       expect(testGroupMemberComponent.hasPeriod()).toBe(true);
       expect(testGroupMemberComponent.getPeriod()).toMatchObject(VALID_PERIOD);
       expect(testGroupMemberComponent.hasInactiveElement()).toBe(true);
@@ -2032,7 +2051,7 @@ describe('Group Suite', () => {
 
       // GroupMemberComponent properties
       expect(testGroupMemberComponent.hasEntity()).toBe(true);
-      expect(testGroupMemberComponent.getEntity()).toMatchObject(VALID_REFERENCE_1); // no change from null arg
+      expect(testGroupMemberComponent.getEntity()).toMatchObject(VALID_REFERENCE_VALUE_3); // no change from null arg
       expect(testGroupMemberComponent.hasPeriod()).toBe(false);
       expect(testGroupMemberComponent.getPeriod()).toMatchObject(new Period());
       expect(testGroupMemberComponent.hasInactiveElement()).toBe(false);
@@ -2040,7 +2059,7 @@ describe('Group Suite', () => {
       expect(testGroupMemberComponent.hasInactive()).toBe(false);
       expect(testGroupMemberComponent.getInactive()).toBeUndefined();
 
-      groupMemberComponent.setEntity(VALID_REFERENCE_1);
+      groupMemberComponent.setEntity(VALID_REFERENCE_VALUE_3);
       groupMemberComponent.setPeriod(VALID_PERIOD);
       groupMemberComponent.setInactiveElement(new BooleanType(VALID_BOOLEAN_TRUE));
 
@@ -2063,7 +2082,7 @@ describe('Group Suite', () => {
     // Tests using primitives
 
     it('should be properly instantiated with primitive values', () => {
-      const testGroupMemberComponent = new GroupMemberComponent(VALID_REFERENCE_1);
+      const testGroupMemberComponent = new GroupMemberComponent(VALID_REFERENCE_VALUE_1);
       testGroupMemberComponent.setInactive(VALID_BOOLEAN_TRUE);
 
       expect(testGroupMemberComponent).toBeDefined();
@@ -2085,7 +2104,7 @@ describe('Group Suite', () => {
 
       // GroupMemberComponent properties
       expect(testGroupMemberComponent.hasEntity()).toBe(true);
-      expect(testGroupMemberComponent.getEntity()).toMatchObject(VALID_REFERENCE_1);
+      expect(testGroupMemberComponent.getEntity()).toMatchObject(VALID_REFERENCE_VALUE_1);
       expect(testGroupMemberComponent.hasPeriod()).toBe(false);
       expect(testGroupMemberComponent.getPeriod()).toMatchObject(new Period());
       expect(testGroupMemberComponent.hasInactiveElement()).toBe(true);
@@ -2095,7 +2114,7 @@ describe('Group Suite', () => {
     });
 
     it('should be properly reset by modifying all properties with primitive values', () => {
-      const testGroupMemberComponent = new GroupMemberComponent(VALID_REFERENCE_1);
+      const testGroupMemberComponent = new GroupMemberComponent(VALID_REFERENCE_VALUE_1);
       testGroupMemberComponent.setPeriod(VALID_PERIOD);
       testGroupMemberComponent.setInactive(VALID_BOOLEAN_TRUE);
 
@@ -2104,7 +2123,7 @@ describe('Group Suite', () => {
 
       // GroupMemberComponent properties
       expect(testGroupMemberComponent.hasEntity()).toBe(true);
-      expect(testGroupMemberComponent.getEntity()).toMatchObject(VALID_REFERENCE_1);
+      expect(testGroupMemberComponent.getEntity()).toMatchObject(VALID_REFERENCE_VALUE_1);
       expect(testGroupMemberComponent.hasPeriod()).toBe(true);
       expect(testGroupMemberComponent.getPeriod()).toMatchObject(VALID_PERIOD);
       expect(testGroupMemberComponent.hasInactiveElement()).toBe(true);
@@ -2112,7 +2131,7 @@ describe('Group Suite', () => {
       expect(testGroupMemberComponent.hasInactive()).toBe(true);
       expect(testGroupMemberComponent.getInactive()).toStrictEqual(VALID_BOOLEAN_TRUE);
 
-      testGroupMemberComponent.setEntity(VALID_REFERENCE_2);
+      testGroupMemberComponent.setEntity(VALID_REFERENCE_VALUE_3);
       testGroupMemberComponent.setPeriod(VALID_PERIOD_2);
       testGroupMemberComponent.setInactive(VALID_BOOLEAN_FALSE);
 
@@ -2121,7 +2140,7 @@ describe('Group Suite', () => {
 
       // GroupMemberComponent properties
       expect(testGroupMemberComponent.hasEntity()).toBe(true);
-      expect(testGroupMemberComponent.getEntity()).toMatchObject(VALID_REFERENCE_2);
+      expect(testGroupMemberComponent.getEntity()).toMatchObject(VALID_REFERENCE_VALUE_3);
       expect(testGroupMemberComponent.hasPeriod()).toBe(true);
       expect(testGroupMemberComponent.getPeriod()).toMatchObject(VALID_PERIOD_2);
       expect(testGroupMemberComponent.hasInactiveElement()).toBe(true);
@@ -2130,20 +2149,19 @@ describe('Group Suite', () => {
       expect(testGroupMemberComponent.getInactive()).toStrictEqual(VALID_BOOLEAN_FALSE);
     });
 
-    it('should throw PrimitiveTypeError when setInactive() with non-boolean value', () => {
-      const testGroupMemberComponent = new GroupMemberComponent(VALID_REFERENCE_1);
+    it('should throw InvalidTypeError when setEntity() with invalid reference type', () => {
+      const testGroupMemberComponent = new GroupMemberComponent(VALID_REFERENCE_VALUE_1);
       const t = () => {
-        // @ts-expect-error: allow non-boolean to test error handling
-        testGroupMemberComponent.setInactive(INVALID_BOOLEAN);
+        testGroupMemberComponent.setEntity(INVALID_REFERENCE_VALUE);
       };
-      expect(t).toThrow(PrimitiveTypeError);
-      expect(t).toThrow(`Invalid GroupMemberComponent.inactive (${INVALID_BOOLEAN})`);
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`setEntity: 'value' argument (${INVALID_REFERENCE}) is not for a valid resource type`);
     });
 
     // Tests using DataType elements
 
     it('should be properly instantiated with PrimitiveType values', () => {
-      const testGroupMemberComponent = new GroupMemberComponent(VALID_REFERENCE_1);
+      const testGroupMemberComponent = new GroupMemberComponent(VALID_REFERENCE_VALUE_1);
       testGroupMemberComponent.setInactiveElement(new BooleanType(VALID_BOOLEAN_TRUE));
 
       expect(testGroupMemberComponent).toBeDefined();
@@ -2165,7 +2183,7 @@ describe('Group Suite', () => {
 
       // GroupMemberComponent properties
       expect(testGroupMemberComponent.hasEntity()).toBe(true);
-      expect(testGroupMemberComponent.getEntity()).toMatchObject(VALID_REFERENCE_1);
+      expect(testGroupMemberComponent.getEntity()).toMatchObject(VALID_REFERENCE_VALUE_1);
       expect(testGroupMemberComponent.hasPeriod()).toBe(false);
       expect(testGroupMemberComponent.getPeriod()).toMatchObject(new Period());
       expect(testGroupMemberComponent.hasInactiveElement()).toBe(true);
@@ -2175,7 +2193,7 @@ describe('Group Suite', () => {
     });
 
     it('should be properly reset by modifying all properties with PrimitiveType values', () => {
-      const testGroupMemberComponent = new GroupMemberComponent(VALID_REFERENCE_1);
+      const testGroupMemberComponent = new GroupMemberComponent(VALID_REFERENCE_VALUE_1);
       testGroupMemberComponent.setPeriod(VALID_PERIOD);
       testGroupMemberComponent.setInactiveElement(new BooleanType(VALID_BOOLEAN_TRUE));
 
@@ -2184,7 +2202,7 @@ describe('Group Suite', () => {
 
       // GroupMemberComponent properties
       expect(testGroupMemberComponent.hasEntity()).toBe(true);
-      expect(testGroupMemberComponent.getEntity()).toMatchObject(VALID_REFERENCE_1);
+      expect(testGroupMemberComponent.getEntity()).toMatchObject(VALID_REFERENCE_VALUE_1);
       expect(testGroupMemberComponent.hasPeriod()).toBe(true);
       expect(testGroupMemberComponent.getPeriod()).toMatchObject(VALID_PERIOD);
       expect(testGroupMemberComponent.hasInactiveElement()).toBe(true);
@@ -2192,7 +2210,7 @@ describe('Group Suite', () => {
       expect(testGroupMemberComponent.hasInactive()).toBe(true);
       expect(testGroupMemberComponent.getInactive()).toStrictEqual(VALID_BOOLEAN_TRUE);
 
-      testGroupMemberComponent.setEntity(VALID_REFERENCE_2);
+      testGroupMemberComponent.setEntity(VALID_REFERENCE_VALUE_3);
       testGroupMemberComponent.setPeriod(VALID_PERIOD_2);
       testGroupMemberComponent.setInactiveElement(new BooleanType(VALID_BOOLEAN_FALSE));
 
@@ -2201,7 +2219,7 @@ describe('Group Suite', () => {
 
       // GroupMemberComponent properties
       expect(testGroupMemberComponent.hasEntity()).toBe(true);
-      expect(testGroupMemberComponent.getEntity()).toMatchObject(VALID_REFERENCE_2);
+      expect(testGroupMemberComponent.getEntity()).toMatchObject(VALID_REFERENCE_VALUE_3);
       expect(testGroupMemberComponent.hasPeriod()).toBe(true);
       expect(testGroupMemberComponent.getPeriod()).toMatchObject(VALID_PERIOD_2);
       expect(testGroupMemberComponent.hasInactiveElement()).toBe(true);
