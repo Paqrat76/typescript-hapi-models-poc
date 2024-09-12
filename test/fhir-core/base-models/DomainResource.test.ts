@@ -33,34 +33,35 @@ import { Meta } from '@src/fhir-core/data-types/complex/Meta';
 import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { MockTask } from '../../test-utils';
 
 describe('DomainResource', () => {
   const VALID_XHTML = '<div xmlns="http://www.w3.org/1999/xhtml">text</div>';
   const VALID_NARRATIVE_1 = new Narrative(NarrativeStatusEnum.GENERATED.code, VALID_XHTML);
   const VALID_NARRATIVE_2 = new Narrative(NarrativeStatusEnum.ADDITIONAL.code, VALID_XHTML);
-  let VALID_RESOURCE_1: MockResource;
-  let VALID_RESOURCE_2: MockResource;
+  let VALID_RESOURCE_1: MockTask;
+  let VALID_RESOURCE_2: MockTask;
   const VALID_EXTENSION_1 = new Extension('url1', new StringType('ext string1'));
   const VALID_EXTENSION_2 = new Extension('url2', new StringType('ext string2'));
   const VALID_EXTENSION_3 = new Extension('url3', new StringType('ext string3'));
   const UNDEFINED_VALUE = undefined;
 
   beforeAll(() => {
-    VALID_RESOURCE_1 = new MockResource();
+    VALID_RESOURCE_1 = new MockTask();
     VALID_RESOURCE_1.setId('Resource-1');
-    VALID_RESOURCE_2 = new MockResource();
+    VALID_RESOURCE_2 = new MockTask();
     VALID_RESOURCE_2.setId('Resource-2');
   });
 
   it('should be properly instantiated as empty', () => {
-    const testDomainResource = new MockDomainResource();
+    const testDomainResource = new MockTask();
     expect(testDomainResource).toBeDefined();
     expect(testDomainResource).toBeInstanceOf(DomainResource);
     expect(testDomainResource).toBeInstanceOf(Resource);
     expect(testDomainResource).toBeInstanceOf(Base);
-    expect(testDomainResource.constructor.name).toStrictEqual('MockDomainResource');
-    expect(testDomainResource.resourceType()).toStrictEqual('MockDomainResource');
-    expect(testDomainResource.fhirType()).toStrictEqual('DomainResource');
+    expect(testDomainResource.constructor.name).toStrictEqual('MockTask');
+    expect(testDomainResource.resourceType()).toStrictEqual('Task');
+    expect(testDomainResource.fhirType()).toStrictEqual('MockTask');
     expect(testDomainResource.isEmpty()).toBe(true);
 
     // Resource properties
@@ -92,7 +93,7 @@ describe('DomainResource', () => {
   });
 
   it('should be properly instantiated with all DomainResource properties', () => {
-    const testDomainResource = new MockDomainResource();
+    const testDomainResource = new MockTask();
     testDomainResource.setText(VALID_NARRATIVE_1);
     testDomainResource.addContained(VALID_RESOURCE_1);
     testDomainResource.addExtension(VALID_EXTENSION_1);
@@ -118,7 +119,7 @@ describe('DomainResource', () => {
   });
 
   it('should be properly reset by modifying all properties with valid values', () => {
-    const testDomainResource = new MockDomainResource();
+    const testDomainResource = new MockTask();
     testDomainResource.setText(VALID_NARRATIVE_1);
     testDomainResource.setContained([VALID_RESOURCE_1]);
     testDomainResource.setExtension([VALID_EXTENSION_1]);
@@ -143,7 +144,7 @@ describe('DomainResource', () => {
   });
 
   it('should be properly reset by modifying all properties with different values', () => {
-    const testDomainResource = new MockDomainResource();
+    const testDomainResource = new MockTask();
     testDomainResource.setText(VALID_NARRATIVE_1);
     testDomainResource.addContained(VALID_RESOURCE_1);
     testDomainResource.addExtension(VALID_EXTENSION_1);
@@ -186,7 +187,7 @@ describe('DomainResource', () => {
   });
 
   it('should properly copy()', () => {
-    const domainResource = new MockDomainResource();
+    const domainResource = new MockTask();
     domainResource.setText(VALID_NARRATIVE_1);
     domainResource.addContained(VALID_RESOURCE_1);
     domainResource.addExtension(VALID_EXTENSION_1);
@@ -198,9 +199,9 @@ describe('DomainResource', () => {
     expect(testDomainResource).toBeInstanceOf(DomainResource);
     expect(testDomainResource).toBeInstanceOf(Resource);
     expect(testDomainResource).toBeInstanceOf(Base);
-    expect(testDomainResource.constructor.name).toStrictEqual('MockDomainResource');
-    expect(testDomainResource.resourceType()).toStrictEqual('MockDomainResource');
-    expect(testDomainResource.fhirType()).toStrictEqual('DomainResource');
+    expect(testDomainResource.constructor.name).toStrictEqual('MockTask');
+    expect(testDomainResource.resourceType()).toStrictEqual('Task');
+    expect(testDomainResource.fhirType()).toStrictEqual('MockTask');
     expect(testDomainResource.isEmpty()).toBe(false);
 
     expect(testDomainResource.hasText()).toBe(true);
@@ -227,9 +228,9 @@ describe('DomainResource', () => {
     expect(testDomainResourceCopyEmpty).toBeInstanceOf(DomainResource);
     expect(testDomainResourceCopyEmpty).toBeInstanceOf(Resource);
     expect(testDomainResourceCopyEmpty).toBeInstanceOf(Base);
-    expect(testDomainResourceCopyEmpty.constructor.name).toStrictEqual('MockDomainResource');
-    expect(testDomainResourceCopyEmpty.resourceType()).toStrictEqual('MockDomainResource');
-    expect(testDomainResourceCopyEmpty.fhirType()).toStrictEqual('DomainResource');
+    expect(testDomainResourceCopyEmpty.constructor.name).toStrictEqual('MockTask');
+    expect(testDomainResourceCopyEmpty.resourceType()).toStrictEqual('Task');
+    expect(testDomainResourceCopyEmpty.fhirType()).toStrictEqual('MockTask');
     expect(testDomainResourceCopyEmpty.isEmpty()).toBe(true);
 
     expect(testDomainResource.hasText()).toBe(false);
@@ -243,7 +244,7 @@ describe('DomainResource', () => {
   });
 
   it('should add instances to properties defined as arrays', () => {
-    const testDomainResource = new MockDomainResource();
+    const testDomainResource = new MockTask();
     testDomainResource.addContained(VALID_RESOURCE_1);
     testDomainResource.addExtension(VALID_EXTENSION_1);
     testDomainResource.addModifierExtension(VALID_EXTENSION_2);
@@ -269,7 +270,7 @@ describe('DomainResource', () => {
   });
 
   it('should properly set an extension with undefined argument', () => {
-    const testDomainResource = new MockDomainResource();
+    const testDomainResource = new MockTask();
     testDomainResource.addExtension(VALID_EXTENSION_1);
     testDomainResource.addModifierExtension(VALID_EXTENSION_2);
 
@@ -288,7 +289,7 @@ describe('DomainResource', () => {
   });
 
   it('should properly verify has extensions work as expected with and without a provided URL', () => {
-    const testDomainResource = new MockDomainResource();
+    const testDomainResource = new MockTask();
     expect(testDomainResource.hasExtension()).toBe(false);
     expect(testDomainResource.hasModifierExtension()).toBe(false);
 
@@ -310,7 +311,7 @@ describe('DomainResource', () => {
   });
 
   it('should properly get extensions by URL as expected with a provided URL', () => {
-    const testDomainResource = new MockDomainResource();
+    const testDomainResource = new MockTask();
     expect(testDomainResource.hasExtension()).toBe(false);
     expect(testDomainResource.getExtensionByUrl('url1')).toBeUndefined();
     expect(testDomainResource.hasModifierExtension()).toBe(false);
@@ -328,7 +329,7 @@ describe('DomainResource', () => {
   });
 
   it('should properly remove extensions by URL as expected with a provided URL', () => {
-    const testDomainResource = new MockDomainResource();
+    const testDomainResource = new MockTask();
     expect(testDomainResource.hasExtension()).toBe(false);
     expect(testDomainResource.hasModifierExtension()).toBe(false);
 
@@ -349,37 +350,3 @@ describe('DomainResource', () => {
     expect(testDomainResource.hasModifierExtension('url3')).toBe(true);
   });
 });
-
-class MockDomainResource extends DomainResource {
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-  constructor() {
-    super();
-  }
-
-  resourceType(): string {
-    return 'MockDomainResource';
-  }
-
-  public copy(): MockDomainResource {
-    const dest = new MockDomainResource();
-    this.copyValues(dest);
-    return dest;
-  }
-}
-
-class MockResource extends Resource {
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-  constructor() {
-    super();
-  }
-
-  resourceType(): string {
-    return 'MockResource';
-  }
-
-  public copy(): MockResource {
-    const dest = new MockResource();
-    this.copyValues(dest);
-    return dest;
-  }
-}

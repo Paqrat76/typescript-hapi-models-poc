@@ -34,9 +34,6 @@
 
     "allowSyntheticDefaultImports": true,
 
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-
     "composite": true,
 
     "noErrorTruncation": true

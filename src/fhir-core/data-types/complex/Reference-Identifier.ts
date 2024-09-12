@@ -41,6 +41,7 @@ import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { fhirCode, fhirString, fhirUri } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty } from '@src/fhir-core/utility/element-util';
+import { ReferenceTargets } from '@src/fhir-core/decorators/ReferenceTargets';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -680,6 +681,7 @@ export class Identifier extends DataType implements IBase {
    * @param value - the `assigner` object value
    * @returns this
    */
+  @ReferenceTargets(['Organization'])
   public setAssigner(value: Reference | undefined): this {
     this.assigner = value;
     return this;

@@ -28,6 +28,7 @@ import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { MockTask } from '../../test-utils';
 
 describe('Resource', () => {
   const VALID_ID = `a-432.E-12345`;
@@ -56,13 +57,13 @@ describe('Resource', () => {
   const UNDEFINED_VALUE = undefined;
 
   it('should be properly instantiated as empty', () => {
-    const testResource = new MockResource();
+    const testResource = new MockTask();
     expect(testResource).toBeDefined();
     expect(testResource).toBeInstanceOf(Resource);
     expect(testResource).toBeInstanceOf(Base);
-    expect(testResource.constructor.name).toStrictEqual('MockResource');
-    expect(testResource.resourceType()).toStrictEqual('MockResource');
-    expect(testResource.fhirType()).toStrictEqual('Resource');
+    expect(testResource.constructor.name).toStrictEqual('MockTask');
+    expect(testResource.resourceType()).toStrictEqual('Task');
+    expect(testResource.fhirType()).toStrictEqual('MockTask');
     expect(testResource.isEmpty()).toBe(true);
 
     expect(testResource.hasId()).toBe(false);
@@ -83,7 +84,7 @@ describe('Resource', () => {
   });
 
   it('should be properly instantiated with primitive values', () => {
-    const testResource = new MockResource();
+    const testResource = new MockTask();
     testResource.setId(VALID_ID);
     testResource.setMeta(VALID_META);
     testResource.setImplicitRules(VALID_URI);
@@ -92,9 +93,9 @@ describe('Resource', () => {
     expect(testResource).toBeDefined();
     expect(testResource).toBeInstanceOf(Resource);
     expect(testResource).toBeInstanceOf(Base);
-    expect(testResource.constructor.name).toStrictEqual('MockResource');
-    expect(testResource.resourceType()).toStrictEqual('MockResource');
-    expect(testResource.fhirType()).toStrictEqual('Resource');
+    expect(testResource.constructor.name).toStrictEqual('MockTask');
+    expect(testResource.resourceType()).toStrictEqual('Task');
+    expect(testResource.fhirType()).toStrictEqual('MockTask');
     expect(testResource.isEmpty()).toBe(false);
 
     expect(testResource.hasId()).toBe(true);
@@ -115,7 +116,7 @@ describe('Resource', () => {
   });
 
   it('should be properly reset by modifying all properties with primitive values', () => {
-    const testResource = new MockResource();
+    const testResource = new MockTask();
     testResource.setId(VALID_ID);
     testResource.setMeta(VALID_META);
     testResource.setImplicitRules(VALID_URI);
@@ -170,7 +171,7 @@ describe('Resource', () => {
   });
 
   it('should throw PrimitiveTypeError when reset with invalid primitive Resource.id value', () => {
-    const testResource = new MockResource();
+    const testResource = new MockTask();
     const t = () => {
       testResource.setId(INVALID_ID);
     };
@@ -179,7 +180,7 @@ describe('Resource', () => {
   });
 
   it('should throw PrimitiveTypeError when reset with invalid primitive Resource.implicitRules value', () => {
-    const testResource = new MockResource();
+    const testResource = new MockTask();
     const t = () => {
       testResource.setImplicitRules(INVALID_URI);
     };
@@ -188,7 +189,7 @@ describe('Resource', () => {
   });
 
   it('should throw PrimitiveTypeError when reset with invalid primitive Resource.language value', () => {
-    const testResource = new MockResource();
+    const testResource = new MockTask();
     const t = () => {
       testResource.setLanguage(INVALID_CODE);
     };
@@ -197,7 +198,7 @@ describe('Resource', () => {
   });
 
   it('should be properly instantiated with PrimitiveType values', () => {
-    const testResource = new MockResource();
+    const testResource = new MockTask();
     testResource.setIdElement(VALID_ID_TYPE);
     testResource.setMeta(VALID_META);
     testResource.setImplicitRulesElement(VALID_URI_TYPE);
@@ -206,10 +207,9 @@ describe('Resource', () => {
     expect(testResource).toBeDefined();
     expect(testResource).toBeInstanceOf(Resource);
     expect(testResource).toBeInstanceOf(Base);
-    expect(testResource.constructor.name).toStrictEqual('MockResource');
-    expect(testResource.resourceType()).toStrictEqual('MockResource');
-    expect(testResource.resourceType()).toStrictEqual('MockResource');
-    expect(testResource.fhirType()).toStrictEqual('Resource');
+    expect(testResource.constructor.name).toStrictEqual('MockTask');
+    expect(testResource.resourceType()).toStrictEqual('Task');
+    expect(testResource.fhirType()).toStrictEqual('MockTask');
     expect(testResource.isEmpty()).toBe(false);
 
     expect(testResource.hasId()).toBe(true);
@@ -230,7 +230,7 @@ describe('Resource', () => {
   });
 
   it('should be properly reset by modifying all properties with PrimitiveType values', () => {
-    const testResource = new MockResource();
+    const testResource = new MockTask();
     testResource.setIdElement(VALID_ID_TYPE);
     testResource.setMeta(VALID_META);
     testResource.setImplicitRulesElement(VALID_URI_TYPE);
@@ -262,7 +262,7 @@ describe('Resource', () => {
   });
 
   it('should properly copy()', () => {
-    const resource = new MockResource();
+    const resource = new MockTask();
     resource.setId(VALID_ID);
     resource.setMeta(VALID_META);
     resource.setImplicitRules(VALID_URI);
@@ -272,8 +272,9 @@ describe('Resource', () => {
     expect(testResource).toBeDefined();
     expect(testResource).toBeInstanceOf(Resource);
     expect(testResource).toBeInstanceOf(Base);
-    expect(testResource.constructor.name).toStrictEqual('MockResource');
-    expect(testResource.fhirType()).toStrictEqual('Resource');
+    expect(testResource.constructor.name).toStrictEqual('MockTask');
+    expect(testResource.resourceType()).toStrictEqual('Task');
+    expect(testResource.fhirType()).toStrictEqual('MockTask');
     expect(testResource.isEmpty()).toBe(false);
 
     expect(testResource.hasId()).toBe(true);
@@ -293,20 +294,3 @@ describe('Resource', () => {
     expect(testResource.getLanguageElement()).toMatchObject(new CodeType(VALID_CODE));
   });
 });
-
-class MockResource extends Resource {
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-  constructor() {
-    super();
-  }
-
-  resourceType(): string {
-    return 'MockResource';
-  }
-
-  public copy(): MockResource {
-    const dest = new MockResource();
-    this.copyValues(dest);
-    return dest;
-  }
-}
