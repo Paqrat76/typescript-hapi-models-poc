@@ -21,6 +21,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.7.2] - 2024-09-27
+
+### Added
+
+- Added type guard and type assertion functions and updated tests
+
+### Changed
+
+- Broke up Group test suite into files for each Group class
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+
 ## [0.7.1] - 2024-09-13
 
 ### Added

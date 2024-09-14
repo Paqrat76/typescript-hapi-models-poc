@@ -26,7 +26,7 @@ import { DataType } from '@src/fhir-core/base-models/core-fhir-models';
 import { IBase } from '@src/fhir-core/base-models/IBase';
 import { DateTimeType } from '@src/fhir-core/data-types/primitive/DateTimeType';
 import { fhirDateTime } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { isElementEmpty } from '@src/fhir-core/utility/element-util';
+import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 

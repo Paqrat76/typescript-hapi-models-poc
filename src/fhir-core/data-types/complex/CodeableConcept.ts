@@ -26,7 +26,7 @@ import { IBase } from '@src/fhir-core/base-models/IBase';
 import { Coding } from '@src/fhir-core/data-types/complex/Coding';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { fhirString } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { isElementEmpty } from '@src/fhir-core/utility/element-util';
+import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 

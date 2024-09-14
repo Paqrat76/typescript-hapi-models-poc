@@ -67,7 +67,7 @@ describe('ReferenceTargets', () => {
     };
     expect(t).toThrow(AssertionError);
     expect(t).toThrow(
-      `Decorator expects setMyReferenceProperty5 to have one argument with type of 'Reference | undefined'`,
+      `Decorator expects setMyReferenceProperty5 to have one argument with type of 'Reference | undefined | null'`,
     );
   });
 

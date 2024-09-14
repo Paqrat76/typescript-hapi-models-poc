@@ -40,7 +40,7 @@ import { Period } from '@src/fhir-core/data-types/complex/Period';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { fhirCode, fhirString, fhirUri } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { isElementEmpty } from '@src/fhir-core/utility/element-util';
+import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import { ReferenceTargets } from '@src/fhir-core/decorators/ReferenceTargets';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */

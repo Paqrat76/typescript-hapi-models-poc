@@ -28,7 +28,7 @@ import { EnumCodeType } from '@src/fhir-core/data-types/primitive/EnumCodeType';
 import { NarrativeStatusEnum } from '@src/fhir-core/data-types/complex/code-systems/NarrativeStatusEnum';
 import { XhtmlType } from '@src/fhir-core/data-types/primitive/XhtmlType';
 import { fhirCode, fhirXhtml } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { isElementEmpty } from '@src/fhir-core/utility/element-util';
+import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */

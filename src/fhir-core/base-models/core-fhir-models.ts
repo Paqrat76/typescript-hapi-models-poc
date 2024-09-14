@@ -51,7 +51,7 @@ import {
   fhirUri,
   fhirUriSchema,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { isElementEmpty, validateUrl } from '@src/fhir-core/utility/element-util';
+import { isElementEmpty, validateUrl } from '@src/fhir-core/utility/fhir-util';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 
 /**

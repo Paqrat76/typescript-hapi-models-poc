@@ -30,6 +30,7 @@
 import { strict as assert } from 'node:assert';
 import { RESOURCE_TYPES, ResourceType } from '@src/fhir-core/base-models/ResourceType';
 import { Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
+import { FhirTypeGuard } from '@src/fhir-core/utility/type-guards';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
 /**
@@ -70,8 +71,8 @@ export function ReferenceTargets(referenceTargets: ResourceType[]) {
 
       const methodName = String(context.name);
       assert(
-        args.length === 1 && (args[0] === undefined || args[0] === null || args[0] instanceof Reference),
-        `Decorator expects ${methodName} to have one argument with type of 'Reference | undefined'`,
+        args.length === 1 && (args[0] === undefined || args[0] === null || FhirTypeGuard(args[0], Reference)),
+        `Decorator expects ${methodName} to have one argument with type of 'Reference | undefined | null'`,
       );
       // undefined supports optional argument while null supports required argument
       const value = args[0] as Reference | undefined | null;

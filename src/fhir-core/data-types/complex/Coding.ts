@@ -28,7 +28,7 @@ import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
 import { fhirBoolean, fhirCode, fhirString, fhirUri } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { isElementEmpty } from '@src/fhir-core/utility/element-util';
+import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 

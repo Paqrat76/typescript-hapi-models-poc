@@ -27,9 +27,9 @@ import { DateTimeType } from '@src/fhir-core/data-types/primitive/DateTimeType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { fhirUrl } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { isElementEmpty, validateUrl } from '@src/fhir-core/utility/element-util';
+import { isElementEmpty, validateUrl } from '@src/fhir-core/utility/fhir-util';
 
-describe('element-util', () => {
+describe('fhir-util', () => {
   describe('isElementEmpty', () => {
     const TEST_UNDEFINED = undefined;
     const TEST_NULL = null;

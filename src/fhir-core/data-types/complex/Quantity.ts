@@ -28,7 +28,7 @@ import { DecimalType } from '@src/fhir-core/data-types/primitive/DecimalType';
 import { EnumCodeType } from '@src/fhir-core/data-types/primitive/EnumCodeType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
-import { isElementEmpty } from '@src/fhir-core/utility/element-util';
+import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import { QuantityComparatorEnum } from '@src/fhir-core/data-types/complex/code-systems/QuantityComparatorEnum';
 import { fhirCode, fhirDecimal, fhirString, fhirUri } from '@src/fhir-core/data-types/primitive/primitive-types';
 

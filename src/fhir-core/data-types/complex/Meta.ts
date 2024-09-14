@@ -29,7 +29,7 @@ import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
 import { InstantType } from '@src/fhir-core/data-types/primitive/InstantType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { fhirCanonical, fhirId, fhirInstant, fhirUri } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { isElementEmpty } from '@src/fhir-core/utility/element-util';
+import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 

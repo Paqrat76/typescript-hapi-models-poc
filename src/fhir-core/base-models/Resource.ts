@@ -36,7 +36,7 @@ import {
   fhirUri,
   fhirUriSchema,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { isElementEmpty } from '@src/fhir-core/utility/element-util';
+import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
