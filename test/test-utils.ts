@@ -26,6 +26,8 @@ import { IBase } from '@src/fhir-core/base-models/IBase';
 import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
 import { ResourceType } from '@src/fhir-core/base-models/ResourceType';
 import { FhirCodeDefinition, IFhirCodeDefinition, IFhirCodeEnum } from '@src/fhir-core/base-models/core-fhir-codes';
+import { Resource } from '@src/fhir-core/base-models/Resource';
+import { DataType } from '@src/fhir-core/base-models/core-fhir-models';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 
 export {
@@ -65,6 +67,28 @@ export class MockFhirModel implements IBase {
   }
 }
 
+export class MockResource extends Resource {
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
+  constructor() {
+    super();
+  }
+
+  public resourceType(): ResourceType {
+    // @ts-expect-error: allow for testing purposes
+    return 'MockResource';
+  }
+
+  public override fhirType(): string {
+    return 'MockResource';
+  }
+
+  public copy(): MockResource {
+    const dest = new MockResource();
+    this.copyValues(dest);
+    return dest;
+  }
+}
+
 export class MockTask extends DomainResource {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor() {
@@ -83,6 +107,17 @@ export class MockTask extends DomainResource {
     const dest = new MockTask();
     this.copyValues(dest);
     return dest;
+  }
+}
+
+export class MockComplexDataType extends DataType {
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
+  constructor() {
+    super();
+  }
+
+  copy(): MockComplexDataType {
+    return new MockComplexDataType();
   }
 }
 

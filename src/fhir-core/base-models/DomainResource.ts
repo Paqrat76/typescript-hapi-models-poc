@@ -22,12 +22,13 @@
  */
 
 import { strict as assert } from 'node:assert';
+import { IBase } from '@src/fhir-core/base-models/IBase';
 import { Resource } from '@src/fhir-core/base-models/Resource';
 import { Narrative } from '@src/fhir-core/data-types/complex/Narrative';
 import { Extension, IBaseExtension, IBaseModifierExtension } from '@src/fhir-core/base-models/core-fhir-models';
 import { fhirUri } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty, validateUrl } from '@src/fhir-core/utility/fhir-util';
-import { IBase } from '@src/fhir-core/base-models/IBase';
+import { assertFhirResourceType, assertFhirType } from '@src/fhir-core/utility/type-guards';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -129,6 +130,11 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
    * @returns this
    */
   public setText(value: Narrative | undefined): this {
+    assertFhirType(
+      value,
+      Narrative,
+      `DomainResource.setText(): The provided argument is not an instance of Narrative.`,
+    );
     this.text = value;
     return this;
   }
@@ -154,6 +160,12 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
    * @returns this
    */
   public setContained(value: Resource[] | undefined): this {
+    value?.forEach((containedResource) => {
+      assertFhirResourceType(
+        containedResource,
+        `DomainResource.setContained(): At least one array item in the provided argument is not an instance of Resource.`,
+      );
+    });
     this.contained = value;
     return this;
   }
@@ -168,6 +180,7 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
     if (value === undefined) {
       return this;
     }
+    assertFhirResourceType(value, `DomainResource.addContained(): Provided argument is not an instance of Resource.`);
     this.initContained();
     this.contained?.push(value);
     return this;
@@ -206,6 +219,13 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
    * {@inheritDoc IBaseExtension.setExtension}
    */
   public setExtension(extension: Extension[] | undefined): this {
+    extension?.forEach((ext) => {
+      assertFhirType(
+        ext,
+        Extension,
+        `DomainResource.setExtension(): At least one array item in the provided argument is not an instance of Extension.`,
+      );
+    });
     this.extension = extension;
     return this;
   }
@@ -242,6 +262,11 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
    */
   public addExtension(extension?: Extension): this {
     if (extension !== undefined) {
+      assertFhirType(
+        extension,
+        Extension,
+        `DomainResource.addExtension(): The provided argument is not an instance of Extension.`,
+      );
       this.initExtension();
       // @ts-expect-error: initExtension() ensures this.extension exists
       this.extension.push(extension);
@@ -296,6 +321,13 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
    * {@inheritDoc IBaseModifierExtension.setModifierExtension}
    */
   public setModifierExtension(extension: Extension[] | undefined): this {
+    extension?.forEach((ext) => {
+      assertFhirType(
+        ext,
+        Extension,
+        `DomainResource.setModifierExtension(): At least one array item in the provided argument is not an instance of Extension.`,
+      );
+    });
     this.modifierExtension = extension;
     return this;
   }
@@ -332,8 +364,13 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
    */
   public addModifierExtension(extension: Extension | undefined): this {
     if (extension !== undefined) {
+      assertFhirType(
+        extension,
+        Extension,
+        `DomainResource.addModifierExtension(): The provided argument is not an instance of Extension.`,
+      );
       this.initModifierExtension();
-      // @ts-expect-error: initExtension() ensures this.extension exists
+      // @ts-expect-error: initExtension() ensures this.modifierExtension exists
       this.modifierExtension.push(extension);
     }
     return this;

@@ -32,6 +32,7 @@ describe('Element', () => {
   const testUrl = 'testUrl';
   const testValue = new StringType('testString');
   const testExtension = new Extension(testUrl, testValue);
+  const INVALID_ID = 'INVALID_ID';
 
   it('should be properly instantiated as empty', () => {
     const mockElement = new MockElement();
@@ -172,6 +173,15 @@ describe('Element', () => {
     expect(testElement.getId()).toStrictEqual(testId);
     expect(testElement.hasExtension()).toBe(true);
     expect(testElement.getExtension()).toMatchObject([testExtension]);
+  });
+
+  it('should throw PrimitiveTypeError when setId() with invalid value', () => {
+    const testElement = new MockElement();
+    const t = () => {
+      testElement.setId(INVALID_ID);
+    };
+    expect(t).toThrow(PrimitiveTypeError);
+    expect(t).toThrow(`Invalid value for IdType (${INVALID_ID})`);
   });
 });
 

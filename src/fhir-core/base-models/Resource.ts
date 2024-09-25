@@ -37,6 +37,7 @@ import {
   fhirUriSchema,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
+import { assertFhirType } from '@src/fhir-core/utility/type-guards';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
@@ -150,6 +151,7 @@ export abstract class Resource extends Base implements IBase {
    * @returns this
    */
   public setIdElement(element: IdType | undefined): this {
+    assertFhirType(element, IdType, `Resource.setIdElement(): The provided argument is not an instance of IdType.`);
     this.id = element;
     return this;
   }
@@ -209,6 +211,7 @@ export abstract class Resource extends Base implements IBase {
    * @returns this
    */
   public setMeta(value: Meta | undefined): this {
+    assertFhirType(value, Meta, `Resource.setMeta(): The provided argument is not an instance of Meta.`);
     this.meta = value;
     return this;
   }
@@ -234,6 +237,11 @@ export abstract class Resource extends Base implements IBase {
    * @returns this
    */
   public setImplicitRulesElement(element: UriType | undefined): this {
+    assertFhirType(
+      element,
+      UriType,
+      `Resource.setImplicitRulesElement(): The provided argument is not an instance of UriType.`,
+    );
     this.implicitRules = element;
     return this;
   }
@@ -293,6 +301,11 @@ export abstract class Resource extends Base implements IBase {
    * @returns this
    */
   public setLanguageElement(element: CodeType | undefined): this {
+    assertFhirType(
+      element,
+      CodeType,
+      `Resource.setLanguageElement(): The provided argument is not an instance of CodeType.`,
+    );
     this.language = element;
     return this;
   }

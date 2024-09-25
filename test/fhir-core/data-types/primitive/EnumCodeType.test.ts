@@ -42,6 +42,7 @@ describe('EnumCodeType', () => {
     expect(testEnumCodeType).toBeInstanceOf(CodeType);
     expect(testEnumCodeType).toBeInstanceOf(PrimitiveType);
     expect(testEnumCodeType.constructor.name).toStrictEqual('EnumCodeType');
+    expect(testEnumCodeType.enumSource()).toStrictEqual('MockCodeEnum');
     expect(testEnumCodeType.fhirType()).toStrictEqual('code');
     expect(testEnumCodeType.isEmpty()).toBe(false);
 
@@ -74,6 +75,7 @@ describe('EnumCodeType', () => {
     expect(testEnumCodeType).toBeInstanceOf(CodeType);
     expect(testEnumCodeType).toBeInstanceOf(PrimitiveType);
     expect(testEnumCodeType.constructor.name).toStrictEqual('EnumCodeType');
+    expect(testEnumCodeType.enumSource()).toStrictEqual('MockCodeEnum');
     expect(testEnumCodeType.fhirType()).toStrictEqual('code');
     expect(testEnumCodeType.isEmpty()).toBe(false);
 
@@ -111,6 +113,7 @@ describe('EnumCodeType', () => {
     expect(testEnumCodeType).toBeInstanceOf(CodeType);
     expect(testEnumCodeType).toBeInstanceOf(PrimitiveType);
     expect(testEnumCodeType.constructor.name).toStrictEqual('EnumCodeType');
+    expect(testEnumCodeType.enumSource()).toStrictEqual('MockCodeEnum');
     expect(testEnumCodeType.fhirType()).toStrictEqual('code');
     expect(testEnumCodeType.isEmpty()).toBe(false);
 
@@ -191,6 +194,7 @@ describe('EnumCodeType', () => {
     expect(testEnumCodeType).toBeInstanceOf(CodeType);
     expect(testEnumCodeType).toBeInstanceOf(PrimitiveType);
     expect(testEnumCodeType.constructor.name).toStrictEqual('EnumCodeType');
+    expect(testEnumCodeType.enumSource()).toStrictEqual('MockCodeEnum');
     expect(testEnumCodeType.fhirType()).toStrictEqual('code');
     expect(testEnumCodeType.isEmpty()).toBe(false);
 

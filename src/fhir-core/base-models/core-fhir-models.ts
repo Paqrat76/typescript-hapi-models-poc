@@ -53,6 +53,7 @@ import {
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty, validateUrl } from '@src/fhir-core/utility/fhir-util';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { assertFhirDataType, assertFhirType } from '@src/fhir-core/utility/type-guards';
 
 /**
  * Base interface to specify `extension` specific methods used by
@@ -265,6 +266,13 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
    * {@inheritDoc IBaseExtension.setExtension}
    */
   public setExtension(extension: Extension[] | undefined): this {
+    extension?.forEach((ext) => {
+      assertFhirType(
+        ext,
+        Extension,
+        `Element.setExtension(): At least one array item in the provided argument is not an instance of Extension.`,
+      );
+    });
     this.extension = extension;
     return this;
   }
@@ -301,6 +309,11 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
    */
   public addExtension(extension?: Extension): this {
     if (extension !== undefined) {
+      assertFhirType(
+        extension,
+        Extension,
+        `Element.addExtension(): The provided argument is not an instance of Extension.`,
+      );
       this.initExtension();
       // @ts-expect-error: initExtension() ensures this.extension exists
       this.extension.push(extension);
@@ -994,6 +1007,10 @@ export class Extension extends Element implements IBase {
    * @returns this
    */
   public setValue(value: DataType | undefined): this {
+    if (value !== undefined) {
+      const errorMessage = `Extension.setValue(): The provided argument is not an instance of DataType or PrimitiveType.`;
+      assertFhirDataType(value, errorMessage);
+    }
     this.value = value;
     return this;
   }

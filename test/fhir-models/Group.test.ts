@@ -384,7 +384,7 @@ describe('Group', () => {
       expect(testGroup.getMember()).toMatchObject([] as GroupMemberComponent[]);
     });
 
-    it('should properly initial property arrays when adding elements', () => {
+    it('should properly initialize property arrays when adding elements', () => {
       const testGroup = new Group(null, null);
 
       testGroup.addIdentifier(VALID_IDENTIFIER_1);
@@ -1301,7 +1301,7 @@ describe('Group', () => {
         testGroup.setTypeEnumType(invalidEnumCodeType);
       };
       expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`Group.setTypeEnumType(): The provided argument is not an instance of EnumCodeType.`);
+      expect(t).toThrow(`Group.setTypeEnumType(): Provided type is not an instance of EnumCodeType.`);
     });
 
     it('should throw InvalidTypeError for Group.setTypeElement()', () => {

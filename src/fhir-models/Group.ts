@@ -44,7 +44,7 @@ import {
 import { GroupTypeEnum } from '@src/fhir-models/code-systems/GroupTypeEnum';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import { ReferenceTargets } from '@src/fhir-core/decorators/ReferenceTargets';
-import { assertFhirType, FhirTypeGuard } from '@src/fhir-core/utility/type-guards';
+import { assertEnumCodeType, assertFhirType, FhirTypeGuard } from '@src/fhir-core/utility/type-guards';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
@@ -81,6 +81,8 @@ export class Group extends DomainResource implements IBase {
     if (type === null) {
       this.type = null;
     } else if (type instanceof EnumCodeType) {
+      const errMsgPrefix = 'Invalid Group.type parameter';
+      assertEnumCodeType(type, GroupTypeEnum, errMsgPrefix);
       this.type = type;
     } else {
       try {
@@ -414,11 +416,8 @@ export class Group extends DomainResource implements IBase {
   public setTypeEnumType(enumType: EnumCodeType): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (enumType !== null) {
-      assertFhirType(
-        enumType,
-        EnumCodeType,
-        `Group.setTypeEnumType(): The provided argument is not an instance of EnumCodeType.`,
-      );
+      const errMsgPrefix = 'Group.setTypeEnumType()';
+      assertEnumCodeType(enumType, GroupTypeEnum, errMsgPrefix);
       this.type = enumType;
     }
     return this;

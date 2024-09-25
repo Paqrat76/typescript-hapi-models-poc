@@ -22,12 +22,21 @@
  */
 
 import { AssertionError } from 'node:assert';
-import { assertFhirType, assertIsDefined, FhirTypeGuard } from '@src/fhir-core/utility/type-guards';
+import {
+  assertEnumCodeType,
+  assertFhirDataType,
+  assertFhirResourceType,
+  assertFhirType,
+  assertIsDefined,
+  FhirTypeGuard,
+} from '@src/fhir-core/utility/type-guards';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { Period } from '@src/fhir-core/data-types/complex/Period';
-import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
-import { MockCodeEnum, MockTask } from '../../test-utils';
 import { EnumCodeType } from '@src/fhir-core/data-types/primitive/EnumCodeType';
+import { QuantityComparatorEnum } from '@src/fhir-core/data-types/complex/code-systems/QuantityComparatorEnum';
+import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { MockCodeEnum, MockComplexDataType, MockFhirModel, MockResource, MockTask } from '../../test-utils';
 
 describe('type-guards', () => {
   describe('assertIsDefined', () => {
@@ -143,6 +152,139 @@ describe('type-guards', () => {
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(`The stringValue instance is not an instance of Period.`);
+    });
+  });
+
+  describe('assertFhirResourceType', () => {
+    it('should not throw InvalidTypeError for valid ResourceType', () => {
+      const task = new MockTask();
+      const t = () => {
+        assertFhirResourceType(task);
+      };
+      expect(t).not.toThrow(InvalidTypeError);
+    });
+
+    it('should throw InvalidTypeError for non-ResourceType', () => {
+      const fhirModel = new MockFhirModel();
+      const t = () => {
+        assertFhirResourceType(fhirModel);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Provided instance is not an instance of Resource.`);
+    });
+
+    it('should throw InvalidTypeError for non-ResourceType with error message override', () => {
+      const testFhirModel = new MockFhirModel();
+      const errMessage = `Provided testFhirModel is not an instance of Resource.`;
+      const t = () => {
+        assertFhirResourceType(testFhirModel, errMessage);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(errMessage);
+    });
+
+    it('should throw InvalidTypeError for invalid ResourceType', () => {
+      const testFhirResource = new MockResource();
+      const t = () => {
+        assertFhirResourceType(testFhirResource);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Provided instance (MockResource) is not a valid resource type.`);
+    });
+
+    it('should throw InvalidTypeError for invalid ResourceType with error message override', () => {
+      const testFhirResource = new MockResource();
+      const errMessage = `Provided testFhirResource is not a valid resource type.`;
+      const t = () => {
+        assertFhirResourceType(testFhirResource, errMessage);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(errMessage);
+    });
+  });
+
+  describe('assertFhirDataType', () => {
+    it('should not throw InvalidTypeError for valid PrimitiveType', () => {
+      const dataType = new StringType('Valid primitive data type');
+      const t = () => {
+        assertFhirDataType(dataType);
+      };
+      expect(t).not.toThrow(InvalidTypeError);
+    });
+
+    it('should not throw InvalidTypeError for valid DataType', () => {
+      const dataType = new MockComplexDataType();
+      const t = () => {
+        assertFhirDataType(dataType);
+      };
+      expect(t).not.toThrow(InvalidTypeError);
+    });
+
+    it('should throw InvalidTypeError for non-DataType', () => {
+      const dataType = new MockFhirModel();
+      const t = () => {
+        assertFhirDataType(dataType);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Provided instance is not an instance of DataType.`);
+    });
+
+    it('should throw InvalidTypeError for non-DataType with error message override', () => {
+      const dataType = new MockFhirModel();
+      const errMessage = `Provided instance (MockFhirModel) is not an instance of DataType.`;
+      const t = () => {
+        assertFhirDataType(dataType, errMessage);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(errMessage);
+    });
+  });
+
+  describe('assertEnumCodeType', () => {
+    it('should not throw InvalidCodeError for valid EnumCodeType', () => {
+      const enumCodeType = new MockCodeEnum();
+      const t = () => {
+        assertEnumCodeType(enumCodeType, MockCodeEnum);
+      };
+      expect(t).not.toThrow(InvalidCodeError);
+    });
+
+    it('should throw InvalidCodeError for invalid EnumCodeType', () => {
+      const enumCodeType = new EnumCodeType('<', new QuantityComparatorEnum());
+      const t = () => {
+        assertEnumCodeType(enumCodeType, MockCodeEnum);
+      };
+      expect(t).toThrow(InvalidCodeError);
+      expect(t).toThrow(`Invalid type parameter: QuantityComparatorEnum; Should be MockCodeEnum.`);
+    });
+
+    it('should throw InvalidCodeError for invalid EnumCodeType with error message prefix', () => {
+      const enumCodeType = new EnumCodeType('<', new QuantityComparatorEnum());
+      const prefix = 'Test Prefix';
+      const t = () => {
+        assertEnumCodeType(enumCodeType, MockCodeEnum, prefix);
+      };
+      expect(t).toThrow(InvalidCodeError);
+      expect(t).toThrow(`${prefix}: Invalid type parameter: QuantityComparatorEnum; Should be MockCodeEnum.`);
+    });
+
+    it('should throw InvalidTypeError for invalid type', () => {
+      const enumCodeType = String('Invalid type');
+      const t = () => {
+        assertEnumCodeType(enumCodeType, MockCodeEnum);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Provided type is not an instance of ${EnumCodeType.name}.`);
+    });
+
+    it('should throw InvalidTypeError for invalid type with error message prefix', () => {
+      const enumCodeType = String('Invalid type');
+      const prefix = 'Test Prefix';
+      const t = () => {
+        assertEnumCodeType(enumCodeType, MockCodeEnum, prefix);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`${prefix}: Provided type is not an instance of ${EnumCodeType.name}.`);
     });
   });
 });
