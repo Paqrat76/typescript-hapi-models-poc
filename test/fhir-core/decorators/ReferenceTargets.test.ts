@@ -22,8 +22,7 @@
  */
 
 import { AssertionError } from 'node:assert';
-import { Identifier, Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
-import { ReferenceTargets } from '@src/fhir-core/decorators/ReferenceTargets';
+import { Identifier, Reference, ReferenceTargets } from '@src/fhir-core/data-types/complex/Reference-Identifier';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { MockTask } from '../../test-utils';
 

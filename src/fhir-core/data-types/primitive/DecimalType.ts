@@ -22,8 +22,7 @@
  */
 
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { fhirDecimal, fhirDecimalSchema } from './primitive-types';
+import { fhirDecimal, fhirDecimalSchema, parseFhirPrimitiveData } from './primitive-types';
 
 /**
  * Decimal Class
@@ -50,36 +49,17 @@ export class DecimalType extends PrimitiveType<fhirDecimal> {
     this.assignValue(value);
   }
 
-  /**
-   * Parses the provided value and returns the desired FHIR primitive value.
-   *
-   * @param value - value to be parsed
-   * @param errMessage - optional error message to override the default
-   * @returns the FHIR primitive value
-   * @throws PrimitiveTypeError for invalid value
-   */
-  static parse(value: string | number, errMessage?: string): fhirDecimal {
-    const valueNumber = typeof value === 'number' ? value : Number.parseFloat(value);
-    const parseResult = fhirDecimalSchema.safeParse(valueNumber);
-    if (parseResult.success) {
-      return parseResult.data;
-    } else {
-      const errMsg = errMessage ?? `Invalid value for DecimalType (${String(value)})`;
-      throw new PrimitiveTypeError(errMsg, parseResult.error);
-    }
-  }
-
   public override setValue(value?: fhirDecimal): this {
     this.assignValue(value);
     return this;
   }
 
   public encodeToString(value: fhirDecimal): string {
-    return DecimalType.parse(value).toString();
+    return parseFhirPrimitiveData(value, fhirDecimalSchema, this.typeErrorMessage(value)).toString();
   }
 
   public parseToPrimitive(value: string): fhirDecimal {
-    return DecimalType.parse(value);
+    return parseFhirPrimitiveData(value, fhirDecimalSchema, this.typeErrorMessage(value));
   }
 
   public override fhirType(): string {
@@ -99,9 +79,14 @@ export class DecimalType extends PrimitiveType<fhirDecimal> {
 
   private assignValue(value: fhirDecimal | undefined): void {
     if (value !== undefined) {
-      super.setValue(DecimalType.parse(value));
+      super.setValue(parseFhirPrimitiveData(value, fhirDecimalSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);
     }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private typeErrorMessage(value: any): string {
+    return `Invalid value for DecimalType (${String(value)})`;
   }
 }

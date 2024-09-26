@@ -22,8 +22,7 @@
  */
 
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { fhirMarkdown, fhirMarkdownSchema } from './primitive-types';
+import { fhirMarkdown, fhirMarkdownSchema, parseFhirPrimitiveData } from './primitive-types';
 
 /**
  * Markdown Class
@@ -50,35 +49,17 @@ export class MarkdownType extends PrimitiveType<fhirMarkdown> {
     this.assignValue(value);
   }
 
-  /**
-   * Parses the provided value and returns the desired FHIR primitive value.
-   *
-   * @param value - value to be parsed
-   * @param errMessage - optional error message to override the default
-   * @returns the FHIR primitive value
-   * @throws PrimitiveTypeError for invalid value
-   */
-  static parse(value: string, errMessage?: string): fhirMarkdown {
-    const parseResult = fhirMarkdownSchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data;
-    } else {
-      const errMsg = errMessage ?? `Invalid value for MarkdownType`;
-      throw new PrimitiveTypeError(errMsg, parseResult.error);
-    }
-  }
-
   public override setValue(value?: fhirMarkdown): this {
     this.assignValue(value);
     return this;
   }
 
   public encodeToString(value: fhirMarkdown): string {
-    return MarkdownType.parse(value).toString();
+    return parseFhirPrimitiveData(value, fhirMarkdownSchema, this.typeErrorMessage()).toString();
   }
 
   public parseToPrimitive(value: string): fhirMarkdown {
-    return MarkdownType.parse(value);
+    return parseFhirPrimitiveData(value, fhirMarkdownSchema, this.typeErrorMessage());
   }
 
   public override fhirType(): string {
@@ -98,9 +79,13 @@ export class MarkdownType extends PrimitiveType<fhirMarkdown> {
 
   private assignValue(value: fhirMarkdown | undefined): void {
     if (value !== undefined) {
-      super.setValue(MarkdownType.parse(value));
+      super.setValue(parseFhirPrimitiveData(value, fhirMarkdownSchema, this.typeErrorMessage()));
     } else {
       super.setValue(undefined);
     }
+  }
+
+  private typeErrorMessage(): string {
+    return `Invalid value for MarkdownType`;
   }
 }

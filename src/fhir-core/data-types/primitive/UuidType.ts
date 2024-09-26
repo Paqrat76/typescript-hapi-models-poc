@@ -22,8 +22,7 @@
  */
 
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { fhirUuid, fhirUuidSchema } from './primitive-types';
+import { fhirUuid, fhirUuidSchema, parseFhirPrimitiveData } from './primitive-types';
 
 /**
  * Uuid Class
@@ -50,35 +49,17 @@ export class UuidType extends PrimitiveType<fhirUuid> {
     this.assignValue(value);
   }
 
-  /**
-   * Parses the provided value and returns the desired FHIR primitive value.
-   *
-   * @param value - value to be parsed
-   * @param errMessage - optional error message to override the default
-   * @returns the FHIR primitive value
-   * @throws PrimitiveTypeError for invalid value
-   */
-  static parse(value: string, errMessage?: string): fhirUuid {
-    const parseResult = fhirUuidSchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data;
-    } else {
-      const errMsg = errMessage ?? `Invalid value for UuidType (${String(value)})`;
-      throw new PrimitiveTypeError(errMsg, parseResult.error);
-    }
-  }
-
   public override setValue(value?: fhirUuid): this {
     this.assignValue(value);
     return this;
   }
 
   public encodeToString(value: fhirUuid): string {
-    return UuidType.parse(value).toString();
+    return parseFhirPrimitiveData(value, fhirUuidSchema, this.typeErrorMessage(value)).toString();
   }
 
   public parseToPrimitive(value: string): fhirUuid {
-    return UuidType.parse(value);
+    return parseFhirPrimitiveData(value, fhirUuidSchema, this.typeErrorMessage(value));
   }
 
   public override fhirType(): string {
@@ -98,9 +79,14 @@ export class UuidType extends PrimitiveType<fhirUuid> {
 
   private assignValue(value: fhirUuid | undefined): void {
     if (value !== undefined) {
-      super.setValue(UuidType.parse(value));
+      super.setValue(parseFhirPrimitiveData(value, fhirUuidSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);
     }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private typeErrorMessage(value: any): string {
+    return `Invalid value for UuidType (${String(value)})`;
   }
 }

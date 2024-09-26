@@ -28,7 +28,17 @@ import { Coding } from '@src/fhir-core/data-types/complex/Coding';
 import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
 import { InstantType } from '@src/fhir-core/data-types/primitive/InstantType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
-import { fhirCanonical, fhirId, fhirInstant, fhirUri } from '@src/fhir-core/data-types/primitive/primitive-types';
+import {
+  fhirCanonical,
+  fhirCanonicalSchema,
+  fhirId,
+  fhirIdSchema,
+  fhirInstant,
+  fhirInstantSchema,
+  fhirUri,
+  fhirUriSchema,
+  parseFhirPrimitiveData,
+} from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
@@ -187,7 +197,8 @@ export class Meta extends DataType implements IBase {
    */
   public setVersionId(value: fhirId | undefined): this {
     const optErrMsg = `Invalid Meta.versionId (${String(value)})`;
-    this.versionId = value === undefined ? undefined : new IdType(IdType.parse(value, optErrMsg));
+    this.versionId =
+      value === undefined ? undefined : new IdType(parseFhirPrimitiveData(value, fhirIdSchema, optErrMsg));
     return this;
   }
 
@@ -239,7 +250,8 @@ export class Meta extends DataType implements IBase {
    */
   public setLastUpdated(value: fhirInstant | undefined): this {
     const optErrMsg = `Invalid Meta.lastUpdated (${String(value)})`;
-    this.lastUpdated = value === undefined ? undefined : new InstantType(InstantType.parse(value, optErrMsg));
+    this.lastUpdated =
+      value === undefined ? undefined : new InstantType(parseFhirPrimitiveData(value, fhirInstantSchema, optErrMsg));
     return this;
   }
 
@@ -291,7 +303,8 @@ export class Meta extends DataType implements IBase {
    */
   public setSource(value: fhirUri | undefined): this {
     const optErrMsg = `Invalid Meta.source (${String(value)})`;
-    this.source = value === undefined ? undefined : new UriType(UriType.parse(value, optErrMsg));
+    this.source =
+      value === undefined ? undefined : new UriType(parseFhirPrimitiveData(value, fhirUriSchema, optErrMsg));
     return this;
   }
 
@@ -373,7 +386,7 @@ export class Meta extends DataType implements IBase {
       const profileElements = [] as CanonicalType[];
       for (const profileValue of value) {
         const optErrMsg = `Invalid Meta.profile array item (${String(profileValue)})`;
-        const element = new CanonicalType(CanonicalType.parse(profileValue, optErrMsg));
+        const element = new CanonicalType(parseFhirPrimitiveData(profileValue, fhirCanonicalSchema, optErrMsg));
         profileElements.push(element);
       }
       this.profile = profileElements;
@@ -392,7 +405,7 @@ export class Meta extends DataType implements IBase {
   public addProfile(value?: fhirCanonical): this {
     if (value !== undefined) {
       const optErrMsg = `Invalid Meta.profile array item (${String(value)})`;
-      const element = new CanonicalType(CanonicalType.parse(value, optErrMsg));
+      const element = new CanonicalType(parseFhirPrimitiveData(value, fhirCanonicalSchema, optErrMsg));
       this.addProfileElement(element);
     }
     return this;

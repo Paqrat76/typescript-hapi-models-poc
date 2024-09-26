@@ -25,13 +25,21 @@
  * FHIR ResourceType
  *
  * @remarks
- * All defined FHIR resources that ultimately extend from Resource.
+ * Type definition based on RESOURCE_TYPES array.
  *
  * @category Base Models
  * @see CodeSystem [resource-types](https://www.hl7.org/fhir/R4/codesystem-resource-types.html)
  */
 export type ResourceType = (typeof RESOURCE_TYPES)[number];
 
+/**
+ * FHIR resource types
+ *
+ * @remarks
+ * All defined FHIR resources that ultimately extend from Resource.
+ *
+ * @category Base Models
+ */
 export const RESOURCE_TYPES = [
   'Account',
   'ActivityDefinition',

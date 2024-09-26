@@ -24,9 +24,19 @@
 /**
  * Primitive data type schema definitions
  *
+ * @remarks
  * Zod schema definitions for FHIR primitive data types with their associated inferred TypeScript type.
  * Except for integer64 (added in R5), all FHIR primitive datatypes are consistent across FHIR releases.
  * The integer64 primitive will be excluded in R4 implementations.
+ *
+ * @privateRemarks
+ * Zod Schema provides the `describe()` method to add a `description` property to the resulting schema.
+ * This feature is used to tag specific characteristics relating to the following FHIR types:
+ * - boolean
+ * - decimal
+ * - bigint
+ * - int
+ * These descriptions are used to properly process these data types in the generic `parseFhirPrimitiveData()`.
  *
  * @see [Zod](https://zod.dev)
  * @see [FHIR R5 Primitives]( https://hl7.org/fhir/R5/datatypes.html#primitive)
@@ -34,7 +44,56 @@
  * @module
  */
 
-import { z } from 'zod';
+import { TypeOf, z } from 'zod';
+import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+
+/**
+ * Parses the provided value and returns the desired FHIR primitive value.
+ *
+ * @param data - value to be parsed
+ * @param schema - custom Zod schema for FHIR primitive
+ * @param errMessage - optional error message to override the default
+ * @returns the FHIR primitive value as the FHIR primitive type
+ * @throws PrimitiveTypeError for invalid data value
+ *
+ * @category Datatypes: Primitive Types
+ */
+export function parseFhirPrimitiveData<T extends z.ZodTypeAny>(
+  data: unknown,
+  schema: T,
+  errMessage?: string,
+): TypeOf<T> {
+  let dataValue = data;
+
+  // A string representation of data for the following datatypes cannot be processed directly by
+  // schema.safeParse(). They must be converted to the appropriate data types. The schema.description
+  // property is used to identify these data types.
+  if (schema.description !== undefined && typeof data === 'string') {
+    const schemaDesc = schema.description;
+    if (schemaDesc === 'CORETYPE:boolean') {
+      if ('true' === data.trim().toLowerCase()) {
+        dataValue = true;
+      } else if ('false' === data.trim().toLowerCase()) {
+        dataValue = false;
+      }
+    } else if (schemaDesc === 'CORETYPE:decimal') {
+      dataValue = Number.parseFloat(data);
+    } else if (schemaDesc === 'CORETYPE:bigint') {
+      dataValue = BigInt(data);
+    } else if (schemaDesc === 'CORETYPE:int') {
+      dataValue = Number.parseInt(data);
+    }
+  }
+
+  const parseResult = schema.safeParse(dataValue);
+  if (parseResult.success) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return parseResult.data as z.infer<T>;
+  } else {
+    const errMsg = errMessage ?? `Invalid FHIR primitive data value`;
+    throw new PrimitiveTypeError(errMsg, parseResult.error);
+  }
+}
 
 /** @ignore */
 export const FHIR_MIN_INTEGER = -2147483648;
@@ -74,7 +133,7 @@ const FHIR_REGEX_XHTML = new RegExp('^[ \\r\\n\\t\\S]+$');
 /**
  * @category Datatypes: Primitive Types
  */
-export const fhirBooleanSchema = z.boolean().default(false);
+export const fhirBooleanSchema = z.boolean().describe('CORETYPE:boolean').default(false);
 /**
  * @category Datatypes: Primitive Types
  */
@@ -131,17 +190,21 @@ export type fhirId = z.infer<typeof fhirIdSchema>;
 
 // NOTE: This FHIR decimal schema definition DOES NOT currently support the FHIR precision requirements.
 //       See the "warning" box at https://hl7.org/fhir/R5/json.html#primitive).
+// NOTE: The describe() method must follow the refined() method when chaining.
 /**
  * @category Datatypes: Primitive Types
  */
-export const fhirDecimalSchema = z.number().refine((val) => {
-  const valStr = String(val);
-  // Decimals in FHIR cannot have more than 18 digits and a decimal point.
-  if (valStr.includes('.')) {
-    return valStr.length <= 19 && FHIR_REGEX_DECIMAL.test(valStr);
-  }
-  return valStr.length <= 18 && FHIR_REGEX_DECIMAL.test(valStr);
-});
+export const fhirDecimalSchema = z
+  .number()
+  .refine((val) => {
+    const valStr = String(val);
+    // Decimals in FHIR cannot have more than 18 digits and a decimal point.
+    if (valStr.includes('.')) {
+      return valStr.length <= 19 && FHIR_REGEX_DECIMAL.test(valStr);
+    }
+    return valStr.length <= 18 && FHIR_REGEX_DECIMAL.test(valStr);
+  })
+  .describe('CORETYPE:decimal');
 /**
  * @category Datatypes: Primitive Types
  */
@@ -151,7 +214,11 @@ export type fhirDecimal = z.infer<typeof fhirDecimalSchema>;
 /**
  * @category Datatypes: Primitive Types
  */
-export const fhirInteger64Schema = z.bigint().gte(FHIR_MIN_INTEGER64).lte(FHIR_MAX_INTEGER64);
+export const fhirInteger64Schema = z
+  .bigint()
+  .describe('CORETYPE:bigint')
+  .gte(FHIR_MIN_INTEGER64)
+  .lte(FHIR_MAX_INTEGER64);
 /**
  * @category Datatypes: Primitive Types
  */
@@ -160,7 +227,7 @@ export type fhirInteger64 = z.infer<typeof fhirInteger64Schema>;
 /**
  * @category Datatypes: Primitive Types
  */
-export const fhirIntegerSchema = z.number().int().gte(FHIR_MIN_INTEGER).lte(FHIR_MAX_INTEGER);
+export const fhirIntegerSchema = z.number().describe('CORETYPE:int').int().gte(FHIR_MIN_INTEGER).lte(FHIR_MAX_INTEGER);
 /**
  * @category Datatypes: Primitive Types
  */
@@ -169,7 +236,7 @@ export type fhirInteger = z.infer<typeof fhirIntegerSchema>;
 /**
  * @category Datatypes: Primitive Types
  */
-export const fhirUnsignedIntSchema = z.number().int().gte(0).lte(FHIR_MAX_INTEGER);
+export const fhirUnsignedIntSchema = z.number().describe('CORETYPE:int').int().gte(0).lte(FHIR_MAX_INTEGER);
 /**
  * @category Datatypes: Primitive Types
  */
@@ -178,7 +245,7 @@ export type fhirUnsignedInt = z.infer<typeof fhirUnsignedIntSchema>;
 /**
  * @category Datatypes: Primitive Types
  */
-export const fhirPositiveIntSchema = z.number().int().gte(1).lte(FHIR_MAX_INTEGER);
+export const fhirPositiveIntSchema = z.number().describe('CORETYPE:int').int().gte(1).lte(FHIR_MAX_INTEGER);
 /**
  * @category Datatypes: Primitive Types
  */
@@ -198,7 +265,7 @@ export type fhirUri = z.infer<typeof fhirUriSchema>;
 /**
  * @category Datatypes: Primitive Types
  */
-export const fhirUrlSchema = fhirUriSchema.brand('fhirUrl');
+export const fhirUrlSchema = fhirUriSchema.brand<'fhirUrl'>();
 /**
  * @category Datatypes: Primitive Types
  */
@@ -207,7 +274,7 @@ export type fhirUrl = z.infer<typeof fhirUrlSchema>;
 /**
  * @category Datatypes: Primitive Types
  */
-export const fhirCanonicalSchema = fhirUriSchema.brand('fhirCanonical');
+export const fhirCanonicalSchema = fhirUriSchema.brand<'fhirCanonical'>();
 /**
  * @category Datatypes: Primitive Types
  */

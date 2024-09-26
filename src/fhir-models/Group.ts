@@ -29,7 +29,7 @@ import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
 import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
 import { EnumCodeType } from '@src/fhir-core/data-types/primitive/EnumCodeType';
-import { Identifier, Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
+import { Identifier, Reference, ReferenceTargets } from '@src/fhir-core/data-types/complex/Reference-Identifier';
 import { Period } from '@src/fhir-core/data-types/complex/Period';
 import { Quantity } from '@src/fhir-core/data-types/complex/Quantity';
 import { Range } from '@src/fhir-core/data-types/complex/Range';
@@ -37,13 +37,16 @@ import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UnsignedIntType } from '@src/fhir-core/data-types/primitive/UnsignedIntType';
 import {
   fhirBoolean,
+  fhirBooleanSchema,
   fhirCode,
   fhirString,
+  fhirStringSchema,
   fhirUnsignedInt,
+  fhirUnsignedIntSchema,
+  parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { GroupTypeEnum } from '@src/fhir-models/code-systems/GroupTypeEnum';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
-import { ReferenceTargets } from '@src/fhir-core/decorators/ReferenceTargets';
 import { assertEnumCodeType, assertFhirType, FhirTypeGuard } from '@src/fhir-core/utility/type-guards';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
@@ -111,7 +114,7 @@ export class Group extends DomainResource implements IBase {
       this.actual = actual;
     } else {
       const optErrMsg = `Invalid Group.actual parameter (${String(actual)})`;
-      this.actual = new BooleanType(BooleanType.parse(actual, optErrMsg));
+      this.actual = new BooleanType(parseFhirPrimitiveData(actual, fhirBooleanSchema, optErrMsg));
     }
   }
 
@@ -389,7 +392,8 @@ export class Group extends DomainResource implements IBase {
    */
   public setActive(value: fhirBoolean | undefined): this {
     const optErrMsg = `Invalid Group.active (${String(value)}))`;
-    this.active = value === undefined ? undefined : new BooleanType(BooleanType.parse(value, optErrMsg));
+    this.active =
+      value === undefined ? undefined : new BooleanType(parseFhirPrimitiveData(value, fhirBooleanSchema, optErrMsg));
     return this;
   }
 
@@ -552,7 +556,7 @@ export class Group extends DomainResource implements IBase {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (value !== null) {
       const optErrMsg = `Invalid Group.actual (${String(value)})`;
-      this.actual = new BooleanType(BooleanType.parse(value, optErrMsg));
+      this.actual = new BooleanType(parseFhirPrimitiveData(value, fhirBooleanSchema, optErrMsg));
     }
     return this;
   }
@@ -640,7 +644,8 @@ export class Group extends DomainResource implements IBase {
    */
   public setName(value: fhirString | undefined): this {
     const optErrMsg = `Invalid Group.name (${String(value)})`;
-    this.name = value === undefined ? undefined : new StringType(StringType.parse(value, optErrMsg));
+    this.name =
+      value === undefined ? undefined : new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
     return this;
   }
 
@@ -697,7 +702,10 @@ export class Group extends DomainResource implements IBase {
    */
   public setQuantity(value: fhirUnsignedInt | undefined): this {
     const optErrMsg = `Invalid Group.quantity (${String(value)})`;
-    this.quantity = value === undefined ? undefined : new UnsignedIntType(UnsignedIntType.parse(value, optErrMsg));
+    this.quantity =
+      value === undefined
+        ? undefined
+        : new UnsignedIntType(parseFhirPrimitiveData(value, fhirUnsignedIntSchema, optErrMsg));
     return this;
   }
 
@@ -956,7 +964,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
       this.exclude = exclude;
     } else {
       const optErrMsg = `Invalid GroupCharacteristicComponent.exclude parameter (${String(exclude)})`;
-      this.exclude = new BooleanType(BooleanType.parse(exclude, optErrMsg));
+      this.exclude = new BooleanType(parseFhirPrimitiveData(exclude, fhirBooleanSchema, optErrMsg));
     }
   }
 
@@ -1275,7 +1283,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (value !== null) {
       const optErrMsg = `Invalid GroupCharacteristicComponent.exclude (${String(value)})`;
-      this.exclude = new BooleanType(BooleanType.parse(value, optErrMsg));
+      this.exclude = new BooleanType(parseFhirPrimitiveData(value, fhirBooleanSchema, optErrMsg));
     }
     return this;
   }
@@ -1524,7 +1532,8 @@ export class GroupMemberComponent extends BackboneElement {
    */
   public setInactive(value: fhirBoolean | undefined): this {
     const optErrMsg = `Invalid GroupMemberComponent.inactive (${String(value)}))`;
-    this.inactive = value === undefined ? undefined : new BooleanType(BooleanType.parse(value, optErrMsg));
+    this.inactive =
+      value === undefined ? undefined : new BooleanType(parseFhirPrimitiveData(value, fhirBooleanSchema, optErrMsg));
     return this;
   }
 

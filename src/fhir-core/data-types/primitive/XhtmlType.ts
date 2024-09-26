@@ -22,8 +22,7 @@
  */
 
 import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { fhirXhtml, fhirXhtmlSchema } from './primitive-types';
+import { fhirXhtml, fhirXhtmlSchema, parseFhirPrimitiveData } from './primitive-types';
 
 /**
  * Xhtml Class
@@ -56,24 +55,6 @@ export class XhtmlType extends PrimitiveType<fhirXhtml> {
     this.assignExtension(undefined);
   }
 
-  /**
-   * Parses the provided value and returns the desired FHIR primitive value.
-   *
-   * @param value - value to be parsed
-   * @param errMessage - optional error message to override the default
-   * @returns the FHIR primitive value
-   * @throws PrimitiveTypeError for invalid value
-   */
-  static parse(value: string, errMessage?: string): fhirXhtml {
-    const parseResult = fhirXhtmlSchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data;
-    } else {
-      const errMsg = errMessage ?? `Invalid value for XhtmlType`;
-      throw new PrimitiveTypeError(errMsg, parseResult.error);
-    }
-  }
-
   public override setExtension(extension: Extension[] | undefined): this {
     this.assignExtension(extension);
     return this;
@@ -93,11 +74,11 @@ export class XhtmlType extends PrimitiveType<fhirXhtml> {
   }
 
   public encodeToString(value: fhirXhtml): string {
-    return XhtmlType.parse(value).toString();
+    return parseFhirPrimitiveData(value, fhirXhtmlSchema, this.typeErrorMessage()).toString();
   }
 
   public parseToPrimitive(value: string): fhirXhtml {
-    return XhtmlType.parse(value);
+    return parseFhirPrimitiveData(value, fhirXhtmlSchema, this.typeErrorMessage());
   }
 
   public override fhirType(): string {
@@ -118,7 +99,7 @@ export class XhtmlType extends PrimitiveType<fhirXhtml> {
 
   private assignValue(value: fhirXhtml | undefined): void {
     if (value !== undefined) {
-      super.setValue(XhtmlType.parse(value));
+      super.setValue(parseFhirPrimitiveData(value, fhirXhtmlSchema, this.typeErrorMessage()));
     } else {
       super.setValue(undefined);
     }
@@ -129,5 +110,9 @@ export class XhtmlType extends PrimitiveType<fhirXhtml> {
       throw new TypeError(this.EXTENSION_ERROR);
     }
     this.extension = undefined;
+  }
+
+  private typeErrorMessage(): string {
+    return `Invalid value for XhtmlType`;
   }
 }

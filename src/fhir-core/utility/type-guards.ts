@@ -22,18 +22,22 @@
  */
 
 /**
- * Common FHIR related TypeScript type guards and related assertion functions
+ * Common FHIR related TypeScript type guards and assertion functions.
+ *
+ * @remarks
+ * All TypeScript type guards and type assertion functions should be included in this module.
+ * However, due to TypeScript circular references, the following have been moved to the
+ * indicated module:
+ * - assertFhirResourceType() placed in Resource.ts
  *
  * @module
  */
 
 import { AssertionError } from 'node:assert';
-import { EnumCodeType } from '@src/fhir-core/data-types/primitive/EnumCodeType';
-import { Resource } from '@src/fhir-core/base-models/Resource';
-import { RESOURCE_TYPES } from '@src/fhir-core/base-models/ResourceType';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
-import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { DataType } from '@src/fhir-core/base-models/core-fhir-models';
+import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
+import { EnumCodeType } from '@src/fhir-core/data-types/primitive/EnumCodeType';
 
 /**
  * Assertion that the value is defined (i.e., not `undefined` and not `null`)
@@ -42,7 +46,7 @@ import { DataType } from '@src/fhir-core/base-models/core-fhir-models';
  * @param errorMessage - optional error message to override the default
  * @throws AssertionError when instance is either `undefined` or `null`
  *
- * @category Utilities
+ * @category Type Guards/Assertions
  */
 export function assertIsDefined<T>(value: T, errorMessage?: string): asserts value is NonNullable<T> {
   if (value === undefined || value === null) {
@@ -51,8 +55,15 @@ export function assertIsDefined<T>(value: T, errorMessage?: string): asserts val
   }
 }
 
+/**
+ * Generic type for TypeScript classes used by type assertion functions
+ *
+ * @category Type Guards/Assertions
+ * @see [A generic type for classes: Class<T>](https://exploringjs.com/tackling-ts/ch_classes-as-values.html#a-generic-type-for-classes-classt)
+ * @see [TypeScript constructors and generic types](https://www.simonholywell.com/post/typescript-constructor-type/)
+ */
 // eslint-disable-next-line
-type Constructor<T> = { new (...args: any[]): T };
+export type Class<T> = { new (...args: any[]): T };
 
 /**
  * FHIR class type guard for any FHIR class (PrimitiveTypes, complex Types, resources)
@@ -65,9 +76,9 @@ type Constructor<T> = { new (...args: any[]): T };
  * @param className - class name for evaluation
  * @returns true if classInstance is undefined or null or instanceof className; false otherwise
  *
- * @category Utilities
+ * @category Type Guards/Assertions
  */
-export function FhirTypeGuard<T>(classInstance: unknown, className: Constructor<T>): classInstance is T {
+export function FhirTypeGuard<T>(classInstance: unknown, className: Class<T>): classInstance is T {
   return classInstance === undefined || classInstance === null || classInstance instanceof className;
 }
 
@@ -79,38 +90,15 @@ export function FhirTypeGuard<T>(classInstance: unknown, className: Constructor<
  * @param errorMessage - optional error message to override the default
  * @throws InvalidTypeError when FhirTypeGuard assertion is false
  *
- * @category Utilities
+ * @category Type Guards/Assertions
  */
 export function assertFhirType<T>(
   classInstance: unknown,
-  className: Constructor<T>,
+  className: Class<T>,
   errorMessage?: string,
 ): asserts classInstance is T {
   if (!FhirTypeGuard(classInstance, className)) {
     const errMsg = errorMessage ?? `Provided instance is not an instance of ${className.name}.`;
-    throw new InvalidTypeError(errMsg);
-  }
-}
-
-/**
- * FHIR ResourceType assertion for any FHIR resource class
- *
- * @param classInstance - class instance to evaluate
- * @param errorMessage - optional error message to override the default
- * @throws InvalidTypeError when ResourceType assertion is false
- *
- * @category Utilities
- */
-export function assertFhirResourceType(
-  classInstance: unknown,
-  errorMessage?: string,
-): asserts classInstance is Resource {
-  if (!(classInstance instanceof Resource)) {
-    const errMsg = errorMessage ?? `Provided instance is not an instance of Resource.`;
-    throw new InvalidTypeError(errMsg);
-  }
-  if (!RESOURCE_TYPES.includes(classInstance.resourceType())) {
-    const errMsg = errorMessage ?? `Provided instance (${classInstance.resourceType()}) is not a valid resource type.`;
     throw new InvalidTypeError(errMsg);
   }
 }
@@ -122,7 +110,7 @@ export function assertFhirResourceType(
  * @param errorMessage - optional error message to override the default
  * @throws InvalidTypeError when DataType assertion is false
  *
- * @category Utilities
+ * @category Type Guards/Assertions
  */
 export function assertFhirDataType(classInstance: unknown, errorMessage?: string): asserts classInstance is DataType {
   if (!(classInstance instanceof DataType)) {
@@ -139,11 +127,11 @@ export function assertFhirDataType(classInstance: unknown, errorMessage?: string
  * @param errorMessagePrefix - optional error message prefix for the error mesage
  * @throws InvalidTypeError when EnumCodeType assertion is false
  *
- * @category Utilities
+ * @category Type Guards/Assertions
  */
 export function assertEnumCodeType<T>(
   type: unknown,
-  enumCodeType: Constructor<T>,
+  enumCodeType: Class<T>,
   errorMessagePrefix?: string,
 ): asserts type is T {
   const prefix = errorMessagePrefix ? `${errorMessagePrefix}: ` : '';

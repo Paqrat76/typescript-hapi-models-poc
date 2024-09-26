@@ -25,13 +25,13 @@ import { AssertionError } from 'node:assert';
 import {
   assertEnumCodeType,
   assertFhirDataType,
-  assertFhirResourceType,
   assertFhirType,
   assertIsDefined,
   FhirTypeGuard,
 } from '@src/fhir-core/utility/type-guards';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { Period } from '@src/fhir-core/data-types/complex/Period';
+import { assertFhirResourceType } from '@src/fhir-core/base-models/Resource';
 import { EnumCodeType } from '@src/fhir-core/data-types/primitive/EnumCodeType';
 import { QuantityComparatorEnum } from '@src/fhir-core/data-types/complex/code-systems/QuantityComparatorEnum';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';

@@ -30,7 +30,17 @@ import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import { QuantityComparatorEnum } from '@src/fhir-core/data-types/complex/code-systems/QuantityComparatorEnum';
-import { fhirCode, fhirDecimal, fhirString, fhirUri } from '@src/fhir-core/data-types/primitive/primitive-types';
+import {
+  fhirCode,
+  fhirCodeSchema,
+  fhirDecimal,
+  fhirDecimalSchema,
+  fhirString,
+  fhirStringSchema,
+  fhirUri,
+  fhirUriSchema,
+  parseFhirPrimitiveData,
+} from '@src/fhir-core/data-types/primitive/primitive-types';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -179,7 +189,8 @@ export class Quantity extends DataType implements IBase {
    */
   public setValue(value: fhirDecimal | undefined): this {
     const optErrMsg = `Invalid Quantity.value (${String(value)})`;
-    this.value = value === undefined ? undefined : new DecimalType(DecimalType.parse(value, optErrMsg));
+    this.value =
+      value === undefined ? undefined : new DecimalType(parseFhirPrimitiveData(value, fhirDecimalSchema, optErrMsg));
     return this;
   }
 
@@ -322,7 +333,8 @@ export class Quantity extends DataType implements IBase {
    */
   public setUnit(value: fhirString | undefined): this {
     const optErrMsg = `Invalid Quantity.unit (${String(value)})`;
-    this.unit = value === undefined ? undefined : new StringType(StringType.parse(value, optErrMsg));
+    this.unit =
+      value === undefined ? undefined : new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
     return this;
   }
 
@@ -374,7 +386,8 @@ export class Quantity extends DataType implements IBase {
    */
   public setSystem(value: fhirUri | undefined): this {
     const optErrMsg = `Invalid Quantity.system (${String(value)})`;
-    this.system = value === undefined ? undefined : new UriType(UriType.parse(value, optErrMsg));
+    this.system =
+      value === undefined ? undefined : new UriType(parseFhirPrimitiveData(value, fhirUriSchema, optErrMsg));
     return this;
   }
 
@@ -426,7 +439,8 @@ export class Quantity extends DataType implements IBase {
    */
   public setCode(value: fhirCode | undefined): this {
     const optErrMsg = `Invalid Quantity.code (${String(value)})`;
-    this.code = value === undefined ? undefined : new CodeType(CodeType.parse(value, optErrMsg));
+    this.code =
+      value === undefined ? undefined : new CodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg));
     return this;
   }
 

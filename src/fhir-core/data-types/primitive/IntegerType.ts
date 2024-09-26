@@ -22,8 +22,7 @@
  */
 
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { fhirInteger, fhirIntegerSchema } from './primitive-types';
+import { fhirInteger, fhirIntegerSchema, parseFhirPrimitiveData } from './primitive-types';
 
 /**
  * Integer Class
@@ -50,36 +49,17 @@ export class IntegerType extends PrimitiveType<fhirInteger> {
     this.assignValue(value);
   }
 
-  /**
-   * Parses the provided value and returns the desired FHIR primitive value.
-   *
-   * @param value - value to be parsed
-   * @param errMessage - optional error message to override the default
-   * @returns the FHIR primitive value
-   * @throws PrimitiveTypeError for invalid value
-   */
-  static parse(value: string | number, errMessage?: string): fhirInteger {
-    const valueNumber = typeof value === 'number' ? value : Number.parseInt(value);
-    const parseResult = fhirIntegerSchema.safeParse(valueNumber);
-    if (parseResult.success) {
-      return parseResult.data;
-    } else {
-      const errMsg = errMessage ?? `Invalid value for IntegerType (${String(value)})`;
-      throw new PrimitiveTypeError(errMsg, parseResult.error);
-    }
-  }
-
   public override setValue(value?: fhirInteger): this {
     this.assignValue(value);
     return this;
   }
 
   public encodeToString(value: fhirInteger): string {
-    return IntegerType.parse(value).toString();
+    return parseFhirPrimitiveData(value, fhirIntegerSchema, this.typeErrorMessage(value)).toString();
   }
 
   public parseToPrimitive(value: string): fhirInteger {
-    return IntegerType.parse(value);
+    return parseFhirPrimitiveData(value, fhirIntegerSchema, this.typeErrorMessage(value));
   }
 
   public override fhirType(): string {
@@ -99,9 +79,14 @@ export class IntegerType extends PrimitiveType<fhirInteger> {
 
   private assignValue(value: fhirInteger | undefined): void {
     if (value !== undefined) {
-      super.setValue(IntegerType.parse(value));
+      super.setValue(parseFhirPrimitiveData(value, fhirIntegerSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);
     }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private typeErrorMessage(value: any): string {
+    return `Invalid value for IntegerType (${String(value)})`;
   }
 }

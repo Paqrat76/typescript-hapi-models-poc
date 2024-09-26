@@ -27,7 +27,12 @@ import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { EnumCodeType } from '@src/fhir-core/data-types/primitive/EnumCodeType';
 import { NarrativeStatusEnum } from '@src/fhir-core/data-types/complex/code-systems/NarrativeStatusEnum';
 import { XhtmlType } from '@src/fhir-core/data-types/primitive/XhtmlType';
-import { fhirCode, fhirXhtml } from '@src/fhir-core/data-types/primitive/primitive-types';
+import {
+  fhirCode,
+  fhirXhtml,
+  fhirXhtmlSchema,
+  parseFhirPrimitiveData,
+} from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 
@@ -91,7 +96,7 @@ export class Narrative extends DataType implements IBase {
       this.div = div;
     } else {
       const optErrMsg = `Invalid Narrative.div`;
-      this.div = new XhtmlType(XhtmlType.parse(div, optErrMsg));
+      this.div = new XhtmlType(parseFhirPrimitiveData(div, fhirXhtmlSchema, optErrMsg));
     }
   }
 
@@ -266,7 +271,7 @@ export class Narrative extends DataType implements IBase {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (value !== null) {
       const optErrMsg = `Invalid Narrative.div`;
-      this.div = new XhtmlType(XhtmlType.parse(value, optErrMsg));
+      this.div = new XhtmlType(parseFhirPrimitiveData(value, fhirXhtmlSchema, optErrMsg));
     }
     return this;
   }

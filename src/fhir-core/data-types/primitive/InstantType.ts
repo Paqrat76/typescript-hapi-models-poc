@@ -22,8 +22,7 @@
  */
 
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { fhirInstant, fhirInstantSchema } from './primitive-types';
+import { fhirInstant, fhirInstantSchema, parseFhirPrimitiveData } from './primitive-types';
 
 /**
  * Instant Class
@@ -50,35 +49,17 @@ export class InstantType extends PrimitiveType<fhirInstant> {
     this.assignValue(value);
   }
 
-  /**
-   * Parses the provided value and returns the desired FHIR primitive value.
-   *
-   * @param value - value to be parsed
-   * @param errMessage - optional error message to override the default
-   * @returns the FHIR primitive value
-   * @throws PrimitiveTypeError for invalid value
-   */
-  static parse(value: string, errMessage?: string): fhirInstant {
-    const parseResult = fhirInstantSchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data;
-    } else {
-      const errMsg = errMessage ?? `Invalid value for InstantType (${String(value)})`;
-      throw new PrimitiveTypeError(errMsg, parseResult.error);
-    }
-  }
-
   public override setValue(value?: fhirInstant): this {
     this.assignValue(value);
     return this;
   }
 
   public encodeToString(value: fhirInstant): string {
-    return InstantType.parse(value).toString();
+    return parseFhirPrimitiveData(value, fhirInstantSchema, this.typeErrorMessage(value)).toString();
   }
 
   public parseToPrimitive(value: string): fhirInstant {
-    return InstantType.parse(value);
+    return parseFhirPrimitiveData(value, fhirInstantSchema, this.typeErrorMessage(value));
   }
 
   public override fhirType(): string {
@@ -98,9 +79,14 @@ export class InstantType extends PrimitiveType<fhirInstant> {
 
   private assignValue(value: fhirInstant | undefined): void {
     if (value !== undefined) {
-      super.setValue(InstantType.parse(value));
+      super.setValue(parseFhirPrimitiveData(value, fhirInstantSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);
     }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private typeErrorMessage(value: any): string {
+    return `Invalid value for InstantType (${String(value)})`;
   }
 }

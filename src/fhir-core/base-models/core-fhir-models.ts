@@ -22,11 +22,13 @@
  */
 
 /**
- * This module contains the non-Resource core FHIR models. The FHIR specification defines
- * the Element type from which all other non-Resource types extend. Its definition includes
- * the FHIR Extension type. From a programming perspective, this introduces circular dependencies
- * because all of these types inherit from Element or one of its child types, and they all
- * include an element of a list of Extension types.
+ * This module contains the non-Resource core FHIR models.
+ *
+ * @remarks
+ * The FHIR specification defines the Element type from which all other non-Resource types extend.
+ * Its definition includes the FHIR Extension type. From a programming perspective, this introduces
+ * circular dependencies because all of these types inherit from Element or one of its child types,
+ * and they all include an element of a list of Extension types.
  *
  * In TypeScript, having each of these models in separate files results in circular dependencies
  * that cannot be resolved by typical strategies such as extracting common elements into a sharable
@@ -50,10 +52,12 @@ import {
   fhirStringSchema,
   fhirUri,
   fhirUriSchema,
+  fhirUrlSchema,
+  parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty, validateUrl } from '@src/fhir-core/utility/fhir-util';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { assertFhirDataType, assertFhirType } from '@src/fhir-core/utility/type-guards';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
 /**
  * Base interface to specify `extension` specific methods used by
@@ -236,15 +240,10 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
    * @throws PrimitiveTypeError for invalid value
    */
   public setId(value: fhirString | undefined): this {
-    if (value === undefined) {
-      this.id = undefined;
-    } else {
-      const parseResult = fhirStringSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Element.id (${value})`, parseResult.error);
-      }
-      this.id = parseResult.data;
-    }
+    this.id =
+      value === undefined
+        ? undefined
+        : parseFhirPrimitiveData(value, fhirStringSchema, `Invalid Element.id (${value})`);
     return this;
   }
 
@@ -267,11 +266,11 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
    */
   public setExtension(extension: Extension[] | undefined): this {
     extension?.forEach((ext) => {
-      assertFhirType(
-        ext,
-        Extension,
-        `Element.setExtension(): At least one array item in the provided argument is not an instance of Extension.`,
-      );
+      if (!(ext instanceof Extension)) {
+        throw new InvalidTypeError(
+          `Element.setExtension(): At least one array item in the provided argument is not an instance of Extension.`,
+        );
+      }
     });
     this.extension = extension;
     return this;
@@ -309,11 +308,9 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
    */
   public addExtension(extension?: Extension): this {
     if (extension !== undefined) {
-      assertFhirType(
-        extension,
-        Extension,
-        `Element.addExtension(): The provided argument is not an instance of Extension.`,
-      );
+      if (!(extension instanceof Extension)) {
+        throw new InvalidTypeError(`Element.addExtension(): The provided argument is not an instance of Extension.`);
+      }
       this.initExtension();
       // @ts-expect-error: initExtension() ensures this.extension exists
       this.extension.push(extension);
@@ -977,11 +974,7 @@ export class Extension extends Element implements IBase {
   public setUrl(value: fhirUri): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (value !== null) {
-      const parseResult = fhirUriSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Extension.url (${value})`, parseResult.error);
-      }
-      this.url = parseResult.data;
+      this.url = parseFhirPrimitiveData(value, fhirUrlSchema, `Invalid Extension.url (${value})`);
     }
     return this;
   }
@@ -1008,8 +1001,11 @@ export class Extension extends Element implements IBase {
    */
   public setValue(value: DataType | undefined): this {
     if (value !== undefined) {
-      const errorMessage = `Extension.setValue(): The provided argument is not an instance of DataType or PrimitiveType.`;
-      assertFhirDataType(value, errorMessage);
+      if (!(value instanceof DataType)) {
+        throw new InvalidTypeError(
+          `Extension.setValue(): The provided argument is not an instance of DataType or PrimitiveType.`,
+        );
+      }
     }
     this.value = value;
     return this;

@@ -134,7 +134,7 @@ describe('BooleanType', () => {
       testBooleanType.setValueAsString(INVALID_BOOLEAN);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow('Invalid value for BooleanType');
+    expect(t).toThrow(`Invalid value for BooleanType (${INVALID_BOOLEAN})`);
   });
 
   it('should properly encodeToString with correct values', () => {

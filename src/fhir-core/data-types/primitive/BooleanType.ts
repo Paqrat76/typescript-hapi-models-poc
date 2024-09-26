@@ -22,8 +22,7 @@
  */
 
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { fhirBoolean, fhirBooleanSchema } from './primitive-types';
+import { fhirBoolean, fhirBooleanSchema, parseFhirPrimitiveData } from './primitive-types';
 
 /**
  * Boolean Class
@@ -51,32 +50,6 @@ export class BooleanType extends PrimitiveType<fhirBoolean> {
     this.assignValue(value);
   }
 
-  /**
-   * Parses the provided value and returns the desired FHIR primitive value.
-   *
-   * @param value - value to be parsed
-   * @param errMessage - optional error message to override the default
-   * @returns the FHIR primitive value
-   * @throws PrimitiveTypeError for invalid value
-   */
-  static parse(value: string | boolean, errMessage?: string): fhirBoolean {
-    let valueBoolean: string | boolean = value;
-    if (typeof value === 'string') {
-      if ('true' === value.trim().toLowerCase()) {
-        valueBoolean = true;
-      } else if ('false' === value.trim().toLowerCase()) {
-        valueBoolean = false;
-      }
-    }
-    const parseResult = fhirBooleanSchema.safeParse(valueBoolean);
-    if (parseResult.success) {
-      return parseResult.data;
-    } else {
-      const errMsg = errMessage ?? `Invalid value for BooleanType (${String(value)})`;
-      throw new PrimitiveTypeError(errMsg, parseResult.error);
-    }
-  }
-
   public override getValue(): fhirBoolean | undefined {
     return this.boolValue;
   }
@@ -98,16 +71,16 @@ export class BooleanType extends PrimitiveType<fhirBoolean> {
     if (value === undefined) {
       this.boolValue = undefined;
     } else {
-      this.boolValue = BooleanType.parse(value);
+      this.boolValue = parseFhirPrimitiveData(value, fhirBooleanSchema, this.typeErrorMessage(value));
     }
   }
 
   public encodeToString(value: fhirBoolean): string {
-    return BooleanType.parse(value).toString();
+    return parseFhirPrimitiveData(value, fhirBooleanSchema, this.typeErrorMessage(value)).toString();
   }
 
   public parseToPrimitive(value: string): fhirBoolean {
-    return BooleanType.parse(value);
+    return parseFhirPrimitiveData(value, fhirBooleanSchema, this.typeErrorMessage(value));
   }
 
   public override fhirType(): string {
@@ -127,10 +100,15 @@ export class BooleanType extends PrimitiveType<fhirBoolean> {
 
   private assignValue(value: fhirBoolean | undefined): void {
     if (value !== undefined) {
-      this.boolValue = BooleanType.parse(value);
+      this.boolValue = parseFhirPrimitiveData(value, fhirBooleanSchema, this.typeErrorMessage(value));
     } else {
       this.boolValue = undefined;
     }
     super.setValue(this.boolValue);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private typeErrorMessage(value: any): string {
+    return `Invalid value for BooleanType (${String(value)})`;
   }
 }

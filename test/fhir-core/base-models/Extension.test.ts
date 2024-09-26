@@ -25,6 +25,8 @@ import { Element, Extension } from '@src/fhir-core/base-models/core-fhir-models'
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { Period } from '@src/fhir-core/data-types/complex/Period';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { InvalidTypeError } from '../../../src';
+import { MockTask } from '../../test-utils';
 
 describe('Extension', () => {
   it('should be properly instantiated as empty', () => {
@@ -153,6 +155,23 @@ describe('Extension', () => {
     };
     expect(t).toThrow(PrimitiveTypeError);
     expect(t).toThrow('Invalid Extension.url (123)');
+  });
+
+  it('should throw InvalidTypeError when modified with invalid data type for value', () => {
+    const testUrl = 'testUrl';
+    const testExtension = new Extension(testUrl);
+    expect(testExtension).toBeDefined();
+    expect(testExtension.isEmpty()).toBe(false);
+    expect(testExtension.hasUrl()).toBe(true);
+    expect(testExtension.getUrl()).toStrictEqual(testUrl);
+
+    const t = () => {
+      const invalidValue = new MockTask();
+      // @ts-expect-error: allow non-DataType to test error handling
+      testExtension.setValue(invalidValue);
+    };
+    expect(t).toThrow(InvalidTypeError);
+    expect(t).toThrow('Extension.setValue(): The provided argument is not an instance of DataType or PrimitiveType.');
   });
 
   it('should be properly copied when instantiated without a value', () => {

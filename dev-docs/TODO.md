@@ -2,8 +2,6 @@
 
 ## POC Feature Set
 
-- Investigate and implement approach to runtime parameter assertions (e.g., not null, not undefined, not empty,
-  appropriate type, etc.)
 - Investigate and implement approach to ensure polymorphic data types only accepts target data types.
 - Add Date handling for FHIR `date`/`dateTime`/`time`/`instant` using [Luxon](https://moment.github.io/luxon/#/?id=luxon)
 - Investigate and implement serialization/parsing (deserialization) for all FHIR data models

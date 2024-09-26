@@ -62,7 +62,6 @@ export * from '@src/fhir-core/data-types/primitive/UrlType';
 export * from '@src/fhir-core/data-types/primitive/UuidType';
 export * from '@src/fhir-core/data-types/primitive/XhtmlType';
 export * from '@src/fhir-core/data-types/primitive/primitive-types';
-export * from '@src/fhir-core/decorators/ReferenceTargets';
 export * from '@src/fhir-core/errors/InvalidCodeError';
 export * from '@src/fhir-core/errors/InvalidTypeError';
 export * from '@src/fhir-core/errors/PrimitiveTypeError';

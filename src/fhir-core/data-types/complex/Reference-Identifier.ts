@@ -22,16 +22,18 @@
  */
 
 /**
- * This module contains the Resource and Identifier FHIR models.
+ * This module contains the Resource and Identifier FHIR models and the ReferenceType decorator.
  *
- * In TypeScript, having each of these models in separate files results in circular dependencies
- * that cannot be resolved by typical strategies such as extracting common elements into a sharable
- * module. Therefore, these modules are collected into this single file. This preserves the correct
- * model representations with their correct dependencies without introducing circular dependencies.
+ * @remarks
+ * In TypeScript, having each of these models and the decorator in separate files results in circular
+ * dependencies that cannot be resolved by typical strategies such as extracting common elements into
+ * a sharable module. Therefore, these modules are collected into this single file. This preserves the
+ * correct model representations with their correct dependencies without introducing circular dependencies.
  *
  * @module
  */
 
+import { strict as assert } from 'node:assert';
 import { DataType } from '@src/fhir-core/base-models/core-fhir-models';
 import { IBase } from '@src/fhir-core/base-models/IBase';
 import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
@@ -39,9 +41,19 @@ import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConce
 import { Period } from '@src/fhir-core/data-types/complex/Period';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
-import { fhirCode, fhirString, fhirUri } from '@src/fhir-core/data-types/primitive/primitive-types';
+import {
+  fhirCode,
+  fhirCodeSchema,
+  fhirString,
+  fhirStringSchema,
+  fhirUri,
+  fhirUriSchema,
+  parseFhirPrimitiveData,
+} from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
-import { ReferenceTargets } from '@src/fhir-core/decorators/ReferenceTargets';
+import { RESOURCE_TYPES, ResourceType } from '@src/fhir-core/base-models/ResourceType';
+import { FhirTypeGuard } from '@src/fhir-core/utility/type-guards';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -170,7 +182,8 @@ export class Reference extends DataType implements IBase {
    */
   public setReference(value: fhirString | undefined): this {
     const optErrMsg = `Invalid Reference.reference (${String(value)})`;
-    this.reference = value === undefined ? undefined : new StringType(StringType.parse(value, optErrMsg));
+    this.reference =
+      value === undefined ? undefined : new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
     return this;
   }
 
@@ -222,7 +235,7 @@ export class Reference extends DataType implements IBase {
    */
   public setType(value: fhirUri | undefined): this {
     const optErrMsg = `Invalid Reference.type (${String(value)})`;
-    this.type = value === undefined ? undefined : new UriType(UriType.parse(value, optErrMsg));
+    this.type = value === undefined ? undefined : new UriType(parseFhirPrimitiveData(value, fhirUriSchema, optErrMsg));
     return this;
   }
 
@@ -299,7 +312,8 @@ export class Reference extends DataType implements IBase {
    */
   public setDisplay(value: fhirString | undefined): this {
     const optErrMsg = `Invalid Reference.display (${String(value)})`;
-    this.display = value === undefined ? undefined : new StringType(StringType.parse(value, optErrMsg));
+    this.display =
+      value === undefined ? undefined : new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
     return this;
   }
 
@@ -503,7 +517,7 @@ export class Identifier extends DataType implements IBase {
    */
   public setUse(value: fhirCode | undefined): this {
     const optErrMsg = `Invalid Identifier.use (${String(value)})`;
-    this.use = value === undefined ? undefined : new CodeType(CodeType.parse(value, optErrMsg));
+    this.use = value === undefined ? undefined : new CodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg));
     return this;
   }
 
@@ -580,7 +594,8 @@ export class Identifier extends DataType implements IBase {
    */
   public setSystem(value: fhirUri | undefined): this {
     const optErrMsg = `Invalid Identifier.system (${String(value)})`;
-    this.system = value === undefined ? undefined : new UriType(UriType.parse(value, optErrMsg));
+    this.system =
+      value === undefined ? undefined : new UriType(parseFhirPrimitiveData(value, fhirUriSchema, optErrMsg));
     return this;
   }
 
@@ -632,7 +647,8 @@ export class Identifier extends DataType implements IBase {
    */
   public setValue(value: fhirString | undefined): this {
     const optErrMsg = `Invalid Identifier.value (${String(value)})`;
-    this.value = value === undefined ? undefined : new StringType(StringType.parse(value, optErrMsg));
+    this.value =
+      value === undefined ? undefined : new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
     return this;
   }
 
@@ -732,3 +748,83 @@ export class Identifier extends DataType implements IBase {
 }
 
 /* eslint-enable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
+
+/**
+ * Factory function for ReferenceTargets decorator.
+ *
+ * @remarks
+ * This decorator validates the provided Reference.reference value for relative or absolute
+ * references are only for the defined ElementDefinition's 'targetProfile' value(s).
+ *
+ * @param referenceTargets - ResourceType array of target references.
+ *                           An empty array is allowed and represents "Any" resource.
+ * @returns ReferenceTargets decorator
+ * @throws AssertionError for invalid uses
+ * @throws InvalidTypeError for actual reference type do not agree with the specified ReferenceTargets
+ *
+ * @category Decorators
+ */
+export function ReferenceTargets(referenceTargets: ResourceType[]) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return function <This, Args extends any[], Return>(
+    originalMethod: (this: This, ...args: Args) => Return,
+    context: ClassMethodDecoratorContext<This, (this: This, ...args: Args) => Return>,
+  ) {
+    return function (this: This, ...args: Args): Return {
+      const isAnyResource = referenceTargets.length === 0;
+      if (!isAnyResource) {
+        // Verify referenceTargets contain valid, non-duplicate values
+        const referenceTargetSet = new Set(referenceTargets);
+        assert(
+          referenceTargets.length === referenceTargetSet.size,
+          'referenceTargets contains duplicate ResourceTypes',
+        );
+        assert(
+          referenceTargets.every((refTarget) => RESOURCE_TYPES.includes(refTarget)),
+          'referenceTargets contains invalid ResourceType(s)',
+        );
+      }
+
+      const methodName = String(context.name);
+      assert(
+        args.length === 1 && (args[0] === undefined || args[0] === null || FhirTypeGuard(args[0], Reference)),
+        `Decorator expects ${methodName} to have one argument with type of 'Reference | undefined | null'`,
+      );
+      // undefined supports optional argument while null supports required argument
+      const value = args[0] as Reference | undefined | null;
+
+      // Return the original function if there is nothing for this decorator to do:
+      // - referenceTargets array is empty - implies "Any" resource
+      // - Decorator should only be used on a method defined as:
+      //   `public set[PropertyName](value: Reference | undefined): this`
+      // - The value of type Reference should have the Reference.reference property set
+      // - The referenceTargets array should have at least one valid ResourceType value
+      // - Reference is to a "contained" resource - reference value begins with "#"
+      if (
+        isAnyResource ||
+        !methodName.startsWith('set') ||
+        value === undefined ||
+        value === null ||
+        !value.hasReference() ||
+        value.getReference()?.startsWith('#')
+      ) {
+        return originalMethod.call(this, ...args);
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const referenceValue = value.getReference()!;
+      // referenceValue (Reference.reference) examples:
+      // - Organization/1234
+      // - https://somedomain.com/path/Organization/1234
+      const isValidReference = referenceTargets.some((refTarget) => referenceValue.includes(`${refTarget}/`));
+
+      if (!isValidReference) {
+        throw new InvalidTypeError(
+          `${methodName}: 'value' argument (${referenceValue}) is not for a valid resource type`,
+        );
+      }
+
+      return originalMethod.call(this, ...args);
+    };
+  };
+}

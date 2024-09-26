@@ -23,12 +23,12 @@
 
 import { strict as assert } from 'node:assert';
 import { IBase } from '@src/fhir-core/base-models/IBase';
-import { Resource } from '@src/fhir-core/base-models/Resource';
+import { assertFhirResourceType, Resource } from '@src/fhir-core/base-models/Resource';
 import { Narrative } from '@src/fhir-core/data-types/complex/Narrative';
 import { Extension, IBaseExtension, IBaseModifierExtension } from '@src/fhir-core/base-models/core-fhir-models';
 import { fhirUri } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty, validateUrl } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirResourceType, assertFhirType } from '@src/fhir-core/utility/type-guards';
+import { assertFhirType } from '@src/fhir-core/utility/type-guards';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 

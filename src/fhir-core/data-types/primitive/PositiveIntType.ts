@@ -22,8 +22,7 @@
  */
 
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { fhirPositiveInt, fhirPositiveIntSchema } from './primitive-types';
+import { fhirPositiveInt, fhirPositiveIntSchema, parseFhirPrimitiveData } from './primitive-types';
 
 /**
  * PositiveInt Class
@@ -49,36 +48,17 @@ export class PositiveIntType extends PrimitiveType<fhirPositiveInt> {
     this.assignValue(value);
   }
 
-  /**
-   * Parses the provided value and returns the desired FHIR primitive value.
-   *
-   * @param value - value to be parsed
-   * @param errMessage - optional error message to override the default
-   * @returns the FHIR primitive value
-   * @throws PrimitiveTypeError for invalid value
-   */
-  static parse(value: string | number, errMessage?: string): fhirPositiveInt {
-    const valueNumber = typeof value === 'number' ? value : Number.parseInt(value);
-    const parseResult = fhirPositiveIntSchema.safeParse(valueNumber);
-    if (parseResult.success) {
-      return parseResult.data;
-    } else {
-      const errMsg = errMessage ?? `Invalid value for PositiveIntType (${String(value)})`;
-      throw new PrimitiveTypeError(errMsg, parseResult.error);
-    }
-  }
-
   public override setValue(value?: fhirPositiveInt): this {
     this.assignValue(value);
     return this;
   }
 
   public encodeToString(value: fhirPositiveInt): string {
-    return PositiveIntType.parse(value).toString();
+    return parseFhirPrimitiveData(value, fhirPositiveIntSchema, this.typeErrorMessage(value)).toString();
   }
 
   public parseToPrimitive(value: string): fhirPositiveInt {
-    return PositiveIntType.parse(value);
+    return parseFhirPrimitiveData(value, fhirPositiveIntSchema, this.typeErrorMessage(value));
   }
 
   public override fhirType(): string {
@@ -98,9 +78,14 @@ export class PositiveIntType extends PrimitiveType<fhirPositiveInt> {
 
   private assignValue(value: fhirPositiveInt | undefined): void {
     if (value !== undefined) {
-      super.setValue(PositiveIntType.parse(value));
+      super.setValue(parseFhirPrimitiveData(value, fhirPositiveIntSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);
     }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private typeErrorMessage(value: any): string {
+    return `Invalid value for PositiveIntType (${String(value)})`;
   }
 }
