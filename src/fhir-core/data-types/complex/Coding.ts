@@ -27,8 +27,18 @@ import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
-import { fhirBoolean, fhirCode, fhirString, fhirUri } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { isElementEmpty } from '@src/fhir-core/utility/element-util';
+import {
+  fhirBoolean,
+  fhirBooleanSchema,
+  fhirCode,
+  fhirCodeSchema,
+  fhirString,
+  fhirStringSchema,
+  fhirUri,
+  fhirUriSchema,
+  parseFhirPrimitiveData,
+} from '@src/fhir-core/data-types/primitive/primitive-types';
+import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -174,7 +184,8 @@ export class Coding extends DataType implements IBase {
    */
   public setSystem(value: fhirUri | undefined): this {
     const optErrMsg = `Invalid Coding.system (${String(value)})`;
-    this.system = value === undefined ? undefined : new UriType(UriType.parse(value, optErrMsg));
+    this.system =
+      value === undefined ? undefined : new UriType(parseFhirPrimitiveData(value, fhirUriSchema, optErrMsg));
     return this;
   }
 
@@ -226,7 +237,8 @@ export class Coding extends DataType implements IBase {
    */
   public setVersion(value: fhirString | undefined): this {
     const optErrMsg = `Invalid Coding.version (${String(value)})`;
-    this.version = value === undefined ? undefined : new StringType(StringType.parse(value, optErrMsg));
+    this.version =
+      value === undefined ? undefined : new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
     return this;
   }
 
@@ -278,7 +290,8 @@ export class Coding extends DataType implements IBase {
    */
   public setCode(value: fhirCode | undefined): this {
     const optErrMsg = `Invalid Coding.code (${String(value)})`;
-    this.code = value === undefined ? undefined : new CodeType(CodeType.parse(value, optErrMsg));
+    this.code =
+      value === undefined ? undefined : new CodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg));
     return this;
   }
 
@@ -330,7 +343,8 @@ export class Coding extends DataType implements IBase {
    */
   public setDisplay(value: fhirString | undefined): this {
     const optErrMsg = `Invalid Coding.display (${String(value)})`;
-    this.display = value === undefined ? undefined : new StringType(StringType.parse(value, optErrMsg));
+    this.display =
+      value === undefined ? undefined : new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
     return this;
   }
 
@@ -382,7 +396,8 @@ export class Coding extends DataType implements IBase {
    */
   public setUserSelected(value: fhirBoolean | undefined): this {
     const optErrMsg = `Invalid Coding.userSelected (${String(value)}))`;
-    this.userSelected = value === undefined ? undefined : new BooleanType(BooleanType.parse(value, optErrMsg));
+    this.userSelected =
+      value === undefined ? undefined : new BooleanType(parseFhirPrimitiveData(value, fhirBooleanSchema, optErrMsg));
     return this;
   }
 

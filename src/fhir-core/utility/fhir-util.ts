@@ -75,7 +75,7 @@ export function isElementEmpty(...elements: (IBase | IBase[] | undefined | null)
  *
  * @category Utilities
  */
-export function validateUrl(url: string) {
+export function validateUrl(url: string): void {
   assert(isNonBlank(url), 'The url must be defined and cannot be blank');
   const parseResult = fhirUriSchema.safeParse(url);
   assert(parseResult.success, 'The url must be a valid fhirUri');

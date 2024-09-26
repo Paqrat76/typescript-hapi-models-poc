@@ -21,9 +21,20 @@
  *
  */
 
+/**
+ * This module contains the Resource core FHIR model along with the FHIR ResourceType assertion.
+ *
+ * @remarks
+ * The FHIR ResourceType assertion contains a reference to the Resource data model that results
+ * in a circular reference when it was in the type-guards.ts module. Therefore, the FHIR ResourceType
+ * assertion function was moved into this module.
+ *
+ * @module
+ */
+
 import { Base } from '@src/fhir-core/base-models/Base';
 import { IBase } from '@src/fhir-core/base-models/IBase';
-import { ResourceType } from '@src/fhir-core/base-models/ResourceType';
+import { RESOURCE_TYPES, ResourceType } from '@src/fhir-core/base-models/ResourceType';
 import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
@@ -35,9 +46,11 @@ import {
   fhirIdSchema,
   fhirUri,
   fhirUriSchema,
+  parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { isElementEmpty } from '@src/fhir-core/utility/element-util';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
+import { assertFhirType } from '@src/fhir-core/utility/type-guards';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -150,6 +163,7 @@ export abstract class Resource extends Base implements IBase {
    * @returns this
    */
   public setIdElement(element: IdType | undefined): this {
+    assertFhirType(element, IdType, `Resource.setIdElement(): The provided argument is not an instance of IdType.`);
     this.id = element;
     return this;
   }
@@ -176,15 +190,10 @@ export abstract class Resource extends Base implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setId(value: fhirId | undefined): this {
-    if (value === undefined) {
-      this.id = undefined;
-    } else {
-      const parseResult = fhirIdSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Resource.id (${value})`, parseResult.error);
-      }
-      this.id = new IdType(parseResult.data);
-    }
+    this.id =
+      value === undefined
+        ? undefined
+        : new IdType(parseFhirPrimitiveData(value, fhirIdSchema, `Invalid Resource.id (${value})`));
     return this;
   }
 
@@ -209,6 +218,7 @@ export abstract class Resource extends Base implements IBase {
    * @returns this
    */
   public setMeta(value: Meta | undefined): this {
+    assertFhirType(value, Meta, `Resource.setMeta(): The provided argument is not an instance of Meta.`);
     this.meta = value;
     return this;
   }
@@ -234,6 +244,11 @@ export abstract class Resource extends Base implements IBase {
    * @returns this
    */
   public setImplicitRulesElement(element: UriType | undefined): this {
+    assertFhirType(
+      element,
+      UriType,
+      `Resource.setImplicitRulesElement(): The provided argument is not an instance of UriType.`,
+    );
     this.implicitRules = element;
     return this;
   }
@@ -260,15 +275,10 @@ export abstract class Resource extends Base implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setImplicitRules(value: fhirUri | undefined): this {
-    if (value === undefined) {
-      this.implicitRules = undefined;
-    } else {
-      const parseResult = fhirUriSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Resource.implicitRules (${value})`, parseResult.error);
-      }
-      this.implicitRules = new UriType(parseResult.data);
-    }
+    this.implicitRules =
+      value === undefined
+        ? undefined
+        : new UriType(parseFhirPrimitiveData(value, fhirUriSchema, `Invalid Resource.implicitRules (${value})`));
     return this;
   }
 
@@ -293,6 +303,11 @@ export abstract class Resource extends Base implements IBase {
    * @returns this
    */
   public setLanguageElement(element: CodeType | undefined): this {
+    assertFhirType(
+      element,
+      CodeType,
+      `Resource.setLanguageElement(): The provided argument is not an instance of CodeType.`,
+    );
     this.language = element;
     return this;
   }
@@ -319,15 +334,10 @@ export abstract class Resource extends Base implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setLanguage(value: fhirCode | undefined): this {
-    if (value === undefined) {
-      this.language = undefined;
-    } else {
-      const parseResult = fhirCodeSchema.safeParse(value);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Resource.language (${value})`, parseResult.error);
-      }
-      this.language = new CodeType(parseResult.data);
-    }
+    this.language =
+      value === undefined
+        ? undefined
+        : new CodeType(parseFhirPrimitiveData(value, fhirCodeSchema, `Invalid Resource.language (${value})`));
     return this;
   }
 
@@ -367,3 +377,26 @@ export abstract class Resource extends Base implements IBase {
 }
 
 /* eslint-enable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
+
+/**
+ * FHIR ResourceType assertion for any FHIR resource class
+ *
+ * @param classInstance - class instance to evaluate
+ * @param errorMessage - optional error message to override the default
+ * @throws InvalidTypeError when ResourceType assertion is false
+ *
+ * @category Type Guards/Assertions
+ */
+export function assertFhirResourceType(
+  classInstance: unknown,
+  errorMessage?: string,
+): asserts classInstance is Resource {
+  if (!(classInstance instanceof Resource)) {
+    const errMsg = errorMessage ?? `Provided instance is not an instance of Resource.`;
+    throw new InvalidTypeError(errMsg);
+  }
+  if (!RESOURCE_TYPES.includes(classInstance.resourceType())) {
+    const errMsg = errorMessage ?? `Provided instance (${classInstance.resourceType()}) is not a valid resource type.`;
+    throw new InvalidTypeError(errMsg);
+  }
+}

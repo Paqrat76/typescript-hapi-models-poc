@@ -22,8 +22,7 @@
  */
 
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { fhirId, fhirIdSchema } from './primitive-types';
+import { fhirId, fhirIdSchema, parseFhirPrimitiveData } from './primitive-types';
 
 /**
  * Id Class
@@ -50,35 +49,17 @@ export class IdType extends PrimitiveType<fhirId> {
     this.assignValue(value);
   }
 
-  /**
-   * Parses the provided value and returns the desired FHIR primitive value.
-   *
-   * @param value - value to be parsed
-   * @param errMessage - optional error message to override the default
-   * @returns the FHIR primitive value
-   * @throws PrimitiveTypeError for invalid value
-   */
-  static parse(value: string, errMessage?: string): fhirId {
-    const parseResult = fhirIdSchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data;
-    } else {
-      const errMsg = errMessage ?? `Invalid value for IdType (${String(value)})`;
-      throw new PrimitiveTypeError(errMsg, parseResult.error);
-    }
-  }
-
   public override setValue(value?: fhirId): this {
     this.assignValue(value);
     return this;
   }
 
   public encodeToString(value: fhirId): string {
-    return IdType.parse(value).toString();
+    return parseFhirPrimitiveData(value, fhirIdSchema, this.typeErrorMessage(value)).toString();
   }
 
   public parseToPrimitive(value: string): fhirId {
-    return IdType.parse(value);
+    return parseFhirPrimitiveData(value, fhirIdSchema, this.typeErrorMessage(value));
   }
 
   public override fhirType(): string {
@@ -98,9 +79,14 @@ export class IdType extends PrimitiveType<fhirId> {
 
   private assignValue(value: fhirId | undefined): void {
     if (value !== undefined) {
-      super.setValue(IdType.parse(value));
+      super.setValue(parseFhirPrimitiveData(value, fhirIdSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);
     }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private typeErrorMessage(value: any): string {
+    return `Invalid value for IdType (${String(value)})`;
   }
 }

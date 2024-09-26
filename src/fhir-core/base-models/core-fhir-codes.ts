@@ -21,8 +21,7 @@
  *
  */
 
-import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
-import { fhirCode } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { fhirCode, fhirCodeSchema, parseFhirPrimitiveData } from '@src/fhir-core/data-types/primitive/primitive-types';
 
 /**
  * Base FHIR code system definition for a particular code defined in an implementation of IFhirCodeEnum.
@@ -81,7 +80,7 @@ export class FhirCodeDefinition implements IFhirCodeDefinition {
    */
   constructor(name: string, code: fhirCode, system?: string, display?: string, definition?: string) {
     // Ensure the code value is a valid fhirCode
-    this.code = CodeType.parse(code);
+    this.code = parseFhirPrimitiveData(code, fhirCodeSchema, `Invalid value for code parameter (${code})`);
 
     this.name = name;
     this.display = display;

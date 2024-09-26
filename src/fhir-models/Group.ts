@@ -24,11 +24,12 @@
 import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
 import { IBase } from '@src/fhir-core/base-models/IBase';
 import { BackboneElement, DataType } from '@src/fhir-core/base-models/core-fhir-models';
+import { ResourceType } from '@src/fhir-core/base-models/ResourceType';
 import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
 import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
 import { EnumCodeType } from '@src/fhir-core/data-types/primitive/EnumCodeType';
-import { Identifier, Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
+import { Identifier, Reference, ReferenceTargets } from '@src/fhir-core/data-types/complex/Reference-Identifier';
 import { Period } from '@src/fhir-core/data-types/complex/Period';
 import { Quantity } from '@src/fhir-core/data-types/complex/Quantity';
 import { Range } from '@src/fhir-core/data-types/complex/Range';
@@ -36,16 +37,19 @@ import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UnsignedIntType } from '@src/fhir-core/data-types/primitive/UnsignedIntType';
 import {
   fhirBoolean,
+  fhirBooleanSchema,
   fhirCode,
   fhirString,
+  fhirStringSchema,
   fhirUnsignedInt,
+  fhirUnsignedIntSchema,
+  parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { GroupTypeEnum } from '@src/fhir-models/code-systems/GroupTypeEnum';
-import { isElementEmpty } from '@src/fhir-core/utility/element-util';
+import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
+import { assertEnumCodeType, assertFhirType, FhirTypeGuard } from '@src/fhir-core/utility/type-guards';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
-import { ResourceType } from '@src/fhir-core/base-models/ResourceType';
-import { ReferenceTargets } from '@src/fhir-core/decorators/ReferenceTargets';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -80,6 +84,8 @@ export class Group extends DomainResource implements IBase {
     if (type === null) {
       this.type = null;
     } else if (type instanceof EnumCodeType) {
+      const errMsgPrefix = 'Invalid Group.type parameter';
+      assertEnumCodeType(type, GroupTypeEnum, errMsgPrefix);
       this.type = type;
     } else {
       try {
@@ -108,7 +114,7 @@ export class Group extends DomainResource implements IBase {
       this.actual = actual;
     } else {
       const optErrMsg = `Invalid Group.actual parameter (${String(actual)})`;
-      this.actual = new BooleanType(BooleanType.parse(actual, optErrMsg));
+      this.actual = new BooleanType(parseFhirPrimitiveData(actual, fhirBooleanSchema, optErrMsg));
     }
   }
 
@@ -288,6 +294,13 @@ export class Group extends DomainResource implements IBase {
    * @returns this
    */
   public setIdentifier(value: Identifier[] | undefined): this {
+    value?.forEach((identifier) => {
+      assertFhirType(
+        identifier,
+        Identifier,
+        `Group.setIdentifier(): At least one provided array item is not an instance of Identifier.`,
+      );
+    });
     this.identifier = value;
     return this;
   }
@@ -300,6 +313,11 @@ export class Group extends DomainResource implements IBase {
    */
   public addIdentifier(value?: Identifier): this {
     if (value !== undefined) {
+      assertFhirType(
+        value,
+        Identifier,
+        `Group.addIdentifier(): The provided argument is not an instance of Identifier.`,
+      );
       this.initIdentifier();
       this.identifier?.push(value);
     }
@@ -342,6 +360,11 @@ export class Group extends DomainResource implements IBase {
    * @returns this
    */
   public setActiveElement(element: BooleanType | undefined): this {
+    assertFhirType(
+      element,
+      BooleanType,
+      `Group.setActiveElement(): The provided argument is not an instance of BooleanType.`,
+    );
     this.active = element;
     return this;
   }
@@ -369,7 +392,8 @@ export class Group extends DomainResource implements IBase {
    */
   public setActive(value: fhirBoolean | undefined): this {
     const optErrMsg = `Invalid Group.active (${String(value)}))`;
-    this.active = value === undefined ? undefined : new BooleanType(BooleanType.parse(value, optErrMsg));
+    this.active =
+      value === undefined ? undefined : new BooleanType(parseFhirPrimitiveData(value, fhirBooleanSchema, optErrMsg));
     return this;
   }
 
@@ -396,6 +420,8 @@ export class Group extends DomainResource implements IBase {
   public setTypeEnumType(enumType: EnumCodeType): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (enumType !== null) {
+      const errMsgPrefix = 'Group.setTypeEnumType()';
+      assertEnumCodeType(enumType, GroupTypeEnum, errMsgPrefix);
       this.type = enumType;
     }
     return this;
@@ -427,6 +453,11 @@ export class Group extends DomainResource implements IBase {
   public setTypeElement(element: CodeType): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (element !== null) {
+      assertFhirType(
+        element,
+        CodeType,
+        `Group.setTypeElement(): The provided argument is not an instance of CodeType.`,
+      );
       this.type = new EnumCodeType(element, this.groupTypeEnum);
     }
     return this;
@@ -486,6 +517,11 @@ export class Group extends DomainResource implements IBase {
   public setActualElement(element: BooleanType): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (element !== null) {
+      assertFhirType(
+        element,
+        BooleanType,
+        `Group.setActualElement(): The provided argument is not an instance of BooleanType.`,
+      );
       this.actual = element;
     }
     return this;
@@ -520,7 +556,7 @@ export class Group extends DomainResource implements IBase {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (value !== null) {
       const optErrMsg = `Invalid Group.actual (${String(value)})`;
-      this.actual = new BooleanType(BooleanType.parse(value, optErrMsg));
+      this.actual = new BooleanType(parseFhirPrimitiveData(value, fhirBooleanSchema, optErrMsg));
     }
     return this;
   }
@@ -546,6 +582,11 @@ export class Group extends DomainResource implements IBase {
    * @returns this
    */
   public setCode(value: CodeableConcept | undefined): this {
+    assertFhirType(
+      value,
+      CodeableConcept,
+      `Group.setCode(): The provided argument is not an instance of CodeableConcept.`,
+    );
     this.code = value;
     return this;
   }
@@ -571,6 +612,11 @@ export class Group extends DomainResource implements IBase {
    * @returns this
    */
   public setNameElement(element: StringType | undefined): this {
+    assertFhirType(
+      element,
+      StringType,
+      `Group.setNameElement(): The provided argument is not an instance of StringType.`,
+    );
     this.name = element;
     return this;
   }
@@ -598,7 +644,8 @@ export class Group extends DomainResource implements IBase {
    */
   public setName(value: fhirString | undefined): this {
     const optErrMsg = `Invalid Group.name (${String(value)})`;
-    this.name = value === undefined ? undefined : new StringType(StringType.parse(value, optErrMsg));
+    this.name =
+      value === undefined ? undefined : new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
     return this;
   }
 
@@ -623,6 +670,11 @@ export class Group extends DomainResource implements IBase {
    * @returns this
    */
   public setQuantityElement(element: UnsignedIntType | undefined): this {
+    assertFhirType(
+      element,
+      UnsignedIntType,
+      `Group.setQuantityElement(): The provided argument is not an instance of UnsignedIntType.`,
+    );
     this.quantity = element;
     return this;
   }
@@ -650,7 +702,10 @@ export class Group extends DomainResource implements IBase {
    */
   public setQuantity(value: fhirUnsignedInt | undefined): this {
     const optErrMsg = `Invalid Group.quantity (${String(value)})`;
-    this.quantity = value === undefined ? undefined : new UnsignedIntType(UnsignedIntType.parse(value, optErrMsg));
+    this.quantity =
+      value === undefined
+        ? undefined
+        : new UnsignedIntType(parseFhirPrimitiveData(value, fhirUnsignedIntSchema, optErrMsg));
     return this;
   }
 
@@ -701,6 +756,13 @@ export class Group extends DomainResource implements IBase {
    * @returns this
    */
   public setCharacteristic(value: GroupCharacteristicComponent[] | undefined): this {
+    value?.forEach((component) => {
+      assertFhirType(
+        component,
+        GroupCharacteristicComponent,
+        `Group.setCharacteristic(): At least one provided array item is not an instance of GroupCharacteristicComponent.`,
+      );
+    });
     this.characteristic = value;
     return this;
   }
@@ -713,6 +775,11 @@ export class Group extends DomainResource implements IBase {
    */
   public addCharacteristic(value?: GroupCharacteristicComponent): this {
     if (value !== undefined) {
+      assertFhirType(
+        value,
+        GroupCharacteristicComponent,
+        `Group.addCharacteristic(): The provided argument is not an instance of GroupCharacteristicComponent.`,
+      );
       this.initCharacteristic();
       this.characteristic?.push(value);
     }
@@ -755,6 +822,13 @@ export class Group extends DomainResource implements IBase {
    * @returns this
    */
   public setMember(value: GroupMemberComponent[] | undefined): this {
+    value?.forEach((component) => {
+      assertFhirType(
+        component,
+        GroupMemberComponent,
+        `Group.setMember(): At least one provided array item is not an instance of GroupMemberComponent.`,
+      );
+    });
     this.member = value;
     return this;
   }
@@ -767,6 +841,11 @@ export class Group extends DomainResource implements IBase {
    */
   public addMember(value?: GroupMemberComponent): this {
     if (value !== undefined) {
+      assertFhirType(
+        value,
+        GroupMemberComponent,
+        `Group.addMember(): The provided argument is not an instance of GroupMemberComponent.`,
+      );
       this.initMember();
       this.member?.push(value);
     }
@@ -885,7 +964,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
       this.exclude = exclude;
     } else {
       const optErrMsg = `Invalid GroupCharacteristicComponent.exclude parameter (${String(exclude)})`;
-      this.exclude = new BooleanType(BooleanType.parse(exclude, optErrMsg));
+      this.exclude = new BooleanType(parseFhirPrimitiveData(exclude, fhirBooleanSchema, optErrMsg));
     }
   }
 
@@ -971,6 +1050,11 @@ export class GroupCharacteristicComponent extends BackboneElement {
   public setCode(value: CodeableConcept): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (value !== null) {
+      assertFhirType(
+        value,
+        CodeableConcept,
+        `GroupCharacteristicComponent.setCode(): The provided argument is not an instance of CodeableConcept.`,
+      );
       this.code = value;
     }
     return this;
@@ -1022,11 +1106,11 @@ export class GroupCharacteristicComponent extends BackboneElement {
   private checkValueDataType(value: DataType): DataType {
     if (
       !(
-        value instanceof CodeableConcept ||
-        value instanceof BooleanType ||
-        value instanceof Quantity ||
-        value instanceof Range ||
-        value instanceof Reference
+        FhirTypeGuard(value, BooleanType) ||
+        FhirTypeGuard(value, CodeableConcept) ||
+        FhirTypeGuard(value, Quantity) ||
+        FhirTypeGuard(value, Range) ||
+        FhirTypeGuard(value, Reference)
       )
     ) {
       throw new InvalidTypeError(`Invalid DataType for Group.characteristic.value[x]: ${value.fhirType()}`);
@@ -1160,6 +1244,11 @@ export class GroupCharacteristicComponent extends BackboneElement {
   public setExcludeElement(element: BooleanType): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (element !== null) {
+      assertFhirType(
+        element,
+        BooleanType,
+        `GroupCharacteristicComponent.setExcludeElement(): The provided argument is not an instance of BooleanType.`,
+      );
       this.exclude = element;
     }
     return this;
@@ -1194,7 +1283,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (value !== null) {
       const optErrMsg = `Invalid GroupCharacteristicComponent.exclude (${String(value)})`;
-      this.exclude = new BooleanType(BooleanType.parse(value, optErrMsg));
+      this.exclude = new BooleanType(parseFhirPrimitiveData(value, fhirBooleanSchema, optErrMsg));
     }
     return this;
   }
@@ -1220,6 +1309,11 @@ export class GroupCharacteristicComponent extends BackboneElement {
    * @returns this
    */
   public setPeriod(value: Period | undefined): this {
+    assertFhirType(
+      value,
+      Period,
+      `GroupCharacteristicComponent.setPeriod(): The provided argument is not an instance of Period.`,
+    );
     this.period = value;
     return this;
   }
@@ -1376,6 +1470,11 @@ export class GroupMemberComponent extends BackboneElement {
    * @returns this
    */
   public setPeriod(value: Period | undefined): this {
+    assertFhirType(
+      value,
+      Period,
+      `GroupMemberComponent.setPeriod(): The provided argument is not an instance of Period.`,
+    );
     this.period = value;
     return this;
   }
@@ -1401,6 +1500,11 @@ export class GroupMemberComponent extends BackboneElement {
    * @returns this
    */
   public setInactiveElement(element: BooleanType | undefined): this {
+    assertFhirType(
+      element,
+      BooleanType,
+      `GroupMemberComponent.setInactiveElement(): The provided argument is not an instance of BooleanType.`,
+    );
     this.inactive = element;
     return this;
   }
@@ -1428,7 +1532,8 @@ export class GroupMemberComponent extends BackboneElement {
    */
   public setInactive(value: fhirBoolean | undefined): this {
     const optErrMsg = `Invalid GroupMemberComponent.inactive (${String(value)}))`;
-    this.inactive = value === undefined ? undefined : new BooleanType(BooleanType.parse(value, optErrMsg));
+    this.inactive =
+      value === undefined ? undefined : new BooleanType(parseFhirPrimitiveData(value, fhirBooleanSchema, optErrMsg));
     return this;
   }
 

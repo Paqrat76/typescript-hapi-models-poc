@@ -25,8 +25,12 @@ import { DateTime } from 'luxon';
 import { DataType } from '@src/fhir-core/base-models/core-fhir-models';
 import { IBase } from '@src/fhir-core/base-models/IBase';
 import { DateTimeType } from '@src/fhir-core/data-types/primitive/DateTimeType';
-import { fhirDateTime } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { isElementEmpty } from '@src/fhir-core/utility/element-util';
+import {
+  fhirDateTime,
+  fhirDateTimeSchema,
+  parseFhirPrimitiveData,
+} from '@src/fhir-core/data-types/primitive/primitive-types';
+import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -130,7 +134,8 @@ export class Period extends DataType implements IBase {
    */
   public setStart(value: fhirDateTime | undefined): this {
     const optErrMsg = `Invalid Period.start (${String(value)})`;
-    this.start = value === undefined ? undefined : new DateTimeType(DateTimeType.parse(value, optErrMsg));
+    this.start =
+      value === undefined ? undefined : new DateTimeType(parseFhirPrimitiveData(value, fhirDateTimeSchema, optErrMsg));
     if (!this.validateStartBeforeEnd()) {
       throw new TypeError('Invalid Period; Period.start is not before or the same as Period.end');
     }
@@ -190,7 +195,8 @@ export class Period extends DataType implements IBase {
    */
   public setEnd(value: fhirDateTime | undefined): this {
     const optErrMsg = `Invalid Period.end (${String(value)})`;
-    this.end = value === undefined ? undefined : new DateTimeType(DateTimeType.parse(value, optErrMsg));
+    this.end =
+      value === undefined ? undefined : new DateTimeType(parseFhirPrimitiveData(value, fhirDateTimeSchema, optErrMsg));
     if (!this.validateStartBeforeEnd()) {
       throw new TypeError('Invalid Period; Period.start is not before or the same as Period.end');
     }

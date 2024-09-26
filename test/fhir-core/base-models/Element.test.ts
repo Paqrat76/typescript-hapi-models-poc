@@ -26,12 +26,15 @@ import { Base } from '@src/fhir-core/base-models/Base';
 import { fhirString } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { MockTask } from '../../test-utils';
+import { InvalidTypeError } from '../../../src';
 
 describe('Element', () => {
   const testId = 'testIdValue';
   const testUrl = 'testUrl';
   const testValue = new StringType('testString');
   const testExtension = new Extension(testUrl, testValue);
+  const INVALID_ID = '';
 
   it('should be properly instantiated as empty', () => {
     const mockElement = new MockElement();
@@ -172,6 +175,39 @@ describe('Element', () => {
     expect(testElement.getId()).toStrictEqual(testId);
     expect(testElement.hasExtension()).toBe(true);
     expect(testElement.getExtension()).toMatchObject([testExtension]);
+  });
+
+  it('should throw PrimitiveTypeError when setId() with invalid value', () => {
+    const testElement = new MockElement();
+    const t = () => {
+      testElement.setId(INVALID_ID);
+    };
+    expect(t).toThrow(PrimitiveTypeError);
+    expect(t).toThrow(`Invalid Element.id (${INVALID_ID})`);
+  });
+
+  it('should throw InvalidTypeError when setExtension() with invalid value', () => {
+    const testElement = new MockElement();
+    const INVALID_EXT = new MockTask();
+    const t = () => {
+      // @ts-expect-error: allow non-Extension for testing
+      testElement.setExtension([INVALID_EXT]);
+    };
+    expect(t).toThrow(InvalidTypeError);
+    expect(t).toThrow(
+      `Element.setExtension(): At least one array item in the provided argument is not an instance of Extension.`,
+    );
+  });
+
+  it('should throw InvalidTypeError when addExtension() with invalid value', () => {
+    const testElement = new MockElement();
+    const INVALID_EXT = new MockTask();
+    const t = () => {
+      // @ts-expect-error: allow non-Extension for testing
+      testElement.addExtension(INVALID_EXT);
+    };
+    expect(t).toThrow(InvalidTypeError);
+    expect(t).toThrow(`Element.addExtension(): The provided argument is not an instance of Extension.`);
   });
 });
 

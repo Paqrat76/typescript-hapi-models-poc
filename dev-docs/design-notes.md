@@ -158,7 +158,7 @@ GitHub: [hapifhir/org.hl7.fhir.core](https://github.com/hapifhir/org.hl7.fhir.co
 
 - **NOTE:** HAPI FHIR has been designed to "auto create" data type elements rather than to return `null`.
   See class header content in [Configuration.java](https://github.com/hapifhir/org.hl7.fhir.core/blob/master/org.hl7.fhir.r4/src/main/java/org/hl7/fhir/r4/model/Configuration.java)
-- Therefore, we will follow suite and not return `undefined` for all `getXxxxElement` methods.
+- Therefore, we will follow suit and not return `undefined` for all `getXxxxElement` methods.
 
 ### TypeScript Runtime Data Validator for Primitives
 
@@ -330,3 +330,32 @@ The `<StructureDefinition.snapshot.element[i].path>` will be reformatted as foll
  * - **isSummary:** <StructureDefinition.snapshot.element[i].isSummary>
  */
 ```
+
+### TypeScript Circular References
+
+References:
+
+- [How to fix nasty circular dependency issues once and for all in JavaScript & TypeScript](https://medium.com/visual-development/how-to-fix-nasty-circular-dependency-issues-once-and-for-all-in-javascript-typescript-a04c987cf0de)
+- [Tired of circular dependency in Typescript/Node.js?](https://dev.to/tahsinature/tired-of-circular-dependency-in-typescriptnodejs-4i0a)
+- [Detect, Prevent, and Fix: Circular Dependencies In JavaScript and TypeScript](https://javascript.plainenglish.io/detect-prevent-and-fix-circular-dependencies-in-javascript-and-typescript-7d9819d37ce2)
+
+The FHIR specification defines data types and resources (data models) based on the [FHIR Type Framework](https://hl7.org/fhir/R5/types.html).
+Ultimately, the specification defines these data structures for exchanging healthcare data using JSON and/or XML.
+By design, circular references in the specification cannot be prevented but are not a problem in the actual data structures.
+Examples of circular references in the FHIR specification include:
+
+- The FHIR Reference data type includes the Identifier data type while the Identifier data type includes the Reference
+  data type.
+- All data types inherit from the FHIR Element that includes a property for FHIR Extensions while the FHIR
+  Extension references almost all FHIR data types.
+
+When designing data structures using TypeScript, these circular references cannot be avoided and must be resolved.
+Various strategies exist to resolve circular references such as:
+
+- Use relative imports inside of the same module
+- Move common code into a separate file to be imported
+- Move code from one module to another
+- Last resort: Combine files with circular dependencies into one file
+
+Unfortunately, due to the FHIR specification, the "last resort" above has been occasionally used in this project.
+When this has been done, a file/module header block documents these cases.

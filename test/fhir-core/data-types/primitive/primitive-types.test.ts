@@ -47,7 +47,9 @@ import {
   fhirUrlSchema,
   fhirUuidSchema,
   fhirXhtmlSchema,
+  parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { TOO_BIG_STRING } from '../../../test-utils';
 
 describe('Primitive Type Schemas', () => {
@@ -651,6 +653,76 @@ describe('Primitive Type Schemas', () => {
       const invalidXhtml = ``;
       parseResult = fhirXhtmlSchema.safeParse(invalidXhtml);
       expect(parseResult.success).toBe(false);
+    });
+  });
+
+  describe('parseFhirPrimitiveData', () => {
+    it('should return appropriate parse results for valid parse', () => {
+      const validBool = true;
+      const parseBoolResult = parseFhirPrimitiveData(validBool, fhirBooleanSchema);
+      expect(parseBoolResult).toStrictEqual(validBool);
+
+      const validString = `Valid string value!`;
+      const parseStringResult = parseFhirPrimitiveData(validString, fhirStringSchema);
+      expect(parseStringResult).toStrictEqual(validString);
+
+      const validInt = 0;
+      const parseIntResult = parseFhirPrimitiveData(validInt, fhirIntegerSchema);
+      expect(parseIntResult).toStrictEqual(validInt);
+
+      const validInt64 = BigInt(FHIR_MIN_INTEGER64);
+      const parseBigIntResult = parseFhirPrimitiveData(validInt64, fhirInteger64Schema);
+      expect(parseBigIntResult).toStrictEqual(validInt64);
+
+      const validDecimal = 1234.5678901234567;
+      const parseDecResult = parseFhirPrimitiveData(validDecimal, fhirDecimalSchema);
+      expect(parseDecResult).toStrictEqual(validDecimal);
+    });
+
+    it('should throw appropriate parse error', () => {
+      const invalidBool = 'invalidBool';
+      let t = () => {
+        parseFhirPrimitiveData(invalidBool, fhirBooleanSchema);
+      };
+      expect(t).toThrow(PrimitiveTypeError);
+      expect(t).toThrow(`Invalid FHIR primitive data value`);
+
+      const invalidString = TOO_BIG_STRING;
+      t = () => {
+        parseFhirPrimitiveData(invalidString, fhirStringSchema);
+      };
+      expect(t).toThrow(PrimitiveTypeError);
+      expect(t).toThrow(`Invalid FHIR primitive data value`);
+
+      const invalidInt = FHIR_MAX_INTEGER + 1;
+      t = () => {
+        parseFhirPrimitiveData(invalidInt, fhirIntegerSchema);
+      };
+      expect(t).toThrow(PrimitiveTypeError);
+      expect(t).toThrow(`Invalid FHIR primitive data value`);
+
+      const invalidInt64 = BigInt(FHIR_MAX_INTEGER64) + 1n;
+      t = () => {
+        parseFhirPrimitiveData(invalidInt64, fhirInteger64Schema);
+      };
+      expect(t).toThrow(PrimitiveTypeError);
+      expect(t).toThrow(`Invalid FHIR primitive data value`);
+
+      const invalidDecimal = Number.MAX_VALUE;
+      t = () => {
+        parseFhirPrimitiveData(invalidDecimal, fhirDecimalSchema);
+      };
+      expect(t).toThrow(PrimitiveTypeError);
+      expect(t).toThrow(`Invalid FHIR primitive data value`);
+    });
+
+    it('should throw appropriate parse error with override message', () => {
+      const invalidString = TOO_BIG_STRING;
+      const t = () => {
+        parseFhirPrimitiveData(invalidString, fhirStringSchema, 'Invalid FHIR string primitive data value');
+      };
+      expect(t).toThrow(PrimitiveTypeError);
+      expect(t).toThrow(`Invalid FHIR string primitive data value`);
     });
   });
 });

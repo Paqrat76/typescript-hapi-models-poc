@@ -21,7 +21,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [0.7.1] - 2024-09-13
+## [0.7.3] - 2024-09-26
+
+### Changed
+
+- Updated dependencies
+- Completed applying parameter type assertions
+- Replaced all static `parse` functions from primitive data type classes to a generic parse function defined in primitive-types.ts
+- Resolved circular dependencies
+
+
+## [0.7.2] - 2024-09-13
+
+### Added
+
+- Added type guard and type assertion functions and updated tests
+
+### Changed
+
+- Broke up Group test suite into files for each Group class
+
+
+## [0.7.1] - 2024-09-12
 
 ### Added
 

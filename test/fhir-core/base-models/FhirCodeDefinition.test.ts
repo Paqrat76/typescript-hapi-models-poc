@@ -63,6 +63,6 @@ describe('FhirCodeDefinition', () => {
       new FhirCodeDefinition(TEST_NAME, INVALID_CODE);
     };
     expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid value for CodeType (${INVALID_CODE})`);
+    expect(t).toThrow(`Invalid value for code parameter (${INVALID_CODE})`);
   });
 });

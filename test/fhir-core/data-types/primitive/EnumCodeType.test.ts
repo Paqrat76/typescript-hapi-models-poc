@@ -25,10 +25,9 @@ import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { EnumCodeType } from '@src/fhir-core/data-types/primitive/EnumCodeType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
-import { FhirCodeDefinition, IFhirCodeDefinition, IFhirCodeEnum } from '@src/fhir-core/base-models/core-fhir-codes';
-import { fhirCode } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { MockCodeEnum } from '../../../test-utils';
 
 describe('EnumCodeType', () => {
   const VALID_CODE = `generated`;
@@ -43,6 +42,7 @@ describe('EnumCodeType', () => {
     expect(testEnumCodeType).toBeInstanceOf(CodeType);
     expect(testEnumCodeType).toBeInstanceOf(PrimitiveType);
     expect(testEnumCodeType.constructor.name).toStrictEqual('EnumCodeType');
+    expect(testEnumCodeType.enumSource()).toStrictEqual('MockCodeEnum');
     expect(testEnumCodeType.fhirType()).toStrictEqual('code');
     expect(testEnumCodeType.isEmpty()).toBe(false);
 
@@ -75,6 +75,7 @@ describe('EnumCodeType', () => {
     expect(testEnumCodeType).toBeInstanceOf(CodeType);
     expect(testEnumCodeType).toBeInstanceOf(PrimitiveType);
     expect(testEnumCodeType.constructor.name).toStrictEqual('EnumCodeType');
+    expect(testEnumCodeType.enumSource()).toStrictEqual('MockCodeEnum');
     expect(testEnumCodeType.fhirType()).toStrictEqual('code');
     expect(testEnumCodeType.isEmpty()).toBe(false);
 
@@ -112,6 +113,7 @@ describe('EnumCodeType', () => {
     expect(testEnumCodeType).toBeInstanceOf(CodeType);
     expect(testEnumCodeType).toBeInstanceOf(PrimitiveType);
     expect(testEnumCodeType.constructor.name).toStrictEqual('EnumCodeType');
+    expect(testEnumCodeType.enumSource()).toStrictEqual('MockCodeEnum');
     expect(testEnumCodeType.fhirType()).toStrictEqual('code');
     expect(testEnumCodeType.isEmpty()).toBe(false);
 
@@ -192,6 +194,7 @@ describe('EnumCodeType', () => {
     expect(testEnumCodeType).toBeInstanceOf(CodeType);
     expect(testEnumCodeType).toBeInstanceOf(PrimitiveType);
     expect(testEnumCodeType.constructor.name).toStrictEqual('EnumCodeType');
+    expect(testEnumCodeType.enumSource()).toStrictEqual('MockCodeEnum');
     expect(testEnumCodeType.fhirType()).toStrictEqual('code');
     expect(testEnumCodeType.isEmpty()).toBe(false);
 
@@ -217,55 +220,3 @@ describe('EnumCodeType', () => {
     expect(testEnumCodeType.fhirCode).toMatchObject(MockCodeEnum.GENERATED);
   });
 });
-
-class MockCodeEnum implements IFhirCodeEnum {
-  // Code definitions copied from NarrativeStatusEnum
-  public static readonly GENERATED = new FhirCodeDefinition(
-    'GENERATED',
-    `generated`,
-    `http://hl7.org/fhir/narrative-status`,
-    `Generated`,
-    `The contents of the narrative are entirely generated from the core elements in the content.`,
-  );
-  public static readonly EXTENSIONS = new FhirCodeDefinition(
-    'EXTENSIONS',
-    `extensions`,
-    `http://hl7.org/fhir/narrative-status`,
-    `Extensions`,
-    `The contents of the narrative are entirely generated from the core elements in the content and some of the content is generated from extensions. The narrative SHALL reflect the impact of all modifier extensions.`,
-  );
-  public static readonly ADDITIONAL = new FhirCodeDefinition(
-    'ADDITIONAL',
-    `additional`,
-    `http://hl7.org/fhir/narrative-status`,
-    `Additional`,
-    `The contents of the narrative may contain additional information not found in the structured data. Note that there is no computable way to determine what the extra information is, other than by human inspection.`,
-  );
-  public static readonly EMPTY = new FhirCodeDefinition(
-    'EMPTY',
-    `empty`,
-    `http://hl7.org/fhir/narrative-status`,
-    `Empty`,
-    `The contents of the narrative are some equivalent of "No human-readable text provided in this case".`,
-  );
-
-  values(): IFhirCodeDefinition[] {
-    return [MockCodeEnum.GENERATED, MockCodeEnum.EXTENSIONS, MockCodeEnum.ADDITIONAL, MockCodeEnum.EMPTY];
-  }
-
-  fromCode(code: fhirCode | undefined): IFhirCodeDefinition {
-    if (code === undefined) {
-      throw new InvalidCodeError(`The provided 'code' value is undefined`);
-    } else if (MockCodeEnum.GENERATED.code === code) {
-      return MockCodeEnum.GENERATED;
-    } else if (MockCodeEnum.EXTENSIONS.code === code) {
-      return MockCodeEnum.EXTENSIONS;
-    } else if (MockCodeEnum.ADDITIONAL.code === code) {
-      return MockCodeEnum.ADDITIONAL;
-    } else if (MockCodeEnum.EMPTY.code === code) {
-      return MockCodeEnum.EMPTY;
-    } else {
-      throw new InvalidCodeError(`Unknown MockCodeEnum 'code' value '${code}'`);
-    }
-  }
-}

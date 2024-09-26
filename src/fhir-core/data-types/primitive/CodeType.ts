@@ -22,8 +22,7 @@
  */
 
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { fhirCode, fhirCodeSchema } from './primitive-types';
+import { fhirCode, fhirCodeSchema, parseFhirPrimitiveData } from './primitive-types';
 
 /**
  * Code Class
@@ -49,35 +48,17 @@ export class CodeType extends PrimitiveType<fhirCode> {
     this.assignValue(value);
   }
 
-  /**
-   * Parses the provided value and returns the desired FHIR primitive value.
-   *
-   * @param value - value to be parsed
-   * @param errMessage - optional error message to override the default
-   * @returns the FHIR primitive value
-   * @throws PrimitiveTypeError for invalid value
-   */
-  static parse(value: string, errMessage?: string): fhirCode {
-    const parseResult = fhirCodeSchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data;
-    } else {
-      const errMsg = errMessage ?? `Invalid value for CodeType (${String(value)})`;
-      throw new PrimitiveTypeError(errMsg, parseResult.error);
-    }
-  }
-
   public override setValue(value?: fhirCode): this {
     this.assignValue(value);
     return this;
   }
 
   public encodeToString(value: fhirCode): string {
-    return CodeType.parse(value).toString();
+    return parseFhirPrimitiveData(value, fhirCodeSchema, this.typeErrorMessage(value)).toString();
   }
 
   public parseToPrimitive(value: string): fhirCode {
-    return CodeType.parse(value);
+    return parseFhirPrimitiveData(value, fhirCodeSchema, this.typeErrorMessage(value));
   }
 
   public override fhirType(): string {
@@ -97,9 +78,14 @@ export class CodeType extends PrimitiveType<fhirCode> {
 
   private assignValue(value: fhirCode | undefined): void {
     if (value !== undefined) {
-      super.setValue(CodeType.parse(value));
+      super.setValue(parseFhirPrimitiveData(value, fhirCodeSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);
     }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private typeErrorMessage(value: any): string {
+    return `Invalid value for CodeType (${String(value)})`;
   }
 }

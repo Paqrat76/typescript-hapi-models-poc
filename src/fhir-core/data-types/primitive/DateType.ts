@@ -22,8 +22,7 @@
  */
 
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { fhirDate, fhirDateSchema } from './primitive-types';
+import { fhirDate, fhirDateSchema, parseFhirPrimitiveData } from './primitive-types';
 
 /**
  * Date Class
@@ -49,35 +48,17 @@ export class DateType extends PrimitiveType<fhirDate> {
     this.assignValue(value);
   }
 
-  /**
-   * Parses the provided value and returns the desired FHIR primitive value.
-   *
-   * @param value - value to be parsed
-   * @param errMessage - optional error message to override the default
-   * @returns the FHIR primitive value
-   * @throws PrimitiveTypeError for invalid value
-   */
-  static parse(value: string, errMessage?: string): fhirDate {
-    const parseResult = fhirDateSchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data;
-    } else {
-      const errMsg = errMessage ?? `Invalid value for DateType (${String(value)})`;
-      throw new PrimitiveTypeError(errMsg, parseResult.error);
-    }
-  }
-
   public override setValue(value?: fhirDate): this {
     this.assignValue(value);
     return this;
   }
 
   public encodeToString(value: fhirDate): string {
-    return DateType.parse(value).toString();
+    return parseFhirPrimitiveData(value, fhirDateSchema, this.typeErrorMessage(value)).toString();
   }
 
   public parseToPrimitive(value: string): fhirDate {
-    return DateType.parse(value);
+    return parseFhirPrimitiveData(value, fhirDateSchema, this.typeErrorMessage(value));
   }
 
   public override fhirType(): string {
@@ -97,9 +78,14 @@ export class DateType extends PrimitiveType<fhirDate> {
 
   private assignValue(value: fhirDate | undefined): void {
     if (value !== undefined) {
-      super.setValue(DateType.parse(value));
+      super.setValue(parseFhirPrimitiveData(value, fhirDateSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);
     }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private typeErrorMessage(value: any): string {
+    return `Invalid value for DateType (${String(value)})`;
   }
 }

@@ -67,6 +67,10 @@ export class EnumCodeType extends CodeType {
     }
   }
 
+  public enumSource(): string {
+    return this.codeEnum.constructor.name;
+  }
+
   public get fhirCodeEnumeration(): IFhirCodeDefinition[] {
     return this.codeEnum.values();
   }

@@ -22,8 +22,7 @@
  */
 
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { fhirUnsignedInt, fhirUnsignedIntSchema } from './primitive-types';
+import { fhirUnsignedInt, fhirUnsignedIntSchema, parseFhirPrimitiveData } from './primitive-types';
 
 /**
  * UnsignedInt Class
@@ -49,36 +48,17 @@ export class UnsignedIntType extends PrimitiveType<fhirUnsignedInt> {
     this.assignValue(value);
   }
 
-  /**
-   * Parses the provided value and returns the desired FHIR primitive value.
-   *
-   * @param value - value to be parsed
-   * @param errMessage - optional error message to override the default
-   * @returns the FHIR primitive value
-   * @throws PrimitiveTypeError for invalid value
-   */
-  static parse(value: string | number, errMessage?: string): fhirUnsignedInt {
-    const valueNumber = typeof value === 'number' ? value : Number.parseInt(value);
-    const parseResult = fhirUnsignedIntSchema.safeParse(valueNumber);
-    if (parseResult.success) {
-      return parseResult.data;
-    } else {
-      const errMsg = errMessage ?? `Invalid value for UnsignedIntType (${String(value)})`;
-      throw new PrimitiveTypeError(errMsg, parseResult.error);
-    }
-  }
-
   public override setValue(value?: fhirUnsignedInt): this {
     this.assignValue(value);
     return this;
   }
 
   public encodeToString(value: fhirUnsignedInt): string {
-    return UnsignedIntType.parse(value).toString();
+    return parseFhirPrimitiveData(value, fhirUnsignedIntSchema, this.typeErrorMessage(value)).toString();
   }
 
   public parseToPrimitive(value: string): fhirUnsignedInt {
-    return UnsignedIntType.parse(value);
+    return parseFhirPrimitiveData(value, fhirUnsignedIntSchema, this.typeErrorMessage(value));
   }
 
   public override fhirType(): string {
@@ -98,9 +78,14 @@ export class UnsignedIntType extends PrimitiveType<fhirUnsignedInt> {
 
   private assignValue(value: fhirUnsignedInt | undefined): void {
     if (value !== undefined) {
-      super.setValue(UnsignedIntType.parse(value));
+      super.setValue(parseFhirPrimitiveData(value, fhirUnsignedIntSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);
     }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private typeErrorMessage(value: any): string {
+    return `Invalid value for UnsignedIntType (${String(value)})`;
   }
 }

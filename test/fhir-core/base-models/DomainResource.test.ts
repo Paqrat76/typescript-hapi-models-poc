@@ -34,11 +34,13 @@ import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { MockTask } from '../../test-utils';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
 describe('DomainResource', () => {
   const VALID_XHTML = '<div xmlns="http://www.w3.org/1999/xhtml">text</div>';
   const VALID_NARRATIVE_1 = new Narrative(NarrativeStatusEnum.GENERATED.code, VALID_XHTML);
   const VALID_NARRATIVE_2 = new Narrative(NarrativeStatusEnum.ADDITIONAL.code, VALID_XHTML);
+  const INVALID_NARRATIVE = new StringType('Invalid Narrative type');
   let VALID_RESOURCE_1: MockTask;
   let VALID_RESOURCE_2: MockTask;
   const VALID_EXTENSION_1 = new Extension('url1', new StringType('ext string1'));
@@ -348,5 +350,81 @@ describe('DomainResource', () => {
     testDomainResource.removeModifierExtension('url2');
     expect(testDomainResource.hasModifierExtension('url2')).toBe(false);
     expect(testDomainResource.hasModifierExtension('url3')).toBe(true);
+  });
+
+  it('should throw InvalidTypeError for invalid Narrative type for DomainResource.setText()', () => {
+    const testDomainResource = new MockTask();
+    const t = () => {
+      // @ts-expect-error: allow for testing
+      testDomainResource.setText(INVALID_NARRATIVE);
+    };
+    expect(t).toThrow(InvalidTypeError);
+    expect(t).toThrow(`DomainResource.setText(): The provided argument is not an instance of Narrative.`);
+  });
+
+  it('should throw InvalidTypeError for invalid Resource type for DomainResource.addContained()', () => {
+    const testDomainResource = new MockTask();
+    const t = () => {
+      // @ts-expect-error: allow for testing
+      testDomainResource.addContained(VALID_NARRATIVE_1);
+    };
+    expect(t).toThrow(InvalidTypeError);
+    expect(t).toThrow(`DomainResource.addContained(): Provided argument is not an instance of Resource.`);
+  });
+
+  it('should throw InvalidTypeError for invalid Resource type for DomainResource.setContained()', () => {
+    const testDomainResource = new MockTask();
+    const t = () => {
+      // @ts-expect-error: allow for testing
+      testDomainResource.setContained([VALID_RESOURCE_1, VALID_NARRATIVE_1]);
+    };
+    expect(t).toThrow(InvalidTypeError);
+    expect(t).toThrow(
+      `DomainResource.setContained(): At least one array item in the provided argument is not an instance of Resource.`,
+    );
+  });
+
+  it('should throw InvalidTypeError for invalid Extension type for DomainResource.addExtension()', () => {
+    const testDomainResource = new MockTask();
+    const t = () => {
+      // @ts-expect-error: allow for testing
+      testDomainResource.addExtension(VALID_NARRATIVE_1);
+    };
+    expect(t).toThrow(InvalidTypeError);
+    expect(t).toThrow(`DomainResource.addExtension(): The provided argument is not an instance of Extension.`);
+  });
+
+  it('should throw InvalidTypeError for invalid Extension type for DomainResource.setExtension()', () => {
+    const testDomainResource = new MockTask();
+    const t = () => {
+      // @ts-expect-error: allow for testing
+      testDomainResource.setExtension([VALID_EXTENSION_1, VALID_NARRATIVE_1]);
+    };
+    expect(t).toThrow(InvalidTypeError);
+    expect(t).toThrow(
+      `DomainResource.setExtension(): At least one array item in the provided argument is not an instance of Extension.`,
+    );
+  });
+
+  it('should throw InvalidTypeError for invalid Extension type for DomainResource.addModifierExtension()', () => {
+    const testDomainResource = new MockTask();
+    const t = () => {
+      // @ts-expect-error: allow for testing
+      testDomainResource.addModifierExtension(VALID_NARRATIVE_1);
+    };
+    expect(t).toThrow(InvalidTypeError);
+    expect(t).toThrow(`DomainResource.addModifierExtension(): The provided argument is not an instance of Extension.`);
+  });
+
+  it('should throw InvalidTypeError for invalid Extension type for DomainResource.setModifierExtension()', () => {
+    const testDomainResource = new MockTask();
+    const t = () => {
+      // @ts-expect-error: allow for testing
+      testDomainResource.setModifierExtension([VALID_EXTENSION_1, VALID_NARRATIVE_1]);
+    };
+    expect(t).toThrow(InvalidTypeError);
+    expect(t).toThrow(
+      `DomainResource.setModifierExtension(): At least one array item in the provided argument is not an instance of Extension.`,
+    );
   });
 });

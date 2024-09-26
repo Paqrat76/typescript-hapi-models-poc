@@ -21,10 +21,14 @@
  *
  */
 
-import { FHIR_MAX_STRING_LENGTH } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { FHIR_MAX_STRING_LENGTH, fhirCode } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { IBase } from '@src/fhir-core/base-models/IBase';
 import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
 import { ResourceType } from '@src/fhir-core/base-models/ResourceType';
+import { FhirCodeDefinition, IFhirCodeDefinition, IFhirCodeEnum } from '@src/fhir-core/base-models/core-fhir-codes';
+import { Resource } from '@src/fhir-core/base-models/Resource';
+import { DataType } from '@src/fhir-core/base-models/core-fhir-models';
+import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 
 export {
   FHIR_MIN_INTEGER,
@@ -63,6 +67,28 @@ export class MockFhirModel implements IBase {
   }
 }
 
+export class MockResource extends Resource {
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
+  constructor() {
+    super();
+  }
+
+  public resourceType(): ResourceType {
+    // @ts-expect-error: allow for testing purposes
+    return 'MockResource';
+  }
+
+  public override fhirType(): string {
+    return 'MockResource';
+  }
+
+  public copy(): MockResource {
+    const dest = new MockResource();
+    this.copyValues(dest);
+    return dest;
+  }
+}
+
 export class MockTask extends DomainResource {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor() {
@@ -81,5 +107,68 @@ export class MockTask extends DomainResource {
     const dest = new MockTask();
     this.copyValues(dest);
     return dest;
+  }
+}
+
+export class MockComplexDataType extends DataType {
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
+  constructor() {
+    super();
+  }
+
+  copy(): MockComplexDataType {
+    return new MockComplexDataType();
+  }
+}
+
+export class MockCodeEnum implements IFhirCodeEnum {
+  // Code definitions copied from NarrativeStatusEnum
+  public static readonly GENERATED = new FhirCodeDefinition(
+    'GENERATED',
+    `generated`,
+    `http://hl7.org/fhir/narrative-status`,
+    `Generated`,
+    `The contents of the narrative are entirely generated from the core elements in the content.`,
+  );
+  public static readonly EXTENSIONS = new FhirCodeDefinition(
+    'EXTENSIONS',
+    `extensions`,
+    `http://hl7.org/fhir/narrative-status`,
+    `Extensions`,
+    `The contents of the narrative are entirely generated from the core elements in the content and some of the content is generated from extensions. The narrative SHALL reflect the impact of all modifier extensions.`,
+  );
+  public static readonly ADDITIONAL = new FhirCodeDefinition(
+    'ADDITIONAL',
+    `additional`,
+    `http://hl7.org/fhir/narrative-status`,
+    `Additional`,
+    `The contents of the narrative may contain additional information not found in the structured data. Note that there is no computable way to determine what the extra information is, other than by human inspection.`,
+  );
+  public static readonly EMPTY = new FhirCodeDefinition(
+    'EMPTY',
+    `empty`,
+    `http://hl7.org/fhir/narrative-status`,
+    `Empty`,
+    `The contents of the narrative are some equivalent of "No human-readable text provided in this case".`,
+  );
+
+  values(): IFhirCodeDefinition[] {
+    return [MockCodeEnum.GENERATED, MockCodeEnum.EXTENSIONS, MockCodeEnum.ADDITIONAL, MockCodeEnum.EMPTY];
+  }
+
+  fromCode(code: fhirCode | undefined): IFhirCodeDefinition {
+    if (code === undefined) {
+      throw new InvalidCodeError(`The provided 'code' value is undefined`);
+    } else if (MockCodeEnum.GENERATED.code === code) {
+      return MockCodeEnum.GENERATED;
+    } else if (MockCodeEnum.EXTENSIONS.code === code) {
+      return MockCodeEnum.EXTENSIONS;
+    } else if (MockCodeEnum.ADDITIONAL.code === code) {
+      return MockCodeEnum.ADDITIONAL;
+    } else if (MockCodeEnum.EMPTY.code === code) {
+      return MockCodeEnum.EMPTY;
+    } else {
+      throw new InvalidCodeError(`Unknown MockCodeEnum 'code' value '${code}'`);
+    }
   }
 }

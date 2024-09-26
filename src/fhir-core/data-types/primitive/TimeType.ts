@@ -22,8 +22,7 @@
  */
 
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { fhirTime, fhirTimeSchema } from './primitive-types';
+import { fhirTime, fhirTimeSchema, parseFhirPrimitiveData } from './primitive-types';
 
 /**
  * Time Class
@@ -49,35 +48,17 @@ export class TimeType extends PrimitiveType<fhirTime> {
     this.assignValue(value);
   }
 
-  /**
-   * Parses the provided value and returns the desired FHIR primitive value.
-   *
-   * @param value - value to be parsed
-   * @param errMessage - optional error message to override the default
-   * @returns the FHIR primitive value
-   * @throws PrimitiveTypeError for invalid value
-   */
-  static parse(value: string, errMessage?: string): fhirTime {
-    const parseResult = fhirTimeSchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data;
-    } else {
-      const errMsg = errMessage ?? `Invalid value for TimeType (${String(value)})`;
-      throw new PrimitiveTypeError(errMsg, parseResult.error);
-    }
-  }
-
   public override setValue(value?: fhirTime): this {
     this.assignValue(value);
     return this;
   }
 
   public encodeToString(value: fhirTime): string {
-    return TimeType.parse(value).toString();
+    return parseFhirPrimitiveData(value, fhirTimeSchema, this.typeErrorMessage(value)).toString();
   }
 
   public parseToPrimitive(value: string): fhirTime {
-    return TimeType.parse(value);
+    return parseFhirPrimitiveData(value, fhirTimeSchema, this.typeErrorMessage(value));
   }
 
   public override fhirType(): string {
@@ -97,9 +78,14 @@ export class TimeType extends PrimitiveType<fhirTime> {
 
   private assignValue(value: fhirTime | undefined): void {
     if (value !== undefined) {
-      super.setValue(TimeType.parse(value));
+      super.setValue(parseFhirPrimitiveData(value, fhirTimeSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);
     }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private typeErrorMessage(value: any): string {
+    return `Invalid value for TimeType (${String(value)})`;
   }
 }

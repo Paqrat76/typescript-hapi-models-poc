@@ -18,16 +18,28 @@ import { XhtmlType } from '@src/fhir-core/data-types/primitive/XhtmlType';
 import { FhirCodeDefinition, IFhirCodeDefinition, IFhirCodeEnum } from '@src/fhir-core/base-models/core-fhir-codes';
 import {
   fhirBoolean,
+  fhirBooleanSchema,
   fhirCanonical,
+  fhirCanonicalSchema,
   fhirCode,
+  fhirCodeSchema,
   fhirDateTime,
+  fhirDateTimeSchema,
   fhirDecimal,
+  fhirDecimalSchema,
   fhirId,
+  fhirIdSchema,
   fhirInstant,
+  fhirInstantSchema,
   fhirString,
+  fhirStringSchema,
   fhirUnsignedInt,
+  fhirUnsignedIntSchema,
   fhirUri,
+  fhirUriSchema,
   fhirXhtml,
+  fhirXhtmlSchema,
+  parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 
@@ -136,7 +148,8 @@ export class TempTemplateTypeMethods {
    */
   public setXxxxBoolean(value: fhirBoolean | undefined): this {
     const optErrMsg = `Invalid XxxClass.xxxxBoolean (${String(value)}))`;
-    this.xxxxBoolean = value === undefined ? undefined : new BooleanType(BooleanType.parse(value, optErrMsg));
+    this.xxxxBoolean =
+      value === undefined ? undefined : new BooleanType(parseFhirPrimitiveData(value, fhirBooleanSchema, optErrMsg));
     return this;
   }
 
@@ -204,7 +217,7 @@ export class TempTemplateTypeMethods {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (value !== null) {
       const optErrMsg = `Invalid XxxClass.xxxxBooleanReq (${String(value)})`;
-      this.xxxxBooleanReq = new BooleanType(BooleanType.parse(value, optErrMsg));
+      this.xxxxBooleanReq = new BooleanType(parseFhirPrimitiveData(value, fhirBooleanSchema, optErrMsg));
     }
     return this;
   }
@@ -264,7 +277,10 @@ export class TempTemplateTypeMethods {
    */
   public setXxxxCanonical(value: fhirCanonical | undefined): this {
     const optErrMsg = `Invalid XxxClass.xxxxCanonical (${String(value)})`;
-    this.xxxxCanonical = value === undefined ? undefined : new CanonicalType(CanonicalType.parse(value, optErrMsg));
+    this.xxxxCanonical =
+      value === undefined
+        ? undefined
+        : new CanonicalType(parseFhirPrimitiveData(value, fhirCanonicalSchema, optErrMsg));
     return this;
   }
 
@@ -323,7 +339,8 @@ export class TempTemplateTypeMethods {
    */
   public setXxxxCode(value: fhirCode | undefined): this {
     const optErrMsg = `Invalid XxxClass.xxxxCode (${String(value)})`;
-    this.xxxxCode = value === undefined ? undefined : new CodeType(CodeType.parse(value, optErrMsg));
+    this.xxxxCode =
+      value === undefined ? undefined : new CodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg));
     return this;
   }
 
@@ -580,7 +597,8 @@ export class TempTemplateTypeMethods {
    */
   public setXxxxDataTime(value: fhirDateTime | undefined): this {
     const optErrMsg = `Invalid XxxClass.xxxxDataTime (${String(value)})`;
-    this.xxxxDataTime = value === undefined ? undefined : new DateTimeType(DateTimeType.parse(value, optErrMsg));
+    this.xxxxDataTime =
+      value === undefined ? undefined : new DateTimeType(parseFhirPrimitiveData(value, fhirDateTimeSchema, optErrMsg));
     return this;
   }
 
@@ -639,7 +657,8 @@ export class TempTemplateTypeMethods {
    */
   public setXxxxDecimal(value: fhirDecimal | undefined): this {
     const optErrMsg = `Invalid XxxClass.xxxxDecimal (${String(value)})`;
-    this.xxxxDecimal = value === undefined ? undefined : new DecimalType(DecimalType.parse(value, optErrMsg));
+    this.xxxxDecimal =
+      value === undefined ? undefined : new DecimalType(parseFhirPrimitiveData(value, fhirDecimalSchema, optErrMsg));
     return this;
   }
 
@@ -698,7 +717,7 @@ export class TempTemplateTypeMethods {
    */
   public setXxxxId(value: fhirId | undefined): this {
     const optErrMsg = `Invalid XxxClass.xxxxId (${String(value)})`;
-    this.xxxxId = value === undefined ? undefined : new IdType(IdType.parse(value, optErrMsg));
+    this.xxxxId = value === undefined ? undefined : new IdType(parseFhirPrimitiveData(value, fhirIdSchema, optErrMsg));
     return this;
   }
 
@@ -757,7 +776,8 @@ export class TempTemplateTypeMethods {
    */
   public setXxxxInstant(value: fhirInstant | undefined): this {
     const optErrMsg = `Invalid XxxClass.xxxxInstant (${String(value)})`;
-    this.xxxxInstant = value === undefined ? undefined : new InstantType(InstantType.parse(value, optErrMsg));
+    this.xxxxInstant =
+      value === undefined ? undefined : new InstantType(parseFhirPrimitiveData(value, fhirInstantSchema, optErrMsg));
     return this;
   }
 
@@ -816,7 +836,8 @@ export class TempTemplateTypeMethods {
    */
   public setXxxxString(value: fhirString | undefined): this {
     const optErrMsg = `Invalid XxxClass.xxxxString`;
-    this.xxxxString = value === undefined ? undefined : new StringType(StringType.parse(value, optErrMsg));
+    this.xxxxString =
+      value === undefined ? undefined : new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
     return this;
   }
 
@@ -876,7 +897,9 @@ export class TempTemplateTypeMethods {
   public setXxxxUnsignedInt(value: fhirUnsignedInt | undefined): this {
     const optErrMsg = `Invalid XxxClass.xxxxUnsignedInt (${String(value)})`;
     this.xxxxUnsignedInt =
-      value === undefined ? undefined : new UnsignedIntType(UnsignedIntType.parse(value, optErrMsg));
+      value === undefined
+        ? undefined
+        : new UnsignedIntType(parseFhirPrimitiveData(value, fhirUnsignedIntSchema, optErrMsg));
     return this;
   }
 
@@ -935,7 +958,8 @@ export class TempTemplateTypeMethods {
    */
   public setXxxxUri(value: fhirUri | undefined): this {
     const optErrMsg = `Invalid XxxClass.xxxxUri (${String(value)})`;
-    this.xxxxUri = value === undefined ? undefined : new UriType(UriType.parse(value, optErrMsg));
+    this.xxxxUri =
+      value === undefined ? undefined : new UriType(parseFhirPrimitiveData(value, fhirUriSchema, optErrMsg));
     return this;
   }
 
@@ -994,7 +1018,8 @@ export class TempTemplateTypeMethods {
    */
   public setXxxxXhtml(value: fhirXhtml | undefined): this {
     const optErrMsg = `Invalid XxxClass.xxxxXhtml`;
-    this.xxxxXhtml = value === undefined ? undefined : new XhtmlType(XhtmlType.parse(value, optErrMsg));
+    this.xxxxXhtml =
+      value === undefined ? undefined : new XhtmlType(parseFhirPrimitiveData(value, fhirXhtmlSchema, optErrMsg));
     return this;
   }
 
@@ -1062,7 +1087,7 @@ export class TempTemplateTypeMethods {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (value !== null) {
       const optErrMsg = `Invalid XxxClass.xxxxXhtmlReq`;
-      this.xxxxXhtmlReq = new XhtmlType(XhtmlType.parse(value, optErrMsg));
+      this.xxxxXhtmlReq = new XhtmlType(parseFhirPrimitiveData(value, fhirXhtmlSchema, optErrMsg));
     }
     return this;
   }

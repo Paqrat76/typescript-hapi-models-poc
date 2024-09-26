@@ -22,8 +22,7 @@
  */
 
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { fhirUrl, fhirUrlSchema } from './primitive-types';
+import { fhirUrl, fhirUrlSchema, parseFhirPrimitiveData } from './primitive-types';
 
 /**
  * Url Class
@@ -49,35 +48,17 @@ export class UrlType extends PrimitiveType<fhirUrl> {
     this.assignValue(value);
   }
 
-  /**
-   * Parses the provided value and returns the desired FHIR primitive value.
-   *
-   * @param value - value to be parsed
-   * @param errMessage - optional error message to override the default
-   * @returns the FHIR primitive value
-   * @throws PrimitiveTypeError for invalid value
-   */
-  static parse(value: string, errMessage?: string): fhirUrl {
-    const parseResult = fhirUrlSchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data;
-    } else {
-      const errMsg = errMessage ?? `Invalid value for UrlType (${String(value)})`;
-      throw new PrimitiveTypeError(errMsg, parseResult.error);
-    }
-  }
-
   public override setValue(value?: fhirUrl): this {
     this.assignValue(value);
     return this;
   }
 
   public encodeToString(value: fhirUrl): string {
-    return UrlType.parse(value).toString();
+    return parseFhirPrimitiveData(value, fhirUrlSchema, this.typeErrorMessage(value)).toString();
   }
 
   public parseToPrimitive(value: string): fhirUrl {
-    return UrlType.parse(value);
+    return parseFhirPrimitiveData(value, fhirUrlSchema, this.typeErrorMessage(value));
   }
 
   public override fhirType(): string {
@@ -97,9 +78,14 @@ export class UrlType extends PrimitiveType<fhirUrl> {
 
   private assignValue(value: fhirUrl | undefined): void {
     if (value !== undefined) {
-      super.setValue(UrlType.parse(value));
+      super.setValue(parseFhirPrimitiveData(value, fhirUrlSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);
     }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private typeErrorMessage(value: any): string {
+    return `Invalid value for UrlType (${String(value)})`;
   }
 }

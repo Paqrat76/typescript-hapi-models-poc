@@ -22,8 +22,7 @@
  */
 
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { fhirString, fhirStringSchema } from './primitive-types';
+import { fhirString, fhirStringSchema, parseFhirPrimitiveData } from './primitive-types';
 
 /**
  * String Class
@@ -50,35 +49,17 @@ export class StringType extends PrimitiveType<fhirString> {
     this.assignValue(value);
   }
 
-  /**
-   * Parses the provided value and returns the desired FHIR primitive value.
-   *
-   * @param value - value to be parsed
-   * @param errMessage - optional error message to override the default
-   * @returns the FHIR primitive value
-   * @throws PrimitiveTypeError for invalid value
-   */
-  static parse(value: string, errMessage?: string): fhirString {
-    const parseResult = fhirStringSchema.safeParse(value);
-    if (parseResult.success) {
-      return parseResult.data;
-    } else {
-      const errMsg = errMessage ?? `Invalid value for StringType`;
-      throw new PrimitiveTypeError(errMsg, parseResult.error);
-    }
-  }
-
   public override setValue(value?: fhirString): this {
     this.assignValue(value);
     return this;
   }
 
   public encodeToString(value: fhirString): string {
-    return StringType.parse(value).toString();
+    return parseFhirPrimitiveData(value, fhirStringSchema, this.typeErrorMessage()).toString();
   }
 
   public parseToPrimitive(value: string): fhirString {
-    return StringType.parse(value);
+    return parseFhirPrimitiveData(value, fhirStringSchema, this.typeErrorMessage());
   }
 
   public override fhirType(): string {
@@ -98,9 +79,13 @@ export class StringType extends PrimitiveType<fhirString> {
 
   private assignValue(value: fhirString | undefined): void {
     if (value !== undefined) {
-      super.setValue(StringType.parse(value));
+      super.setValue(parseFhirPrimitiveData(value, fhirStringSchema, this.typeErrorMessage()));
     } else {
       super.setValue(undefined);
     }
+  }
+
+  private typeErrorMessage(): string {
+    return `Invalid value for StringType`;
   }
 }

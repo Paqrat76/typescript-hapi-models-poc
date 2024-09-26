@@ -29,6 +29,7 @@ import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { MockTask } from '../../test-utils';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
 describe('Resource', () => {
   const VALID_ID = `a-432.E-12345`;
@@ -292,5 +293,45 @@ describe('Resource', () => {
     expect(testResource.getImplicitRulesElement()).toMatchObject(new UriType(VALID_URI));
     expect(testResource.hasLanguageElement()).toBe(true);
     expect(testResource.getLanguageElement()).toMatchObject(new CodeType(VALID_CODE));
+  });
+
+  it('should throw InvalidTypeError for invalid IdType type for Resource.setIdElement()', () => {
+    const testResource = new MockTask();
+    const t = () => {
+      // @ts-expect-error: allow for testing
+      testResource.setIdElement(VALID_URI_TYPE);
+    };
+    expect(t).toThrow(InvalidTypeError);
+    expect(t).toThrow(`Resource.setIdElement(): The provided argument is not an instance of IdType.`);
+  });
+
+  it('should throw InvalidTypeError for invalid Meta type for Resource.setMeta()', () => {
+    const testResource = new MockTask();
+    const t = () => {
+      // @ts-expect-error: allow for testing
+      testResource.setMeta(VALID_URI_TYPE);
+    };
+    expect(t).toThrow(InvalidTypeError);
+    expect(t).toThrow(`Resource.setMeta(): The provided argument is not an instance of Meta.`);
+  });
+
+  it('should throw InvalidTypeError for invalid UriType type for Resource.setImplicitRulesElement()', () => {
+    const testResource = new MockTask();
+    const t = () => {
+      // @ts-expect-error: allow for testing
+      testResource.setImplicitRulesElement(VALID_ID_TYPE);
+    };
+    expect(t).toThrow(InvalidTypeError);
+    expect(t).toThrow(`Resource.setImplicitRulesElement(): The provided argument is not an instance of UriType.`);
+  });
+
+  it('should throw InvalidTypeError for invalid CodeType type for Resource.setLanguageElement()', () => {
+    const testResource = new MockTask();
+    const t = () => {
+      // @ts-expect-error: allow for testing
+      testResource.setLanguageElement(VALID_ID_TYPE);
+    };
+    expect(t).toThrow(InvalidTypeError);
+    expect(t).toThrow(`Resource.setLanguageElement(): The provided argument is not an instance of CodeType.`);
   });
 });
