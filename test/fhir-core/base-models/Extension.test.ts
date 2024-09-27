@@ -23,10 +23,10 @@
 
 import { Element, Extension } from '@src/fhir-core/base-models/core-fhir-models';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { XhtmlType } from '@src/fhir-core/data-types/primitive/XhtmlType';
 import { Period } from '@src/fhir-core/data-types/complex/Period';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { InvalidTypeError } from '../../../src';
-import { MockTask } from '../../test-utils';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
 describe('Extension', () => {
   it('should be properly instantiated as empty', () => {
@@ -166,12 +166,11 @@ describe('Extension', () => {
     expect(testExtension.getUrl()).toStrictEqual(testUrl);
 
     const t = () => {
-      const invalidValue = new MockTask();
-      // @ts-expect-error: allow non-DataType to test error handling
+      const invalidValue = new XhtmlType();
       testExtension.setValue(invalidValue);
     };
     expect(t).toThrow(InvalidTypeError);
-    expect(t).toThrow('Extension.setValue(): The provided argument is not an instance of DataType or PrimitiveType.');
+    expect(t).toThrow(`setValue: 'value' argument type (xhtml) is not for a supported open DataType`);
   });
 
   it('should be properly copied when instantiated without a value', () => {

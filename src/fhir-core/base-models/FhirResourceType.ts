@@ -22,7 +22,7 @@
  */
 
 /**
- * FHIR ResourceType
+ * FhirResourceType
  *
  * @remarks
  * Type definition based on RESOURCE_TYPES array.
@@ -30,7 +30,7 @@
  * @category Base Models
  * @see CodeSystem [resource-types](https://www.hl7.org/fhir/R4/codesystem-resource-types.html)
  */
-export type ResourceType = (typeof RESOURCE_TYPES)[number];
+export type FhirResourceType = (typeof RESOURCE_TYPES)[number];
 
 /**
  * FHIR resource types
