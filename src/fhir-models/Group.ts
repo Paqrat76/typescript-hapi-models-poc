@@ -24,7 +24,7 @@
 import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
 import { IBase } from '@src/fhir-core/base-models/IBase';
 import { BackboneElement, DataType } from '@src/fhir-core/base-models/core-fhir-models';
-import { ResourceType } from '@src/fhir-core/base-models/ResourceType';
+import { FhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
 import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
 import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
@@ -50,6 +50,7 @@ import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import { assertEnumCodeType, assertFhirType, FhirTypeGuard } from '@src/fhir-core/utility/type-guards';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { ChoiceDataTypes } from '@src/fhir-core/utility/decorators';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -276,8 +277,8 @@ export class Group extends DomainResource implements IBase {
   /**
    * {@inheritDoc Resource.resourceType}
    */
-  public resourceType(): ResourceType {
-    return this.fhirType() as ResourceType;
+  public resourceType(): FhirResourceType {
+    return this.fhirType() as FhirResourceType;
   }
 
   /**
@@ -969,6 +970,29 @@ export class GroupCharacteristicComponent extends BackboneElement {
   }
 
   /**
+   * Returns the provide value if is a supported DataType; otherwise throws InvalidTypeError.
+   *
+   * @param value - the `value` object value
+   * @returns the provide value if it is a supported DataType
+   * @throws InvalidTypeError if value is not a supported DataType
+   * @private
+   */
+  private checkValueDataType(value: DataType): DataType {
+    if (
+      !(
+        FhirTypeGuard(value, BooleanType) ||
+        FhirTypeGuard(value, CodeableConcept) ||
+        FhirTypeGuard(value, Quantity) ||
+        FhirTypeGuard(value, Range) ||
+        FhirTypeGuard(value, Reference)
+      )
+    ) {
+      throw new InvalidTypeError(`Invalid DataType for Group.characteristic.value[x]: ${value.fhirType()}`);
+    }
+    return value;
+  }
+
+  /**
    * Group.characteristic.code Element
    *
    * @remarks
@@ -1080,10 +1104,11 @@ export class GroupCharacteristicComponent extends BackboneElement {
    * @param value - the `value` object value
    * @returns this
    */
+  @ChoiceDataTypes(['boolean', 'CodeableConcept', 'Quantity', 'Range', 'Reference'])
   public setValue(value: DataType): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (value !== null) {
-      this.value = this.checkValueDataType(value);
+      this.value = value;
     }
     return this;
   }
@@ -1093,29 +1118,6 @@ export class GroupCharacteristicComponent extends BackboneElement {
    */
   public hasValue(): boolean {
     return this.value !== null && !this.value.isEmpty();
-  }
-
-  /**
-   * Returns the provide value if is a supported DataType; otherwise throws InvalidTypeError.
-   *
-   * @param value - the `value` object value
-   * @returns the provide value if it is a supported DataType
-   * @throws InvalidTypeError if value is not a supported DataType
-   * @private
-   */
-  private checkValueDataType(value: DataType): DataType {
-    if (
-      !(
-        FhirTypeGuard(value, BooleanType) ||
-        FhirTypeGuard(value, CodeableConcept) ||
-        FhirTypeGuard(value, Quantity) ||
-        FhirTypeGuard(value, Range) ||
-        FhirTypeGuard(value, Reference)
-      )
-    ) {
-      throw new InvalidTypeError(`Invalid DataType for Group.characteristic.value[x]: ${value.fhirType()}`);
-    }
-    return value;
   }
 
   /**

@@ -51,7 +51,7 @@ import {
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
-import { RESOURCE_TYPES, ResourceType } from '@src/fhir-core/base-models/ResourceType';
+import { RESOURCE_TYPES, FhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
 import { FhirTypeGuard } from '@src/fhir-core/utility/type-guards';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
@@ -756,7 +756,7 @@ export class Identifier extends DataType implements IBase {
  * This decorator validates the provided Reference.reference value for relative or absolute
  * references are only for the defined ElementDefinition's 'targetProfile' value(s).
  *
- * @param referenceTargets - ResourceType array of target references.
+ * @param referenceTargets - FhirResourceType array of target references.
  *                           An empty array is allowed and represents "Any" resource.
  * @returns ReferenceTargets decorator
  * @throws AssertionError for invalid uses
@@ -764,7 +764,7 @@ export class Identifier extends DataType implements IBase {
  *
  * @category Decorators
  */
-export function ReferenceTargets(referenceTargets: ResourceType[]) {
+export function ReferenceTargets(referenceTargets: FhirResourceType[]) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return function <This, Args extends any[], Return>(
     originalMethod: (this: This, ...args: Args) => Return,
@@ -781,7 +781,7 @@ export function ReferenceTargets(referenceTargets: ResourceType[]) {
         );
         assert(
           referenceTargets.every((refTarget) => RESOURCE_TYPES.includes(refTarget)),
-          'referenceTargets contains invalid ResourceType(s)',
+          'referenceTargets contains invalid FhirResourceType(s)',
         );
       }
 
@@ -798,7 +798,7 @@ export function ReferenceTargets(referenceTargets: ResourceType[]) {
       // - Decorator should only be used on a method defined as:
       //   `public set[PropertyName](value: Reference | undefined): this`
       // - The value of type Reference should have the Reference.reference property set
-      // - The referenceTargets array should have at least one valid ResourceType value
+      // - The referenceTargets array should have at least one valid FhirResourceType value
       // - Reference is to a "contained" resource - reference value begins with "#"
       if (
         isAnyResource ||

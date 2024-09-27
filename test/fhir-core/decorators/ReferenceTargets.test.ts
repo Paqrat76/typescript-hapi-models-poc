@@ -54,7 +54,7 @@ describe('ReferenceTargets', () => {
       testMockTaskR1.setMyReferenceProperty4(testReference);
     };
     expect(t).toThrow(AssertionError);
-    expect(t).toThrow(`referenceTargets contains invalid ResourceType(s)`);
+    expect(t).toThrow(`referenceTargets contains invalid FhirResourceType(s)`);
   });
 
   it('should throw AssertionError with invalid method argument type', () => {

@@ -2,7 +2,6 @@
 
 ## POC Feature Set
 
-- Investigate and implement approach to ensure polymorphic data types only accepts target data types.
 - Add Date handling for FHIR `date`/`dateTime`/`time`/`instant` using [Luxon](https://moment.github.io/luxon/#/?id=luxon)
 - Investigate and implement serialization/parsing (deserialization) for all FHIR data models
   - For inspiration, see HAPI FHIR [Parsing and Serialization](https://hapifhir.io/hapi-fhir/docs/model/parsers.html)

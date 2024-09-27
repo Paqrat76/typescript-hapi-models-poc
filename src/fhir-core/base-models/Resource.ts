@@ -34,7 +34,7 @@
 
 import { Base } from '@src/fhir-core/base-models/Base';
 import { IBase } from '@src/fhir-core/base-models/IBase';
-import { RESOURCE_TYPES, ResourceType } from '@src/fhir-core/base-models/ResourceType';
+import { RESOURCE_TYPES, FhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
 import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
@@ -87,7 +87,7 @@ export abstract class Resource extends Base implements IBase {
   /**
    * @returns the FHIR resource type as defined by the FHIR specification
    */
-  public abstract resourceType(): ResourceType;
+  public abstract resourceType(): FhirResourceType;
 
   /**
    * Resource.id Element

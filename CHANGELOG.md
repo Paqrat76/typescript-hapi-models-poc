@@ -21,6 +21,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.7.4] - 2024-09-27
+
+### Added
+
+- Added support to ensure polymorphic and open data types only accepts target data types
+
+### Changed
+
+- Renamed ResourceType to FhirResourceType
+
+
 ## [0.7.3] - 2024-09-26
 
 ### Changed
@@ -47,7 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added decorator ReferenceTargets
-- Added ResourceType type
+- Added FhirResourceType type
 
 
 ## [0.7.0] - 2024-09-11

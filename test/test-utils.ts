@@ -24,7 +24,7 @@
 import { FHIR_MAX_STRING_LENGTH, fhirCode } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { IBase } from '@src/fhir-core/base-models/IBase';
 import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
-import { ResourceType } from '@src/fhir-core/base-models/ResourceType';
+import { FhirResourceType } from '../src/fhir-core/base-models/FhirResourceType';
 import { FhirCodeDefinition, IFhirCodeDefinition, IFhirCodeEnum } from '@src/fhir-core/base-models/core-fhir-codes';
 import { Resource } from '@src/fhir-core/base-models/Resource';
 import { DataType } from '@src/fhir-core/base-models/core-fhir-models';
@@ -73,7 +73,7 @@ export class MockResource extends Resource {
     super();
   }
 
-  public resourceType(): ResourceType {
+  public resourceType(): FhirResourceType {
     // @ts-expect-error: allow for testing purposes
     return 'MockResource';
   }
@@ -95,11 +95,11 @@ export class MockTask extends DomainResource {
     super();
   }
 
-  public resourceType(): ResourceType {
+  public resourceType(): FhirResourceType {
     return 'Task';
   }
 
-  public override fhirType(): string {
+  public fhirType(): string {
     return 'MockTask';
   }
 

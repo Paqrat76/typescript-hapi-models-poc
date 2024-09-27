@@ -52,11 +52,10 @@ import {
   fhirStringSchema,
   fhirUri,
   fhirUriSchema,
-  fhirUrlSchema,
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { OPEN_DATA_TYPES } from '@src/fhir-core/data-types/FhirDataType';
 import { isElementEmpty, validateUrl } from '@src/fhir-core/utility/fhir-util';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
 /**
@@ -913,18 +912,10 @@ export class Extension extends Element implements IBase {
     if (url === null) {
       this.url = null;
     } else {
-      const parseResult = fhirUriSchema.safeParse(url);
-      if (!parseResult.success) {
-        throw new PrimitiveTypeError(`Invalid Extension.url (${url})`, parseResult.error);
-      }
-      this.url = parseResult.data;
+      this.url = parseFhirPrimitiveData(url, fhirUriSchema, `Invalid Extension.url (${url})`);
     }
 
-    if (value === undefined) {
-      this.value = undefined;
-    } else {
-      this.value = value;
-    }
+    this.setValue(value);
   }
 
   /**
@@ -974,7 +965,7 @@ export class Extension extends Element implements IBase {
   public setUrl(value: fhirUri): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (value !== null) {
-      this.url = parseFhirPrimitiveData(value, fhirUrlSchema, `Invalid Extension.url (${value})`);
+      this.url = parseFhirPrimitiveData(value, fhirUriSchema, `Invalid Extension.url (${value})`);
     }
     return this;
   }
@@ -999,15 +990,12 @@ export class Extension extends Element implements IBase {
    * @param value - the `value` value
    * @returns this
    */
+  @OpenDataTypes()
   public setValue(value: DataType | undefined): this {
-    if (value !== undefined) {
-      if (!(value instanceof DataType)) {
-        throw new InvalidTypeError(
-          `Extension.setValue(): The provided argument is not an instance of DataType or PrimitiveType.`,
-        );
-      }
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (value !== null) {
+      this.value = value;
     }
-    this.value = value;
     return this;
   }
 
@@ -1052,3 +1040,55 @@ export class Extension extends Element implements IBase {
 }
 
 /* eslint-enable jsdoc/require-param, jsdoc/require-returns */
+
+/**
+ * Factory function for OpenDataTypes decorator for open data type "set" methods
+ *
+ * @remarks
+ * This decorator validates the data type of the provided "set" method argument against the list
+ * of the FhirOpenDataType. The FhirOpenDataType are expressed as FHIR primitive and/or
+ * complex data type names. These values are available in each data type class as `instance.fhirType()`.
+ * FhirOpenDataTypes are used in the following places: ElementDefinition, Extension, Parameters, Task,
+ * and Transport (R5).
+ *
+ * @returns OpenDataTypes decorator
+ * @throws AssertionError for invalid uses
+ * @throws InvalidTypeError for actual data type does not agree with the specified FhirOpenDataType
+ *
+ * @category Decorators
+ */
+export function OpenDataTypes() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return function <This, Args extends any[], Return>(
+    originalMethod: (this: This, ...args: Args) => Return,
+    context: ClassMethodDecoratorContext<This, (this: This, ...args: Args) => Return>,
+  ) {
+    return function (this: This, ...args: Args): Return {
+      const methodName = String(context.name);
+      assert(
+        args.length === 1 && (args[0] === undefined || args[0] === null || args[0] instanceof DataType),
+        `Decorator expects ${methodName} to have one argument with type of 'DataType | undefined | null'`,
+      );
+      // undefined supports optional argument
+      const value = args[0] as DataType | undefined | null;
+
+      // Return the original function if there is nothing for this decorator to do:
+      // - Decorator should only be used on a method defined as:
+      //   `public set[PropertyName](value: DataType | undefined): this`
+      // - value is undefined
+      if (!methodName.startsWith('set') || value === undefined || value === null) {
+        return originalMethod.call(this, ...args);
+      }
+
+      const isValidOpenDataType = OPEN_DATA_TYPES.some((datatype) => value.fhirType() === datatype);
+
+      if (!isValidOpenDataType) {
+        throw new InvalidTypeError(
+          `${methodName}: 'value' argument type (${value.fhirType()}) is not for a supported open DataType`,
+        );
+      }
+
+      return originalMethod.call(this, ...args);
+    };
+  };
+}

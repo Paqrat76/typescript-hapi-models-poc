@@ -284,6 +284,19 @@ describe('GroupCharacteristicComponent', () => {
         expect(t).toThrow(`Invalid DataType for Group.characteristic.value[x]: ${mockModel.fhirType()}`);
       });
 
+      it('should throw InvalidTypeError when set with an invalid value[x] type', () => {
+        const testGroupCharacteristicComponent = new GroupCharacteristicComponent(null, null, null);
+        expect(testGroupCharacteristicComponent.hasValue()).toBe(false);
+        expect(testGroupCharacteristicComponent.getValue()).toBeNull();
+
+        const testValue = new StringType('test string');
+        const t = () => {
+          testGroupCharacteristicComponent.setValue(testValue);
+        };
+        expect(t).toThrow(InvalidTypeError);
+        expect(t).toThrow(`setValue: 'value' argument type (${testValue.fhirType()}) is not for a supported DataType`);
+      });
+
       it('should properly handle value[x] as CodeableConcept', () => {
         const testGroupCharacteristicComponent = new GroupCharacteristicComponent(null, null, null);
         expect(testGroupCharacteristicComponent.hasValue()).toBe(false);

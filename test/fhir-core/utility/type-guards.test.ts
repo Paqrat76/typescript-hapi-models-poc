@@ -156,7 +156,7 @@ describe('type-guards', () => {
   });
 
   describe('assertFhirResourceType', () => {
-    it('should not throw InvalidTypeError for valid ResourceType', () => {
+    it('should not throw InvalidTypeError for valid FhirResourceType', () => {
       const task = new MockTask();
       const t = () => {
         assertFhirResourceType(task);
@@ -164,7 +164,7 @@ describe('type-guards', () => {
       expect(t).not.toThrow(InvalidTypeError);
     });
 
-    it('should throw InvalidTypeError for non-ResourceType', () => {
+    it('should throw InvalidTypeError for non-FhirResourceType', () => {
       const fhirModel = new MockFhirModel();
       const t = () => {
         assertFhirResourceType(fhirModel);
@@ -173,7 +173,7 @@ describe('type-guards', () => {
       expect(t).toThrow(`Provided instance is not an instance of Resource.`);
     });
 
-    it('should throw InvalidTypeError for non-ResourceType with error message override', () => {
+    it('should throw InvalidTypeError for non-FhirResourceType with error message override', () => {
       const testFhirModel = new MockFhirModel();
       const errMessage = `Provided testFhirModel is not an instance of Resource.`;
       const t = () => {
@@ -183,7 +183,7 @@ describe('type-guards', () => {
       expect(t).toThrow(errMessage);
     });
 
-    it('should throw InvalidTypeError for invalid ResourceType', () => {
+    it('should throw InvalidTypeError for invalid FhirResourceType', () => {
       const testFhirResource = new MockResource();
       const t = () => {
         assertFhirResourceType(testFhirResource);
@@ -192,7 +192,7 @@ describe('type-guards', () => {
       expect(t).toThrow(`Provided instance (MockResource) is not a valid resource type.`);
     });
 
-    it('should throw InvalidTypeError for invalid ResourceType with error message override', () => {
+    it('should throw InvalidTypeError for invalid FhirResourceType with error message override', () => {
       const testFhirResource = new MockResource();
       const errMessage = `Provided testFhirResource is not a valid resource type.`;
       const t = () => {
