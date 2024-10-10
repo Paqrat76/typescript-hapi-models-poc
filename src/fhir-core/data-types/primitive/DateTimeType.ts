@@ -21,8 +21,19 @@
  *
  */
 
+import { DateTime } from 'luxon';
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
-import { fhirDateTime, fhirDateTimeSchema, parseFhirPrimitiveData } from './primitive-types';
+import {
+  DateTimeOpts,
+  getDateTimeObject,
+  getDateTimeObjectAsUTC,
+  getValueAsDateOnly,
+  getValueAsDateTime,
+  getValueAsInstant,
+  getValueAsYear,
+  getValueAsYearMonth,
+} from '@src/fhir-core/utility/date-time-util';
+import { DateTimeTypeImpl, fhirDateTime, fhirDateTimeSchema, parseFhirPrimitiveData } from './primitive-types';
 
 /**
  * DateTime Class
@@ -38,7 +49,7 @@ import { fhirDateTime, fhirDateTimeSchema, parseFhirPrimitiveData } from './prim
  * @category Datatypes: Primitive
  * @see [FHIR dateTime](http://hl7.org/fhir/StructureDefinition/dateTime)
  */
-export class DateTimeType extends PrimitiveType<fhirDateTime> {
+export class DateTimeType extends PrimitiveType<fhirDateTime> implements DateTimeTypeImpl {
   /**
    * @param value - the value of the primitive `fhirDateTime`
    * @throws PrimitiveTypeError for invalid value
@@ -50,6 +61,46 @@ export class DateTimeType extends PrimitiveType<fhirDateTime> {
 
   public override setValue(value?: fhirDateTime): this {
     this.assignValue(value);
+    return this;
+  }
+
+  public getValueAsDateTime(opts?: DateTimeOpts): DateTime | undefined {
+    const currValue = this.getValue();
+    return getDateTimeObject(currValue, opts);
+  }
+
+  public getValueAsDateTimeUTC(): DateTime | undefined {
+    const currValue = this.getValue();
+    return getDateTimeObjectAsUTC(currValue);
+  }
+
+  public setValueAsYear(dt: DateTime | undefined): this {
+    const newValue = getValueAsYear(dt);
+    this.assignValue(newValue);
+    return this;
+  }
+
+  public setValueAsYearMonth(dt: DateTime | undefined): this {
+    const newValue = getValueAsYearMonth(dt);
+    this.assignValue(newValue);
+    return this;
+  }
+
+  public setValueAsDateOnly(dt: DateTime | undefined): this {
+    const newValue = getValueAsDateOnly(dt);
+    this.assignValue(newValue);
+    return this;
+  }
+
+  public setValueAsDateTime(dt: DateTime | undefined): this {
+    const newValue = getValueAsDateTime(dt);
+    this.assignValue(newValue);
+    return this;
+  }
+
+  public setValueAsInstant(dt: DateTime | undefined): this {
+    const newValue = getValueAsInstant(dt);
+    this.assignValue(newValue);
     return this;
   }
 

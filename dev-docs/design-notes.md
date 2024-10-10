@@ -152,6 +152,76 @@ GitHub: [hapifhir/org.hl7.fhir.core](https://github.com/hapifhir/org.hl7.fhir.co
   - [schemawax](https://www.npmjs.com/package/schemawax)
 - [Recreating advanced Enum types in Typescript](https://medium.com/swlh/recreating-advanced-enum-types-in-typescript-7a267a2a885)
 
+## Date/DateTime Handling
+
+### FHIR Date/Time Primitives
+
+**NOTE:** Where a timezone (`+zz:zz`) is specified, UTC (`Z`) may also be specified
+
+- [date](https://hl7.org/fhir/R5/datatypes.html#date)
+  - `YYYY`
+  - `YYYY-MM`
+  - `YYYY-MM-DD`
+- [dateTime](https://hl7.org/fhir/R5/datatypes.html#dateTime)
+  - `YYYY`
+  - `YYYY-MM`
+  - `YYYY-MM-DD`
+  - `YYYY-MM-DDThh:mm:ss+zz:zz` / `YYYY-MM-DDThh:mm:ssZ`
+  - `YYYY-MM-DDThh:mm:ss.sss+zz:zz` / `YYYY-MM-DDThh:mm:ss.sssZ`
+- [instant](https://hl7.org/fhir/R5/datatypes.html#instant)
+  - `YYYY-MM-DDThh:mm:ss.sss+zz:zz` / `YYYY-MM-DDThh:mm:ss.sssZ`
+
+### Luxon
+
+- **References**
+
+  - NPM [Luxon](https://www.npmjs.com/package/luxon)
+  - Home [Luxon](https://moment.github.io/luxon/#/)
+    - [Changing the default zone](https://moment.github.io/luxon/#/zones?id=changing-the-default-zone)
+      - `Settings.defaultZone = "utc";`
+      - `DateTime.local().zoneName;` //=> 'UTC
+    - [Luxon Validity](https://moment.github.io/luxon/#/validity)
+    - [Luxon API](https://moment.github.io/luxon/api-docs/index.html)
+    - [Some Luxon examples](https://moment.github.io/luxon/demo/global.html)
+
+- **Notes**
+  - **Immutable**, chainable, unambiguous API
+  - Native time zone and Intl support (no locale or tz files)
+  - Months in Luxon are 1-indexed instead of 0-indexed like in Moment and the native Date type
+  - Luxon has both a Duration type and an Interval type
+  - Luxon parsers are very strict
+  - Luxon uses getters instead of accessor methods, so `dateTime.year` instead of `dateTime.year()`
+  - Luxon centralizes its "setters", like `dateTime.set({year: 2016, month: 4})` instead of `dateTime.year(2016).month(4)`
+
+#### Luxon Parsing ([ISO 8601](https://moment.github.io/luxon/#/parsing?id=iso-8601))
+
+- All supported FHIR formats are directly parsable by Luzon
+  - `const dt: DateTime = DateTime.fromISO("2016");`
+  - `const dt: DateTime = DateTime.fromISO("2016-05");`
+  - `const dt: DateTime = DateTime.fromISO("2016-05-25");`
+  - `const dt: DateTime = DateTime.fromISO("2016-05-25T09:24:15Z");`
+  - `const dt: DateTime = DateTime.fromISO("2016-05-25T09:24:15-04.00");`
+  - `const dt: DateTime = DateTime.fromISO("2016-05-25T09:24:15.123Z");`
+  - `const dt: DateTime = DateTime.fromISO("2016-05-25T09:24:15.123-04.00");`
+- DateTime.fromISO() will default to the system's local timezone unless an offset is included in the dateTime string
+  or a timezone option is provided to override the default:
+  - `const dt: DateTime = DateTime.fromISO("2016-05-25T09:24:15Z");`
+  - `const dt: DateTime = DateTime.fromISO("2016-05-25T09:24:15-04.00");`
+  - `const dt: DateTime = DateTime.fromISO("2016-05-25", { zone: "utc" });`
+  - `const dt: DateTime = DateTime.fromISO("2016-05-25", { zone: "America/New_York" });`
+- `DateTime.now().toISO()` will default to the system's local date/time and timezone in ISO format
+- `DateTime.utc().toISO()` will default to UTC and timezone in ISO format
+
+#### Luxon Formatting ([ISO 8601](https://moment.github.io/luxon/#/parsing?id=iso-8601))
+
+- to ISO
+  - `dt.toISO();` //=> '2017-04-20T11:32:00.000-04:00'
+  - `dt.toISO({ suppressMilliseconds: true });` //=> '2017-04-20T11:32:00-04:00'
+  - `dt.toISODate();` //=> '2017-04-20'
+- to Format
+  - `dt.toFormat("yyyy");` //=> '2017'
+  - `dt.toFormat("yyyy-MM");` //=> '2017-04'
+
 ## Design Decisions
 
 ### Auto Create DataType Elements on `getXxxxElement`

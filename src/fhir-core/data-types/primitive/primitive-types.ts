@@ -45,7 +45,133 @@
  */
 
 import { TypeOf, z } from 'zod';
+import { DateTime } from 'luxon';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { DateTimeOpts } from '@src/fhir-core/utility/date-time-util';
+
+/**
+ * FHIR DateType implementation
+ *
+ * @interface
+ * @category Datatypes: Primitive
+ */
+export interface DateTypeImpl {
+  /**
+   * Returns a Luxon DateTime object for the PrimitiveType's `getValue()`.
+   *
+   * @remarks
+   * Uses DateTime.fromISO() static method to create a DateTime object.
+   *
+   * @param opts - Optional DateTime options object to affect the creation of the DateTime instance
+   * @returns an instance of a DateTime object
+   * @throws InvalidDateTimeError if the instantiated DataTime object is invalid
+   *
+   * @see [Luxon DateTime.fromISO()](https://moment.github.io/luxon/api-docs/index.html#datetimefromiso)
+   */
+  getValueAsDateTime: (opts?: DateTimeOpts) => DateTime | undefined;
+  /**
+   * Returns a Luxon DateTime object having the UTC time zone for the PrimitiveType's `getValue()`.
+   *
+   * @remarks
+   * Uses DateTime.fromISO() static method to create a DateTime object.
+   *
+   * @returns an instance of a DateTime object having the UTC time zone
+   * @throws InvalidDateTimeError if the instantiated DataTime object is invalid
+   */
+  getValueAsDateTimeUTC: () => DateTime | undefined;
+  /**
+   * Sets the PrimitiveType's value of the provided dt argument as 'YYYY'
+   *
+   * @param dt - DateTime object from which to obtain a string value
+   * @returns this
+   * @throws InvalidDateTimeError for an invalid dt argument
+   */
+  setValueAsYear: (dt: DateTime | undefined) => this;
+  /**
+   * Sets the PrimitiveType's value of the provided dt argument as 'YYYY-MM'
+   *
+   * @param dt - DateTime object from which to obtain a string value
+   * @returns this
+   * @throws InvalidDateTimeError for an invalid dt argument
+   */
+  setValueAsYearMonth: (dt: DateTime | undefined) => this;
+  /**
+   * Sets the PrimitiveType's value of the provided dt argument as 'YYYY-MM-DD'
+   *
+   * @param dt - DateTime object from which to obtain a string value
+   * @returns this
+   * @throws InvalidDateTimeError for an invalid dt argument
+   */
+  setValueAsDateOnly: (dt: DateTime | undefined) => this;
+}
+
+/**
+ * FHIR DateTimeType implementation
+ *
+ * @interface
+ * @category Datatypes: Primitive
+ */
+export interface DateTimeTypeImpl extends DateTypeImpl {
+  /**
+   * Sets the PrimitiveType's value of the provided dt argument as an ISO datetime string excluding
+   * milliseconds from the format if they are 0
+   *
+   * @param dt - DateTime object from which to obtain a string value
+   * @returns this
+   * @throws InvalidDateTimeError for an invalid dt argument
+   */
+  setValueAsDateTime: (dt: DateTime | undefined) => this;
+  /**
+   * Sets the PrimitiveType's value of the provided dt argument as an ISO datetime string including
+   * milliseconds
+   *
+   * @param dt - DateTime object from which to obtain a string value
+   * @returns this
+   * @throws InvalidDateTimeError for an invalid dt argument
+   */
+  setValueAsInstant: (dt: DateTime | undefined) => this;
+}
+
+/**
+ * FHIR InstantType implementation
+ *
+ * @interface
+ * @category Datatypes: Primitive
+ */
+export interface InstantTypeImpl {
+  /**
+   * Returns a Luxon DateTime object for the PrimitiveType's `getValue()`.
+   *
+   * @remarks
+   * Uses DateTime.fromISO() static method to create a DateTime object.
+   *
+   * @param opts - Optional DateTime options object to affect the creation of the DateTime instance
+   * @returns an instance of a DateTime object
+   * @throws InvalidDateTimeError if the instantiated DataTime object is invalid
+   *
+   * @see [Luxon DateTime.fromISO()](https://moment.github.io/luxon/api-docs/index.html#datetimefromiso)
+   */
+  getValueAsDateTime: (opts?: DateTimeOpts) => DateTime | undefined;
+  /**
+   * Returns a Luxon DateTime object having the UTC time zone for the PrimitiveType's `getValue()`.
+   *
+   * @remarks
+   * Uses DateTime.fromISO() static method to create a DateTime object.
+   *
+   * @returns an instance of a DateTime object having the UTC time zone
+   * @throws InvalidDateTimeError if the instantiated DataTime object is invalid
+   */
+  getValueAsDateTimeUTC: () => DateTime | undefined;
+  /**
+   * Sets the PrimitiveType's value of the provided dt argument as an ISO datetime string including
+   * milliseconds
+   *
+   * @param dt - DateTime object from which to obtain a string value
+   * @returns this
+   * @throws InvalidDateTimeError for an invalid dt argument
+   */
+  setValueAsInstant: (dt: DateTime | undefined) => this;
+}
 
 /**
  * Parses the provided value and returns the desired FHIR primitive value.
@@ -56,7 +182,7 @@ import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
  * @returns the FHIR primitive value as the FHIR primitive type
  * @throws PrimitiveTypeError for invalid data value
  *
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export function parseFhirPrimitiveData<T extends z.ZodTypeAny>(
   data: unknown,
@@ -131,58 +257,58 @@ const FHIR_REGEX_XHTML = new RegExp('^[ \\r\\n\\t\\S]+$');
 // FHIR boolean primitive
 
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export const fhirBooleanSchema = z.boolean().describe('CORETYPE:boolean').default(false);
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export type fhirBoolean = z.infer<typeof fhirBooleanSchema>;
 
 // FHIR string primitive
 
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export const fhirBase64BinarySchema = z.string().regex(FHIR_REGEX_BASE64BINARY);
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export type fhirBase64Binary = z.infer<typeof fhirBase64BinarySchema>;
 
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export const fhirStringSchema = z.string().min(1).max(FHIR_MAX_STRING_LENGTH);
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export type fhirString = z.infer<typeof fhirStringSchema>;
 
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export const fhirMarkdownSchema = fhirStringSchema.brand<'fhirMarkdown'>();
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export type fhirMarkdown = z.infer<typeof fhirMarkdownSchema>;
 
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export const fhirCodeSchema = z.string().regex(FHIR_REGEX_CODE);
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export type fhirCode = z.infer<typeof fhirCodeSchema>;
 
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export const fhirIdSchema = z.string().regex(FHIR_REGEX_ID);
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export type fhirId = z.infer<typeof fhirIdSchema>;
 
@@ -192,7 +318,7 @@ export type fhirId = z.infer<typeof fhirIdSchema>;
 //       See the "warning" box at https://hl7.org/fhir/R5/json.html#primitive).
 // NOTE: The describe() method must follow the refined() method when chaining.
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export const fhirDecimalSchema = z
   .number()
@@ -206,13 +332,13 @@ export const fhirDecimalSchema = z
   })
   .describe('CORETYPE:decimal');
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export type fhirDecimal = z.infer<typeof fhirDecimalSchema>;
 
 // integer64 was added to the FHIR specification in FHIR R5
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export const fhirInteger64Schema = z
   .bigint()
@@ -220,129 +346,129 @@ export const fhirInteger64Schema = z
   .gte(FHIR_MIN_INTEGER64)
   .lte(FHIR_MAX_INTEGER64);
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export type fhirInteger64 = z.infer<typeof fhirInteger64Schema>;
 
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export const fhirIntegerSchema = z.number().describe('CORETYPE:int').int().gte(FHIR_MIN_INTEGER).lte(FHIR_MAX_INTEGER);
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export type fhirInteger = z.infer<typeof fhirIntegerSchema>;
 
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export const fhirUnsignedIntSchema = z.number().describe('CORETYPE:int').int().gte(0).lte(FHIR_MAX_INTEGER);
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export type fhirUnsignedInt = z.infer<typeof fhirUnsignedIntSchema>;
 
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export const fhirPositiveIntSchema = z.number().describe('CORETYPE:int').int().gte(1).lte(FHIR_MAX_INTEGER);
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export type fhirPositiveInt = z.infer<typeof fhirPositiveIntSchema>;
 
 // FHIR uri primitive
 
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export const fhirUriSchema = z.string().regex(FHIR_REGEX_URI);
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export type fhirUri = z.infer<typeof fhirUriSchema>;
 
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export const fhirUrlSchema = fhirUriSchema.brand<'fhirUrl'>();
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export type fhirUrl = z.infer<typeof fhirUrlSchema>;
 
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export const fhirCanonicalSchema = fhirUriSchema.brand<'fhirCanonical'>();
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export type fhirCanonical = z.infer<typeof fhirCanonicalSchema>;
 
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export const fhirUuidSchema = z.string().regex(FHIR_REGEX_UUID);
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export type fhirUuid = z.infer<typeof fhirUuidSchema>;
 
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export const fhirOidSchema = z.string().regex(FHIR_REGEX_OID);
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export type fhirOid = z.infer<typeof fhirOidSchema>;
 
 // FHIR date/time primitive
 
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export const fhirDateSchema = z.string().regex(FHIR_REGEX_DATE);
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export type fhirDate = z.infer<typeof fhirDateSchema>;
 
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export const fhirDateTimeSchema = z.string().regex(FHIR_REGEX_DATETIME);
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export type fhirDateTime = z.infer<typeof fhirDateTimeSchema>;
 
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export const fhirTimeSchema = z.string().regex(FHIR_REGEX_TIME);
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export type fhirTime = z.infer<typeof fhirTimeSchema>;
 
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export const fhirInstantSchema = z.string().regex(FHIR_REGEX_INSTANT);
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export type fhirInstant = z.infer<typeof fhirInstantSchema>;
 
 // FHIR xhtml fragment
 
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export const fhirXhtmlSchema = z.string().regex(FHIR_REGEX_XHTML);
 /**
- * @category Datatypes: Primitive Types
+ * @category Datatypes: Primitive Base Types
  */
 export type fhirXhtml = z.infer<typeof fhirXhtmlSchema>;
