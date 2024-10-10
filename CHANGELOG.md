@@ -21,6 +21,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.8.0] - 2024-10-10
+
+### Added
+
+- InvalidDateTimeError
+- DateTime utilities for Luxon DateTime library
+
+### Changed
+
+- Updated dependencies
+- Implemented interfaces for use of DateTime related utilities in DateType, DataTimeType, and InstantType
+
+
 ## [0.7.4] - 2024-09-27
 
 ### Added

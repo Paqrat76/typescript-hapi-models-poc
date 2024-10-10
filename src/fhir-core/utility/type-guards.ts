@@ -22,7 +22,7 @@
  */
 
 /**
- * Common FHIR related TypeScript type guards and assertion functions.
+ * Common FHIR related TypeScript type guards and assertion functions
  *
  * @remarks
  * All TypeScript type guards and type assertion functions should be included in this module.

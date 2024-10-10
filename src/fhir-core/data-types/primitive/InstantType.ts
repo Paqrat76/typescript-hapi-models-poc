@@ -21,8 +21,15 @@
  *
  */
 
+import { DateTime } from 'luxon';
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
-import { fhirInstant, fhirInstantSchema, parseFhirPrimitiveData } from './primitive-types';
+import {
+  DateTimeOpts,
+  getDateTimeObject,
+  getDateTimeObjectAsUTC,
+  getValueAsInstant,
+} from '@src/fhir-core/utility/date-time-util';
+import { fhirInstant, fhirInstantSchema, InstantTypeImpl, parseFhirPrimitiveData } from './primitive-types';
 
 /**
  * Instant Class
@@ -39,7 +46,7 @@ import { fhirInstant, fhirInstantSchema, parseFhirPrimitiveData } from './primit
  * @category Datatypes: Primitive
  * @see [FHIR instant](http://hl7.org/fhir/StructureDefinition/instant)
  */
-export class InstantType extends PrimitiveType<fhirInstant> {
+export class InstantType extends PrimitiveType<fhirInstant> implements InstantTypeImpl {
   /**
    * @param value - the value of the primitive `fhirInstant`
    * @throws PrimitiveTypeError for invalid value
@@ -51,6 +58,22 @@ export class InstantType extends PrimitiveType<fhirInstant> {
 
   public override setValue(value?: fhirInstant): this {
     this.assignValue(value);
+    return this;
+  }
+
+  public getValueAsDateTime(opts?: DateTimeOpts): DateTime | undefined {
+    const currValue = this.getValue();
+    return getDateTimeObject(currValue, opts);
+  }
+
+  public getValueAsDateTimeUTC(): DateTime | undefined {
+    const currValue = this.getValue();
+    return getDateTimeObjectAsUTC(currValue);
+  }
+
+  public setValueAsInstant(dt: DateTime | undefined): this {
+    const newValue = getValueAsInstant(dt);
+    this.assignValue(newValue);
     return this;
   }
 
