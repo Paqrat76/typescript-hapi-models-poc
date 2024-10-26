@@ -65,6 +65,10 @@ export class PositiveIntType extends PrimitiveType<fhirPositiveInt> {
     return 'positiveInt';
   }
 
+  public override isNumberPrimitive(): boolean {
+    return true;
+  }
+
   public override copy(): PositiveIntType {
     const dest = new PositiveIntType();
     this.copyValues(dest);

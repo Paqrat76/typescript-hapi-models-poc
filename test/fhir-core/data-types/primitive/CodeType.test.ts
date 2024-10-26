@@ -22,6 +22,7 @@
  */
 
 import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 
@@ -38,12 +39,15 @@ describe('CodeType', () => {
     expect(testCodeType.constructor.name).toStrictEqual('CodeType');
     expect(testCodeType.fhirType()).toStrictEqual('code');
     expect(testCodeType.isEmpty()).toBe(true);
+    expect(testCodeType.isPrimitive()).toBe(true);
+    expect(testCodeType.isStringPrimitive()).toBe(true);
+    expect(testCodeType.toJSON()).toBeUndefined();
 
     // inherited properties from Element
     expect(testCodeType.hasId()).toBe(false);
     expect(testCodeType.getId()).toBeUndefined();
     expect(testCodeType.hasExtension()).toBe(false);
-    expect(testCodeType.getExtension()).toMatchObject([] as Extension[]);
+    expect(testCodeType.getExtension()).toEqual([] as Extension[]);
     // primitive value properties
     expect(testCodeType.hasValue()).toBe(false);
     expect(testCodeType.getValue()).toBeUndefined();
@@ -52,12 +56,35 @@ describe('CodeType', () => {
 
   it('should be properly initialized', () => {
     const testCodeType = new CodeType(VALID_CODE);
+    const testId = 'id1234';
+    testCodeType.setId(testId);
+    const testExtension = new Extension('testUrl', new StringType('extension string value'));
+    testCodeType.addExtension(testExtension);
+
     expect(testCodeType).toBeDefined();
     expect(testCodeType).toBeInstanceOf(CodeType);
     expect(testCodeType.constructor.name).toStrictEqual('CodeType');
     expect(testCodeType.fhirType()).toStrictEqual('code');
     expect(testCodeType.isEmpty()).toBe(false);
+    expect(testCodeType.isPrimitive()).toBe(true);
+    expect(testCodeType.isStringPrimitive()).toBe(true);
+    expect(testCodeType.toJSON()).toStrictEqual(VALID_CODE);
+    expect(testCodeType.toSiblingJSON()).toEqual({
+      id: 'id1234',
+      extension: [
+        {
+          url: 'testUrl',
+          valueString: 'extension string value',
+        },
+      ],
+    });
 
+    // inherited properties from Element
+    expect(testCodeType.hasId()).toBe(true);
+    expect(testCodeType.getId()).toStrictEqual(testId);
+    expect(testCodeType.hasExtension()).toBe(true);
+    expect(testCodeType.getExtension()).toEqual([testExtension]);
+    // primitive value properties
     expect(testCodeType.hasValue()).toBe(true);
     expect(testCodeType.getValue()).toBeDefined();
     expect(testCodeType.getValue()).toStrictEqual(VALID_CODE);
@@ -156,6 +183,9 @@ describe('CodeType', () => {
     expect(testCodeType.constructor.name).toStrictEqual('CodeType');
     expect(testCodeType.fhirType()).toStrictEqual('code');
     expect(testCodeType.isEmpty()).toBe(false);
+    expect(testCodeType.isPrimitive()).toBe(true);
+    expect(testCodeType.isStringPrimitive()).toBe(true);
+    expect(testCodeType.toJSON()).toStrictEqual(VALID_CODE);
     expect(testCodeType.hasValue()).toBe(true);
     expect(testCodeType.getValue()).toBeDefined();
     expect(testCodeType.getValue()).toStrictEqual(VALID_CODE);

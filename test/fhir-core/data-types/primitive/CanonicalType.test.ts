@@ -22,6 +22,7 @@
  */
 
 import { CanonicalType } from '@src/fhir-core/data-types/primitive/CanonicalType';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { fhirCanonical } from '@src/fhir-core/data-types/primitive/primitive-types';
@@ -39,12 +40,15 @@ describe('CanonicalType', () => {
     expect(testCanonicalType.constructor.name).toStrictEqual('CanonicalType');
     expect(testCanonicalType.fhirType()).toStrictEqual('canonical');
     expect(testCanonicalType.isEmpty()).toBe(true);
+    expect(testCanonicalType.isPrimitive()).toBe(true);
+    expect(testCanonicalType.isStringPrimitive()).toBe(true);
+    expect(testCanonicalType.toJSON()).toBeUndefined();
 
     // inherited properties from Element
     expect(testCanonicalType.hasId()).toBe(false);
     expect(testCanonicalType.getId()).toBeUndefined();
     expect(testCanonicalType.hasExtension()).toBe(false);
-    expect(testCanonicalType.getExtension()).toMatchObject([] as Extension[]);
+    expect(testCanonicalType.getExtension()).toEqual([] as Extension[]);
     // primitive value properties
     expect(testCanonicalType.hasValue()).toBe(false);
     expect(testCanonicalType.getValue()).toBeUndefined();
@@ -53,12 +57,35 @@ describe('CanonicalType', () => {
 
   it('should be properly initialized', () => {
     const testCanonicalType = new CanonicalType(VALID_CANONICAL);
+    const testId = 'id1234';
+    testCanonicalType.setId(testId);
+    const testExtension = new Extension('testUrl', new StringType('extension string value'));
+    testCanonicalType.addExtension(testExtension);
+
     expect(testCanonicalType).toBeDefined();
     expect(testCanonicalType).toBeInstanceOf(CanonicalType);
     expect(testCanonicalType.constructor.name).toStrictEqual('CanonicalType');
     expect(testCanonicalType.fhirType()).toStrictEqual('canonical');
     expect(testCanonicalType.isEmpty()).toBe(false);
+    expect(testCanonicalType.isPrimitive()).toBe(true);
+    expect(testCanonicalType.isStringPrimitive()).toBe(true);
+    expect(testCanonicalType.toJSON()).toStrictEqual(VALID_CANONICAL);
+    expect(testCanonicalType.toSiblingJSON()).toEqual({
+      id: 'id1234',
+      extension: [
+        {
+          url: 'testUrl',
+          valueString: 'extension string value',
+        },
+      ],
+    });
 
+    // inherited properties from Element
+    expect(testCanonicalType.hasId()).toBe(true);
+    expect(testCanonicalType.getId()).toStrictEqual(testId);
+    expect(testCanonicalType.hasExtension()).toBe(true);
+    expect(testCanonicalType.getExtension()).toEqual([testExtension]);
+    // primitive value properties
     expect(testCanonicalType.hasValue()).toBe(true);
     expect(testCanonicalType.getValue()).toBeDefined();
     expect(testCanonicalType.getValue()).toStrictEqual(VALID_CANONICAL);
@@ -80,6 +107,9 @@ describe('CanonicalType', () => {
     expect(testCanonicalType.getValue()).toBeDefined();
     expect(testCanonicalType.getValue()).toStrictEqual(VALID_CANONICAL);
     expect(testCanonicalType.getValueAsString()).toStrictEqual(VALID_CANONICAL);
+    expect(testCanonicalType.isPrimitive()).toBe(true);
+    expect(testCanonicalType.isStringPrimitive()).toBe(true);
+    expect(testCanonicalType.toJSON()).toStrictEqual(VALID_CANONICAL);
 
     testCanonicalType.setValue(VALID_CANONICAL_2);
     expect(testCanonicalType.isEmpty()).toBe(false);
@@ -87,12 +117,14 @@ describe('CanonicalType', () => {
     expect(testCanonicalType.getValue()).toBeDefined();
     expect(testCanonicalType.getValue()).toStrictEqual(VALID_CANONICAL_2);
     expect(testCanonicalType.getValueAsString()).toStrictEqual(VALID_CANONICAL_2);
+    expect(testCanonicalType.toJSON()).toStrictEqual(VALID_CANONICAL_2);
 
     testCanonicalType.setValue();
     expect(testCanonicalType.isEmpty()).toBe(true);
     expect(testCanonicalType.hasValue()).toBe(false);
     expect(testCanonicalType.getValue()).toBeUndefined();
     expect(testCanonicalType.getValueAsString()).toBeUndefined();
+    expect(testCanonicalType.toJSON()).toBeUndefined();
   });
 
   it('should throw PrimitiveTypeError when setValue() with invalid value', () => {
@@ -157,6 +189,9 @@ describe('CanonicalType', () => {
     expect(testCanonicalType.constructor.name).toStrictEqual('CanonicalType');
     expect(testCanonicalType.fhirType()).toStrictEqual('canonical');
     expect(testCanonicalType.isEmpty()).toBe(false);
+    expect(testCanonicalType.isPrimitive()).toBe(true);
+    expect(testCanonicalType.isStringPrimitive()).toBe(true);
+    expect(testCanonicalType.toJSON()).toStrictEqual(VALID_CANONICAL);
     expect(testCanonicalType.hasValue()).toBe(true);
     expect(testCanonicalType.getValue()).toBeDefined();
     expect(testCanonicalType.getValue()).toStrictEqual(VALID_CANONICAL);

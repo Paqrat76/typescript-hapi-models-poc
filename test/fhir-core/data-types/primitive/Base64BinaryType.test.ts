@@ -22,6 +22,7 @@
  */
 
 import { Base64BinaryType } from '@src/fhir-core/data-types/primitive/Base64BinaryType';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 
@@ -38,12 +39,15 @@ describe('Base64BinaryType', () => {
     expect(testBase64BinaryType.constructor.name).toStrictEqual('Base64BinaryType');
     expect(testBase64BinaryType.fhirType()).toStrictEqual('base64Binary');
     expect(testBase64BinaryType.isEmpty()).toBe(true);
+    expect(testBase64BinaryType.isPrimitive()).toBe(true);
+    expect(testBase64BinaryType.isStringPrimitive()).toBe(true);
+    expect(testBase64BinaryType.toJSON()).toBeUndefined();
 
     // inherited properties from Element
     expect(testBase64BinaryType.hasId()).toBe(false);
     expect(testBase64BinaryType.getId()).toBeUndefined();
     expect(testBase64BinaryType.hasExtension()).toBe(false);
-    expect(testBase64BinaryType.getExtension()).toMatchObject([] as Extension[]);
+    expect(testBase64BinaryType.getExtension()).toEqual([] as Extension[]);
     // primitive value properties
     expect(testBase64BinaryType.hasValue()).toBe(false);
     expect(testBase64BinaryType.getValue()).toBeUndefined();
@@ -52,12 +56,35 @@ describe('Base64BinaryType', () => {
 
   it('should be properly initialized', () => {
     const testBase64BinaryType = new Base64BinaryType(VALID_BASE64BINARY);
+    const testId = 'id1234';
+    testBase64BinaryType.setId(testId);
+    const testExtension = new Extension('testUrl', new StringType('extension string value'));
+    testBase64BinaryType.addExtension(testExtension);
+
     expect(testBase64BinaryType).toBeDefined();
     expect(testBase64BinaryType).toBeInstanceOf(Base64BinaryType);
     expect(testBase64BinaryType.constructor.name).toStrictEqual('Base64BinaryType');
     expect(testBase64BinaryType.fhirType()).toStrictEqual('base64Binary');
     expect(testBase64BinaryType.isEmpty()).toBe(false);
+    expect(testBase64BinaryType.isPrimitive()).toBe(true);
+    expect(testBase64BinaryType.isStringPrimitive()).toBe(true);
+    expect(testBase64BinaryType.toJSON()).toStrictEqual(VALID_BASE64BINARY);
+    expect(testBase64BinaryType.toSiblingJSON()).toEqual({
+      id: 'id1234',
+      extension: [
+        {
+          url: 'testUrl',
+          valueString: 'extension string value',
+        },
+      ],
+    });
 
+    // inherited properties from Element
+    expect(testBase64BinaryType.hasId()).toBe(true);
+    expect(testBase64BinaryType.getId()).toStrictEqual(testId);
+    expect(testBase64BinaryType.hasExtension()).toBe(true);
+    expect(testBase64BinaryType.getExtension()).toEqual([testExtension]);
+    // primitive value properties
     expect(testBase64BinaryType.hasValue()).toBe(true);
     expect(testBase64BinaryType.getValue()).toBeDefined();
     expect(testBase64BinaryType.getValue()).toStrictEqual(VALID_BASE64BINARY);
@@ -79,6 +106,9 @@ describe('Base64BinaryType', () => {
     expect(testBase64BinaryType.getValue()).toBeDefined();
     expect(testBase64BinaryType.getValue()).toStrictEqual(VALID_BASE64BINARY);
     expect(testBase64BinaryType.getValueAsString()).toStrictEqual(VALID_BASE64BINARY);
+    expect(testBase64BinaryType.isPrimitive()).toBe(true);
+    expect(testBase64BinaryType.isStringPrimitive()).toBe(true);
+    expect(testBase64BinaryType.toJSON()).toStrictEqual(VALID_BASE64BINARY);
 
     testBase64BinaryType.setValue(VALID_BASE64BINARY_2);
     expect(testBase64BinaryType.isEmpty()).toBe(false);
@@ -86,12 +116,14 @@ describe('Base64BinaryType', () => {
     expect(testBase64BinaryType.getValue()).toBeDefined();
     expect(testBase64BinaryType.getValue()).toStrictEqual(VALID_BASE64BINARY_2);
     expect(testBase64BinaryType.getValueAsString()).toStrictEqual(VALID_BASE64BINARY_2);
+    expect(testBase64BinaryType.toJSON()).toStrictEqual(VALID_BASE64BINARY_2);
 
     testBase64BinaryType.setValue();
     expect(testBase64BinaryType.isEmpty()).toBe(true);
     expect(testBase64BinaryType.hasValue()).toBe(false);
     expect(testBase64BinaryType.getValue()).toBeUndefined();
     expect(testBase64BinaryType.getValueAsString()).toBeUndefined();
+    expect(testBase64BinaryType.toJSON()).toBeUndefined();
   });
 
   it('should throw PrimitiveTypeError when setValue() with invalid value', () => {
@@ -156,6 +188,9 @@ describe('Base64BinaryType', () => {
     expect(testBase64BinaryType.constructor.name).toStrictEqual('Base64BinaryType');
     expect(testBase64BinaryType.fhirType()).toStrictEqual('base64Binary');
     expect(testBase64BinaryType.isEmpty()).toBe(false);
+    expect(testBase64BinaryType.isPrimitive()).toBe(true);
+    expect(testBase64BinaryType.isStringPrimitive()).toBe(true);
+    expect(testBase64BinaryType.toJSON()).toStrictEqual(VALID_BASE64BINARY);
     expect(testBase64BinaryType.hasValue()).toBe(true);
     expect(testBase64BinaryType.getValue()).toBeDefined();
     expect(testBase64BinaryType.getValue()).toStrictEqual(VALID_BASE64BINARY);

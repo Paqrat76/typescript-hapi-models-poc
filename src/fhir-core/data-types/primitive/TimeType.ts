@@ -65,6 +65,10 @@ export class TimeType extends PrimitiveType<fhirTime> {
     return 'time';
   }
 
+  public override isStringPrimitive(): boolean {
+    return true;
+  }
+
   public override copy(): TimeType {
     const dest = new TimeType();
     this.copyValues(dest);

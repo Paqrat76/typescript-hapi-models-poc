@@ -22,6 +22,9 @@
  */
 
 import { IBase } from './IBase';
+import * as JSON from '@src/fhir-core/utility/json-helpers';
+
+/* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
 /**
  * Abstract Base Class
@@ -49,12 +52,27 @@ export abstract class Base implements IBase {
   protected constructor() {}
 
   /**
-   * @returns the FHIR type defined in the FHIR standard
+   * {@inheritDoc IBase.fhirType}
    */
   public abstract fhirType(): string;
 
   /**
-   * @returns `true` if the instance is empty; `false` otherwise
+   * {@inheritDoc IBase.hasFireType}
+   */
+  public hasFireType(...typeNames: string[]): boolean {
+    const ft = this.fhirType();
+    let retValue = false;
+    for (const tn of typeNames) {
+      if (tn.toLowerCase() === ft.toLowerCase()) {
+        retValue = true;
+        break;
+      }
+    }
+    return retValue;
+  }
+
+  /**
+   * {@inheritDoc IBase.isEmpty}
    */
   public abstract isEmpty(): boolean;
 
@@ -73,5 +91,68 @@ export abstract class Base implements IBase {
    */
   protected abstract copyValues(dest: Base): void;
 
+  /**
+   * {@inheritDoc IBase.isResource}
+   */
+  public isResource(): boolean {
+    return false;
+  }
+
+  /**
+   * {@inheritDoc IBase.isComplexDataType}
+   */
+  public isComplexDataType(): boolean {
+    return false;
+  }
+
+  /**
+   * {@inheritDoc IBase.isPrimitive}
+   */
+  public isPrimitive(): boolean {
+    return false;
+  }
+
+  /**
+   * {@inheritDoc IBase.isBooleanPrimitive}
+   */
+  public isBooleanPrimitive(): boolean {
+    return false;
+  }
+
+  /**
+   * {@inheritDoc IBase.isStringPrimitive}
+   */
+  public isStringPrimitive(): boolean {
+    return false;
+  }
+
+  /**
+   * {@inheritDoc IBase.isNumberPrimitive}
+   */
+  public isNumberPrimitive(): boolean {
+    return false;
+  }
+
+  /**
+   * {@inheritDoc IBase.isBigIntPrimitive}
+   */
+  public isBigIntPrimitive(): boolean {
+    return false;
+  }
+
+  /**
+   * {@inheritDoc IBase.isDateTimePrimitive}
+   */
+  public isDateTimePrimitive(): boolean {
+    return false;
+  }
+
+  /**
+   * {@inheritDoc IBase.toJSON}
+   */
+  public abstract toJSON(): JSON.Value | undefined;
+
   // TODO: Add additional methods as required
 }
+
+/* eslint-enable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */

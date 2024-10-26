@@ -22,6 +22,7 @@
  */
 
 import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 
@@ -36,12 +37,15 @@ describe('BooleanType', () => {
     expect(testBooleanType.constructor.name).toStrictEqual('BooleanType');
     expect(testBooleanType.fhirType()).toStrictEqual('boolean');
     expect(testBooleanType.isEmpty()).toBe(true);
+    expect(testBooleanType.isPrimitive()).toBe(true);
+    expect(testBooleanType.isBooleanPrimitive()).toBe(true);
+    expect(testBooleanType.toJSON()).toBeUndefined();
 
     // inherited properties from Element
     expect(testBooleanType.hasId()).toBe(false);
     expect(testBooleanType.getId()).toBeUndefined();
     expect(testBooleanType.hasExtension()).toBe(false);
-    expect(testBooleanType.getExtension()).toMatchObject([] as Extension[]);
+    expect(testBooleanType.getExtension()).toEqual([] as Extension[]);
     // primitive value properties
     expect(testBooleanType.hasValue()).toBe(false);
     expect(testBooleanType.getValue()).toBeUndefined();
@@ -50,12 +54,35 @@ describe('BooleanType', () => {
 
   it('should be properly initialized as true', () => {
     const testBooleanType = new BooleanType(true);
+    const testId = 'id1234';
+    testBooleanType.setId(testId);
+    const testExtension = new Extension('testUrl', new StringType('extension string value'));
+    testBooleanType.addExtension(testExtension);
+
     expect(testBooleanType).toBeDefined();
     expect(testBooleanType).toBeInstanceOf(BooleanType);
     expect(testBooleanType.constructor.name).toStrictEqual('BooleanType');
     expect(testBooleanType.fhirType()).toStrictEqual('boolean');
     expect(testBooleanType.isEmpty()).toBe(false);
+    expect(testBooleanType.isPrimitive()).toBe(true);
+    expect(testBooleanType.isBooleanPrimitive()).toBe(true);
+    expect(testBooleanType.toJSON()).toBe(true);
+    expect(testBooleanType.toSiblingJSON()).toEqual({
+      id: 'id1234',
+      extension: [
+        {
+          url: 'testUrl',
+          valueString: 'extension string value',
+        },
+      ],
+    });
 
+    // inherited properties from Element
+    expect(testBooleanType.hasId()).toBe(true);
+    expect(testBooleanType.getId()).toStrictEqual(testId);
+    expect(testBooleanType.hasExtension()).toBe(true);
+    expect(testBooleanType.getExtension()).toEqual([testExtension]);
+    // primitive value properties
     expect(testBooleanType.hasValue()).toBe(true);
     expect(testBooleanType.getValue()).toBeDefined();
     expect(testBooleanType.getValue()).toBe(true);
@@ -64,12 +91,35 @@ describe('BooleanType', () => {
 
   it('should be properly initialized as false', () => {
     const testBooleanType = new BooleanType(false);
+    const testId = 'id1234';
+    testBooleanType.setId(testId);
+    const testExtension = new Extension('testUrl', new StringType('extension string value'));
+    testBooleanType.addExtension(testExtension);
+
     expect(testBooleanType).toBeDefined();
     expect(testBooleanType).toBeInstanceOf(BooleanType);
     expect(testBooleanType.constructor.name).toStrictEqual('BooleanType');
     expect(testBooleanType.fhirType()).toStrictEqual('boolean');
     expect(testBooleanType.isEmpty()).toBe(false);
+    expect(testBooleanType.isPrimitive()).toBe(true);
+    expect(testBooleanType.isBooleanPrimitive()).toBe(true);
+    expect(testBooleanType.toJSON()).toBe(false);
+    expect(testBooleanType.toSiblingJSON()).toEqual({
+      id: 'id1234',
+      extension: [
+        {
+          url: 'testUrl',
+          valueString: 'extension string value',
+        },
+      ],
+    });
 
+    // inherited properties from Element
+    expect(testBooleanType.hasId()).toBe(true);
+    expect(testBooleanType.getId()).toStrictEqual(testId);
+    expect(testBooleanType.hasExtension()).toBe(true);
+    expect(testBooleanType.getExtension()).toEqual([testExtension]);
+    // primitive value properties
     expect(testBooleanType.hasValue()).toBe(true);
     expect(testBooleanType.getValue()).toBeDefined();
     expect(testBooleanType.getValue()).toBe(false);
@@ -92,6 +142,7 @@ describe('BooleanType', () => {
     expect(testBooleanType.getValue()).toBeDefined();
     expect(testBooleanType.getValue()).toBe(true);
     expect(testBooleanType.getValueAsString()).toStrictEqual('true');
+    expect(testBooleanType.toJSON()).toBe(true);
 
     testBooleanType.setValue(false);
     expect(testBooleanType.isEmpty()).toBe(false);
@@ -99,12 +150,14 @@ describe('BooleanType', () => {
     expect(testBooleanType.getValue()).toBeDefined();
     expect(testBooleanType.getValue()).toBe(false);
     expect(testBooleanType.getValueAsString()).toStrictEqual('false');
+    expect(testBooleanType.toJSON()).toBe(false);
 
     testBooleanType.setValue();
     expect(testBooleanType.isEmpty()).toBe(true);
     expect(testBooleanType.hasValue()).toBe(false);
     expect(testBooleanType.getValue()).toBeUndefined();
     expect(testBooleanType.getValueAsString()).toBeUndefined();
+    expect(testBooleanType.toJSON()).toBeUndefined();
   });
 
   it('should throw PrimitiveTypeError when setValue() with non-boolean value', () => {
@@ -173,16 +226,34 @@ describe('BooleanType', () => {
   });
 
   it('should properly copy()', () => {
-    const booleanType = new BooleanType(true);
-    const testBooleanType = booleanType.copy();
+    let booleanType = new BooleanType(true);
+    let testBooleanType = booleanType.copy();
     expect(testBooleanType).toBeDefined();
     expect(testBooleanType).toBeInstanceOf(BooleanType);
     expect(testBooleanType.constructor.name).toStrictEqual('BooleanType');
     expect(testBooleanType.fhirType()).toStrictEqual('boolean');
     expect(testBooleanType.isEmpty()).toBe(false);
+    expect(testBooleanType.isPrimitive()).toBe(true);
+    expect(testBooleanType.isBooleanPrimitive()).toBe(true);
+    expect(testBooleanType.toJSON()).toBe(true);
     expect(testBooleanType.hasValue()).toBe(true);
     expect(testBooleanType.getValue()).toBeDefined();
     expect(testBooleanType.getValue()).toBe(true);
     expect(testBooleanType.getValueAsString()).toStrictEqual('true');
+
+    booleanType = new BooleanType(false);
+    testBooleanType = booleanType.copy();
+    expect(testBooleanType).toBeDefined();
+    expect(testBooleanType).toBeInstanceOf(BooleanType);
+    expect(testBooleanType.constructor.name).toStrictEqual('BooleanType');
+    expect(testBooleanType.fhirType()).toStrictEqual('boolean');
+    expect(testBooleanType.isEmpty()).toBe(false);
+    expect(testBooleanType.isPrimitive()).toBe(true);
+    expect(testBooleanType.isBooleanPrimitive()).toBe(true);
+    expect(testBooleanType.toJSON()).toBe(false);
+    expect(testBooleanType.hasValue()).toBe(true);
+    expect(testBooleanType.getValue()).toBeDefined();
+    expect(testBooleanType.getValue()).toBe(false);
+    expect(testBooleanType.getValueAsString()).toStrictEqual('false');
   });
 });

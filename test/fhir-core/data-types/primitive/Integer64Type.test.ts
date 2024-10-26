@@ -21,16 +21,18 @@
  *
  */
 
-import { FHIR_MIN_INTEGER64, FHIR_MAX_INTEGER64 } from '../../../test-utils';
 import { Integer64Type } from '@src/fhir-core/data-types/primitive/Integer64Type';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
+import { FHIR_MIN_INTEGER64, FHIR_MAX_INTEGER64 } from '../../../test-utils';
 
 describe('Integer64Type', () => {
   const VALID_INTEGER64 = BigInt(FHIR_MIN_INTEGER64);
   const VALID_INTEGER64_2 = 0n;
   const VALID_INTEGER64_3 = BigInt(FHIR_MAX_INTEGER64);
   const INVALID_INTEGER64 = BigInt(FHIR_MAX_INTEGER64) + 1n;
+  const VALID_INTEGER64_JSON = String(VALID_INTEGER64);
 
   it('should be properly instantiated as empty', () => {
     const testInteger64Type = new Integer64Type();
@@ -40,12 +42,15 @@ describe('Integer64Type', () => {
     expect(testInteger64Type.constructor.name).toStrictEqual('Integer64Type');
     expect(testInteger64Type.fhirType()).toStrictEqual('integer64');
     expect(testInteger64Type.isEmpty()).toBe(true);
+    expect(testInteger64Type.isPrimitive()).toBe(true);
+    expect(testInteger64Type.isBigIntPrimitive()).toBe(true);
+    expect(testInteger64Type.toJSON()).toBeUndefined();
 
     // inherited properties from Element
     expect(testInteger64Type.hasId()).toBe(false);
     expect(testInteger64Type.getId()).toBeUndefined();
     expect(testInteger64Type.hasExtension()).toBe(false);
-    expect(testInteger64Type.getExtension()).toMatchObject([] as Extension[]);
+    expect(testInteger64Type.getExtension()).toEqual([] as Extension[]);
     // primitive value properties
     expect(testInteger64Type.hasValue()).toBe(false);
     expect(testInteger64Type.getValue()).toBeUndefined();
@@ -54,12 +59,35 @@ describe('Integer64Type', () => {
 
   it('should be properly initialized', () => {
     const testInteger64Type = new Integer64Type(VALID_INTEGER64);
+    const testId = 'id1234';
+    testInteger64Type.setId(testId);
+    const testExtension = new Extension('testUrl', new StringType('extension string value'));
+    testInteger64Type.addExtension(testExtension);
+
     expect(testInteger64Type).toBeDefined();
     expect(testInteger64Type).toBeInstanceOf(Integer64Type);
     expect(testInteger64Type.constructor.name).toStrictEqual('Integer64Type');
     expect(testInteger64Type.fhirType()).toStrictEqual('integer64');
     expect(testInteger64Type.isEmpty()).toBe(false);
+    expect(testInteger64Type.isPrimitive()).toBe(true);
+    expect(testInteger64Type.isBigIntPrimitive()).toBe(true);
+    expect(testInteger64Type.toJSON()).toStrictEqual(VALID_INTEGER64_JSON);
+    expect(testInteger64Type.toSiblingJSON()).toEqual({
+      id: 'id1234',
+      extension: [
+        {
+          url: 'testUrl',
+          valueString: 'extension string value',
+        },
+      ],
+    });
 
+    // inherited properties from Element
+    expect(testInteger64Type.hasId()).toBe(true);
+    expect(testInteger64Type.getId()).toStrictEqual(testId);
+    expect(testInteger64Type.hasExtension()).toBe(true);
+    expect(testInteger64Type.getExtension()).toEqual([testExtension]);
+    // primitive value properties
     expect(testInteger64Type.hasValue()).toBe(true);
     expect(testInteger64Type.getValue()).toBeDefined();
     expect(testInteger64Type.getValue()).toStrictEqual(VALID_INTEGER64);
@@ -167,6 +195,9 @@ describe('Integer64Type', () => {
     expect(testInteger64Type.constructor.name).toStrictEqual('Integer64Type');
     expect(testInteger64Type.fhirType()).toStrictEqual('integer64');
     expect(testInteger64Type.isEmpty()).toBe(false);
+    expect(testInteger64Type.isPrimitive()).toBe(true);
+    expect(testInteger64Type.isBigIntPrimitive()).toBe(true);
+    expect(testInteger64Type.toJSON()).toStrictEqual(VALID_INTEGER64_JSON);
     expect(testInteger64Type.hasValue()).toBe(true);
     expect(testInteger64Type.getValue()).toBeDefined();
     expect(testInteger64Type.getValue()).toStrictEqual(VALID_INTEGER64);

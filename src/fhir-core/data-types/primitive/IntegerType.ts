@@ -66,6 +66,10 @@ export class IntegerType extends PrimitiveType<fhirInteger> {
     return 'integer';
   }
 
+  public override isNumberPrimitive(): boolean {
+    return true;
+  }
+
   public override copy(): IntegerType {
     const dest = new IntegerType();
     this.copyValues(dest);

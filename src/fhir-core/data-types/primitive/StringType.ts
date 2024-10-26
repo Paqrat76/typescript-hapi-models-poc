@@ -66,6 +66,10 @@ export class StringType extends PrimitiveType<fhirString> {
     return 'string';
   }
 
+  public override isStringPrimitive(): boolean {
+    return true;
+  }
+
   public override copy(): StringType {
     const dest = new StringType();
     this.copyValues(dest);

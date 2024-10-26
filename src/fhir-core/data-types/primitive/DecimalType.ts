@@ -66,6 +66,10 @@ export class DecimalType extends PrimitiveType<fhirDecimal> {
     return 'decimal';
   }
 
+  public override isNumberPrimitive(): boolean {
+    return true;
+  }
+
   public override copy(): DecimalType {
     const dest = new DecimalType();
     this.copyValues(dest);

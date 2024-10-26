@@ -21,14 +21,21 @@
  *
  */
 
-import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
 import { IBase } from '@src/fhir-core/base-models/IBase';
-import { BackboneElement, DataType } from '@src/fhir-core/base-models/core-fhir-models';
+import {
+  BackboneElement,
+  DataType,
+  setFhirBackboneElementListJson,
+  setFhirComplexJson,
+  setFhirComplexListJson,
+  setFhirPrimitiveJson,
+  setPolymorphicValueJson,
+} from '@src/fhir-core/base-models/core-fhir-models';
+import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
 import { FhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
 import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
-import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { CodeType, EnumCodeType, assertEnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
-import { EnumCodeType } from '@src/fhir-core/data-types/primitive/EnumCodeType';
 import { Identifier, Reference, ReferenceTargets } from '@src/fhir-core/data-types/complex/Reference-Identifier';
 import { Period } from '@src/fhir-core/data-types/complex/Period';
 import { Quantity } from '@src/fhir-core/data-types/complex/Quantity';
@@ -47,10 +54,11 @@ import {
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { GroupTypeEnum } from '@src/fhir-models/code-systems/GroupTypeEnum';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
-import { assertEnumCodeType, assertFhirType, FhirTypeGuard } from '@src/fhir-core/utility/type-guards';
+import { assertFhirType } from '@src/fhir-core/utility/type-guards';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { ChoiceDataTypes } from '@src/fhir-core/utility/decorators';
+import * as JSON from '@src/fhir-core/utility/json-helpers';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -727,6 +735,8 @@ export class Group extends DomainResource implements IBase {
   /**
    * Assigns the provided Reference object value to the `managingEntity` property.
    *
+   * @decorator `@ReferenceTargets(['Organization', 'RelatedPerson', 'Practitioner', 'PractitionerRole'])`
+   *
    * @param value - the `managingEntity` object value
    * @returns this
    */
@@ -876,14 +886,14 @@ export class Group extends DomainResource implements IBase {
   }
 
   /**
-   * {@inheritDoc Base.fhirType}
+   * {@inheritDoc IBase.fhirType}
    */
   public override fhirType(): string {
     return 'Group';
   }
 
   /**
-   * {@inheritDoc Base.isEmpty}
+   * {@inheritDoc IBase.isEmpty}
    */
   public override isEmpty(): boolean {
     return (
@@ -928,8 +938,63 @@ export class Group extends DomainResource implements IBase {
     dest.characteristic = this.characteristic;
     dest.member = this.member;
   }
+
+  /**
+   * {@inheritDoc IBase.toJSON}
+   */
+  public override toJSON(): JSON.Value | undefined {
+    // Will always have, at least, the 'resourceType' property from Resource
+    const jsonObj = super.toJSON() as JSON.Object;
+
+    if (this.hasIdentifier()) {
+      setFhirComplexListJson(this.getIdentifier(), 'identifier', jsonObj);
+    }
+
+    if (this.hasActiveElement()) {
+      setFhirPrimitiveJson<fhirBoolean>(this.getActiveElement(), 'active', jsonObj);
+    }
+
+    if (this.hasTypeElement()) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      setFhirPrimitiveJson<fhirCode>(this.getTypeElement()!, 'type', jsonObj);
+    }
+
+    if (this.hasActualElement()) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      setFhirPrimitiveJson<fhirBoolean>(this.getActualElement()!, 'actual', jsonObj);
+    }
+
+    if (this.hasCode()) {
+      setFhirComplexJson(this.getCode(), 'code', jsonObj);
+    }
+
+    if (this.hasNameElement()) {
+      setFhirPrimitiveJson<fhirString>(this.getNameElement(), 'name', jsonObj);
+    }
+
+    if (this.hasQuantityElement()) {
+      setFhirPrimitiveJson<fhirUnsignedInt>(this.getQuantityElement(), 'quantity', jsonObj);
+    }
+
+    if (this.hasManagingEntity()) {
+      setFhirComplexJson(this.getManagingEntity(), 'managingEntity', jsonObj);
+    }
+
+    if (this.hasCharacteristic()) {
+      setFhirBackboneElementListJson(this.getCharacteristic(), 'characteristic', jsonObj);
+    }
+
+    if (this.hasMember()) {
+      setFhirBackboneElementListJson(this.getMember(), 'member', jsonObj);
+    }
+
+    // jsonObj will always have, at least, the 'resourceType' property from Resource.
+    // If that is all jsonObj has, return undefined.
+    return Object.keys(jsonObj).length > 1 ? jsonObj : undefined;
+  }
 }
 
+// noinspection DuplicatedCode
 /**
  * GroupCharacteristicComponent Subclass
  *
@@ -956,7 +1021,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
     if (value === null) {
       this.value = null;
     } else {
-      this.value = this.checkValueDataType(value);
+      this.setValue(value);
     }
 
     if (exclude === null) {
@@ -967,29 +1032,6 @@ export class GroupCharacteristicComponent extends BackboneElement {
       const optErrMsg = `Invalid GroupCharacteristicComponent.exclude parameter (${String(exclude)})`;
       this.exclude = new BooleanType(parseFhirPrimitiveData(exclude, fhirBooleanSchema, optErrMsg));
     }
-  }
-
-  /**
-   * Returns the provide value if is a supported DataType; otherwise throws InvalidTypeError.
-   *
-   * @param value - the `value` object value
-   * @returns the provide value if it is a supported DataType
-   * @throws InvalidTypeError if value is not a supported DataType
-   * @private
-   */
-  private checkValueDataType(value: DataType): DataType {
-    if (
-      !(
-        FhirTypeGuard(value, BooleanType) ||
-        FhirTypeGuard(value, CodeableConcept) ||
-        FhirTypeGuard(value, Quantity) ||
-        FhirTypeGuard(value, Range) ||
-        FhirTypeGuard(value, Reference)
-      )
-    ) {
-      throw new InvalidTypeError(`Invalid DataType for Group.characteristic.value[x]: ${value.fhirType()}`);
-    }
-    return value;
   }
 
   /**
@@ -1026,7 +1068,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
    * - **isModifier:** false
    * - **isSummary:** false
    */
-  protected value: DataType | null;
+  protected value!: DataType | null;
 
   /**
    * Group.characteristic.exclude Element
@@ -1100,6 +1142,8 @@ export class GroupCharacteristicComponent extends BackboneElement {
 
   /**
    * Assigns the provided DataType object value to the `value` property.
+   *
+   * @decorator `@ChoiceDataTypes(['boolean', 'CodeableConcept', 'Quantity', 'Range', 'Reference'])`
    *
    * @param value - the `value` object value
    * @returns this
@@ -1328,14 +1372,14 @@ export class GroupCharacteristicComponent extends BackboneElement {
   }
 
   /**
-   * {@inheritDoc Base.fhirType}
+   * {@inheritDoc IBase.fhirType}
    */
   public override fhirType(): string {
     return 'Group.characteristic';
   }
 
   /**
-   * {@inheritDoc Base.isEmpty}
+   * {@inheritDoc IBase.isEmpty}
    */
   public override isEmpty(): boolean {
     return super.isEmpty() && isElementEmpty(this.code, this.value, this.exclude, this.period);
@@ -1360,6 +1404,41 @@ export class GroupCharacteristicComponent extends BackboneElement {
     dest.exclude = this.exclude;
     dest.period = this.period;
   }
+
+  /**
+   * {@inheritDoc IBase.toJSON}
+   */
+  public override toJSON(): JSON.Value | undefined {
+    if (this.isEmpty()) {
+      return undefined;
+    }
+
+    let jsonObj = super.toJSON() as JSON.Object | undefined;
+    if (jsonObj === undefined) {
+      jsonObj = {} as JSON.Object;
+    }
+
+    if (this.hasCode()) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      setFhirComplexJson(this.getCode()!, 'code', jsonObj);
+    }
+
+    if (this.hasValue()) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      setPolymorphicValueJson(this.getValue()!, jsonObj);
+    }
+
+    if (this.hasExcludeElement()) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      setFhirPrimitiveJson<fhirBoolean>(this.getExcludeElement()!, 'exclude', jsonObj);
+    }
+
+    if (this.hasPeriod()) {
+      setFhirComplexJson(this.getPeriod(), 'period', jsonObj);
+    }
+
+    return jsonObj;
+  }
 }
 
 /**
@@ -1381,7 +1460,11 @@ export class GroupMemberComponent extends BackboneElement {
   constructor(entity: Reference | null) {
     super();
 
-    this.entity = entity;
+    if (entity === null) {
+      this.entity = null;
+    } else {
+      this.setEntity(entity);
+    }
   }
 
   /**
@@ -1397,7 +1480,7 @@ export class GroupMemberComponent extends BackboneElement {
    * - **isModifier:** false
    * - **isSummary:** false
    */
-  protected entity: Reference | null;
+  protected entity!: Reference | null;
 
   /**
    * Group.member.period Element
@@ -1438,6 +1521,8 @@ export class GroupMemberComponent extends BackboneElement {
 
   /**
    * Assigns the provided Reference object value to the `entity` property.
+   *
+   * @decorator `@ReferenceTargets(['Patient', 'Practitioner', 'PractitionerRole', 'Device', 'Medication', 'Substance', 'Group'])`
    *
    * @param value - the `entity` object value
    * @returns this
@@ -1547,14 +1632,14 @@ export class GroupMemberComponent extends BackboneElement {
   }
 
   /**
-   * {@inheritDoc Base.fhirType}
+   * {@inheritDoc IBase.fhirType}
    */
   public override fhirType(): string {
     return 'Group.member';
   }
 
   /**
-   * {@inheritDoc Base.isEmpty}
+   * {@inheritDoc IBase.isEmpty}
    */
   public override isEmpty(): boolean {
     return super.isEmpty() && isElementEmpty(this.entity, this.period, this.inactive);
@@ -1577,6 +1662,35 @@ export class GroupMemberComponent extends BackboneElement {
     dest.entity = this.entity;
     dest.period = this.period;
     dest.inactive = this.inactive;
+  }
+
+  /**
+   * {@inheritDoc IBase.toJSON}
+   */
+  public override toJSON(): JSON.Value | undefined {
+    if (this.isEmpty()) {
+      return undefined;
+    }
+
+    let jsonObj = super.toJSON() as JSON.Object | undefined;
+    if (jsonObj === undefined) {
+      jsonObj = {} as JSON.Object;
+    }
+
+    if (this.hasEntity()) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      setFhirComplexJson(this.getEntity()!, 'entity', jsonObj);
+    }
+
+    if (this.hasPeriod()) {
+      setFhirComplexJson(this.getPeriod(), 'period', jsonObj);
+    }
+
+    if (this.hasInactiveElement()) {
+      setFhirPrimitiveJson<fhirBoolean>(this.getInactiveElement(), 'inactive', jsonObj);
+    }
+
+    return jsonObj;
   }
 }
 

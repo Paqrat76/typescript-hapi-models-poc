@@ -24,8 +24,7 @@
 import { strict as assert } from 'node:assert';
 import { Quantity } from '@src/fhir-core/data-types/complex/Quantity';
 import { IBase } from '@src/fhir-core/base-models/IBase';
-import { EnumCodeType } from '@src/fhir-core/data-types/primitive/EnumCodeType';
-import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { fhirCode } from '@src/fhir-core/data-types/primitive/primitive-types';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
@@ -92,14 +91,14 @@ export class SimpleQuantity extends Quantity implements IBase {
   }
 
   /**
-   * {@inheritDoc Base.fhirType}
+   * {@inheritDoc IBase.fhirType}
    */
   public override fhirType(): string {
     return 'SimpleQuantity';
   }
 
   /**
-   * {@inheritDoc Base.isEmpty}
+   * {@inheritDoc IBase.isEmpty}
    */
   public override isEmpty(): boolean {
     return super.isEmpty();
@@ -119,6 +118,13 @@ export class SimpleQuantity extends Quantity implements IBase {
    */
   protected override copyValues(dest: SimpleQuantity): void {
     super.copyValues(dest);
+  }
+
+  /**
+   * {@inheritDoc IBase.isComplexDataType}
+   */
+  public override isComplexDataType(): boolean {
+    return true;
   }
 }
 

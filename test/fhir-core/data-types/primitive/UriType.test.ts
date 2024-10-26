@@ -22,6 +22,7 @@
  */
 
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 
@@ -38,12 +39,15 @@ describe('UriType', () => {
     expect(testUriType.constructor.name).toStrictEqual('UriType');
     expect(testUriType.fhirType()).toStrictEqual('uri');
     expect(testUriType.isEmpty()).toBe(true);
+    expect(testUriType.isPrimitive()).toBe(true);
+    expect(testUriType.isStringPrimitive()).toBe(true);
+    expect(testUriType.toJSON()).toBeUndefined();
 
     // inherited properties from Element
     expect(testUriType.hasId()).toBe(false);
     expect(testUriType.getId()).toBeUndefined();
     expect(testUriType.hasExtension()).toBe(false);
-    expect(testUriType.getExtension()).toMatchObject([] as Extension[]);
+    expect(testUriType.getExtension()).toEqual([] as Extension[]);
     // primitive value properties
     expect(testUriType.hasValue()).toBe(false);
     expect(testUriType.getValue()).toBeUndefined();
@@ -52,12 +56,35 @@ describe('UriType', () => {
 
   it('should be properly initialized', () => {
     const testUriType = new UriType(VALID_URI);
+    const testId = 'id1234';
+    testUriType.setId(testId);
+    const testExtension = new Extension('testUrl', new StringType('extension string value'));
+    testUriType.addExtension(testExtension);
+
     expect(testUriType).toBeDefined();
     expect(testUriType).toBeInstanceOf(UriType);
     expect(testUriType.constructor.name).toStrictEqual('UriType');
     expect(testUriType.fhirType()).toStrictEqual('uri');
     expect(testUriType.isEmpty()).toBe(false);
+    expect(testUriType.isPrimitive()).toBe(true);
+    expect(testUriType.isStringPrimitive()).toBe(true);
+    expect(testUriType.toJSON()).toStrictEqual(VALID_URI);
+    expect(testUriType.toSiblingJSON()).toEqual({
+      id: 'id1234',
+      extension: [
+        {
+          url: 'testUrl',
+          valueString: 'extension string value',
+        },
+      ],
+    });
 
+    // inherited properties from Element
+    expect(testUriType.hasId()).toBe(true);
+    expect(testUriType.getId()).toStrictEqual(testId);
+    expect(testUriType.hasExtension()).toBe(true);
+    expect(testUriType.getExtension()).toEqual([testExtension]);
+    // primitive value properties
     expect(testUriType.hasValue()).toBe(true);
     expect(testUriType.getValue()).toBeDefined();
     expect(testUriType.getValue()).toStrictEqual(VALID_URI);
@@ -156,6 +183,9 @@ describe('UriType', () => {
     expect(testUriType.constructor.name).toStrictEqual('UriType');
     expect(testUriType.fhirType()).toStrictEqual('uri');
     expect(testUriType.isEmpty()).toBe(false);
+    expect(testUriType.isPrimitive()).toBe(true);
+    expect(testUriType.isStringPrimitive()).toBe(true);
+    expect(testUriType.toJSON()).toStrictEqual(VALID_URI);
     expect(testUriType.hasValue()).toBe(true);
     expect(testUriType.getValue()).toBeDefined();
     expect(testUriType.getValue()).toStrictEqual(VALID_URI);

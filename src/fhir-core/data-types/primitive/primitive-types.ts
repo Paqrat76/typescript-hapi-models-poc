@@ -39,7 +39,7 @@
  * These descriptions are used to properly process these data types in the generic `parseFhirPrimitiveData()`.
  *
  * @see [Zod](https://zod.dev)
- * @see [FHIR R5 Primitives]( https://hl7.org/fhir/R5/datatypes.html#primitive)
+ * @see [FHIR R5 Primitives](https://hl7.org/fhir/R5/datatypes.html#primitive)
  *
  * @module
  */
@@ -338,6 +338,7 @@ export type fhirDecimal = z.infer<typeof fhirDecimalSchema>;
 
 // integer64 was added to the FHIR specification in FHIR R5
 /**
+ * @since 5.0.0
  * @category Datatypes: Primitive Base Types
  */
 export const fhirInteger64Schema = z
@@ -346,6 +347,7 @@ export const fhirInteger64Schema = z
   .gte(FHIR_MIN_INTEGER64)
   .lte(FHIR_MAX_INTEGER64);
 /**
+ * @since 5.0.0
  * @category Datatypes: Primitive Base Types
  */
 export type fhirInteger64 = z.infer<typeof fhirInteger64Schema>;

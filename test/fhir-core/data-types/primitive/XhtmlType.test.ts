@@ -22,15 +22,15 @@
  */
 
 import { XhtmlType } from '@src/fhir-core/data-types/primitive/XhtmlType';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
-import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 
 describe('XhtmlType', () => {
   const VALID_XHTML = `<div xmlns="http://www.w3.org/1999/xhtml">text</div>`;
   const VALID_XHTML_2 = ` any\tstring\r\nlike this that passes the regex `;
   const INVALID_XHTML = '';
-  const testExtension = new Extension('testUrl', new StringType('testString'));
+  const testExtension = new Extension('testUrl', new StringType('extension string value'));
 
   it('should be properly instantiated as empty', () => {
     const testXhtmlType = new XhtmlType();
@@ -40,12 +40,15 @@ describe('XhtmlType', () => {
     expect(testXhtmlType.constructor.name).toStrictEqual('XhtmlType');
     expect(testXhtmlType.fhirType()).toStrictEqual('xhtml');
     expect(testXhtmlType.isEmpty()).toBe(true);
+    expect(testXhtmlType.isPrimitive()).toBe(true);
+    expect(testXhtmlType.isStringPrimitive()).toBe(true);
+    expect(testXhtmlType.toJSON()).toBeUndefined();
 
     // inherited properties from Element
     expect(testXhtmlType.hasId()).toBe(false);
     expect(testXhtmlType.getId()).toBeUndefined();
     expect(testXhtmlType.hasExtension()).toBe(false);
-    expect(testXhtmlType.getExtension()).toMatchObject([] as Extension[]);
+    expect(testXhtmlType.getExtension()).toEqual([] as Extension[]);
     // primitive value properties
     expect(testXhtmlType.hasValue()).toBe(false);
     expect(testXhtmlType.getValue()).toBeUndefined();
@@ -54,12 +57,25 @@ describe('XhtmlType', () => {
 
   it('should be properly initialized', () => {
     const testXhtmlType = new XhtmlType(VALID_XHTML);
+    const testId = 'id1234';
+    testXhtmlType.setId(testId);
+
     expect(testXhtmlType).toBeDefined();
     expect(testXhtmlType).toBeInstanceOf(XhtmlType);
     expect(testXhtmlType.constructor.name).toStrictEqual('XhtmlType');
     expect(testXhtmlType.fhirType()).toStrictEqual('xhtml');
     expect(testXhtmlType.isEmpty()).toBe(false);
+    expect(testXhtmlType.isPrimitive()).toBe(true);
+    expect(testXhtmlType.isStringPrimitive()).toBe(true);
+    expect(testXhtmlType.toJSON()).toStrictEqual(VALID_XHTML);
+    expect(testXhtmlType.toSiblingJSON()).toEqual({ id: 'id1234' });
 
+    // inherited properties from Element
+    expect(testXhtmlType.hasId()).toBe(true);
+    expect(testXhtmlType.getId()).toStrictEqual(testId);
+    expect(testXhtmlType.hasExtension()).toBe(false);
+    expect(testXhtmlType.getExtension()).toStrictEqual([]);
+    // primitive value properties
     expect(testXhtmlType.hasValue()).toBe(true);
     expect(testXhtmlType.getValue()).toBeDefined();
     expect(testXhtmlType.getValue()).toStrictEqual(VALID_XHTML);
@@ -75,15 +91,15 @@ describe('XhtmlType', () => {
     expect(testXhtmlType.getValueAsString()).toStrictEqual(VALID_XHTML);
 
     expect(testXhtmlType.hasExtension()).toBe(false);
-    expect(testXhtmlType.getExtension()).toMatchObject([] as Extension[]);
+    expect(testXhtmlType.getExtension()).toEqual([] as Extension[]);
 
     testXhtmlType.setExtension(undefined);
     expect(testXhtmlType.hasExtension()).toBe(false);
-    expect(testXhtmlType.getExtension()).toMatchObject([] as Extension[]);
+    expect(testXhtmlType.getExtension()).toEqual([] as Extension[]);
 
     testXhtmlType.addExtension(undefined);
     expect(testXhtmlType.hasExtension()).toBe(false);
-    expect(testXhtmlType.getExtension()).toMatchObject([] as Extension[]);
+    expect(testXhtmlType.getExtension()).toEqual([] as Extension[]);
   });
 
   it('should throw TypeError when attempting to setExtension()', () => {
@@ -196,6 +212,9 @@ describe('XhtmlType', () => {
     expect(testXhtmlType.constructor.name).toStrictEqual('XhtmlType');
     expect(testXhtmlType.fhirType()).toStrictEqual('xhtml');
     expect(testXhtmlType.isEmpty()).toBe(false);
+    expect(testXhtmlType.isPrimitive()).toBe(true);
+    expect(testXhtmlType.isStringPrimitive()).toBe(true);
+    expect(testXhtmlType.toJSON()).toStrictEqual(VALID_XHTML);
     expect(testXhtmlType.hasValue()).toBe(true);
     expect(testXhtmlType.getValue()).toBeDefined();
     expect(testXhtmlType.getValue()).toStrictEqual(VALID_XHTML);

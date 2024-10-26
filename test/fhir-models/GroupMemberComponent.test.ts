@@ -24,15 +24,15 @@
 import { GroupMemberComponent } from '@src/fhir-models/Group';
 import { BackboneElement, Element, Extension } from '@src/fhir-core/base-models/core-fhir-models';
 import { Base } from '@src/fhir-core/base-models/Base';
-import { Period } from '@src/fhir-core/data-types/complex/Period';
 import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
-import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
-import { Quantity } from '@src/fhir-core/data-types/complex/Quantity';
-import { SimpleQuantity } from '@src/fhir-core/data-types/complex/SimpleQuantity';
-import { Range } from '@src/fhir-core/data-types/complex/Range';
 import { Identifier, Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
+import { Period } from '@src/fhir-core/data-types/complex/Period';
+import { Quantity } from '@src/fhir-core/data-types/complex/Quantity';
+import { Range } from '@src/fhir-core/data-types/complex/Range';
+import { SimpleQuantity } from '@src/fhir-core/data-types/complex/SimpleQuantity';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
 describe('GroupMemberComponent', () => {
   const VALID_STRING_1 = 'This is a valid string.';
@@ -71,11 +71,11 @@ describe('GroupMemberComponent', () => {
   VALID_RANGE.setLow(SIMPLE_QUANTITY_1);
   VALID_RANGE.setHigh(SIMPLE_QUANTITY_2);
 
-  const VALID_REFERENCE_1 = 'Organization/13579';
+  const VALID_REFERENCE_1 = 'Practitioner/13579';
   const VALID_REFERENCE_VALUE_1 = new Reference();
   VALID_REFERENCE_VALUE_1.setReference(VALID_REFERENCE_1);
 
-  const VALID_REFERENCE_2 = 'Organization/24680';
+  const VALID_REFERENCE_2 = 'PractitionerRole/24680';
   const VALID_REFERENCE_VALUE_2 = new Reference();
   VALID_REFERENCE_VALUE_2.setReference(VALID_REFERENCE_2);
 
@@ -112,22 +112,23 @@ describe('GroupMemberComponent', () => {
       expect(testGroupMemberComponent.constructor.name).toStrictEqual('GroupMemberComponent');
       expect(testGroupMemberComponent.fhirType()).toStrictEqual('Group.member');
       expect(testGroupMemberComponent.isEmpty()).toBe(true);
+      expect(testGroupMemberComponent.toJSON()).toBeUndefined();
 
       // inherited properties from BackboneElement
       expect(testGroupMemberComponent.hasId()).toBe(false);
       expect(testGroupMemberComponent.getId()).toBeUndefined();
       expect(testGroupMemberComponent.hasExtension()).toBe(false);
-      expect(testGroupMemberComponent.getExtension()).toMatchObject([] as Extension[]);
+      expect(testGroupMemberComponent.getExtension()).toEqual([] as Extension[]);
       expect(testGroupMemberComponent.hasModifierExtension()).toBe(false);
-      expect(testGroupMemberComponent.getModifierExtension()).toMatchObject([] as Extension[]);
+      expect(testGroupMemberComponent.getModifierExtension()).toEqual([] as Extension[]);
 
       // GroupMemberComponent properties
       expect(testGroupMemberComponent.hasEntity()).toBe(false);
       expect(testGroupMemberComponent.getEntity()).toBeNull();
       expect(testGroupMemberComponent.hasPeriod()).toBe(false);
-      expect(testGroupMemberComponent.getPeriod()).toMatchObject(new Period());
+      expect(testGroupMemberComponent.getPeriod()).toEqual(new Period());
       expect(testGroupMemberComponent.hasInactiveElement()).toBe(false);
-      expect(testGroupMemberComponent.getInactiveElement()).toMatchObject(new BooleanType());
+      expect(testGroupMemberComponent.getInactiveElement()).toEqual(new BooleanType());
       expect(testGroupMemberComponent.hasInactive()).toBe(false);
       expect(testGroupMemberComponent.getInactive()).toBeUndefined();
     });
@@ -143,22 +144,28 @@ describe('GroupMemberComponent', () => {
       expect(testGroupMemberComponent.constructor.name).toStrictEqual('GroupMemberComponent');
       expect(testGroupMemberComponent.fhirType()).toStrictEqual('Group.member');
       expect(testGroupMemberComponent.isEmpty()).toBe(false);
+      const expectedJson = {
+        entity: {
+          reference: 'Practitioner/13579',
+        },
+      };
+      expect(testGroupMemberComponent.toJSON()).toEqual(expectedJson);
 
       // inherited properties from BackboneElement
       expect(testGroupMemberComponent.hasId()).toBe(false);
       expect(testGroupMemberComponent.getId()).toBeUndefined();
       expect(testGroupMemberComponent.hasExtension()).toBe(false);
-      expect(testGroupMemberComponent.getExtension()).toMatchObject([] as Extension[]);
+      expect(testGroupMemberComponent.getExtension()).toEqual([] as Extension[]);
       expect(testGroupMemberComponent.hasModifierExtension()).toBe(false);
-      expect(testGroupMemberComponent.getModifierExtension()).toMatchObject([] as Extension[]);
+      expect(testGroupMemberComponent.getModifierExtension()).toEqual([] as Extension[]);
 
       // GroupMemberComponent properties
       expect(testGroupMemberComponent.hasEntity()).toBe(true);
-      expect(testGroupMemberComponent.getEntity()).toMatchObject(VALID_REFERENCE_VALUE_1);
+      expect(testGroupMemberComponent.getEntity()).toEqual(VALID_REFERENCE_VALUE_1);
       expect(testGroupMemberComponent.hasPeriod()).toBe(false);
-      expect(testGroupMemberComponent.getPeriod()).toMatchObject(new Period());
+      expect(testGroupMemberComponent.getPeriod()).toEqual(new Period());
       expect(testGroupMemberComponent.hasInactiveElement()).toBe(false);
-      expect(testGroupMemberComponent.getInactiveElement()).toMatchObject(new BooleanType());
+      expect(testGroupMemberComponent.getInactiveElement()).toEqual(new BooleanType());
       expect(testGroupMemberComponent.hasInactive()).toBe(false);
       expect(testGroupMemberComponent.getInactive()).toBeUndefined();
     });
@@ -178,22 +185,33 @@ describe('GroupMemberComponent', () => {
       expect(testGroupMemberComponent.constructor.name).toStrictEqual('GroupMemberComponent');
       expect(testGroupMemberComponent.fhirType()).toStrictEqual('Group.member');
       expect(testGroupMemberComponent.isEmpty()).toBe(false);
+      const expectedJson = {
+        entity: {
+          reference: 'Patient/98765',
+        },
+        period: {
+          start: '2017-01-01T00:00:00.000Z',
+          end: '2017-01-01T01:00:00.000Z',
+        },
+        inactive: true,
+      };
+      expect(testGroupMemberComponent.toJSON()).toEqual(expectedJson);
 
       // inherited properties from BackboneElement
       expect(testGroupMemberComponent.hasId()).toBe(false);
       expect(testGroupMemberComponent.getId()).toBeUndefined();
       expect(testGroupMemberComponent.hasExtension()).toBe(false);
-      expect(testGroupMemberComponent.getExtension()).toMatchObject([] as Extension[]);
+      expect(testGroupMemberComponent.getExtension()).toEqual([] as Extension[]);
       expect(testGroupMemberComponent.hasModifierExtension()).toBe(false);
-      expect(testGroupMemberComponent.getModifierExtension()).toMatchObject([] as Extension[]);
+      expect(testGroupMemberComponent.getModifierExtension()).toEqual([] as Extension[]);
 
       // GroupMemberComponent properties
       expect(testGroupMemberComponent.hasEntity()).toBe(true);
-      expect(testGroupMemberComponent.getEntity()).toMatchObject(VALID_REFERENCE_VALUE_3);
+      expect(testGroupMemberComponent.getEntity()).toEqual(VALID_REFERENCE_VALUE_3);
       expect(testGroupMemberComponent.hasPeriod()).toBe(true);
-      expect(testGroupMemberComponent.getPeriod()).toMatchObject(VALID_PERIOD);
+      expect(testGroupMemberComponent.getPeriod()).toEqual(VALID_PERIOD);
       expect(testGroupMemberComponent.hasInactiveElement()).toBe(true);
-      expect(testGroupMemberComponent.getInactiveElement()).toMatchObject(new BooleanType(VALID_BOOLEAN_TRUE));
+      expect(testGroupMemberComponent.getInactiveElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
       expect(testGroupMemberComponent.hasInactive()).toBe(true);
       expect(testGroupMemberComponent.getInactive()).toStrictEqual(VALID_BOOLEAN_TRUE);
 
@@ -211,22 +229,28 @@ describe('GroupMemberComponent', () => {
       expect(testGroupMemberComponent.constructor.name).toStrictEqual('GroupMemberComponent');
       expect(testGroupMemberComponent.fhirType()).toStrictEqual('Group.member');
       expect(testGroupMemberComponent.isEmpty()).toBe(false);
+      const expectedJson1 = {
+        entity: {
+          reference: 'Patient/98765',
+        },
+      };
+      expect(testGroupMemberComponent.toJSON()).toEqual(expectedJson1);
 
       // inherited properties from BackboneElement
       expect(testGroupMemberComponent.hasId()).toBe(false);
       expect(testGroupMemberComponent.getId()).toBeUndefined();
       expect(testGroupMemberComponent.hasExtension()).toBe(false);
-      expect(testGroupMemberComponent.getExtension()).toMatchObject([] as Extension[]);
+      expect(testGroupMemberComponent.getExtension()).toEqual([] as Extension[]);
       expect(testGroupMemberComponent.hasModifierExtension()).toBe(false);
-      expect(testGroupMemberComponent.getModifierExtension()).toMatchObject([] as Extension[]);
+      expect(testGroupMemberComponent.getModifierExtension()).toEqual([] as Extension[]);
 
       // GroupMemberComponent properties
       expect(testGroupMemberComponent.hasEntity()).toBe(true);
-      expect(testGroupMemberComponent.getEntity()).toMatchObject(VALID_REFERENCE_VALUE_3); // no change from null arg
+      expect(testGroupMemberComponent.getEntity()).toEqual(VALID_REFERENCE_VALUE_3); // no change from null arg
       expect(testGroupMemberComponent.hasPeriod()).toBe(false);
-      expect(testGroupMemberComponent.getPeriod()).toMatchObject(new Period());
+      expect(testGroupMemberComponent.getPeriod()).toEqual(new Period());
       expect(testGroupMemberComponent.hasInactiveElement()).toBe(false);
-      expect(testGroupMemberComponent.getInactiveElement()).toMatchObject(new BooleanType());
+      expect(testGroupMemberComponent.getInactiveElement()).toEqual(new BooleanType());
       expect(testGroupMemberComponent.hasInactive()).toBe(false);
       expect(testGroupMemberComponent.getInactive()).toBeUndefined();
 
@@ -237,7 +261,7 @@ describe('GroupMemberComponent', () => {
       testGroupMemberComponent = groupMemberComponent.copy();
 
       expect(testGroupMemberComponent.hasInactiveElement()).toBe(true);
-      expect(testGroupMemberComponent.getInactiveElement()).toMatchObject(new BooleanType(VALID_BOOLEAN_TRUE));
+      expect(testGroupMemberComponent.getInactiveElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
       expect(testGroupMemberComponent.hasInactive()).toBe(true);
       expect(testGroupMemberComponent.getInactive()).toStrictEqual(VALID_BOOLEAN_TRUE);
 
@@ -245,7 +269,7 @@ describe('GroupMemberComponent', () => {
       testGroupMemberComponent = groupMemberComponent.copy();
 
       expect(testGroupMemberComponent.hasInactiveElement()).toBe(false);
-      expect(testGroupMemberComponent.getInactiveElement()).toMatchObject(new BooleanType());
+      expect(testGroupMemberComponent.getInactiveElement()).toEqual(new BooleanType());
       expect(testGroupMemberComponent.hasInactive()).toBe(false);
       expect(testGroupMemberComponent.getInactive()).toBeUndefined();
     });
@@ -264,22 +288,29 @@ describe('GroupMemberComponent', () => {
       expect(testGroupMemberComponent.constructor.name).toStrictEqual('GroupMemberComponent');
       expect(testGroupMemberComponent.fhirType()).toStrictEqual('Group.member');
       expect(testGroupMemberComponent.isEmpty()).toBe(false);
+      const expectedJson = {
+        entity: {
+          reference: 'Practitioner/13579',
+        },
+        inactive: true,
+      };
+      expect(testGroupMemberComponent.toJSON()).toEqual(expectedJson);
 
       // inherited properties from BackboneElement
       expect(testGroupMemberComponent.hasId()).toBe(false);
       expect(testGroupMemberComponent.getId()).toBeUndefined();
       expect(testGroupMemberComponent.hasExtension()).toBe(false);
-      expect(testGroupMemberComponent.getExtension()).toMatchObject([] as Extension[]);
+      expect(testGroupMemberComponent.getExtension()).toEqual([] as Extension[]);
       expect(testGroupMemberComponent.hasModifierExtension()).toBe(false);
-      expect(testGroupMemberComponent.getModifierExtension()).toMatchObject([] as Extension[]);
+      expect(testGroupMemberComponent.getModifierExtension()).toEqual([] as Extension[]);
 
       // GroupMemberComponent properties
       expect(testGroupMemberComponent.hasEntity()).toBe(true);
-      expect(testGroupMemberComponent.getEntity()).toMatchObject(VALID_REFERENCE_VALUE_1);
+      expect(testGroupMemberComponent.getEntity()).toEqual(VALID_REFERENCE_VALUE_1);
       expect(testGroupMemberComponent.hasPeriod()).toBe(false);
-      expect(testGroupMemberComponent.getPeriod()).toMatchObject(new Period());
+      expect(testGroupMemberComponent.getPeriod()).toEqual(new Period());
       expect(testGroupMemberComponent.hasInactiveElement()).toBe(true);
-      expect(testGroupMemberComponent.getInactiveElement()).toMatchObject(new BooleanType(VALID_BOOLEAN_TRUE));
+      expect(testGroupMemberComponent.getInactiveElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
       expect(testGroupMemberComponent.hasInactive()).toBe(true);
       expect(testGroupMemberComponent.getInactive()).toStrictEqual(VALID_BOOLEAN_TRUE);
     });
@@ -294,11 +325,11 @@ describe('GroupMemberComponent', () => {
 
       // GroupMemberComponent properties
       expect(testGroupMemberComponent.hasEntity()).toBe(true);
-      expect(testGroupMemberComponent.getEntity()).toMatchObject(VALID_REFERENCE_VALUE_1);
+      expect(testGroupMemberComponent.getEntity()).toEqual(VALID_REFERENCE_VALUE_1);
       expect(testGroupMemberComponent.hasPeriod()).toBe(true);
-      expect(testGroupMemberComponent.getPeriod()).toMatchObject(VALID_PERIOD);
+      expect(testGroupMemberComponent.getPeriod()).toEqual(VALID_PERIOD);
       expect(testGroupMemberComponent.hasInactiveElement()).toBe(true);
-      expect(testGroupMemberComponent.getInactiveElement()).toMatchObject(new BooleanType(VALID_BOOLEAN_TRUE));
+      expect(testGroupMemberComponent.getInactiveElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
       expect(testGroupMemberComponent.hasInactive()).toBe(true);
       expect(testGroupMemberComponent.getInactive()).toStrictEqual(VALID_BOOLEAN_TRUE);
 
@@ -311,11 +342,11 @@ describe('GroupMemberComponent', () => {
 
       // GroupMemberComponent properties
       expect(testGroupMemberComponent.hasEntity()).toBe(true);
-      expect(testGroupMemberComponent.getEntity()).toMatchObject(VALID_REFERENCE_VALUE_3);
+      expect(testGroupMemberComponent.getEntity()).toEqual(VALID_REFERENCE_VALUE_3);
       expect(testGroupMemberComponent.hasPeriod()).toBe(true);
-      expect(testGroupMemberComponent.getPeriod()).toMatchObject(VALID_PERIOD_2);
+      expect(testGroupMemberComponent.getPeriod()).toEqual(VALID_PERIOD_2);
       expect(testGroupMemberComponent.hasInactiveElement()).toBe(true);
-      expect(testGroupMemberComponent.getInactiveElement()).toMatchObject(new BooleanType(VALID_BOOLEAN_FALSE));
+      expect(testGroupMemberComponent.getInactiveElement()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
       expect(testGroupMemberComponent.hasInactive()).toBe(true);
       expect(testGroupMemberComponent.getInactive()).toStrictEqual(VALID_BOOLEAN_FALSE);
     });
@@ -343,22 +374,29 @@ describe('GroupMemberComponent', () => {
       expect(testGroupMemberComponent.constructor.name).toStrictEqual('GroupMemberComponent');
       expect(testGroupMemberComponent.fhirType()).toStrictEqual('Group.member');
       expect(testGroupMemberComponent.isEmpty()).toBe(false);
+      const expectedJson = {
+        entity: {
+          reference: 'Practitioner/13579',
+        },
+        inactive: true,
+      };
+      expect(testGroupMemberComponent.toJSON()).toEqual(expectedJson);
 
       // inherited properties from BackboneElement
       expect(testGroupMemberComponent.hasId()).toBe(false);
       expect(testGroupMemberComponent.getId()).toBeUndefined();
       expect(testGroupMemberComponent.hasExtension()).toBe(false);
-      expect(testGroupMemberComponent.getExtension()).toMatchObject([] as Extension[]);
+      expect(testGroupMemberComponent.getExtension()).toEqual([] as Extension[]);
       expect(testGroupMemberComponent.hasModifierExtension()).toBe(false);
-      expect(testGroupMemberComponent.getModifierExtension()).toMatchObject([] as Extension[]);
+      expect(testGroupMemberComponent.getModifierExtension()).toEqual([] as Extension[]);
 
       // GroupMemberComponent properties
       expect(testGroupMemberComponent.hasEntity()).toBe(true);
-      expect(testGroupMemberComponent.getEntity()).toMatchObject(VALID_REFERENCE_VALUE_1);
+      expect(testGroupMemberComponent.getEntity()).toEqual(VALID_REFERENCE_VALUE_1);
       expect(testGroupMemberComponent.hasPeriod()).toBe(false);
-      expect(testGroupMemberComponent.getPeriod()).toMatchObject(new Period());
+      expect(testGroupMemberComponent.getPeriod()).toEqual(new Period());
       expect(testGroupMemberComponent.hasInactiveElement()).toBe(true);
-      expect(testGroupMemberComponent.getInactiveElement()).toMatchObject(new BooleanType(VALID_BOOLEAN_TRUE));
+      expect(testGroupMemberComponent.getInactiveElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
       expect(testGroupMemberComponent.hasInactive()).toBe(true);
       expect(testGroupMemberComponent.getInactive()).toStrictEqual(VALID_BOOLEAN_TRUE);
     });
@@ -373,11 +411,11 @@ describe('GroupMemberComponent', () => {
 
       // GroupMemberComponent properties
       expect(testGroupMemberComponent.hasEntity()).toBe(true);
-      expect(testGroupMemberComponent.getEntity()).toMatchObject(VALID_REFERENCE_VALUE_1);
+      expect(testGroupMemberComponent.getEntity()).toEqual(VALID_REFERENCE_VALUE_1);
       expect(testGroupMemberComponent.hasPeriod()).toBe(true);
-      expect(testGroupMemberComponent.getPeriod()).toMatchObject(VALID_PERIOD);
+      expect(testGroupMemberComponent.getPeriod()).toEqual(VALID_PERIOD);
       expect(testGroupMemberComponent.hasInactiveElement()).toBe(true);
-      expect(testGroupMemberComponent.getInactiveElement()).toMatchObject(new BooleanType(VALID_BOOLEAN_TRUE));
+      expect(testGroupMemberComponent.getInactiveElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
       expect(testGroupMemberComponent.hasInactive()).toBe(true);
       expect(testGroupMemberComponent.getInactive()).toStrictEqual(VALID_BOOLEAN_TRUE);
 
@@ -390,11 +428,11 @@ describe('GroupMemberComponent', () => {
 
       // GroupMemberComponent properties
       expect(testGroupMemberComponent.hasEntity()).toBe(true);
-      expect(testGroupMemberComponent.getEntity()).toMatchObject(VALID_REFERENCE_VALUE_3);
+      expect(testGroupMemberComponent.getEntity()).toEqual(VALID_REFERENCE_VALUE_3);
       expect(testGroupMemberComponent.hasPeriod()).toBe(true);
-      expect(testGroupMemberComponent.getPeriod()).toMatchObject(VALID_PERIOD_2);
+      expect(testGroupMemberComponent.getPeriod()).toEqual(VALID_PERIOD_2);
       expect(testGroupMemberComponent.hasInactiveElement()).toBe(true);
-      expect(testGroupMemberComponent.getInactiveElement()).toMatchObject(new BooleanType(VALID_BOOLEAN_FALSE));
+      expect(testGroupMemberComponent.getInactiveElement()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
       expect(testGroupMemberComponent.hasInactive()).toBe(true);
       expect(testGroupMemberComponent.getInactive()).toStrictEqual(VALID_BOOLEAN_FALSE);
     });

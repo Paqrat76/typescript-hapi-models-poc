@@ -21,10 +21,11 @@
  *
  */
 
-import { FHIR_MAX_INTEGER } from '../../../test-utils';
 import { PositiveIntType } from '@src/fhir-core/data-types/primitive/PositiveIntType';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
+import { FHIR_MAX_INTEGER } from '../../../test-utils';
 
 describe('PositiveIntType', () => {
   const VALID_INTEGER = 1;
@@ -39,12 +40,15 @@ describe('PositiveIntType', () => {
     expect(testPositiveIntType.constructor.name).toStrictEqual('PositiveIntType');
     expect(testPositiveIntType.fhirType()).toStrictEqual('positiveInt');
     expect(testPositiveIntType.isEmpty()).toBe(true);
+    expect(testPositiveIntType.isPrimitive()).toBe(true);
+    expect(testPositiveIntType.isNumberPrimitive()).toBe(true);
+    expect(testPositiveIntType.toJSON()).toBeUndefined();
 
     // inherited properties from Element
     expect(testPositiveIntType.hasId()).toBe(false);
     expect(testPositiveIntType.getId()).toBeUndefined();
     expect(testPositiveIntType.hasExtension()).toBe(false);
-    expect(testPositiveIntType.getExtension()).toMatchObject([] as Extension[]);
+    expect(testPositiveIntType.getExtension()).toEqual([] as Extension[]);
     // primitive value properties
     expect(testPositiveIntType.hasValue()).toBe(false);
     expect(testPositiveIntType.getValue()).toBeUndefined();
@@ -53,12 +57,35 @@ describe('PositiveIntType', () => {
 
   it('should be properly initialized', () => {
     const testPositiveIntType = new PositiveIntType(VALID_INTEGER);
+    const testId = 'id1234';
+    testPositiveIntType.setId(testId);
+    const testExtension = new Extension('testUrl', new StringType('extension string value'));
+    testPositiveIntType.addExtension(testExtension);
+
     expect(testPositiveIntType).toBeDefined();
     expect(testPositiveIntType).toBeInstanceOf(PositiveIntType);
     expect(testPositiveIntType.constructor.name).toStrictEqual('PositiveIntType');
     expect(testPositiveIntType.fhirType()).toStrictEqual('positiveInt');
     expect(testPositiveIntType.isEmpty()).toBe(false);
+    expect(testPositiveIntType.isPrimitive()).toBe(true);
+    expect(testPositiveIntType.isNumberPrimitive()).toBe(true);
+    expect(testPositiveIntType.toJSON()).toStrictEqual(VALID_INTEGER);
+    expect(testPositiveIntType.toSiblingJSON()).toEqual({
+      id: 'id1234',
+      extension: [
+        {
+          url: 'testUrl',
+          valueString: 'extension string value',
+        },
+      ],
+    });
 
+    // inherited properties from Element
+    expect(testPositiveIntType.hasId()).toBe(true);
+    expect(testPositiveIntType.getId()).toStrictEqual(testId);
+    expect(testPositiveIntType.hasExtension()).toBe(true);
+    expect(testPositiveIntType.getExtension()).toEqual([testExtension]);
+    // primitive value properties
     expect(testPositiveIntType.hasValue()).toBe(true);
     expect(testPositiveIntType.getValue()).toBeDefined();
     expect(testPositiveIntType.getValue()).toStrictEqual(VALID_INTEGER);
@@ -157,6 +184,9 @@ describe('PositiveIntType', () => {
     expect(testPositiveIntType.constructor.name).toStrictEqual('PositiveIntType');
     expect(testPositiveIntType.fhirType()).toStrictEqual('positiveInt');
     expect(testPositiveIntType.isEmpty()).toBe(false);
+    expect(testPositiveIntType.isPrimitive()).toBe(true);
+    expect(testPositiveIntType.isNumberPrimitive()).toBe(true);
+    expect(testPositiveIntType.toJSON()).toStrictEqual(VALID_INTEGER);
     expect(testPositiveIntType.hasValue()).toBe(true);
     expect(testPositiveIntType.getValue()).toBeDefined();
     expect(testPositiveIntType.getValue()).toStrictEqual(VALID_INTEGER);

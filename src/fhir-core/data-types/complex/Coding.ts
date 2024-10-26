@@ -21,7 +21,7 @@
  *
  */
 
-import { DataType } from '@src/fhir-core/base-models/core-fhir-models';
+import { DataType, setFhirPrimitiveJson } from '@src/fhir-core/base-models/core-fhir-models';
 import { IBase } from '@src/fhir-core/base-models/IBase';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
@@ -39,6 +39,7 @@ import {
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
+import * as JSON from '@src/fhir-core/utility/json-helpers';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -409,14 +410,14 @@ export class Coding extends DataType implements IBase {
   }
 
   /**
-   * {@inheritDoc Base.fhirType}
+   * {@inheritDoc IBase.fhirType}
    */
   public override fhirType(): string {
     return 'Coding';
   }
 
   /**
-   * {@inheritDoc Base.isEmpty}
+   * {@inheritDoc IBase.isEmpty}
    */
   public override isEmpty(): boolean {
     return super.isEmpty() && isElementEmpty(this.system, this.version, this.code, this.display, this.userSelected);
@@ -441,6 +442,49 @@ export class Coding extends DataType implements IBase {
     dest.code = this.code?.copy();
     dest.display = this.display?.copy();
     dest.userSelected = this.userSelected?.copy();
+  }
+
+  /**
+   * {@inheritDoc IBase.isComplexDataType}
+   */
+  public override isComplexDataType(): boolean {
+    return true;
+  }
+
+  /**
+   * {@inheritDoc IBase.toJSON}
+   */
+  public override toJSON(): JSON.Value | undefined {
+    if (this.isEmpty()) {
+      return undefined;
+    }
+
+    let jsonObj = super.toJSON() as JSON.Object | undefined;
+    if (jsonObj === undefined) {
+      jsonObj = {} as JSON.Object;
+    }
+
+    if (this.hasSystemElement()) {
+      setFhirPrimitiveJson<fhirUri>(this.getSystemElement(), 'system', jsonObj);
+    }
+
+    if (this.hasVersionElement()) {
+      setFhirPrimitiveJson<fhirString>(this.getVersionElement(), 'version', jsonObj);
+    }
+
+    if (this.hasCodeElement()) {
+      setFhirPrimitiveJson<fhirCode>(this.getCodeElement(), 'code', jsonObj);
+    }
+
+    if (this.hasDisplayElement()) {
+      setFhirPrimitiveJson<fhirString>(this.getDisplayElement(), 'display', jsonObj);
+    }
+
+    if (this.hasUserSelectedElement()) {
+      setFhirPrimitiveJson<fhirBoolean>(this.getUserSelectedElement(), 'userSelected', jsonObj);
+    }
+
+    return jsonObj;
   }
 }
 

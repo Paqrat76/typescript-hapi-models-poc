@@ -22,7 +22,7 @@
  */
 
 /**
- * This module contains the non-Resource core FHIR models.
+ * This module contains the core FHIR models.
  *
  * @remarks
  * The FHIR specification defines the Element type from which all other non-Resource types extend.
@@ -32,19 +32,16 @@
  *
  * In TypeScript, having each of these models in separate files results in circular dependencies
  * that cannot be resolved by typical strategies such as extracting common elements into a sharable
- * module. Therefore, these modules, plus the Extension model, are collected into this single file.
- * This preserves the correct model representations with their correct inheritance without
- * introducing circular dependencies.
+ * module. Therefore, these modules are collected into this single file. This preserves the correct
+ * model representations with their correct inheritance without introducing circular dependencies.
  *
  * @see [FHIR Type Framework](https://hl7.org/fhir/R5/types.html)
  *
  * @module
  */
 
-/* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
-
 import { strict as assert } from 'node:assert';
-import { isEmpty as _isEmpty } from 'lodash';
+import { isEmpty as _isEmpty, isNil, upperFirst } from 'lodash';
 import { Base } from './Base';
 import { IBase } from './IBase';
 import {
@@ -56,7 +53,13 @@ import {
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { OPEN_DATA_TYPES } from '@src/fhir-core/data-types/FhirDataType';
 import { isElementEmpty, validateUrl } from '@src/fhir-core/utility/fhir-util';
+import { assertFhirType } from '@src/fhir-core/utility/type-guards';
+import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+
+//region Core Models
+
+/* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
 /**
  * Base interface to specify `extension` specific methods used by
@@ -354,17 +357,17 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
   }
 
   /**
-   * {@inheritDoc Base.fhirType}
+   * {@inheritDoc IBase.fhirType}
    */
   public override fhirType(): string {
     return 'Element';
   }
 
   /**
-   * {@inheritDoc Base.isEmpty}
+   * {@inheritDoc IBase.isEmpty}
    */
   public override isEmpty(): boolean {
-    return !this.hasId() && isElementEmpty(this.extension);
+    return !this.hasId() && !this.hasExtension();
   }
 
   /**
@@ -385,6 +388,28 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
     } else {
       dest.extension = undefined;
     }
+  }
+
+  /**
+   * {@inheritDoc IBase.toJSON}
+   */
+  public override toJSON(): JSON.Value | undefined {
+    if (!this.hasId() && !this.hasExtension()) {
+      return undefined;
+    }
+
+    const jsonObj: JSON.Object = {};
+
+    if (this.hasId()) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      jsonObj['id'] = this.getId()!;
+    }
+
+    if (this.hasExtension()) {
+      setFhirExtensionJson(this.getExtension(), jsonObj);
+    }
+
+    return jsonObj;
   }
 }
 
@@ -519,14 +544,14 @@ export abstract class BackboneElement extends Element implements IBase, IBaseMod
   }
 
   /**
-   * {@inheritDoc Base.fhirType}
+   * {@inheritDoc IBase.fhirType}
    */
   public override fhirType(): string {
     return 'BackboneElement';
   }
 
   /**
-   * {@inheritDoc Base.isEmpty}
+   * {@inheritDoc IBase.isEmpty}
    */
   public override isEmpty(): boolean {
     return super.isEmpty() && isElementEmpty(this.modifierExtension);
@@ -548,6 +573,26 @@ export abstract class BackboneElement extends Element implements IBase, IBaseMod
         dest.modifierExtension.push(modifierExtension.copy());
       }
     }
+  }
+
+  /**
+   * {@inheritDoc IBase.toJSON}
+   */
+  public override toJSON(): JSON.Value | undefined {
+    if (this.isEmpty()) {
+      return undefined;
+    }
+
+    let jsonObj = super.toJSON() as JSON.Object | undefined;
+    if (jsonObj === undefined) {
+      jsonObj = {} as JSON.Object;
+    }
+
+    if (this.hasModifierExtension()) {
+      setFhirExtensionJson(this.getModifierExtension(), jsonObj, true);
+    }
+
+    return jsonObj;
   }
 }
 
@@ -710,14 +755,14 @@ export abstract class BackboneType extends DataType implements IBase, IBaseModif
   }
 
   /**
-   * {@inheritDoc Base.fhirType}
+   * {@inheritDoc IBase.fhirType}
    */
   public override fhirType(): string {
     return 'BackboneType';
   }
 
   /**
-   * {@inheritDoc Base.isEmpty}
+   * {@inheritDoc IBase.isEmpty}
    */
   public override isEmpty(): boolean {
     return super.isEmpty() && isElementEmpty(this.modifierExtension);
@@ -739,6 +784,26 @@ export abstract class BackboneType extends DataType implements IBase, IBaseModif
         dest.modifierExtension.push(modifierExtension.copy());
       }
     }
+  }
+
+  /**
+   * {@inheritDoc IBase.toJSON}
+   */
+  public override toJSON(): JSON.Value | undefined {
+    if (this.isEmpty()) {
+      return undefined;
+    }
+
+    let jsonObj = super.toJSON() as JSON.Object | undefined;
+    if (jsonObj === undefined) {
+      jsonObj = {} as JSON.Object;
+    }
+
+    if (this.hasModifierExtension()) {
+      setFhirExtensionJson(this.getModifierExtension(), jsonObj, true);
+    }
+
+    return jsonObj;
   }
 }
 
@@ -863,7 +928,7 @@ export abstract class PrimitiveType<T> extends DataType implements IBase {
   public abstract parseToPrimitive(value: string): T;
 
   /**
-   * {@inheritDoc Base.isEmpty}
+   * {@inheritDoc IBase.isEmpty}
    */
   public override isEmpty(): boolean {
     return !this.hasValue();
@@ -879,6 +944,34 @@ export abstract class PrimitiveType<T> extends DataType implements IBase {
    */
   protected override copyValues(dest: PrimitiveType<T>): void {
     super.copyValues(dest);
+  }
+
+  /**
+   * {@inheritDoc IBase.isPrimitive}
+   */
+  public override isPrimitive(): boolean {
+    return true;
+  }
+
+  /**
+   * @returns the primitive data type's JSON value containing the actual primitive's value
+   *
+   * @see [Representations - JSON](https://hl7.org/fhir/R5/datatypes.html#representations)
+   * @see {@link PrimitiveType.toSiblingJSON}
+   */
+  public override toJSON(): JSON.Value | undefined {
+    return this.hasValue() ? (this.getValue() as JSON.Value) : undefined;
+  }
+
+  /**
+   * @returns the primitive data type's sibling JSON value containing the `id` and/or `extension` properties
+   *
+   * @see [Representations - JSON](https://hl7.org/fhir/R5/datatypes.html#representations)
+   * @see {@link PrimitiveType.toJSON}
+   */
+  public toSiblingJSON(): JSON.Value | undefined {
+    // from the parent Element
+    return super.toJSON();
   }
 }
 
@@ -987,6 +1080,8 @@ export class Extension extends Element implements IBase {
   /**
    * Assigns the provided value to the `value` property.
    *
+   * @decorator `@OpenDataTypes()`
+   *
    * @param value - the `value` value
    * @returns this
    */
@@ -1007,14 +1102,14 @@ export class Extension extends Element implements IBase {
   }
 
   /**
-   * {@inheritDoc Base.fhirType}
+   * {@inheritDoc IBase.fhirType}
    */
   public override fhirType(): string {
     return 'Extension';
   }
 
   /**
-   * {@inheritDoc Base.isEmpty}
+   * {@inheritDoc IBase.isEmpty}
    */
   public override isEmpty() {
     return super.isEmpty() && isElementEmpty(this.value) && !this.hasUrl();
@@ -1037,9 +1132,391 @@ export class Extension extends Element implements IBase {
     dest.url = this.url;
     dest.value = this.value ? this.value.copy() : undefined;
   }
+
+  /**
+   * {@inheritDoc IBase.toJSON}
+   */
+  public override toJSON(): JSON.Value | undefined {
+    if (this.isEmpty()) {
+      return undefined;
+    }
+
+    const jsonObj: JSON.Object = {};
+
+    // Extension extends Element containing the id and extensions properties. The id property
+    // is rarely used in an Extension but since it is permissible, include it if it exists.
+    // The child extensions, if they exist, are handled below.
+    if (this.hasId()) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      jsonObj['id'] = this.getId()!;
+    }
+
+    // The url is a mandatory attribute / property so it should always exist.
+    if (this.hasUrl()) {
+      jsonObj['url'] = this.getUrl();
+    }
+
+    // An extension SHALL have either a value (i.e. a value[x] element) or sub-extensions, but not both.
+    // If present, the value[x] element SHALL have content (value attribute or other elements)
+    if (this.hasValue()) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      setPolymorphicValueJson(this.getValue()!, jsonObj);
+    } else if (this.hasExtension()) {
+      setFhirExtensionJson(this.getExtension(), jsonObj);
+    }
+
+    return jsonObj;
+  }
 }
 
 /* eslint-enable jsdoc/require-param, jsdoc/require-returns */
+
+//endregion
+
+// region FHIR JSON Helpers
+
+/**
+ * FHIR JSON Helpers
+ *
+ * @privateRemarks
+ * Due to TypeScript circular references, the following JSON helpers are included in this and other modules.
+ * Other JSON helpers are included in fhir-core/utility/json-helpers.ts
+ */
+
+/**
+ * Transforms the provided FHIR DataType to its JSON representation and adds it to the provided JSON.Object.
+ * Does nothing if the FHIR DataType's value is undefined.
+ *
+ * @param value - Polymorphic DataType value
+ * @param jsonObj - JSON.Object to which to add the transformed FHIR DataType
+ * @throws AssertionError for invalid parameters
+ *
+ * @category Utilities: JSON
+ */
+export function setPolymorphicValueJson(value: DataType, jsonObj: JSON.Object): void {
+  assert(!isNil(value), 'Provided value is undefined/null');
+  assert(!isNil(jsonObj), 'Provided jsonObj is undefined/null');
+  assertFhirDataType(value, 'Provided value is not an instance of DataType');
+
+  const fhirType = value.fhirType();
+  const valueKeyName = `value${upperFirst(fhirType)}`;
+
+  const json: JSON.Value | undefined = value.toJSON();
+  if (json === null) {
+    jsonObj[valueKeyName] = null;
+  } else if (typeof json === 'boolean') {
+    jsonObj[valueKeyName] = json;
+  } else if (typeof json === 'number') {
+    jsonObj[valueKeyName] = json;
+  } else if (!_isEmpty(json)) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    jsonObj[valueKeyName] = json!;
+  }
+}
+
+/**
+ * Transforms the provided FHIR Extensions to their JSON representations and adds them to the provided JSON.Object.
+ * Does nothing if the individual FHIR Extensions are undefined.
+ *
+ * @param extensions - FHIR Extensions to be transformed
+ * @param jsonObj - JSON.Object to which to add the transformed Extensions
+ * @param isModifierExtension - optional boolean (default: `false`); sets JSON object key name to `modifierExtension` if true; otherwise `extension`
+ * @throws AssertionError for invalid parameters
+ *
+ * @category Utilities: JSON
+ */
+export function setFhirExtensionJson(extensions: Extension[], jsonObj: JSON.Object, isModifierExtension = false): void {
+  assert(!isNil(extensions), 'Provided extensions is undefined/null');
+  assert(!isNil(jsonObj), 'Provided jsonObj is undefined/null');
+
+  const jsonExtension = [] as JSON.Array;
+  for (const extension of extensions) {
+    assertFhirType(extension, Extension, 'Provided item in extensions is not an instance of Extension');
+    const extJson = extension.toJSON();
+    if (!_isEmpty(extJson)) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      jsonExtension.push(extJson!);
+    }
+  }
+
+  if (jsonExtension.length > 0) {
+    const propName = isModifierExtension ? 'modifierExtension' : 'extension';
+    jsonObj[propName] = jsonExtension;
+  }
+}
+
+/**
+ * Transforms the provided FHIR primitive DataType to its JSON representation and adds it to the provided JSON.Object.
+ * Does nothing if the FHIR primitive DataType's value is undefined.
+ *
+ * @typeParam T - the FHIR primitive type
+ * @param ptElement - FHIR primitive DataType to transform
+ * @param propName - the property name for the provided FHIR primitive DataType
+ * @param jsonObj - JSON.Object to which to add the transformed FHIR primitive DataType
+ * @throws AssertionError for invalid parameters
+ *
+ * @see [JSON representation of primitive elements](https://hl7.org/fhir/R4/json.html#primitive)
+ * @category Utilities: JSON
+ */
+export function setFhirPrimitiveJson<T>(ptElement: PrimitiveType<T>, propName: string, jsonObj: JSON.Object): void {
+  assert(!isNil(ptElement), 'Provided ptElement is undefined/null');
+  assert(!_isEmpty(propName), 'Provided propName is empty/undefined/null');
+  assert(!isNil(jsonObj), 'Provided jsonObj is undefined/null');
+  assertFhirPrimitiveType<T>(ptElement, 'Provided ptElement is not an instance of PrimitiveType');
+
+  const primitiveValue: JSON.Value | undefined = ptElement.toJSON();
+  if (primitiveValue === undefined) {
+    return;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  jsonObj[propName] = primitiveValue!;
+
+  const siblingJson: JSON.Value | undefined = ptElement.toSiblingJSON();
+  if (!_isEmpty(siblingJson)) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    jsonObj[`_${propName}`] = siblingJson!;
+  }
+}
+
+/**
+ * Transforms the provided array of FHIR primitive DataType to their JSON representation and adds it to the provided
+ * JSON.Object. Does nothing if the FHIR primitive DataType's value is undefined.
+ *
+ * @typeParam T - the FHIR primitive type
+ * @param ptElements - array of FHIR primitive DataTypes to transform
+ * @param propName - the property name for the provided FHIR complex DataTypes
+ * @param jsonObj - JSON.Object to which to add the transformed FHIR complex DataTypes
+ * @throws AssertionError for invalid parameters
+ *
+ * @see [JSON representation of primitive elements](https://hl7.org/fhir/R4/json.html#primitive)
+ * @category Utilities: JSON
+ */
+export function setFhirPrimitiveListJson<T>(
+  ptElements: PrimitiveType<T>[],
+  propName: string,
+  jsonObj: JSON.Object,
+): void {
+  assert(!isNil(ptElements), 'Provided ptElements is undefined/null');
+  assert(!_isEmpty(propName), 'Provided propName is empty/undefined/null');
+  assert(!isNil(jsonObj), 'Provided jsonObj is undefined/null');
+
+  const jsonArray: JSON.Array = [];
+  const siblingArray: JSON.Array = [];
+  for (const ptElement of ptElements) {
+    assertFhirPrimitiveType<T>(ptElement, 'Provided item in ptElements is not an instance of PrimitiveType');
+    const primitiveValue: JSON.Value | undefined = ptElement.toJSON();
+    if (_isEmpty(primitiveValue)) {
+      jsonArray.push(null);
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      jsonArray.push(primitiveValue!);
+    }
+
+    const siblingJson: JSON.Value | undefined = ptElement.toSiblingJSON();
+    if (_isEmpty(siblingJson)) {
+      siblingArray.push(null);
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      siblingArray.push(siblingJson!);
+    }
+  }
+
+  if (jsonArray.length > 0) {
+    // Add primitive content if and only if there is at least one non-null data element
+    const nonNullArray = jsonArray.filter((value) => value !== null);
+    if (nonNullArray.length > 0) {
+      jsonObj[propName] = jsonArray;
+    }
+  }
+  if (siblingArray.length > 0) {
+    // Add sibling content if and only if there is at least one non-null data element
+    const nonNullArray = siblingArray.filter((value) => value !== null);
+    if (nonNullArray.length > 0) {
+      jsonObj[`_${propName}`] = siblingArray;
+    }
+  }
+}
+
+/**
+ * Transforms the provided FHIR complex DataType to its JSON representation and adds it to the provided JSON.Object.
+ * Does nothing if the FHIR complex DataType's value is undefined.
+ *
+ * @param cElement - FHIR complex DataType to transform
+ * @param propName - the property name for the provided FHIR complex DataType
+ * @param jsonObj - JSON.Object to which to add the transformed FHIR complex DataType
+ * @throws AssertionError for invalid parameters
+ *
+ * @category Utilities: JSON
+ */
+export function setFhirComplexJson(cElement: DataType, propName: string, jsonObj: JSON.Object): void {
+  assert(!isNil(cElement), 'Provided cElement is undefined/null');
+  assert(!_isEmpty(propName), 'Provided propName is empty/undefined/null');
+  assert(!isNil(jsonObj), 'Provided jsonObj is undefined/null');
+  assertFhirDataType(cElement, 'Provided cElement is not an instance of DataType');
+
+  const complexValue: JSON.Value | undefined = cElement.toJSON();
+  if (_isEmpty(complexValue)) {
+    return;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  jsonObj[propName] = complexValue!;
+}
+
+/**
+ * Transforms the provided array of FHIR complex DataType to their JSON representation and adds it to the provided
+ * JSON.Object. Does nothing if the FHIR complex DataType's value is undefined.
+ *
+ * @param cElements - array of FHIR complex DataTypes to transform
+ * @param propName - the property name for the provided FHIR complex DataTypes
+ * @param jsonObj - JSON.Object to which to add the transformed FHIR complex DataTypes
+ * @throws AssertionError for invalid parameters
+ *
+ * @category Utilities: JSON
+ */
+export function setFhirComplexListJson(cElements: DataType[], propName: string, jsonObj: JSON.Object): void {
+  assert(!isNil(cElements), 'Provided cElements is undefined/null');
+  assert(!_isEmpty(propName), 'Provided propName is empty/undefined/null');
+  assert(!isNil(jsonObj), 'Provided jsonObj is undefined/null');
+
+  const jsonArray: JSON.Array = [];
+  for (const cElement of cElements) {
+    assertFhirDataType(cElement, 'Provided item in cElements is not an instance of DataType');
+    const complexValue: JSON.Value | undefined = cElement.toJSON();
+    if (!_isEmpty(complexValue)) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      jsonArray.push(complexValue!);
+    }
+  }
+  if (jsonArray.length > 0) {
+    jsonObj[propName] = jsonArray;
+  }
+}
+
+/**
+ * Transforms the provided FHIR BackboneElement to its JSON representation and adds it to the provided JSON.Object.
+ * Does nothing if the FHIR BackboneElement's value is undefined.
+ *
+ * @param bElement - FHIR BackboneElement to transform
+ * @param propName - the property name for the provided FHIR BackboneElement
+ * @param jsonObj - JSON.Object to which to add the transformed FHIR BackboneElement
+ * @throws AssertionError for invalid parameters
+ *
+ * @category Utilities: JSON
+ */
+export function setFhirBackboneElementJson(bElement: BackboneElement, propName: string, jsonObj: JSON.Object): void {
+  assert(!isNil(bElement), 'Provided bElement is undefined/null');
+  assert(!_isEmpty(propName), 'Provided propName is empty/undefined/null');
+  assert(!isNil(jsonObj), 'Provided jsonObj is undefined/null');
+  assertFhirBackboneElement(bElement, 'Provided bElement is not an instance of BackboneElement');
+
+  const backboneValue: JSON.Value | undefined = bElement.toJSON();
+  if (_isEmpty(backboneValue)) {
+    return;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  jsonObj[propName] = backboneValue!;
+}
+
+/**
+ * Transforms the provided array of FHIR BackboneElement to their JSON representation and adds it to the provided
+ * JSON.Object. Does nothing if the FHIR BackboneElement's value is undefined.
+ *
+ * @param bElements - array of FHIR BackboneElements to transform
+ * @param propName - the property name for the provided FHIR BackboneElements
+ * @param jsonObj - JSON.Object to which to add the transformed FHIR BackboneElements
+ * @throws AssertionError for invalid parameters
+ *
+ * @category Utilities: JSON
+ */
+export function setFhirBackboneElementListJson(
+  bElements: BackboneElement[],
+  propName: string,
+  jsonObj: JSON.Object,
+): void {
+  assert(!isNil(bElements), 'Provided bElements is undefined/null');
+  assert(!_isEmpty(propName), 'Provided propName is empty/undefined/null');
+  assert(!isNil(jsonObj), 'Provided jsonObj is undefined/null');
+
+  const jsonArray: JSON.Array = [];
+  for (const bElement of bElements) {
+    assertFhirBackboneElement(bElement, 'Provided bElement is not an instance of BackboneElement');
+    const backboneValue: JSON.Value | undefined = bElement.toJSON();
+    if (!_isEmpty(backboneValue)) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      jsonArray.push(backboneValue!);
+    }
+  }
+  if (jsonArray.length > 0) {
+    jsonObj[propName] = jsonArray;
+  }
+}
+
+/**
+ * Transforms the provided FHIR BackboneType to its JSON representation and adds it to the provided JSON.Object.
+ * Does nothing if the FHIR BackboneElement's value is undefined.
+ *
+ * @param bType - FHIR BackboneType to transform
+ * @param propName - the property name for the provided FHIR BackboneType
+ * @param jsonObj - JSON.Object to which to add the transformed FHIR BackboneType
+ * @throws AssertionError for invalid parameters
+ *
+ * @category Utilities: JSON
+ */
+export function setFhirBackboneTypeJson(bType: BackboneType, propName: string, jsonObj: JSON.Object): void {
+  assert(!isNil(bType), 'Provided bType is undefined/null');
+  assert(!_isEmpty(propName), 'Provided propName is empty/undefined/null');
+  assert(!isNil(jsonObj), 'Provided jsonObj is undefined/null');
+  assertFhirBackboneType(bType, 'Provided bType is not an instance of BackboneType');
+
+  const backboneValue: JSON.Value | undefined = bType.toJSON();
+  if (_isEmpty(backboneValue)) {
+    return;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  jsonObj[propName] = backboneValue!;
+}
+
+/**
+ * Transforms the provided array of FHIR BackboneType to their JSON representation and adds it to the provided
+ * JSON.Object. Does nothing if the FHIR BackboneType's value is undefined.
+ *
+ * @param bTypes - array of FHIR BackboneType to transform
+ * @param propName - the property name for the provided FHIR BackboneTypes
+ * @param jsonObj - JSON.Object to which to add the transformed FHIR BackboneTypes
+ * @throws AssertionError for invalid parameters
+ *
+ * @category Utilities: JSON
+ */
+export function setFhirBackboneTypeListJson(bTypes: BackboneType[], propName: string, jsonObj: JSON.Object): void {
+  assert(!isNil(bTypes), 'Provided bTypes is undefined/null');
+  assert(!_isEmpty(propName), 'Provided propName is empty/undefined/null');
+  assert(!isNil(jsonObj), 'Provided jsonObj is undefined/null');
+
+  const jsonArray: JSON.Array = [];
+  for (const bType of bTypes) {
+    assertFhirBackboneType(bType, 'Provided bType is not an instance of BackboneType');
+    const backboneValue: JSON.Value | undefined = bType.toJSON();
+    if (!_isEmpty(backboneValue)) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      jsonArray.push(backboneValue!);
+    }
+  }
+  if (jsonArray.length > 0) {
+    jsonObj[propName] = jsonArray;
+  }
+}
+
+//endregion
+
+// region TypeScript Decorators
+
+/**
+ * TypeScript Decorators
+ *
+ * @privateRemarks
+ * Due to TypeScript circular references, the following decorator definitions are included in this module.
+ * Other decorator definitions are included in fhir-core/utility/decorators.ts
+ */
 
 /**
  * Factory function for OpenDataTypes decorator for open data type "set" methods
@@ -1092,3 +1569,90 @@ export function OpenDataTypes() {
     };
   };
 }
+
+//endregion
+
+// region TypeScript Type Assertions
+
+/**
+ * TypeScript Type Assertions
+ *
+ * @privateRemarks
+ * Due to TypeScript circular references, the following type assertion definitions are included in this module.
+ * Other type assertion definitions are included in fhir-core/utility/type-guards.ts
+ */
+
+/**
+ * FHIR BackboneElement assertion for any FHIR data type class
+ *
+ * @param classInstance - class instance to evaluate
+ * @param errorMessage - optional error message to override the default
+ * @throws InvalidTypeError when BackboneElement assertion is false
+ *
+ * @category Type Guards/Assertions
+ */
+export function assertFhirBackboneElement(
+  classInstance: unknown,
+  errorMessage?: string,
+): asserts classInstance is BackboneElement {
+  if (!(classInstance instanceof BackboneElement)) {
+    const errMsg = errorMessage ?? `Provided instance is not an instance of BackboneElement.`;
+    throw new InvalidTypeError(errMsg);
+  }
+}
+
+/**
+ * FHIR BackboneType assertion for any FHIR data type class
+ *
+ * @param classInstance - class instance to evaluate
+ * @param errorMessage - optional error message to override the default
+ * @throws InvalidTypeError when BackboneType assertion is false
+ *
+ * @category Type Guards/Assertions
+ */
+export function assertFhirBackboneType(
+  classInstance: unknown,
+  errorMessage?: string,
+): asserts classInstance is BackboneType {
+  if (!(classInstance instanceof BackboneType)) {
+    const errMsg = errorMessage ?? `Provided instance is not an instance of BackboneType.`;
+    throw new InvalidTypeError(errMsg);
+  }
+}
+
+/**
+ * FHIR DataType assertion for any FHIR data type class
+ *
+ * @param classInstance - class instance to evaluate
+ * @param errorMessage - optional error message to override the default
+ * @throws InvalidTypeError when DataType assertion is false
+ *
+ * @category Type Guards/Assertions
+ */
+export function assertFhirDataType(classInstance: unknown, errorMessage?: string): asserts classInstance is DataType {
+  if (!(classInstance instanceof DataType)) {
+    const errMsg = errorMessage ?? `Provided instance is not an instance of DataType.`;
+    throw new InvalidTypeError(errMsg);
+  }
+}
+
+/**
+ * FHIR DataType assertion for any FHIR primitive type class
+ *
+ * @param classInstance - class instance to evaluate
+ * @param errorMessage - optional error message to override the default
+ * @throws InvalidTypeError when DataType assertion is false
+ *
+ * @category Type Guards/Assertions
+ */
+export function assertFhirPrimitiveType<T>(
+  classInstance: unknown,
+  errorMessage?: string,
+): asserts classInstance is PrimitiveType<T> {
+  if (!(classInstance instanceof PrimitiveType)) {
+    const errMsg = errorMessage ?? `Provided instance is not an instance of PrimitiveType.`;
+    throw new InvalidTypeError(errMsg);
+  }
+}
+
+// endregion

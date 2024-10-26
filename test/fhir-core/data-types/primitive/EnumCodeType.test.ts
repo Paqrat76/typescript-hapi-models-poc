@@ -21,8 +21,8 @@
  *
  */
 
-import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
-import { EnumCodeType } from '@src/fhir-core/data-types/primitive/EnumCodeType';
+import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+//import { EnumCodeType } from '@src/fhir-core/data-types/primitive/EnumCodeType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
@@ -45,12 +45,15 @@ describe('EnumCodeType', () => {
     expect(testEnumCodeType.enumSource()).toStrictEqual('MockCodeEnum');
     expect(testEnumCodeType.fhirType()).toStrictEqual('code');
     expect(testEnumCodeType.isEmpty()).toBe(false);
+    expect(testEnumCodeType.isPrimitive()).toBe(true);
+    expect(testEnumCodeType.isStringPrimitive()).toBe(true);
+    expect(testEnumCodeType.toJSON()).toStrictEqual(VALID_CODE);
 
     // inherited properties from Element
     expect(testEnumCodeType.hasId()).toBe(false);
     expect(testEnumCodeType.getId()).toBeUndefined();
     expect(testEnumCodeType.hasExtension()).toBe(false);
-    expect(testEnumCodeType.getExtension()).toMatchObject([] as Extension[]);
+    expect(testEnumCodeType.getExtension()).toEqual([] as Extension[]);
 
     // primitive value properties
     expect(testEnumCodeType.hasValue()).toBe(true);
@@ -65,7 +68,7 @@ describe('EnumCodeType', () => {
       MockCodeEnum.EMPTY,
     ];
     expect(testEnumCodeType.fhirCodeEnumeration).toEqual(expect.arrayContaining(expectedEnums));
-    expect(testEnumCodeType.fhirCode).toMatchObject(MockCodeEnum.GENERATED);
+    expect(testEnumCodeType.fhirCode).toEqual(MockCodeEnum.GENERATED);
   });
 
   it('should be properly instantiated with a CodeType', () => {
@@ -78,12 +81,15 @@ describe('EnumCodeType', () => {
     expect(testEnumCodeType.enumSource()).toStrictEqual('MockCodeEnum');
     expect(testEnumCodeType.fhirType()).toStrictEqual('code');
     expect(testEnumCodeType.isEmpty()).toBe(false);
+    expect(testEnumCodeType.isPrimitive()).toBe(true);
+    expect(testEnumCodeType.isStringPrimitive()).toBe(true);
+    expect(testEnumCodeType.toJSON()).toStrictEqual(VALID_CODE_2);
 
     // inherited properties from Element
     expect(testEnumCodeType.hasId()).toBe(false);
     expect(testEnumCodeType.getId()).toBeUndefined();
     expect(testEnumCodeType.hasExtension()).toBe(false);
-    expect(testEnumCodeType.getExtension()).toMatchObject([] as Extension[]);
+    expect(testEnumCodeType.getExtension()).toEqual([] as Extension[]);
 
     // primitive value properties
     expect(testEnumCodeType.hasValue()).toBe(true);
@@ -98,7 +104,7 @@ describe('EnumCodeType', () => {
       MockCodeEnum.EMPTY,
     ];
     expect(testEnumCodeType.fhirCodeEnumeration).toEqual(expect.arrayContaining(expectedEnums));
-    expect(testEnumCodeType.fhirCode).toMatchObject(MockCodeEnum.ADDITIONAL);
+    expect(testEnumCodeType.fhirCode).toEqual(MockCodeEnum.ADDITIONAL);
   });
 
   it('should be properly instantiated with a CodeType having both id and extension', () => {
@@ -116,12 +122,24 @@ describe('EnumCodeType', () => {
     expect(testEnumCodeType.enumSource()).toStrictEqual('MockCodeEnum');
     expect(testEnumCodeType.fhirType()).toStrictEqual('code');
     expect(testEnumCodeType.isEmpty()).toBe(false);
+    expect(testEnumCodeType.isPrimitive()).toBe(true);
+    expect(testEnumCodeType.isStringPrimitive()).toBe(true);
+    expect(testEnumCodeType.toJSON()).toStrictEqual(VALID_CODE_2);
+    expect(testEnumCodeType.toSiblingJSON()).toEqual({
+      id: 'id1234',
+      extension: [
+        {
+          url: 'testUrl',
+          valueString: 'extension string value',
+        },
+      ],
+    });
 
     // inherited properties from Element
     expect(testEnumCodeType.hasId()).toBe(true);
     expect(testEnumCodeType.getId()).toStrictEqual('id1234');
     expect(testEnumCodeType.hasExtension()).toBe(true);
-    expect(testEnumCodeType.getExtension()).toMatchObject([testExtension]);
+    expect(testEnumCodeType.getExtension()).toEqual([testExtension]);
 
     // primitive value properties
     expect(testEnumCodeType.hasValue()).toBe(true);
@@ -136,7 +154,7 @@ describe('EnumCodeType', () => {
       MockCodeEnum.EMPTY,
     ];
     expect(testEnumCodeType.fhirCodeEnumeration).toEqual(expect.arrayContaining(expectedEnums));
-    expect(testEnumCodeType.fhirCode).toMatchObject(MockCodeEnum.ADDITIONAL);
+    expect(testEnumCodeType.fhirCode).toEqual(MockCodeEnum.ADDITIONAL);
   });
 
   it('should throw PrimitiveTypeError from super constructor when initialized with invalid value', () => {
@@ -162,7 +180,7 @@ describe('EnumCodeType', () => {
     expect(testEnumCodeType.getValue()).toBeDefined();
     expect(testEnumCodeType.getValue()).toStrictEqual(VALID_CODE);
     expect(testEnumCodeType.getValueAsString()).toStrictEqual(VALID_CODE);
-    expect(testEnumCodeType.fhirCode).toMatchObject(MockCodeEnum.GENERATED);
+    expect(testEnumCodeType.fhirCode).toEqual(MockCodeEnum.GENERATED);
 
     testEnumCodeType.setValue(VALID_CODE_2);
     expect(testEnumCodeType.isEmpty()).toBe(false);
@@ -170,7 +188,7 @@ describe('EnumCodeType', () => {
     expect(testEnumCodeType.getValue()).toBeDefined();
     expect(testEnumCodeType.getValue()).toStrictEqual(VALID_CODE_2);
     expect(testEnumCodeType.getValueAsString()).toStrictEqual(VALID_CODE_2);
-    expect(testEnumCodeType.fhirCode).toMatchObject(MockCodeEnum.ADDITIONAL);
+    expect(testEnumCodeType.fhirCode).toEqual(MockCodeEnum.ADDITIONAL);
 
     let t = () => {
       testEnumCodeType.setValue(INVALID_CODE);
@@ -197,12 +215,15 @@ describe('EnumCodeType', () => {
     expect(testEnumCodeType.enumSource()).toStrictEqual('MockCodeEnum');
     expect(testEnumCodeType.fhirType()).toStrictEqual('code');
     expect(testEnumCodeType.isEmpty()).toBe(false);
+    expect(testEnumCodeType.isPrimitive()).toBe(true);
+    expect(testEnumCodeType.isStringPrimitive()).toBe(true);
+    expect(testEnumCodeType.toJSON()).toStrictEqual(VALID_CODE);
 
     // inherited properties from Element
     expect(testEnumCodeType.hasId()).toBe(false);
     expect(testEnumCodeType.getId()).toBeUndefined();
     expect(testEnumCodeType.hasExtension()).toBe(false);
-    expect(testEnumCodeType.getExtension()).toMatchObject([] as Extension[]);
+    expect(testEnumCodeType.getExtension()).toEqual([] as Extension[]);
 
     // primitive value properties
     expect(testEnumCodeType.hasValue()).toBe(true);
@@ -217,6 +238,6 @@ describe('EnumCodeType', () => {
       MockCodeEnum.EMPTY,
     ];
     expect(testEnumCodeType.fhirCodeEnumeration).toEqual(expect.arrayContaining(expectedEnums));
-    expect(testEnumCodeType.fhirCode).toMatchObject(MockCodeEnum.GENERATED);
+    expect(testEnumCodeType.fhirCode).toEqual(MockCodeEnum.GENERATED);
   });
 });

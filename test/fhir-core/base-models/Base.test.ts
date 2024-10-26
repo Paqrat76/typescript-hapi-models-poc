@@ -21,8 +21,8 @@
  *
  */
 
-import { isEmpty as _isEmpty } from 'lodash';
 import { Base } from '@src/fhir-core/base-models/Base';
+import { MockBase } from '../../test-utils';
 
 describe('Base', () => {
   it('should be properly instantiated', () => {
@@ -31,7 +31,7 @@ describe('Base', () => {
     expect(mockBase).toBeInstanceOf(Base);
     expect(mockBase.constructor.name).toStrictEqual('MockBase');
     expect(mockBase.mockValue).toBeUndefined();
-    expect(mockBase.fhirType()).toStrictEqual('Base');
+    expect(mockBase.fhirType()).toStrictEqual('MockBase');
     expect(mockBase.isEmpty()).toBe(true);
   });
 
@@ -41,43 +41,35 @@ describe('Base', () => {
     expect(mockBase).toBeDefined();
     expect(mockBase.mockValue).toBeDefined();
     expect(mockBase.mockValue).toStrictEqual(testString);
-    expect(mockBase.fhirType()).toStrictEqual('Base');
+    expect(mockBase.fhirType()).toStrictEqual('MockBase');
     expect(mockBase.isEmpty()).toBe(false);
 
     const testBase = mockBase.copy();
     expect(testBase).toBeDefined();
     expect(mockBase.mockValue).toBeDefined();
     expect(mockBase.mockValue).toStrictEqual(testString);
-    expect(testBase.fhirType()).toStrictEqual('Base');
+    expect(testBase.fhirType()).toStrictEqual('MockBase');
     expect(testBase.isEmpty()).toBe(false);
   });
+
+  it('should return expected values for hasFireType()', () => {
+    const mockBase = new MockBase();
+    expect(mockBase.hasFireType('MockBase')).toBe(true);
+    expect(mockBase.hasFireType('MockBase', 'TypeA', 'TypeB')).toBe(true);
+    expect(mockBase.hasFireType('TypeA', 'MockBase', 'TypeB')).toBe(true);
+    expect(mockBase.hasFireType('InvalidType')).toBe(false);
+  });
+
+  it('should return default value of false for all is[Type] methods', () => {
+    const mockBase = new MockBase();
+    // The is[Type] methods default to false and must be overridden in subclasses as appropriate
+    expect(mockBase.isResource()).toBe(false);
+    expect(mockBase.isComplexDataType()).toBe(false);
+    expect(mockBase.isPrimitive()).toBe(false);
+    expect(mockBase.isBooleanPrimitive()).toBe(false);
+    expect(mockBase.isStringPrimitive()).toBe(false);
+    expect(mockBase.isNumberPrimitive()).toBe(false);
+    expect(mockBase.isBigIntPrimitive()).toBe(false);
+    expect(mockBase.isDateTimePrimitive()).toBe(false);
+  });
 });
-
-class MockBase extends Base {
-  public mockValue: string | undefined = undefined;
-
-  constructor(value?: string) {
-    super();
-    if (value) {
-      this.mockValue = value;
-    }
-  }
-
-  public fhirType(): string {
-    return 'Base';
-  }
-
-  public isEmpty(): boolean {
-    return _isEmpty(this.mockValue);
-  }
-
-  public copy(): MockBase {
-    const dest = new MockBase();
-    this.copyValues(dest);
-    return dest;
-  }
-
-  public copyValues(dest: MockBase): void {
-    dest.mockValue = this.mockValue;
-  }
-}

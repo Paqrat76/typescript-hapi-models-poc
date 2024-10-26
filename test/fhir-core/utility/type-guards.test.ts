@@ -22,21 +22,29 @@
  */
 
 import { AssertionError } from 'node:assert';
+import { assertFhirType, assertIsDefined, FhirTypeGuard } from '@src/fhir-core/utility/type-guards';
 import {
-  assertEnumCodeType,
   assertFhirDataType,
-  assertFhirType,
-  assertIsDefined,
-  FhirTypeGuard,
-} from '@src/fhir-core/utility/type-guards';
+  assertFhirPrimitiveType,
+  assertFhirBackboneElement,
+  assertFhirBackboneType,
+} from '@src/fhir-core/base-models/core-fhir-models';
+import { assertFhirResourceType } from '@src/fhir-core/base-models/Resource';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { Period } from '@src/fhir-core/data-types/complex/Period';
-import { assertFhirResourceType } from '@src/fhir-core/base-models/Resource';
-import { EnumCodeType } from '@src/fhir-core/data-types/primitive/EnumCodeType';
+import { EnumCodeType, assertEnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { QuantityComparatorEnum } from '@src/fhir-core/data-types/complex/code-systems/QuantityComparatorEnum';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
-import { MockCodeEnum, MockComplexDataType, MockFhirModel, MockResource, MockTask } from '../../test-utils';
+import {
+  MockBackboneElement,
+  MockBackboneType,
+  MockCodeEnum,
+  MockComplexDataType,
+  MockFhirModel,
+  MockResource,
+  MockTask,
+} from '../../test-utils';
 
 describe('type-guards', () => {
   describe('assertIsDefined', () => {
@@ -189,7 +197,7 @@ describe('type-guards', () => {
         assertFhirResourceType(testFhirResource);
       };
       expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`Provided instance (MockResource) is not a valid resource type.`);
+      expect(t).toThrow(`Provided instance (Resource) is not a valid resource type.`);
     });
 
     it('should throw InvalidTypeError for invalid FhirResourceType with error message override', () => {
@@ -234,6 +242,93 @@ describe('type-guards', () => {
       const errMessage = `Provided instance (MockFhirModel) is not an instance of DataType.`;
       const t = () => {
         assertFhirDataType(dataType, errMessage);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(errMessage);
+    });
+  });
+
+  describe('assertFhirPrimitiveType', () => {
+    it('should not throw InvalidTypeError for valid PrimitiveType', () => {
+      const primitiveType = new StringType('Valid primitive data type');
+      const t = () => {
+        assertFhirPrimitiveType(primitiveType);
+      };
+      expect(t).not.toThrow(InvalidTypeError);
+    });
+
+    it('should throw InvalidTypeError for non-PrimitiveType', () => {
+      const primitiveType = new Period();
+      const t = () => {
+        assertFhirPrimitiveType(primitiveType);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Provided instance is not an instance of PrimitiveType.`);
+    });
+
+    it('should throw InvalidTypeError for non-PrimitiveType with error message override', () => {
+      const primitiveType = new MockFhirModel();
+      const errMessage = `Provided instance (MockFhirModel) is not an instance of PrimitiveType.`;
+      const t = () => {
+        assertFhirPrimitiveType(primitiveType, errMessage);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(errMessage);
+    });
+  });
+
+  describe('assertFhirBackboneElement', () => {
+    it('should not throw InvalidTypeError for valid BackboneElement', () => {
+      const bElement = new MockBackboneElement();
+      const t = () => {
+        assertFhirBackboneElement(bElement);
+      };
+      expect(t).not.toThrow(InvalidTypeError);
+    });
+
+    it('should throw InvalidTypeError for non-BackboneElement', () => {
+      const bElement = new MockFhirModel();
+      const t = () => {
+        assertFhirBackboneElement(bElement);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Provided instance is not an instance of BackboneElement.`);
+    });
+
+    it('should throw InvalidTypeError for non-DataType with error message override', () => {
+      const bElement = new MockFhirModel();
+      const errMessage = `Provided instance (MockFhirModel) is not an instance of BackboneElement.`;
+      const t = () => {
+        assertFhirBackboneElement(bElement, errMessage);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(errMessage);
+    });
+  });
+
+  describe('assertFhirBackboneType', () => {
+    it('should not throw InvalidTypeError for valid BackboneType', () => {
+      const bType = new MockBackboneType();
+      const t = () => {
+        assertFhirBackboneType(bType);
+      };
+      expect(t).not.toThrow(InvalidTypeError);
+    });
+
+    it('should throw InvalidTypeError for non-BackboneType', () => {
+      const bType = new MockFhirModel();
+      const t = () => {
+        assertFhirBackboneType(bType);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Provided instance is not an instance of BackboneType.`);
+    });
+
+    it('should throw InvalidTypeError for non-DataType with error message override', () => {
+      const bType = new MockFhirModel();
+      const errMessage = `Provided instance (MockFhirModel) is not an instance of BackboneType.`;
+      const t = () => {
+        assertFhirBackboneType(bType, errMessage);
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(errMessage);

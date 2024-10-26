@@ -22,16 +22,22 @@
  */
 
 /**
- * This module contains the Resource core FHIR model along with the FHIR ResourceType assertion.
+ * This module contains the Resource core FHIR model along with other resource related functions.
  *
- * @remarks
+ * @privateRemarks
  * The FHIR ResourceType assertion contains a reference to the Resource data model that results
  * in a circular reference when it was in the type-guards.ts module. Therefore, the FHIR ResourceType
  * assertion function was moved into this module.
  *
+ * The setFhirResourceJson/setFhirResourceListJson contains a reference to the Resource data model
+ * that results in a circular reference when it was in the json-helpers.ts module. Therefore, these
+ * functions were moved into this module.
+ *
  * @module
  */
 
+import { strict as assert } from 'node:assert';
+import { isEmpty as _isEmpty, isNil } from 'lodash';
 import { Base } from '@src/fhir-core/base-models/Base';
 import { IBase } from '@src/fhir-core/base-models/IBase';
 import { RESOURCE_TYPES, FhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
@@ -48,8 +54,10 @@ import {
   fhirUriSchema,
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { setFhirComplexJson, setFhirPrimitiveJson } from '@src/fhir-core/base-models/core-fhir-models';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import { assertFhirType } from '@src/fhir-core/utility/type-guards';
+import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
@@ -374,6 +382,38 @@ export abstract class Resource extends Base implements IBase {
     dest.implicitRules = this.implicitRules?.copy();
     dest.language = this.language?.copy();
   }
+
+  /**
+   * {@inheritDoc Base.isResource}
+   */
+  public override isResource(): boolean {
+    return true;
+  }
+
+  /**
+   * {@inheritDoc Base.toJSON}
+   */
+  public override toJSON(): JSON.Value | undefined {
+    const jsonObj = { resourceType: this.resourceType() } as JSON.Object;
+
+    if (this.hasIdElement()) {
+      setFhirPrimitiveJson<fhirId>(this.getIdElement(), 'id', jsonObj);
+    }
+
+    if (this.hasMeta()) {
+      setFhirComplexJson(this.getMeta(), 'meta', jsonObj);
+    }
+
+    if (this.hasImplicitRulesElement()) {
+      setFhirPrimitiveJson<fhirUri>(this.getImplicitRulesElement(), 'implicitRules', jsonObj);
+    }
+
+    if (this.hasLanguageElement()) {
+      setFhirPrimitiveJson<fhirCode>(this.getLanguageElement(), 'language', jsonObj);
+    }
+
+    return jsonObj;
+  }
 }
 
 /* eslint-enable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
@@ -398,5 +438,60 @@ export function assertFhirResourceType(
   if (!RESOURCE_TYPES.includes(classInstance.resourceType())) {
     const errMsg = errorMessage ?? `Provided instance (${classInstance.resourceType()}) is not a valid resource type.`;
     throw new InvalidTypeError(errMsg);
+  }
+}
+
+/**
+ * Transforms the provided FHIR Resource to its JSON representation and adds it to the provided JSON.Object.
+ * Does nothing if the Resource's value is undefined.
+ *
+ * @param resource - FHIR Resource to transform
+ * @param propName - the property name for the provided FHIR complex DataType
+ * @param jsonObj - JSON.Object to which to add the transformed FHIR complex DataType
+ * @throws AssertionError for invalid parameters
+ *
+ * @category Utilities: JSON
+ */
+export function setFhirResourceJson(resource: Resource, propName: string, jsonObj: JSON.Object): void {
+  assert(!isNil(resource), 'Provided resource is undefined/null');
+  assert(!_isEmpty(propName), 'Provided propName is empty/undefined/null');
+  assert(!isNil(jsonObj), 'Provided jsonObj is undefined/null');
+  assertFhirResourceType(resource, 'Provided resource is not an instance of Resource');
+
+  const resourceValue: JSON.Value | undefined = resource.toJSON();
+  if (_isEmpty(resourceValue)) {
+    return;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  jsonObj[propName] = resourceValue!;
+}
+
+/**
+ * Transforms the provided array of FHIR Resource to their JSON representation and adds it to the provided
+ * JSON.Object. Does nothing if the FHIR Resource's value is undefined.
+ *
+ * @param resources - array of FHIR Resources to transform
+ * @param propName - the property name for the provided FHIR complex DataTypes
+ * @param jsonObj - JSON.Object to which to add the transformed FHIR complex DataTypes
+ * @throws AssertionError for invalid parameters
+ *
+ * @category Utilities: JSON
+ */
+export function setFhirResourceListJson(resources: Resource[], propName: string, jsonObj: JSON.Object): void {
+  assert(!isNil(resources), 'Provided resources is undefined/null');
+  assert(!_isEmpty(propName), 'Provided propName is empty/undefined/null');
+  assert(!isNil(jsonObj), 'Provided jsonObj is undefined/null');
+
+  const jsonArray: JSON.Array = [];
+  for (const resource of resources) {
+    assertFhirResourceType(resource, 'Provided resource is not an instance of Resource');
+    const resourceValue: JSON.Value | undefined = resource.toJSON();
+    if (!_isEmpty(resourceValue)) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      jsonArray.push(resourceValue!);
+    }
+  }
+  if (jsonArray.length > 0) {
+    jsonObj[propName] = jsonArray;
   }
 }

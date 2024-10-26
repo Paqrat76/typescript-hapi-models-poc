@@ -22,6 +22,7 @@
  */
 
 import { TimeType } from '@src/fhir-core/data-types/primitive/TimeType';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 
@@ -38,12 +39,15 @@ describe('TimeType', () => {
     expect(testTimeType.constructor.name).toStrictEqual('TimeType');
     expect(testTimeType.fhirType()).toStrictEqual('time');
     expect(testTimeType.isEmpty()).toBe(true);
+    expect(testTimeType.isPrimitive()).toBe(true);
+    expect(testTimeType.isStringPrimitive()).toBe(true);
+    expect(testTimeType.toJSON()).toBeUndefined();
 
     // inherited properties from Element
     expect(testTimeType.hasId()).toBe(false);
     expect(testTimeType.getId()).toBeUndefined();
     expect(testTimeType.hasExtension()).toBe(false);
-    expect(testTimeType.getExtension()).toMatchObject([] as Extension[]);
+    expect(testTimeType.getExtension()).toEqual([] as Extension[]);
     // primitive value properties
     expect(testTimeType.hasValue()).toBe(false);
     expect(testTimeType.getValue()).toBeUndefined();
@@ -52,12 +56,35 @@ describe('TimeType', () => {
 
   it('should be properly initialized', () => {
     const testTimeType = new TimeType(VALID_TIME);
+    const testId = 'id1234';
+    testTimeType.setId(testId);
+    const testExtension = new Extension('testUrl', new StringType('extension string value'));
+    testTimeType.addExtension(testExtension);
+
     expect(testTimeType).toBeDefined();
     expect(testTimeType).toBeInstanceOf(TimeType);
     expect(testTimeType.constructor.name).toStrictEqual('TimeType');
     expect(testTimeType.fhirType()).toStrictEqual('time');
     expect(testTimeType.isEmpty()).toBe(false);
+    expect(testTimeType.isPrimitive()).toBe(true);
+    expect(testTimeType.isStringPrimitive()).toBe(true);
+    expect(testTimeType.toJSON()).toStrictEqual(VALID_TIME);
+    expect(testTimeType.toSiblingJSON()).toEqual({
+      id: 'id1234',
+      extension: [
+        {
+          url: 'testUrl',
+          valueString: 'extension string value',
+        },
+      ],
+    });
 
+    // inherited properties from Element
+    expect(testTimeType.hasId()).toBe(true);
+    expect(testTimeType.getId()).toStrictEqual(testId);
+    expect(testTimeType.hasExtension()).toBe(true);
+    expect(testTimeType.getExtension()).toEqual([testExtension]);
+    // primitive value properties
     expect(testTimeType.hasValue()).toBe(true);
     expect(testTimeType.getValue()).toBeDefined();
     expect(testTimeType.getValue()).toStrictEqual(VALID_TIME);
@@ -156,6 +183,9 @@ describe('TimeType', () => {
     expect(testTimeType.constructor.name).toStrictEqual('TimeType');
     expect(testTimeType.fhirType()).toStrictEqual('time');
     expect(testTimeType.isEmpty()).toBe(false);
+    expect(testTimeType.isPrimitive()).toBe(true);
+    expect(testTimeType.isStringPrimitive()).toBe(true);
+    expect(testTimeType.toJSON()).toStrictEqual(VALID_TIME);
     expect(testTimeType.hasValue()).toBe(true);
     expect(testTimeType.getValue()).toBeDefined();
     expect(testTimeType.getValue()).toStrictEqual(VALID_TIME);

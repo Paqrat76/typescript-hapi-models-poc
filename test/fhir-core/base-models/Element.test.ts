@@ -23,17 +23,20 @@
 
 import { Element, Extension } from '@src/fhir-core/base-models/core-fhir-models';
 import { Base } from '@src/fhir-core/base-models/Base';
-import { fhirString } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { MockTask } from '../../test-utils';
-import { InvalidTypeError } from '../../../src';
+import { MockElement, MockTask } from '../../test-utils';
 
 describe('Element', () => {
   const testId = 'testIdValue';
   const testUrl = 'testUrl';
   const testValue = new StringType('testString');
   const testExtension = new Extension(testUrl, testValue);
+  const expectedJson = {
+    id: 'testIdValue',
+    extension: [{ url: 'testUrl', valueString: 'testString' }],
+  };
   const INVALID_ID = '';
 
   it('should be properly instantiated as empty', () => {
@@ -46,8 +49,27 @@ describe('Element', () => {
     expect(mockElement.hasId()).toBe(false);
     expect(mockElement.getId()).toBeUndefined();
     expect(mockElement.hasExtension()).toBe(false);
-    expect(mockElement.getExtension()).toMatchObject([] as Extension[]);
+    expect(mockElement.getExtension()).toEqual([] as Extension[]);
     expect(mockElement.isEmpty()).toBe(true);
+    expect(mockElement.toJSON()).toBeUndefined();
+  });
+
+  it('should be properly instantiated', () => {
+    const mockElement = new MockElement();
+    mockElement.setId(testId);
+    mockElement.addExtension(testExtension);
+    expect(mockElement).toBeDefined();
+    expect(mockElement).toBeInstanceOf(Element);
+    expect(mockElement).toBeInstanceOf(Base);
+    expect(mockElement.constructor.name).toStrictEqual('MockElement');
+    expect(mockElement.fhirType()).toStrictEqual('Element');
+    expect(mockElement.hasId()).toBe(true);
+    expect(mockElement.getId()).toStrictEqual(testId);
+    expect(mockElement.hasExtension()).toBe(true);
+    expect(mockElement.hasExtension(testUrl)).toBe(true);
+    expect(mockElement.getExtension()).toEqual([testExtension]);
+    expect(mockElement.isEmpty()).toBe(false);
+    expect(mockElement.toJSON()).toEqual(expectedJson);
   });
 
   it('should be properly handle setting the id property', () => {
@@ -79,19 +101,19 @@ describe('Element', () => {
     expect(mockElement).toBeDefined();
     expect(mockElement.hasExtension()).toBe(false);
     expect(mockElement.hasExtension(testUrl)).toBe(false);
-    expect(mockElement.getExtension()).toMatchObject([] as Extension[]);
+    expect(mockElement.getExtension()).toEqual([] as Extension[]);
     expect(mockElement.isEmpty()).toBe(true);
 
     mockElement.addExtension();
     expect(mockElement.hasExtension()).toBe(false);
     expect(mockElement.hasExtension(testUrl)).toBe(false);
-    expect(mockElement.getExtension()).toMatchObject([] as Extension[]);
+    expect(mockElement.getExtension()).toEqual([] as Extension[]);
     expect(mockElement.isEmpty()).toBe(true);
 
     mockElement.addExtension(testExtension);
     expect(mockElement.hasExtension()).toBe(true);
     expect(mockElement.hasExtension(testUrl)).toBe(true);
-    expect(mockElement.getExtension()).toMatchObject([testExtension]);
+    expect(mockElement.getExtension()).toEqual([testExtension]);
     expect(mockElement.isEmpty()).toBe(false);
   });
 
@@ -99,18 +121,18 @@ describe('Element', () => {
     const mockElement = new MockElement();
     expect(mockElement).toBeDefined();
     expect(mockElement.hasExtension()).toBe(false);
-    expect(mockElement.getExtension()).toMatchObject([] as Extension[]);
+    expect(mockElement.getExtension()).toEqual([] as Extension[]);
     expect(mockElement.isEmpty()).toBe(true);
 
     mockElement.addExtension(testExtension);
     expect(mockElement.hasExtension()).toBe(true);
-    expect(mockElement.getExtension()).toMatchObject([testExtension]);
+    expect(mockElement.getExtension()).toEqual([testExtension]);
     expect(mockElement.isEmpty()).toBe(false);
 
     // no-op
     mockElement.removeExtension('nonExistentUrl');
     expect(mockElement.hasExtension()).toBe(true);
-    expect(mockElement.getExtension()).toMatchObject([testExtension]);
+    expect(mockElement.getExtension()).toEqual([testExtension]);
     expect(mockElement.isEmpty()).toBe(false);
 
     mockElement.removeExtension(testUrl);
@@ -123,13 +145,13 @@ describe('Element', () => {
     expect(mockElement).toBeDefined();
     expect(mockElement.hasExtension()).toBe(false);
     expect(mockElement.hasExtension(testUrl)).toBe(false);
-    expect(mockElement.getExtension()).toMatchObject([] as Extension[]);
+    expect(mockElement.getExtension()).toEqual([] as Extension[]);
     expect(mockElement.isEmpty()).toBe(true);
 
     mockElement.setExtension([testExtension]);
     expect(mockElement.hasExtension()).toBe(true);
     expect(mockElement.hasExtension(testUrl)).toBe(true);
-    expect(mockElement.getExtension()).toMatchObject([testExtension]);
+    expect(mockElement.getExtension()).toEqual([testExtension]);
     expect(mockElement.isEmpty()).toBe(false);
   });
 
@@ -137,7 +159,7 @@ describe('Element', () => {
     const mockElement = new MockElement();
     expect(mockElement).toBeDefined();
     expect(mockElement.hasExtension()).toBe(false);
-    expect(mockElement.getExtension()).toMatchObject([] as Extension[]);
+    expect(mockElement.getExtension()).toEqual([] as Extension[]);
     expect(mockElement.isEmpty()).toBe(true);
 
     const undefExtensionPath1 = mockElement.getExtensionByUrl('nonExistentUrl');
@@ -145,7 +167,7 @@ describe('Element', () => {
 
     mockElement.addExtension(testExtension);
     expect(mockElement.hasExtension()).toBe(true);
-    expect(mockElement.getExtension()).toMatchObject([testExtension]);
+    expect(mockElement.getExtension()).toEqual([testExtension]);
     expect(mockElement.isEmpty()).toBe(false);
 
     const undefExtensionPath2 = mockElement.getExtensionByUrl('nonExistentUrl');
@@ -153,7 +175,7 @@ describe('Element', () => {
 
     const returnedExtension = mockElement.getExtensionByUrl(testUrl);
     expect(returnedExtension).toBeDefined();
-    expect(returnedExtension).toMatchObject(testExtension);
+    expect(returnedExtension).toEqual(testExtension);
   });
 
   it('should correctly execute copy()', () => {
@@ -165,8 +187,9 @@ describe('Element', () => {
     expect(mockElement.hasId()).toBe(true);
     expect(mockElement.getId()).toStrictEqual(testId);
     expect(mockElement.hasExtension()).toBe(true);
-    expect(mockElement.getExtension()).toMatchObject([testExtension]);
+    expect(mockElement.getExtension()).toEqual([testExtension]);
     expect(mockElement.isEmpty()).toBe(false);
+    expect(mockElement.toJSON()).toEqual(expectedJson);
 
     const testElement = mockElement.copy();
     expect(testElement).toBeDefined();
@@ -174,7 +197,8 @@ describe('Element', () => {
     expect(testElement.hasId()).toBe(true);
     expect(testElement.getId()).toStrictEqual(testId);
     expect(testElement.hasExtension()).toBe(true);
-    expect(testElement.getExtension()).toMatchObject([testExtension]);
+    expect(testElement.getExtension()).toEqual([testExtension]);
+    expect(mockElement.toJSON()).toEqual(expectedJson);
   });
 
   it('should throw PrimitiveTypeError when setId() with invalid value', () => {
@@ -210,21 +234,3 @@ describe('Element', () => {
     expect(t).toThrow(`Element.addExtension(): The provided argument is not an instance of Extension.`);
   });
 });
-
-class MockElement extends Element {
-  constructor(id?: fhirString, extension?: Extension[]) {
-    super();
-    if (id !== undefined) {
-      this.id = id;
-    }
-    if (extension !== undefined) {
-      this.extension = extension;
-    }
-  }
-
-  public copy(): MockElement {
-    const dest = new MockElement();
-    this.copyValues(dest);
-    return dest;
-  }
-}

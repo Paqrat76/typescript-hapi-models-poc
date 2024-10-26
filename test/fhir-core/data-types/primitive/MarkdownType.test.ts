@@ -23,6 +23,7 @@
 
 import { TOO_BIG_STRING } from '../../../test-utils';
 import { MarkdownType } from '@src/fhir-core/data-types/primitive/MarkdownType';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { fhirMarkdown } from '@src/fhir-core/data-types/primitive/primitive-types';
@@ -40,12 +41,15 @@ describe('MarkdownType', () => {
     expect(testMarkdownType.constructor.name).toStrictEqual('MarkdownType');
     expect(testMarkdownType.fhirType()).toStrictEqual('markdown');
     expect(testMarkdownType.isEmpty()).toBe(true);
+    expect(testMarkdownType.isPrimitive()).toBe(true);
+    expect(testMarkdownType.isStringPrimitive()).toBe(true);
+    expect(testMarkdownType.toJSON()).toBeUndefined();
 
     // inherited properties from Element
     expect(testMarkdownType.hasId()).toBe(false);
     expect(testMarkdownType.getId()).toBeUndefined();
     expect(testMarkdownType.hasExtension()).toBe(false);
-    expect(testMarkdownType.getExtension()).toMatchObject([] as Extension[]);
+    expect(testMarkdownType.getExtension()).toEqual([] as Extension[]);
     // primitive value properties
     expect(testMarkdownType.hasValue()).toBe(false);
     expect(testMarkdownType.getValue()).toBeUndefined();
@@ -54,12 +58,35 @@ describe('MarkdownType', () => {
 
   it('should be properly initialized', () => {
     const testMarkdownType = new MarkdownType(VALID_MARKDOWN);
+    const testId = 'id1234';
+    testMarkdownType.setId(testId);
+    const testExtension = new Extension('testUrl', new StringType('extension string value'));
+    testMarkdownType.addExtension(testExtension);
+
     expect(testMarkdownType).toBeDefined();
     expect(testMarkdownType).toBeInstanceOf(MarkdownType);
     expect(testMarkdownType.constructor.name).toStrictEqual('MarkdownType');
     expect(testMarkdownType.fhirType()).toStrictEqual('markdown');
     expect(testMarkdownType.isEmpty()).toBe(false);
+    expect(testMarkdownType.isPrimitive()).toBe(true);
+    expect(testMarkdownType.isStringPrimitive()).toBe(true);
+    expect(testMarkdownType.toJSON()).toStrictEqual(VALID_MARKDOWN);
+    expect(testMarkdownType.toSiblingJSON()).toEqual({
+      id: 'id1234',
+      extension: [
+        {
+          url: 'testUrl',
+          valueString: 'extension string value',
+        },
+      ],
+    });
 
+    // inherited properties from Element
+    expect(testMarkdownType.hasId()).toBe(true);
+    expect(testMarkdownType.getId()).toStrictEqual(testId);
+    expect(testMarkdownType.hasExtension()).toBe(true);
+    expect(testMarkdownType.getExtension()).toEqual([testExtension]);
+    // primitive value properties
     expect(testMarkdownType.hasValue()).toBe(true);
     expect(testMarkdownType.getValue()).toBeDefined();
     expect(testMarkdownType.getValue()).toStrictEqual(VALID_MARKDOWN);
@@ -202,6 +229,9 @@ describe('MarkdownType', () => {
     expect(testMarkdownType.constructor.name).toStrictEqual('MarkdownType');
     expect(testMarkdownType.fhirType()).toStrictEqual('markdown');
     expect(testMarkdownType.isEmpty()).toBe(false);
+    expect(testMarkdownType.isPrimitive()).toBe(true);
+    expect(testMarkdownType.isStringPrimitive()).toBe(true);
+    expect(testMarkdownType.toJSON()).toStrictEqual(VALID_MARKDOWN);
     expect(testMarkdownType.hasValue()).toBe(true);
     expect(testMarkdownType.getValue()).toBeDefined();
     expect(testMarkdownType.getValue()).toStrictEqual(VALID_MARKDOWN);

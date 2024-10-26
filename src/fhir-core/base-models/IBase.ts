@@ -21,6 +21,8 @@
  *
  */
 
+import * as JSON from '@src/fhir-core/utility/json-helpers';
+
 /**
  * Base interface to specify methods used by utilities, etc.
  *
@@ -36,7 +38,60 @@ export interface IBase {
   fhirType: () => string;
 
   /**
+   * Determines if any value in typeNames equals the current fhirType() value
+   *
+   * @param typeNames - array of FHIR type names
+   * @returns true if any value in typeNames equals (case-insensitive) the current fhirType() value; false otherwise
+   */
+  hasFireType: (...typeNames: string[]) => boolean;
+
+  /**
    * @returns `true` if the instance is empty; `false` otherwise
    */
   isEmpty: () => boolean;
+
+  /**
+   * @returns `true` if the instance is a FHIR resource; `false` otherwise
+   */
+  isResource: () => boolean;
+
+  /**
+   * @returns `true` if the instance is a FHIR complex datatype; `false` otherwise
+   */
+  isComplexDataType: () => boolean;
+
+  /**
+   * @returns `true` if the instance is a FHIR primitive datatype; `false` otherwise
+   */
+  isPrimitive: () => boolean;
+
+  /**
+   * @returns `true` if the instance is a FHIR primitive boolean datatype; `false` otherwise
+   */
+  isBooleanPrimitive: () => boolean;
+
+  /**
+   * @returns `true` if the instance is a FHIR primitive string-based datatype; `false` otherwise
+   */
+  isStringPrimitive: () => boolean;
+
+  /**
+   * @returns `true` if the instance is a FHIR primitive number-based datatype; `false` otherwise
+   */
+  isNumberPrimitive: () => boolean;
+
+  /**
+   * @returns `true` if the instance is a FHIR primitive bigint-based datatype; `false` otherwise
+   */
+  isBigIntPrimitive: () => boolean;
+
+  /**
+   * @returns `true` if the instance is a FHIR primitive datetime-based datatype; `false` otherwise
+   */
+  isDateTimePrimitive: () => boolean;
+
+  /**
+   * @returns the JSON value
+   */
+  toJSON: () => JSON.Value | undefined;
 }

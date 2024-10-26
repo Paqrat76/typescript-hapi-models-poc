@@ -66,6 +66,10 @@ export class UriType extends PrimitiveType<fhirUri> {
     return 'uri';
   }
 
+  public override isStringPrimitive(): boolean {
+    return true;
+  }
+
   public override copy(): UriType {
     const dest = new UriType();
     this.copyValues(dest);

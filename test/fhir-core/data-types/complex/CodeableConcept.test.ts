@@ -51,216 +51,333 @@ describe('CodeableConcept', () => {
 
   const UNDEFINED_VALUE = undefined;
 
-  it('should be properly instantiated as empty', () => {
-    const testCodeableConcept = new CodeableConcept();
-    expect(testCodeableConcept).toBeDefined();
-    expect(testCodeableConcept).toBeInstanceOf(DataType);
-    expect(testCodeableConcept).toBeInstanceOf(CodeableConcept);
-    expect(testCodeableConcept.constructor.name).toStrictEqual('CodeableConcept');
-    expect(testCodeableConcept.fhirType()).toStrictEqual('CodeableConcept');
-    expect(testCodeableConcept.isEmpty()).toBe(true);
-
-    // inherited properties from Element
-    expect(testCodeableConcept.hasId()).toBe(false);
-    expect(testCodeableConcept.getId()).toBeUndefined();
-    expect(testCodeableConcept.hasExtension()).toBe(false);
-    expect(testCodeableConcept.getExtension()).toMatchObject([] as Extension[]);
-
-    // CodeableConcept properties
-    expect(testCodeableConcept.hasCoding()).toBe(false);
-    expect(testCodeableConcept.getCoding()).toMatchObject([] as Coding[]);
-    expect(testCodeableConcept.hasTextElement()).toBe(false);
-    expect(testCodeableConcept.getTextElement()).toMatchObject(new StringType());
-    expect(testCodeableConcept.hasText()).toBe(false);
-    expect(testCodeableConcept.getText()).toBeUndefined();
-  });
-
-  it('should be properly instantiated with valid primitive values', () => {
-    const testCodeableConcept = new CodeableConcept();
-    testCodeableConcept.setCoding([VALID_CODING, VALID_CODING_2]);
-    testCodeableConcept.setText(VALID_STRING);
-
-    expect(testCodeableConcept).toBeDefined();
-    expect(testCodeableConcept).toBeInstanceOf(DataType);
-    expect(testCodeableConcept).toBeInstanceOf(CodeableConcept);
-    expect(testCodeableConcept.constructor.name).toStrictEqual('CodeableConcept');
-    expect(testCodeableConcept.fhirType()).toStrictEqual('CodeableConcept');
-    expect(testCodeableConcept.isEmpty()).toBe(false);
-
-    // inherited properties from Element
-    expect(testCodeableConcept.hasId()).toBe(false);
-    expect(testCodeableConcept.getId()).toBeUndefined();
-    expect(testCodeableConcept.hasExtension()).toBe(false);
-    expect(testCodeableConcept.getExtension()).toMatchObject([] as Extension[]);
-
-    // CodeableConcept properties
-    expect(testCodeableConcept.hasCoding()).toBe(true);
-    expect(testCodeableConcept.getCoding()).toHaveLength(2);
-    expect(testCodeableConcept.getCoding()).toEqual(expect.arrayContaining([VALID_CODING, VALID_CODING_2]));
-    expect(testCodeableConcept.hasTextElement()).toBe(true);
-    expect(testCodeableConcept.getTextElement()).toMatchObject(VALID_STRING_TYPE);
-    expect(testCodeableConcept.hasText()).toBe(true);
-    expect(testCodeableConcept.getText()).toStrictEqual(VALID_STRING);
-  });
-
-  it('should be properly instantiated with valid PrimitiveType values', () => {
-    const testCodeableConcept = new CodeableConcept();
-    testCodeableConcept.setCoding([VALID_CODING, VALID_CODING_2]);
-    testCodeableConcept.setTextElement(VALID_STRING_TYPE);
-
-    expect(testCodeableConcept).toBeDefined();
-    expect(testCodeableConcept).toBeInstanceOf(DataType);
-    expect(testCodeableConcept).toBeInstanceOf(CodeableConcept);
-    expect(testCodeableConcept.constructor.name).toStrictEqual('CodeableConcept');
-    expect(testCodeableConcept.fhirType()).toStrictEqual('CodeableConcept');
-    expect(testCodeableConcept.isEmpty()).toBe(false);
-
-    // inherited properties from Element
-    expect(testCodeableConcept.hasId()).toBe(false);
-    expect(testCodeableConcept.getId()).toBeUndefined();
-    expect(testCodeableConcept.hasExtension()).toBe(false);
-    expect(testCodeableConcept.getExtension()).toMatchObject([] as Extension[]);
-
-    // CodeableConcept properties
-    expect(testCodeableConcept.hasCoding()).toBe(true);
-    expect(testCodeableConcept.getCoding()).toHaveLength(2);
-    expect(testCodeableConcept.getCoding()).toEqual(expect.arrayContaining([VALID_CODING, VALID_CODING_2]));
-    expect(testCodeableConcept.hasTextElement()).toBe(true);
-    expect(testCodeableConcept.getTextElement()).toMatchObject(VALID_STRING_TYPE);
-    expect(testCodeableConcept.hasText()).toBe(true);
-    expect(testCodeableConcept.getText()).toStrictEqual(VALID_STRING);
-  });
-
-  it('should throw PrimitiveTypeError when initialized with invalid primitive text value', () => {
-    const testCodeableConcept = new CodeableConcept();
-    const t = () => {
-      testCodeableConcept.setText(INVALID_STRING);
+  describe('Core', () => {
+    const expectedJson = {
+      coding: [
+        {
+          code: 'testCodeType',
+          display: 'This is a valid string.',
+          system: 'testUriType',
+        },
+        {
+          code: 'testCodeType2',
+          display: 'This is another valid string!',
+          system: 'testUriType2',
+        },
+      ],
+      text: 'This is a valid string.',
     };
-    expect(t).toThrow(PrimitiveTypeError);
-    expect(t).toThrow(`Invalid CodeableConcept.text`);
+
+    it('should be properly instantiated as empty', () => {
+      const testCodeableConcept = new CodeableConcept();
+      expect(testCodeableConcept).toBeDefined();
+      expect(testCodeableConcept).toBeInstanceOf(DataType);
+      expect(testCodeableConcept).toBeInstanceOf(CodeableConcept);
+      expect(testCodeableConcept.constructor.name).toStrictEqual('CodeableConcept');
+      expect(testCodeableConcept.fhirType()).toStrictEqual('CodeableConcept');
+      expect(testCodeableConcept.isEmpty()).toBe(true);
+      expect(testCodeableConcept.isComplexDataType()).toBe(true);
+      expect(testCodeableConcept.toJSON()).toBeUndefined();
+
+      // inherited properties from Element
+      expect(testCodeableConcept.hasId()).toBe(false);
+      expect(testCodeableConcept.getId()).toBeUndefined();
+      expect(testCodeableConcept.hasExtension()).toBe(false);
+      expect(testCodeableConcept.getExtension()).toEqual([] as Extension[]);
+
+      // CodeableConcept properties
+      expect(testCodeableConcept.hasCoding()).toBe(false);
+      expect(testCodeableConcept.getCoding()).toEqual([] as Coding[]);
+      expect(testCodeableConcept.hasTextElement()).toBe(false);
+      expect(testCodeableConcept.getTextElement()).toEqual(new StringType());
+      expect(testCodeableConcept.hasText()).toBe(false);
+      expect(testCodeableConcept.getText()).toBeUndefined();
+    });
+
+    it('should be properly instantiated with addCoding', () => {
+      const testCodeableConcept = new CodeableConcept();
+      testCodeableConcept.addCoding(VALID_CODING);
+      testCodeableConcept.addCoding(VALID_CODING_2);
+      testCodeableConcept.setText(VALID_STRING);
+
+      expect(testCodeableConcept).toBeDefined();
+      expect(testCodeableConcept).toBeInstanceOf(DataType);
+      expect(testCodeableConcept).toBeInstanceOf(CodeableConcept);
+      expect(testCodeableConcept.constructor.name).toStrictEqual('CodeableConcept');
+      expect(testCodeableConcept.fhirType()).toStrictEqual('CodeableConcept');
+      expect(testCodeableConcept.isEmpty()).toBe(false);
+      expect(testCodeableConcept.isComplexDataType()).toBe(true);
+      expect(testCodeableConcept.toJSON()).toEqual(expectedJson);
+
+      // inherited properties from Element
+      expect(testCodeableConcept.hasId()).toBe(false);
+      expect(testCodeableConcept.getId()).toBeUndefined();
+      expect(testCodeableConcept.hasExtension()).toBe(false);
+      expect(testCodeableConcept.getExtension()).toEqual([] as Extension[]);
+
+      // CodeableConcept properties
+      expect(testCodeableConcept.hasCoding()).toBe(true);
+      expect(testCodeableConcept.getCoding()).toHaveLength(2);
+      expect(testCodeableConcept.getCoding()).toEqual(expect.arrayContaining([VALID_CODING, VALID_CODING_2]));
+      expect(testCodeableConcept.hasTextElement()).toBe(true);
+      expect(testCodeableConcept.getTextElement()).toEqual(VALID_STRING_TYPE);
+      expect(testCodeableConcept.hasText()).toBe(true);
+      expect(testCodeableConcept.getText()).toStrictEqual(VALID_STRING);
+    });
+
+    it('should be properly instantiated with setCoding', () => {
+      const testCodeableConcept = new CodeableConcept();
+      testCodeableConcept.setCoding([VALID_CODING, VALID_CODING_2]);
+      testCodeableConcept.setTextElement(VALID_STRING_TYPE);
+
+      expect(testCodeableConcept).toBeDefined();
+      expect(testCodeableConcept).toBeInstanceOf(DataType);
+      expect(testCodeableConcept).toBeInstanceOf(CodeableConcept);
+      expect(testCodeableConcept.constructor.name).toStrictEqual('CodeableConcept');
+      expect(testCodeableConcept.fhirType()).toStrictEqual('CodeableConcept');
+      expect(testCodeableConcept.isEmpty()).toBe(false);
+      expect(testCodeableConcept.isComplexDataType()).toBe(true);
+      expect(testCodeableConcept.toJSON()).toEqual(expectedJson);
+
+      // inherited properties from Element
+      expect(testCodeableConcept.hasId()).toBe(false);
+      expect(testCodeableConcept.getId()).toBeUndefined();
+      expect(testCodeableConcept.hasExtension()).toBe(false);
+      expect(testCodeableConcept.getExtension()).toEqual([] as Extension[]);
+
+      // CodeableConcept properties
+      expect(testCodeableConcept.hasCoding()).toBe(true);
+      expect(testCodeableConcept.getCoding()).toHaveLength(2);
+      expect(testCodeableConcept.getCoding()).toEqual(expect.arrayContaining([VALID_CODING, VALID_CODING_2]));
+      expect(testCodeableConcept.hasTextElement()).toBe(true);
+      expect(testCodeableConcept.getTextElement()).toEqual(VALID_STRING_TYPE);
+      expect(testCodeableConcept.hasText()).toBe(true);
+      expect(testCodeableConcept.getText()).toStrictEqual(VALID_STRING);
+    });
+
+    it('should throw PrimitiveTypeError when initialized with invalid primitive text value', () => {
+      const testCodeableConcept = new CodeableConcept();
+      const t = () => {
+        testCodeableConcept.setText(INVALID_STRING);
+      };
+      expect(t).toThrow(PrimitiveTypeError);
+      expect(t).toThrow(`Invalid CodeableConcept.text`);
+    });
+
+    it('should be properly reset by modifying all properties', () => {
+      const testCodeableConcept = new CodeableConcept();
+
+      testCodeableConcept.setCoding([VALID_CODING]);
+      testCodeableConcept.setText(VALID_STRING);
+      expect(testCodeableConcept).toBeDefined();
+      expect(testCodeableConcept.isEmpty()).toBe(false);
+      expect(testCodeableConcept.hasCoding()).toBe(true);
+      expect(testCodeableConcept.getCoding()).toEqual([VALID_CODING]);
+      expect(testCodeableConcept.hasTextElement()).toBe(true);
+      expect(testCodeableConcept.getTextElement()).toEqual(VALID_STRING_TYPE);
+      expect(testCodeableConcept.hasText()).toBe(true);
+      expect(testCodeableConcept.getText()).toStrictEqual(VALID_STRING);
+
+      testCodeableConcept.setCoding([VALID_CODING_2]);
+      testCodeableConcept.setTextElement(VALID_STRING_TYPE_2);
+      expect(testCodeableConcept).toBeDefined();
+      expect(testCodeableConcept.isEmpty()).toBe(false);
+      expect(testCodeableConcept.hasCoding()).toBe(true);
+      expect(testCodeableConcept.getCoding()).toEqual([VALID_CODING_2]);
+      expect(testCodeableConcept.hasTextElement()).toBe(true);
+      expect(testCodeableConcept.getTextElement()).toEqual(VALID_STRING_TYPE_2);
+      expect(testCodeableConcept.hasText()).toBe(true);
+      expect(testCodeableConcept.getText()).toStrictEqual(VALID_STRING_2);
+    });
+
+    it('should be properly reset by modifying all properties with undefined values', () => {
+      // undefined - primitive text
+      const testCodeableConcept = new CodeableConcept();
+      testCodeableConcept.addCoding(UNDEFINED_VALUE);
+      testCodeableConcept.setText(UNDEFINED_VALUE);
+      expect(testCodeableConcept).toBeDefined();
+      expect(testCodeableConcept.isEmpty()).toBe(true);
+      expect(testCodeableConcept.isComplexDataType()).toBe(true);
+      expect(testCodeableConcept.toJSON()).toBeUndefined();
+
+      // inherited properties from Element
+      expect(testCodeableConcept.hasId()).toBe(false);
+      expect(testCodeableConcept.getId()).toBeUndefined();
+      expect(testCodeableConcept.hasExtension()).toBe(false);
+      expect(testCodeableConcept.getExtension()).toEqual([] as Extension[]);
+
+      // CodeableConcept properties
+      expect(testCodeableConcept.hasCoding()).toBe(false);
+      expect(testCodeableConcept.getCoding()).toEqual([] as Coding[]);
+      expect(testCodeableConcept.hasTextElement()).toBe(false);
+      expect(testCodeableConcept.getTextElement()).toEqual(new StringType());
+      expect(testCodeableConcept.hasText()).toBe(false);
+      expect(testCodeableConcept.getText()).toBeUndefined();
+
+      // undefined - PrimitiveType text
+      testCodeableConcept.setCoding(UNDEFINED_VALUE);
+      testCodeableConcept.setTextElement(UNDEFINED_VALUE);
+      expect(testCodeableConcept).toBeDefined();
+      expect(testCodeableConcept.isEmpty()).toBe(true);
+
+      // inherited properties from Element
+      expect(testCodeableConcept.hasId()).toBe(false);
+      expect(testCodeableConcept.getId()).toBeUndefined();
+      expect(testCodeableConcept.hasExtension()).toBe(false);
+      expect(testCodeableConcept.getExtension()).toEqual([] as Extension[]);
+
+      // CodeableConcept properties
+      expect(testCodeableConcept.hasCoding()).toBe(false);
+      expect(testCodeableConcept.getCoding()).toEqual([] as Coding[]);
+      expect(testCodeableConcept.hasTextElement()).toBe(false);
+      expect(testCodeableConcept.getTextElement()).toEqual(new StringType());
+      expect(testCodeableConcept.hasText()).toBe(false);
+      expect(testCodeableConcept.getText()).toBeUndefined();
+    });
+
+    it('should properly copy()', () => {
+      let codeableConceptType = new CodeableConcept();
+      codeableConceptType.addCoding(VALID_CODING);
+      codeableConceptType.addCoding(VALID_CODING_2);
+      codeableConceptType.setText(VALID_STRING);
+      let testCodeableConcept = codeableConceptType.copy();
+
+      expect(testCodeableConcept).toBeDefined();
+      expect(testCodeableConcept).toBeInstanceOf(DataType);
+      expect(testCodeableConcept).toBeInstanceOf(CodeableConcept);
+      expect(testCodeableConcept.constructor.name).toStrictEqual('CodeableConcept');
+      expect(testCodeableConcept.fhirType()).toStrictEqual('CodeableConcept');
+      expect(testCodeableConcept.isEmpty()).toBe(false);
+      expect(testCodeableConcept.isComplexDataType()).toBe(true);
+      expect(testCodeableConcept.toJSON()).toEqual(expectedJson);
+
+      // inherited properties from Element
+      expect(testCodeableConcept.hasId()).toBe(false);
+      expect(testCodeableConcept.getId()).toBeUndefined();
+      expect(testCodeableConcept.hasExtension()).toBe(false);
+      expect(testCodeableConcept.getExtension()).toEqual([] as Extension[]);
+
+      // CodeableConcept properties
+      expect(testCodeableConcept.hasCoding()).toBe(true);
+      expect(testCodeableConcept.getCoding()).toHaveLength(2);
+      expect(testCodeableConcept.getCoding()).toEqual(expect.arrayContaining([VALID_CODING, VALID_CODING_2]));
+      expect(testCodeableConcept.hasTextElement()).toBe(true);
+      expect(testCodeableConcept.getTextElement()).toEqual(VALID_STRING_TYPE);
+      expect(testCodeableConcept.hasText()).toBe(true);
+      expect(testCodeableConcept.getText()).toStrictEqual(VALID_STRING);
+
+      // copy empty
+      codeableConceptType = new CodeableConcept();
+      testCodeableConcept = codeableConceptType.copy();
+      expect(testCodeableConcept).toBeDefined();
+      expect(testCodeableConcept).toBeInstanceOf(DataType);
+      expect(testCodeableConcept).toBeInstanceOf(CodeableConcept);
+      expect(testCodeableConcept.constructor.name).toStrictEqual('CodeableConcept');
+      expect(testCodeableConcept.fhirType()).toStrictEqual('CodeableConcept');
+      expect(testCodeableConcept.isEmpty()).toBe(true);
+      expect(testCodeableConcept.isComplexDataType()).toBe(true);
+      expect(testCodeableConcept.toJSON()).toBeUndefined();
+
+      // inherited properties from Element
+      expect(testCodeableConcept.hasId()).toBe(false);
+      expect(testCodeableConcept.getId()).toBeUndefined();
+      expect(testCodeableConcept.hasExtension()).toBe(false);
+      expect(testCodeableConcept.getExtension()).toEqual([] as Extension[]);
+
+      // CodeableConcept properties
+      expect(testCodeableConcept.hasCoding()).toBe(false);
+      expect(testCodeableConcept.getCoding()).toEqual([] as Coding[]);
+      expect(testCodeableConcept.hasTextElement()).toBe(false);
+      expect(testCodeableConcept.getTextElement()).toEqual(new StringType());
+      expect(testCodeableConcept.hasText()).toBe(false);
+      expect(testCodeableConcept.getText()).toBeUndefined();
+    });
   });
 
-  it('should be properly reset by modifying all properties with primitive values', () => {
-    const testCodeableConcept = new CodeableConcept();
+  describe('Serialization/Deserialization', () => {
+    it('should properly create serialized content', () => {
+      const testCodeableConcept = new CodeableConcept();
+      const testId = 'id1234';
+      testCodeableConcept.setId(testId);
+      const testExtension1 = new Extension('testUrl1', new StringType('base extension string value 1'));
+      testCodeableConcept.addExtension(testExtension1);
+      const testExtension2 = new Extension('testUrl2', new StringType('base extension string value 2'));
+      testCodeableConcept.addExtension(testExtension2);
 
-    testCodeableConcept.setCoding([VALID_CODING]);
-    testCodeableConcept.setText(VALID_STRING);
-    expect(testCodeableConcept).toBeDefined();
-    expect(testCodeableConcept.isEmpty()).toBe(false);
-    expect(testCodeableConcept.hasCoding()).toBe(true);
-    expect(testCodeableConcept.getCoding()).toEqual([VALID_CODING]);
-    expect(testCodeableConcept.hasTextElement()).toBe(true);
-    expect(testCodeableConcept.getTextElement()).toMatchObject(VALID_STRING_TYPE);
-    expect(testCodeableConcept.hasText()).toBe(true);
-    expect(testCodeableConcept.getText()).toStrictEqual(VALID_STRING);
+      const coding1 = new Coding();
+      coding1.setSystem(VALID_URI);
+      coding1.setCode(VALID_CODE);
+      coding1.setDisplay(VALID_STRING);
+      const coding1Id = 'S1357';
+      const coding1Extension = new Extension('coding1Url', new StringType('coding1 extension string value'));
+      coding1.setId(coding1Id);
+      coding1.addExtension(coding1Extension);
 
-    testCodeableConcept.setCoding([VALID_CODING_2]);
-    testCodeableConcept.setTextElement(VALID_STRING_TYPE_2);
-    expect(testCodeableConcept).toBeDefined();
-    expect(testCodeableConcept.isEmpty()).toBe(false);
-    expect(testCodeableConcept.hasCoding()).toBe(true);
-    expect(testCodeableConcept.getCoding()).toEqual([VALID_CODING_2]);
-    expect(testCodeableConcept.hasTextElement()).toBe(true);
-    expect(testCodeableConcept.getTextElement()).toMatchObject(VALID_STRING_TYPE_2);
-    expect(testCodeableConcept.hasText()).toBe(true);
-    expect(testCodeableConcept.getText()).toStrictEqual(VALID_STRING_2);
-  });
+      const coding2 = new Coding();
+      coding2.setSystem(VALID_URI_2);
+      coding2.setCode(VALID_CODE_2);
+      coding2.setDisplay(VALID_STRING_2);
 
-  it('should be properly reset by modifying all properties with undefined values', () => {
-    // undefined - primitive text
-    let testCodeableConcept = new CodeableConcept();
-    testCodeableConcept.addCoding(UNDEFINED_VALUE);
-    testCodeableConcept.setText(UNDEFINED_VALUE);
-    expect(testCodeableConcept).toBeDefined();
-    expect(testCodeableConcept.isEmpty()).toBe(true);
+      testCodeableConcept.setCoding([coding1, coding2]);
+      testCodeableConcept.setTextElement(VALID_STRING_TYPE);
 
-    // inherited properties from Element
-    expect(testCodeableConcept.hasId()).toBe(false);
-    expect(testCodeableConcept.getId()).toBeUndefined();
-    expect(testCodeableConcept.hasExtension()).toBe(false);
-    expect(testCodeableConcept.getExtension()).toMatchObject([] as Extension[]);
+      expect(testCodeableConcept).toBeDefined();
+      expect(testCodeableConcept).toBeInstanceOf(DataType);
+      expect(testCodeableConcept).toBeInstanceOf(CodeableConcept);
+      expect(testCodeableConcept.constructor.name).toStrictEqual('CodeableConcept');
+      expect(testCodeableConcept.fhirType()).toStrictEqual('CodeableConcept');
+      expect(testCodeableConcept.isEmpty()).toBe(false);
+      expect(testCodeableConcept.isComplexDataType()).toBe(true);
 
-    // CodeableConcept properties
-    expect(testCodeableConcept.hasCoding()).toBe(false);
-    expect(testCodeableConcept.getCoding()).toMatchObject([] as Coding[]);
-    expect(testCodeableConcept.hasTextElement()).toBe(false);
-    expect(testCodeableConcept.getTextElement()).toMatchObject(new StringType());
-    expect(testCodeableConcept.hasText()).toBe(false);
-    expect(testCodeableConcept.getText()).toBeUndefined();
+      // inherited properties from Element
+      expect(testCodeableConcept.hasId()).toBe(true);
+      expect(testCodeableConcept.getId()).toStrictEqual(testId);
+      expect(testCodeableConcept.hasExtension()).toBe(true);
+      expect(testCodeableConcept.getExtension()).toEqual([testExtension1, testExtension2]);
 
-    // undefined - PrimitiveType text
-    testCodeableConcept = new CodeableConcept();
-    testCodeableConcept.setCoding(UNDEFINED_VALUE);
-    testCodeableConcept.setTextElement(UNDEFINED_VALUE);
-    expect(testCodeableConcept).toBeDefined();
-    expect(testCodeableConcept.isEmpty()).toBe(true);
+      // CodeableConcept properties
+      expect(testCodeableConcept.hasCoding()).toBe(true);
+      expect(testCodeableConcept.getCoding()).toHaveLength(2);
+      expect(testCodeableConcept.getCoding()).toEqual(expect.arrayContaining([coding1, coding2]));
+      expect(testCodeableConcept.hasTextElement()).toBe(true);
+      expect(testCodeableConcept.getTextElement()).toEqual(VALID_STRING_TYPE);
+      expect(testCodeableConcept.hasText()).toBe(true);
+      expect(testCodeableConcept.getText()).toStrictEqual(VALID_STRING);
 
-    // inherited properties from Element
-    expect(testCodeableConcept.hasId()).toBe(false);
-    expect(testCodeableConcept.getId()).toBeUndefined();
-    expect(testCodeableConcept.hasExtension()).toBe(false);
-    expect(testCodeableConcept.getExtension()).toMatchObject([] as Extension[]);
-
-    // CodeableConcept properties
-    expect(testCodeableConcept.hasCoding()).toBe(false);
-    expect(testCodeableConcept.getCoding()).toMatchObject([] as Coding[]);
-    expect(testCodeableConcept.hasTextElement()).toBe(false);
-    expect(testCodeableConcept.getTextElement()).toMatchObject(new StringType());
-    expect(testCodeableConcept.hasText()).toBe(false);
-    expect(testCodeableConcept.getText()).toBeUndefined();
-  });
-
-  it('should properly copy()', () => {
-    let codeableConceptType = new CodeableConcept();
-    codeableConceptType.addCoding(VALID_CODING);
-    codeableConceptType.addCoding(VALID_CODING_2);
-    codeableConceptType.setText(VALID_STRING);
-    let testCodeableConcept = codeableConceptType.copy();
-
-    expect(testCodeableConcept).toBeDefined();
-    expect(testCodeableConcept).toBeInstanceOf(DataType);
-    expect(testCodeableConcept).toBeInstanceOf(CodeableConcept);
-    expect(testCodeableConcept.constructor.name).toStrictEqual('CodeableConcept');
-    expect(testCodeableConcept.fhirType()).toStrictEqual('CodeableConcept');
-    expect(testCodeableConcept.isEmpty()).toBe(false);
-
-    // inherited properties from Element
-    expect(testCodeableConcept.hasId()).toBe(false);
-    expect(testCodeableConcept.getId()).toBeUndefined();
-    expect(testCodeableConcept.hasExtension()).toBe(false);
-    expect(testCodeableConcept.getExtension()).toMatchObject([] as Extension[]);
-
-    // CodeableConcept properties
-    expect(testCodeableConcept.hasCoding()).toBe(true);
-    expect(testCodeableConcept.getCoding()).toHaveLength(2);
-    expect(testCodeableConcept.getCoding()).toEqual(expect.arrayContaining([VALID_CODING, VALID_CODING_2]));
-    expect(testCodeableConcept.hasTextElement()).toBe(true);
-    expect(testCodeableConcept.getTextElement()).toMatchObject(VALID_STRING_TYPE);
-    expect(testCodeableConcept.hasText()).toBe(true);
-    expect(testCodeableConcept.getText()).toStrictEqual(VALID_STRING);
-
-    // copy empty
-    codeableConceptType = new CodeableConcept();
-    testCodeableConcept = codeableConceptType.copy();
-    expect(testCodeableConcept).toBeDefined();
-    expect(testCodeableConcept).toBeInstanceOf(DataType);
-    expect(testCodeableConcept).toBeInstanceOf(CodeableConcept);
-    expect(testCodeableConcept.constructor.name).toStrictEqual('CodeableConcept');
-    expect(testCodeableConcept.fhirType()).toStrictEqual('CodeableConcept');
-    expect(testCodeableConcept.isEmpty()).toBe(true);
-
-    // inherited properties from Element
-    expect(testCodeableConcept.hasId()).toBe(false);
-    expect(testCodeableConcept.getId()).toBeUndefined();
-    expect(testCodeableConcept.hasExtension()).toBe(false);
-    expect(testCodeableConcept.getExtension()).toMatchObject([] as Extension[]);
-
-    // CodeableConcept properties
-    expect(testCodeableConcept.hasCoding()).toBe(false);
-    expect(testCodeableConcept.getCoding()).toMatchObject([] as Coding[]);
-    expect(testCodeableConcept.hasTextElement()).toBe(false);
-    expect(testCodeableConcept.getTextElement()).toMatchObject(new StringType());
-    expect(testCodeableConcept.hasText()).toBe(false);
-    expect(testCodeableConcept.getText()).toBeUndefined();
+      const expectedJson = {
+        id: 'id1234',
+        extension: [
+          {
+            url: 'testUrl1',
+            valueString: 'base extension string value 1',
+          },
+          {
+            url: 'testUrl2',
+            valueString: 'base extension string value 2',
+          },
+        ],
+        coding: [
+          {
+            id: 'S1357',
+            extension: [
+              {
+                url: 'coding1Url',
+                valueString: 'coding1 extension string value',
+              },
+            ],
+            system: 'testUriType',
+            code: 'testCodeType',
+            display: 'This is a valid string.',
+          },
+          {
+            system: 'testUriType2',
+            code: 'testCodeType2',
+            display: 'This is another valid string!',
+          },
+        ],
+        text: 'This is a valid string.',
+      };
+      expect(testCodeableConcept.toJSON()).toEqual(expectedJson);
+    });
   });
 });

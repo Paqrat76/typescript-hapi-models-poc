@@ -40,7 +40,7 @@ import { InvalidDateTimeError } from '@src/fhir-core/errors/InvalidDateTimeError
 /**
  * Luxon DateTime options to affect the creation of the DateTime instance.
  *
- * @category Utilities
+ * @category Utilities: DateTime
  * @interface
  */
 export interface DateTimeOpts {
@@ -84,7 +84,7 @@ export interface DateTimeOpts {
  * @returns an instance of a DateTime object
  * @throws InvalidDateTimeError if the instantiated DataTime object is invalid
  *
- * @category Utilities
+ * @category Utilities: DateTime
  * @see [Luxon DateTime.fromISO()](https://moment.github.io/luxon/api-docs/index.html#datetimefromiso)
  */
 export function getDateTimeObject(value: string | undefined, opts?: DateTimeOpts): DateTime | undefined {
@@ -116,7 +116,7 @@ export function getDateTimeObject(value: string | undefined, opts?: DateTimeOpts
  * @returns an instance of a DateTime object having the UTC time zone
  * @throws InvalidDateTimeError if the instantiated DataTime object is invalid
  *
- * @category Utilities
+ * @category Utilities: DateTime
  * @see [Luxon DateTime.fromISO()](https://moment.github.io/luxon/api-docs/index.html#datetimefromiso)
  */
 export function getDateTimeObjectAsUTC(value: string | undefined): DateTime | undefined {
@@ -140,7 +140,7 @@ export function getDateTimeObjectAsUTC(value: string | undefined): DateTime | un
  * @returns the FHIR primitive date/dateTime value as 'YYYY'
  * @throws InvalidDateTimeError for an invalid dt argument
  *
- * @category Utilities
+ * @category Utilities: DateTime
  */
 export function getValueAsYear(dt: unknown): string | undefined {
   verifyDateTime(dt);
@@ -154,7 +154,7 @@ export function getValueAsYear(dt: unknown): string | undefined {
  * @returns the FHIR primitive date/dateTime value as 'YYYY-MM'
  * @throws InvalidDateTimeError for an invalid dt argument
  *
- * @category Utilities
+ * @category Utilities: DateTime
  */
 export function getValueAsYearMonth(dt: unknown): string | undefined {
   verifyDateTime(dt);
@@ -168,7 +168,7 @@ export function getValueAsYearMonth(dt: unknown): string | undefined {
  * @returns the FHIR primitive date/dateTime value as 'YYYY-MM-DD'
  * @throws InvalidDateTimeError for an invalid dt argument
  *
- * @category Utilities
+ * @category Utilities: DateTime
  */
 export function getValueAsDateOnly(dt: unknown): string | undefined {
   verifyDateTime(dt);
@@ -185,7 +185,7 @@ export function getValueAsDateOnly(dt: unknown): string | undefined {
  * @returns the FHIR primitive date/dateTime value as an ISO datetime string
  * @throws InvalidDateTimeError for an invalid dt argument
  *
- * @category Utilities
+ * @category Utilities: DateTime
  */
 export function getValueAsDateTime(dt: unknown): string | undefined {
   verifyDateTime(dt);
@@ -202,7 +202,7 @@ export function getValueAsDateTime(dt: unknown): string | undefined {
  * @returns the FHIR primitive date/dateTime value as an ISO datetime string
  * @throws InvalidDateTimeError for an invalid dt argument
  *
- * @category Utilities
+ * @category Utilities: DateTime
  */
 export function getValueAsInstant(dt: unknown): string | undefined {
   verifyDateTime(dt);
@@ -216,6 +216,7 @@ export function getValueAsInstant(dt: unknown): string | undefined {
  *
  * @param dt - expected DateTime object
  * @throws InvalidDateTimeError if not a valid DateTime object
+ *
  * @private
  */
 function verifyDateTime(dt: unknown): void {

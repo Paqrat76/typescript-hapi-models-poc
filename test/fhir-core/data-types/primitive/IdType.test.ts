@@ -22,6 +22,7 @@
  */
 
 import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 
@@ -38,12 +39,15 @@ describe('IdType', () => {
     expect(testIdType.constructor.name).toStrictEqual('IdType');
     expect(testIdType.fhirType()).toStrictEqual('id');
     expect(testIdType.isEmpty()).toBe(true);
+    expect(testIdType.isPrimitive()).toBe(true);
+    expect(testIdType.isStringPrimitive()).toBe(true);
+    expect(testIdType.toJSON()).toBeUndefined();
 
     // inherited properties from Element
     expect(testIdType.hasId()).toBe(false);
     expect(testIdType.getId()).toBeUndefined();
     expect(testIdType.hasExtension()).toBe(false);
-    expect(testIdType.getExtension()).toMatchObject([] as Extension[]);
+    expect(testIdType.getExtension()).toEqual([] as Extension[]);
     // primitive value properties
     expect(testIdType.hasValue()).toBe(false);
     expect(testIdType.getValue()).toBeUndefined();
@@ -52,12 +56,35 @@ describe('IdType', () => {
 
   it('should be properly initialized', () => {
     const testIdType = new IdType(VALID_ID);
+    const testId = 'id1234';
+    testIdType.setId(testId);
+    const testExtension = new Extension('testUrl', new StringType('extension string value'));
+    testIdType.addExtension(testExtension);
+
     expect(testIdType).toBeDefined();
     expect(testIdType).toBeInstanceOf(IdType);
     expect(testIdType.constructor.name).toStrictEqual('IdType');
     expect(testIdType.fhirType()).toStrictEqual('id');
     expect(testIdType.isEmpty()).toBe(false);
+    expect(testIdType.isPrimitive()).toBe(true);
+    expect(testIdType.isStringPrimitive()).toBe(true);
+    expect(testIdType.toJSON()).toStrictEqual(VALID_ID);
+    expect(testIdType.toSiblingJSON()).toEqual({
+      id: 'id1234',
+      extension: [
+        {
+          url: 'testUrl',
+          valueString: 'extension string value',
+        },
+      ],
+    });
 
+    // inherited properties from Element
+    expect(testIdType.hasId()).toBe(true);
+    expect(testIdType.getId()).toStrictEqual(testId);
+    expect(testIdType.hasExtension()).toBe(true);
+    expect(testIdType.getExtension()).toEqual([testExtension]);
+    // primitive value properties
     expect(testIdType.hasValue()).toBe(true);
     expect(testIdType.getValue()).toBeDefined();
     expect(testIdType.getValue()).toStrictEqual(VALID_ID);
@@ -156,6 +183,9 @@ describe('IdType', () => {
     expect(testIdType.constructor.name).toStrictEqual('IdType');
     expect(testIdType.fhirType()).toStrictEqual('id');
     expect(testIdType.isEmpty()).toBe(false);
+    expect(testIdType.isPrimitive()).toBe(true);
+    expect(testIdType.isStringPrimitive()).toBe(true);
+    expect(testIdType.toJSON()).toStrictEqual(VALID_ID);
     expect(testIdType.hasValue()).toBe(true);
     expect(testIdType.getValue()).toBeDefined();
     expect(testIdType.getValue()).toStrictEqual(VALID_ID);

@@ -21,10 +21,11 @@
  *
  */
 
-import { FHIR_MAX_INTEGER } from '../../../test-utils';
 import { UnsignedIntType } from '@src/fhir-core/data-types/primitive/UnsignedIntType';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
+import { FHIR_MAX_INTEGER } from '../../../test-utils';
 
 describe('UnsignedIntType', () => {
   const VALID_INTEGER = 0;
@@ -39,12 +40,15 @@ describe('UnsignedIntType', () => {
     expect(testUnsignedIntType.constructor.name).toStrictEqual('UnsignedIntType');
     expect(testUnsignedIntType.fhirType()).toStrictEqual('unsignedInt');
     expect(testUnsignedIntType.isEmpty()).toBe(true);
+    expect(testUnsignedIntType.isPrimitive()).toBe(true);
+    expect(testUnsignedIntType.isNumberPrimitive()).toBe(true);
+    expect(testUnsignedIntType.toJSON()).toBeUndefined();
 
     // inherited properties from Element
     expect(testUnsignedIntType.hasId()).toBe(false);
     expect(testUnsignedIntType.getId()).toBeUndefined();
     expect(testUnsignedIntType.hasExtension()).toBe(false);
-    expect(testUnsignedIntType.getExtension()).toMatchObject([] as Extension[]);
+    expect(testUnsignedIntType.getExtension()).toEqual([] as Extension[]);
     // primitive value properties
     expect(testUnsignedIntType.hasValue()).toBe(false);
     expect(testUnsignedIntType.getValue()).toBeUndefined();
@@ -53,12 +57,35 @@ describe('UnsignedIntType', () => {
 
   it('should be properly initialized', () => {
     const testUnsignedIntType = new UnsignedIntType(VALID_INTEGER);
+    const testId = 'id1234';
+    testUnsignedIntType.setId(testId);
+    const testExtension = new Extension('testUrl', new StringType('extension string value'));
+    testUnsignedIntType.addExtension(testExtension);
+
     expect(testUnsignedIntType).toBeDefined();
     expect(testUnsignedIntType).toBeInstanceOf(UnsignedIntType);
     expect(testUnsignedIntType.constructor.name).toStrictEqual('UnsignedIntType');
     expect(testUnsignedIntType.fhirType()).toStrictEqual('unsignedInt');
     expect(testUnsignedIntType.isEmpty()).toBe(false);
+    expect(testUnsignedIntType.isPrimitive()).toBe(true);
+    expect(testUnsignedIntType.isNumberPrimitive()).toBe(true);
+    expect(testUnsignedIntType.toJSON()).toStrictEqual(VALID_INTEGER);
+    expect(testUnsignedIntType.toSiblingJSON()).toEqual({
+      id: 'id1234',
+      extension: [
+        {
+          url: 'testUrl',
+          valueString: 'extension string value',
+        },
+      ],
+    });
 
+    // inherited properties from Element
+    expect(testUnsignedIntType.hasId()).toBe(true);
+    expect(testUnsignedIntType.getId()).toStrictEqual(testId);
+    expect(testUnsignedIntType.hasExtension()).toBe(true);
+    expect(testUnsignedIntType.getExtension()).toEqual([testExtension]);
+    // primitive value properties
     expect(testUnsignedIntType.hasValue()).toBe(true);
     expect(testUnsignedIntType.getValue()).toBeDefined();
     expect(testUnsignedIntType.getValue()).toStrictEqual(VALID_INTEGER);
@@ -157,6 +184,9 @@ describe('UnsignedIntType', () => {
     expect(testUnsignedIntType.constructor.name).toStrictEqual('UnsignedIntType');
     expect(testUnsignedIntType.fhirType()).toStrictEqual('unsignedInt');
     expect(testUnsignedIntType.isEmpty()).toBe(false);
+    expect(testUnsignedIntType.isPrimitive()).toBe(true);
+    expect(testUnsignedIntType.isNumberPrimitive()).toBe(true);
+    expect(testUnsignedIntType.toJSON()).toStrictEqual(VALID_INTEGER);
     expect(testUnsignedIntType.hasValue()).toBe(true);
     expect(testUnsignedIntType.getValue()).toBeDefined();
     expect(testUnsignedIntType.getValue()).toStrictEqual(VALID_INTEGER);

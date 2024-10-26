@@ -22,102 +22,6 @@
  */
 
 /**
- * FhirDataType
- *
- * @remarks
- * Type definition based on DATA_TYPES array.
- *
- * @category Base Models
- */
-export type FhirDataType = (typeof DATA_TYPES)[number];
-
-/**
- * FHIR data types
- *
- * @remarks
- * All defined FHIR data types for complex and primitive data types.
- *
- * @category Base Models
- * @see [DataTypes](https://hl7.org/fhir/R5/datatypes.html)
- */
-export const DATA_TYPES = [
-  // Primitive Datatypes
-  'base64Binary',
-  'boolean',
-  'canonical',
-  'code',
-  'date',
-  'dateTime',
-  'decimal',
-  'id',
-  'instant',
-  'integer',
-  'integer64', // added in FHIR R5
-  'markdown',
-  'oid',
-  'positiveInt',
-  'string',
-  'time',
-  'unsignedInt',
-  'uri',
-  'url',
-  'uuid',
-  // General Purpose Datatypes
-  'Address',
-  'Age',
-  'Annotation',
-  'Attachment',
-  'CodeableConcept',
-  'Coding',
-  'ContactPoint',
-  'Count',
-  'Distance',
-  'Duration',
-  'HumanName',
-  'Identifier',
-  'Money',
-  'MoneyQuantity',
-  'Period',
-  'Quantity',
-  'Range',
-  'Ratio',
-  'RatioRange', // added in FHIR R5
-  'SampledData',
-  'Signature',
-  'SimpleQuantity',
-  'Timing',
-  // Metadata Datatypes
-  'Availability', // added in FHIR R5
-  'ContactDetail',
-  'DataRequirement',
-  'Expression',
-  'ExtendedContactDetail', // added in FHIR R5
-  'MonetaryComponent', // added in FHIR R5
-  'ParameterDefinition',
-  'RelatedArtifact',
-  'TriggerDefinition',
-  'UsageContext',
-  'VirtualServiceDetail', // added in FHIR R5
-  // Special Purpose Datatypes
-  'CodeableReference', // added in FHIR R5
-  'Dosage',
-  'Meta',
-  'Narrative',
-  'Reference',
-  'xhtml',
-] as const;
-
-/**
- * FhirOpenDataType
- *
- * @remarks
- * Type definition based on OPEN_DATA_TYPES array.
- *
- * @category Base Models
- */
-export type FhirOpenDataType = (typeof OPEN_DATA_TYPES)[number];
-
-/**
  * FHIR open data types
  *
  * @remarks
@@ -190,3 +94,46 @@ export const OPEN_DATA_TYPES = [
   'Dosage',
   'Meta',
 ] as const;
+
+/**
+ * FhirOpenDataType
+ *
+ * @remarks
+ * Type definition based on OPEN_DATA_TYPES array.
+ *
+ * @category Base Models
+ */
+export type FhirOpenDataType = (typeof OPEN_DATA_TYPES)[number];
+
+/**
+ * Non-open data types that are valid data types
+ */
+const NON_OPEN_DATA_TYPES = [
+  'MonetaryComponent',
+  'VirtualServiceDetail',
+  'CodeableReference',
+  'Narrative',
+  'Reference',
+  'xhtml',
+] as const;
+
+/**
+ * FHIR data types
+ *
+ * @remarks
+ * All defined FHIR data types for complex and primitive data types.
+ *
+ * @category Base Models
+ * @see [DataTypes](https://hl7.org/fhir/R5/datatypes.html)
+ */
+export const DATA_TYPES = [...OPEN_DATA_TYPES, ...NON_OPEN_DATA_TYPES] as const;
+
+/**
+ * FhirDataType
+ *
+ * @remarks
+ * Type definition based on DATA_TYPES array.
+ *
+ * @category Base Models
+ */
+export type FhirDataType = (typeof DATA_TYPES)[number];

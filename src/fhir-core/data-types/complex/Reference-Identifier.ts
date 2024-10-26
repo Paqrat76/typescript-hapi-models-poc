@@ -34,7 +34,7 @@
  */
 
 import { strict as assert } from 'node:assert';
-import { DataType } from '@src/fhir-core/base-models/core-fhir-models';
+import { DataType, setFhirPrimitiveJson, setFhirComplexJson } from '@src/fhir-core/base-models/core-fhir-models';
 import { IBase } from '@src/fhir-core/base-models/IBase';
 import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
@@ -54,6 +54,7 @@ import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import { RESOURCE_TYPES, FhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
 import { FhirTypeGuard } from '@src/fhir-core/utility/type-guards';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import * as JSON from '@src/fhir-core/utility/json-helpers';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -325,14 +326,14 @@ export class Reference extends DataType implements IBase {
   }
 
   /**
-   * {@inheritDoc Base.fhirType}
+   * {@inheritDoc IBase.fhirType}
    */
   public override fhirType(): string {
     return 'Reference';
   }
 
   /**
-   * {@inheritDoc Base.isEmpty}
+   * {@inheritDoc IBase.isEmpty}
    */
   public override isEmpty(): boolean {
     return super.isEmpty() && isElementEmpty(this.reference, this.type, this.identifier, this.display);
@@ -356,6 +357,45 @@ export class Reference extends DataType implements IBase {
     dest.type = this.type?.copy();
     dest.identifier = this.identifier?.copy();
     dest.display = this.display?.copy();
+  }
+
+  /**
+   * {@inheritDoc IBase.isComplexDataType}
+   */
+  public override isComplexDataType(): boolean {
+    return true;
+  }
+
+  /**
+   * {@inheritDoc IBase.toJSON}
+   */
+  public override toJSON(): JSON.Value | undefined {
+    if (this.isEmpty()) {
+      return undefined;
+    }
+
+    let jsonObj = super.toJSON() as JSON.Object | undefined;
+    if (jsonObj === undefined) {
+      jsonObj = {} as JSON.Object;
+    }
+
+    if (this.hasReferenceElement()) {
+      setFhirPrimitiveJson<fhirString>(this.getReferenceElement(), 'reference', jsonObj);
+    }
+
+    if (this.hasTypeElement()) {
+      setFhirPrimitiveJson<fhirUri>(this.getTypeElement(), 'type', jsonObj);
+    }
+
+    if (this.hasIdentifier()) {
+      setFhirComplexJson(this.getIdentifier(), 'identifier', jsonObj);
+    }
+
+    if (this.hasDisplayElement()) {
+      setFhirPrimitiveJson<fhirString>(this.getDisplayElement(), 'display', jsonObj);
+    }
+
+    return jsonObj;
   }
 }
 
@@ -694,6 +734,8 @@ export class Identifier extends DataType implements IBase {
   /**
    * Assigns the provided Reference object value to the `assigner` property.
    *
+   * @decorator `@ReferenceTargets(['Organization'])`
+   *
    * @param value - the `assigner` object value
    * @returns this
    */
@@ -711,14 +753,14 @@ export class Identifier extends DataType implements IBase {
   }
 
   /**
-   * {@inheritDoc Base.fhirType}
+   * {@inheritDoc IBase.fhirType}
    */
   public override fhirType(): string {
     return 'Identifier';
   }
 
   /**
-   * {@inheritDoc Base.isEmpty}
+   * {@inheritDoc IBase.isEmpty}
    */
   public override isEmpty(): boolean {
     return super.isEmpty() && isElementEmpty(this.use, this.type, this.system, this.value, this.period, this.assigner);
@@ -744,6 +786,53 @@ export class Identifier extends DataType implements IBase {
     dest.value = this.value?.copy();
     dest.period = this.period?.copy();
     dest.assigner = this.assigner?.copy();
+  }
+
+  /**
+   * {@inheritDoc IBase.isComplexDataType}
+   */
+  public override isComplexDataType(): boolean {
+    return true;
+  }
+
+  /**
+   * {@inheritDoc IBase.toJSON}
+   */
+  public override toJSON(): JSON.Value | undefined {
+    if (this.isEmpty()) {
+      return undefined;
+    }
+
+    let jsonObj = super.toJSON() as JSON.Object | undefined;
+    if (jsonObj === undefined) {
+      jsonObj = {} as JSON.Object;
+    }
+
+    if (this.hasUseElement()) {
+      setFhirPrimitiveJson<fhirCode>(this.getUseElement(), 'use', jsonObj);
+    }
+
+    if (this.hasType()) {
+      setFhirComplexJson(this.getType(), 'type', jsonObj);
+    }
+
+    if (this.hasSystemElement()) {
+      setFhirPrimitiveJson<fhirUri>(this.getSystemElement(), 'system', jsonObj);
+    }
+
+    if (this.hasValueElement()) {
+      setFhirPrimitiveJson<fhirString>(this.getValueElement(), 'value', jsonObj);
+    }
+
+    if (this.hasPeriod()) {
+      setFhirComplexJson(this.getPeriod(), 'period', jsonObj);
+    }
+
+    if (this.hasAssigner()) {
+      setFhirComplexJson(this.getAssigner(), 'assigner', jsonObj);
+    }
+
+    return jsonObj;
   }
 }
 

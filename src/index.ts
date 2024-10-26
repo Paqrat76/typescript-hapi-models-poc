@@ -71,6 +71,7 @@ export * from '@src/fhir-core/utility/common-util';
 export * from '@src/fhir-core/utility/date-time-util';
 export * from '@src/fhir-core/utility/decorators';
 export * from '@src/fhir-core/utility/fhir-util';
+export * from '@src/fhir-core/utility/json-helpers';
 export * from '@src/fhir-core/utility/type-guards';
 export * from '@src/fhir-models/Group';
 export * from '@src/fhir-models/code-systems/GroupTypeEnum';

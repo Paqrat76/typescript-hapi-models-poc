@@ -22,6 +22,7 @@
  */
 
 import { DecimalType } from '@src/fhir-core/data-types/primitive/DecimalType';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 
@@ -39,12 +40,15 @@ describe('DecimalType', () => {
     expect(testDecimalType.constructor.name).toStrictEqual('DecimalType');
     expect(testDecimalType.fhirType()).toStrictEqual('decimal');
     expect(testDecimalType.isEmpty()).toBe(true);
+    expect(testDecimalType.isPrimitive()).toBe(true);
+    expect(testDecimalType.isNumberPrimitive()).toBe(true);
+    expect(testDecimalType.toJSON()).toBeUndefined();
 
     // inherited properties from Element
     expect(testDecimalType.hasId()).toBe(false);
     expect(testDecimalType.getId()).toBeUndefined();
     expect(testDecimalType.hasExtension()).toBe(false);
-    expect(testDecimalType.getExtension()).toMatchObject([] as Extension[]);
+    expect(testDecimalType.getExtension()).toEqual([] as Extension[]);
     // primitive value properties
     expect(testDecimalType.hasValue()).toBe(false);
     expect(testDecimalType.getValue()).toBeUndefined();
@@ -53,12 +57,35 @@ describe('DecimalType', () => {
 
   it('should be properly initialized', () => {
     const testDecimalType = new DecimalType(VALID_DECIMAL);
+    const testId = 'id1234';
+    testDecimalType.setId(testId);
+    const testExtension = new Extension('testUrl', new StringType('extension string value'));
+    testDecimalType.addExtension(testExtension);
+
     expect(testDecimalType).toBeDefined();
     expect(testDecimalType).toBeInstanceOf(DecimalType);
     expect(testDecimalType.constructor.name).toStrictEqual('DecimalType');
     expect(testDecimalType.fhirType()).toStrictEqual('decimal');
     expect(testDecimalType.isEmpty()).toBe(false);
+    expect(testDecimalType.isPrimitive()).toBe(true);
+    expect(testDecimalType.isNumberPrimitive()).toBe(true);
+    expect(testDecimalType.toJSON()).toStrictEqual(VALID_DECIMAL);
+    expect(testDecimalType.toSiblingJSON()).toEqual({
+      id: 'id1234',
+      extension: [
+        {
+          url: 'testUrl',
+          valueString: 'extension string value',
+        },
+      ],
+    });
 
+    // inherited properties from Element
+    expect(testDecimalType.hasId()).toBe(true);
+    expect(testDecimalType.getId()).toStrictEqual(testId);
+    expect(testDecimalType.hasExtension()).toBe(true);
+    expect(testDecimalType.getExtension()).toEqual([testExtension]);
+    // primitive value properties
     expect(testDecimalType.hasValue()).toBe(true);
     expect(testDecimalType.getValue()).toBeDefined();
     expect(testDecimalType.getValue()).toStrictEqual(VALID_DECIMAL);
@@ -175,6 +202,9 @@ describe('DecimalType', () => {
     expect(testDecimalType.constructor.name).toStrictEqual('DecimalType');
     expect(testDecimalType.fhirType()).toStrictEqual('decimal');
     expect(testDecimalType.isEmpty()).toBe(false);
+    expect(testDecimalType.isPrimitive()).toBe(true);
+    expect(testDecimalType.isNumberPrimitive()).toBe(true);
+    expect(testDecimalType.toJSON()).toStrictEqual(VALID_DECIMAL);
     expect(testDecimalType.hasValue()).toBe(true);
     expect(testDecimalType.getValue()).toBeDefined();
     expect(testDecimalType.getValue()).toStrictEqual(VALID_DECIMAL);

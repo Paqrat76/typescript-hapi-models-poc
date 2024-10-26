@@ -21,20 +21,21 @@
  *
  */
 
+import { AssertionError } from 'node:assert';
 import { GroupCharacteristicComponent } from '@src/fhir-models/Group';
 import { BackboneElement, Element, Extension } from '@src/fhir-core/base-models/core-fhir-models';
 import { Base } from '@src/fhir-core/base-models/Base';
-import { Period } from '@src/fhir-core/data-types/complex/Period';
 import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
-import { MockFhirModel } from '../test-utils';
+import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
+import { Identifier, Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
+import { Period } from '@src/fhir-core/data-types/complex/Period';
+import { Quantity } from '@src/fhir-core/data-types/complex/Quantity';
+import { Range } from '@src/fhir-core/data-types/complex/Range';
+import { SimpleQuantity } from '@src/fhir-core/data-types/complex/SimpleQuantity';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
-import { Quantity } from '@src/fhir-core/data-types/complex/Quantity';
-import { SimpleQuantity } from '@src/fhir-core/data-types/complex/SimpleQuantity';
-import { Range } from '@src/fhir-core/data-types/complex/Range';
-import { Identifier, Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
-import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { MockFhirModel } from '../test-utils';
 
 describe('GroupCharacteristicComponent', () => {
   const VALID_STRING_1 = 'This is a valid string.';
@@ -87,10 +88,6 @@ describe('GroupCharacteristicComponent', () => {
   const VALID_REFERENCE_VALUE_3 = new Reference();
   VALID_REFERENCE_VALUE_3.setReference(VALID_REFERENCE_3);
 
-  const INVALID_REFERENCE = 'Location/98765';
-  const INVALID_REFERENCE_VALUE = new Reference();
-  INVALID_REFERENCE_VALUE.setReference(INVALID_REFERENCE);
-
   const VALID_START_DATETIME = `2017-01-01T00:00:00.000Z`;
   const VALID_END_DATETIME = `2017-01-01T01:00:00.000Z`;
   const VALID_PERIOD = new Period();
@@ -116,20 +113,21 @@ describe('GroupCharacteristicComponent', () => {
       expect(testGroupCharacteristicComponent.constructor.name).toStrictEqual('GroupCharacteristicComponent');
       expect(testGroupCharacteristicComponent.fhirType()).toStrictEqual('Group.characteristic');
       expect(testGroupCharacteristicComponent.isEmpty()).toBe(true);
+      expect(testGroupCharacteristicComponent.toJSON()).toBeUndefined();
 
       // inherited properties from BackboneElement
       expect(testGroupCharacteristicComponent.hasId()).toBe(false);
       expect(testGroupCharacteristicComponent.getId()).toBeUndefined();
       expect(testGroupCharacteristicComponent.hasExtension()).toBe(false);
-      expect(testGroupCharacteristicComponent.getExtension()).toMatchObject([] as Extension[]);
+      expect(testGroupCharacteristicComponent.getExtension()).toEqual([] as Extension[]);
       expect(testGroupCharacteristicComponent.hasModifierExtension()).toBe(false);
-      expect(testGroupCharacteristicComponent.getModifierExtension()).toMatchObject([] as Extension[]);
+      expect(testGroupCharacteristicComponent.getModifierExtension()).toEqual([] as Extension[]);
 
       // GroupMemberComponent properties
       expect(testGroupCharacteristicComponent.hasCode()).toBe(false);
       expect(testGroupCharacteristicComponent.getCode()).toBeNull();
       expect(testGroupCharacteristicComponent.hasPeriod()).toBe(false);
-      expect(testGroupCharacteristicComponent.getPeriod()).toMatchObject(new Period());
+      expect(testGroupCharacteristicComponent.getPeriod()).toEqual(new Period());
 
       expect(testGroupCharacteristicComponent.hasValue()).toBe(false);
       expect(testGroupCharacteristicComponent.getValue()).toBeNull();
@@ -167,34 +165,44 @@ describe('GroupCharacteristicComponent', () => {
       expect(testGroupCharacteristicComponent.constructor.name).toStrictEqual('GroupCharacteristicComponent');
       expect(testGroupCharacteristicComponent.fhirType()).toStrictEqual('Group.characteristic');
       expect(testGroupCharacteristicComponent.isEmpty()).toBe(false);
+      const expectedJson = {
+        code: {
+          text: 'This is a valid string.',
+        },
+        exclude: true,
+        period: {
+          start: '2017-01-01T00:00:00.000Z',
+          end: '2017-01-01T01:00:00.000Z',
+        },
+        valueBoolean: false,
+      };
+      expect(testGroupCharacteristicComponent.toJSON()).toEqual(expectedJson);
 
       // inherited properties from BackboneElement
       expect(testGroupCharacteristicComponent.hasId()).toBe(false);
       expect(testGroupCharacteristicComponent.getId()).toBeUndefined();
       expect(testGroupCharacteristicComponent.hasExtension()).toBe(false);
-      expect(testGroupCharacteristicComponent.getExtension()).toMatchObject([] as Extension[]);
+      expect(testGroupCharacteristicComponent.getExtension()).toEqual([] as Extension[]);
       expect(testGroupCharacteristicComponent.hasModifierExtension()).toBe(false);
-      expect(testGroupCharacteristicComponent.getModifierExtension()).toMatchObject([] as Extension[]);
+      expect(testGroupCharacteristicComponent.getModifierExtension()).toEqual([] as Extension[]);
 
       // GroupMemberComponent properties
       expect(testGroupCharacteristicComponent.hasCode()).toBe(true);
-      expect(testGroupCharacteristicComponent.getCode()).toMatchObject(VALID_CODEABLECONCEPT_1);
+      expect(testGroupCharacteristicComponent.getCode()).toEqual(VALID_CODEABLECONCEPT_1);
       expect(testGroupCharacteristicComponent.hasPeriod()).toBe(true);
-      expect(testGroupCharacteristicComponent.getPeriod()).toMatchObject(VALID_PERIOD_1);
+      expect(testGroupCharacteristicComponent.getPeriod()).toEqual(VALID_PERIOD_1);
 
       expect(testGroupCharacteristicComponent.hasValue()).toBe(true);
-      expect(testGroupCharacteristicComponent.getValue()).toMatchObject(new BooleanType(VALID_BOOLEAN_FALSE));
+      expect(testGroupCharacteristicComponent.getValue()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
       expect(testGroupCharacteristicComponent.hasValueBooleanType()).toBe(true);
-      expect(testGroupCharacteristicComponent.getValueBooleanType()).toMatchObject(
-        new BooleanType(VALID_BOOLEAN_FALSE),
-      );
+      expect(testGroupCharacteristicComponent.getValueBooleanType()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
       expect(testGroupCharacteristicComponent.hasValueCodeableConcept()).toBe(false);
       expect(testGroupCharacteristicComponent.hasValueQuantity()).toBe(false);
       expect(testGroupCharacteristicComponent.hasValueRange()).toBe(false);
       expect(testGroupCharacteristicComponent.hasValueReference()).toBe(false);
 
       expect(testGroupCharacteristicComponent.hasExcludeElement()).toBe(true);
-      expect(testGroupCharacteristicComponent.getExcludeElement()).toMatchObject(new BooleanType(VALID_BOOLEAN_TRUE));
+      expect(testGroupCharacteristicComponent.getExcludeElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
       expect(testGroupCharacteristicComponent.hasExclude()).toBe(true);
       expect(testGroupCharacteristicComponent.getExclude()).toStrictEqual(VALID_BOOLEAN_TRUE);
 
@@ -216,34 +224,40 @@ describe('GroupCharacteristicComponent', () => {
       expect(testGroupCharacteristicComponent.constructor.name).toStrictEqual('GroupCharacteristicComponent');
       expect(testGroupCharacteristicComponent.fhirType()).toStrictEqual('Group.characteristic');
       expect(testGroupCharacteristicComponent.isEmpty()).toBe(false);
+      const expectedJson1 = {
+        code: {
+          text: 'This is a valid string.',
+        },
+        exclude: true,
+        valueBoolean: false,
+      };
+      expect(testGroupCharacteristicComponent.toJSON()).toEqual(expectedJson1);
 
       // inherited properties from BackboneElement
       expect(testGroupCharacteristicComponent.hasId()).toBe(false);
       expect(testGroupCharacteristicComponent.getId()).toBeUndefined();
       expect(testGroupCharacteristicComponent.hasExtension()).toBe(false);
-      expect(testGroupCharacteristicComponent.getExtension()).toMatchObject([] as Extension[]);
+      expect(testGroupCharacteristicComponent.getExtension()).toEqual([] as Extension[]);
       expect(testGroupCharacteristicComponent.hasModifierExtension()).toBe(false);
-      expect(testGroupCharacteristicComponent.getModifierExtension()).toMatchObject([] as Extension[]);
+      expect(testGroupCharacteristicComponent.getModifierExtension()).toEqual([] as Extension[]);
 
       // GroupMemberComponent properties
       expect(testGroupCharacteristicComponent.hasCode()).toBe(true);
-      expect(testGroupCharacteristicComponent.getCode()).toMatchObject(VALID_CODEABLECONCEPT_1);
+      expect(testGroupCharacteristicComponent.getCode()).toEqual(VALID_CODEABLECONCEPT_1);
       expect(testGroupCharacteristicComponent.hasPeriod()).toBe(false);
-      expect(testGroupCharacteristicComponent.getPeriod()).toMatchObject(new Period());
+      expect(testGroupCharacteristicComponent.getPeriod()).toEqual(new Period());
 
       expect(testGroupCharacteristicComponent.hasValue()).toBe(true);
-      expect(testGroupCharacteristicComponent.getValue()).toMatchObject(new BooleanType(VALID_BOOLEAN_FALSE));
+      expect(testGroupCharacteristicComponent.getValue()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
       expect(testGroupCharacteristicComponent.hasValueBooleanType()).toBe(true);
-      expect(testGroupCharacteristicComponent.getValueBooleanType()).toMatchObject(
-        new BooleanType(VALID_BOOLEAN_FALSE),
-      );
+      expect(testGroupCharacteristicComponent.getValueBooleanType()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
       expect(testGroupCharacteristicComponent.hasValueCodeableConcept()).toBe(false);
       expect(testGroupCharacteristicComponent.hasValueQuantity()).toBe(false);
       expect(testGroupCharacteristicComponent.hasValueRange()).toBe(false);
       expect(testGroupCharacteristicComponent.hasValueReference()).toBe(false);
 
       expect(testGroupCharacteristicComponent.hasExcludeElement()).toBe(true);
-      expect(testGroupCharacteristicComponent.getExcludeElement()).toMatchObject(new BooleanType(VALID_BOOLEAN_TRUE));
+      expect(testGroupCharacteristicComponent.getExcludeElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
       expect(testGroupCharacteristicComponent.hasExclude()).toBe(true);
       expect(testGroupCharacteristicComponent.getExclude()).toStrictEqual(VALID_BOOLEAN_TRUE);
 
@@ -252,7 +266,7 @@ describe('GroupCharacteristicComponent', () => {
       testGroupCharacteristicComponent = groupCharacteristicComponent.copy();
 
       expect(testGroupCharacteristicComponent.hasExcludeElement()).toBe(true);
-      expect(testGroupCharacteristicComponent.getExcludeElement()).toMatchObject(new BooleanType(VALID_BOOLEAN_TRUE));
+      expect(testGroupCharacteristicComponent.getExcludeElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
       expect(testGroupCharacteristicComponent.hasExclude()).toBe(true);
       expect(testGroupCharacteristicComponent.getExclude()).toStrictEqual(VALID_BOOLEAN_TRUE);
     });
@@ -280,8 +294,8 @@ describe('GroupCharacteristicComponent', () => {
           // @ts-expect-error: allow non-boolean to test error handling
           new GroupCharacteristicComponent(null, mockModel, null);
         };
-        expect(t).toThrow(InvalidTypeError);
-        expect(t).toThrow(`Invalid DataType for Group.characteristic.value[x]: ${mockModel.fhirType()}`);
+        expect(t).toThrow(AssertionError);
+        expect(t).toThrow(`Decorator expects setValue to have one argument with type of 'DataType | undefined | null'`);
       });
 
       it('should throw InvalidTypeError when set with an invalid value[x] type', () => {
@@ -306,9 +320,9 @@ describe('GroupCharacteristicComponent', () => {
 
         testGroupCharacteristicComponent.setValue(VALID_CODEABLECONCEPT_1);
         expect(testGroupCharacteristicComponent.hasValue()).toBe(true);
-        expect(testGroupCharacteristicComponent.getValue()).toMatchObject(VALID_CODEABLECONCEPT_1);
+        expect(testGroupCharacteristicComponent.getValue()).toEqual(VALID_CODEABLECONCEPT_1);
         expect(testGroupCharacteristicComponent.hasValueCodeableConcept()).toBe(true);
-        expect(testGroupCharacteristicComponent.getValueCodeableConcept()).toMatchObject(VALID_CODEABLECONCEPT_1);
+        expect(testGroupCharacteristicComponent.getValueCodeableConcept()).toEqual(VALID_CODEABLECONCEPT_1);
 
         expect(testGroupCharacteristicComponent.hasValueBooleanType()).toBe(false);
         expect(testGroupCharacteristicComponent.hasValueQuantity()).toBe(false);
@@ -357,9 +371,9 @@ describe('GroupCharacteristicComponent', () => {
 
         testGroupCharacteristicComponent.setValue(VALID_BOOLEAN_TYPE);
         expect(testGroupCharacteristicComponent.hasValue()).toBe(true);
-        expect(testGroupCharacteristicComponent.getValue()).toMatchObject(VALID_BOOLEAN_TYPE);
+        expect(testGroupCharacteristicComponent.getValue()).toEqual(VALID_BOOLEAN_TYPE);
         expect(testGroupCharacteristicComponent.hasValueBooleanType()).toBe(true);
-        expect(testGroupCharacteristicComponent.getValueBooleanType()).toMatchObject(VALID_BOOLEAN_TYPE);
+        expect(testGroupCharacteristicComponent.getValueBooleanType()).toEqual(VALID_BOOLEAN_TYPE);
 
         expect(testGroupCharacteristicComponent.hasValueCodeableConcept()).toBe(false);
         expect(testGroupCharacteristicComponent.hasValueQuantity()).toBe(false);
@@ -408,9 +422,9 @@ describe('GroupCharacteristicComponent', () => {
 
         testGroupCharacteristicComponent.setValue(VALID_QUANTITY);
         expect(testGroupCharacteristicComponent.hasValue()).toBe(true);
-        expect(testGroupCharacteristicComponent.getValue()).toMatchObject(VALID_QUANTITY);
+        expect(testGroupCharacteristicComponent.getValue()).toEqual(VALID_QUANTITY);
         expect(testGroupCharacteristicComponent.hasValueQuantity()).toBe(true);
-        expect(testGroupCharacteristicComponent.getValueQuantity()).toMatchObject(VALID_QUANTITY);
+        expect(testGroupCharacteristicComponent.getValueQuantity()).toEqual(VALID_QUANTITY);
 
         expect(testGroupCharacteristicComponent.hasValueCodeableConcept()).toBe(false);
         expect(testGroupCharacteristicComponent.hasValueBooleanType()).toBe(false);
@@ -459,9 +473,9 @@ describe('GroupCharacteristicComponent', () => {
 
         testGroupCharacteristicComponent.setValue(VALID_RANGE);
         expect(testGroupCharacteristicComponent.hasValue()).toBe(true);
-        expect(testGroupCharacteristicComponent.getValue()).toMatchObject(VALID_RANGE);
+        expect(testGroupCharacteristicComponent.getValue()).toEqual(VALID_RANGE);
         expect(testGroupCharacteristicComponent.hasValueRange()).toBe(true);
-        expect(testGroupCharacteristicComponent.getValueRange()).toMatchObject(VALID_RANGE);
+        expect(testGroupCharacteristicComponent.getValueRange()).toEqual(VALID_RANGE);
 
         expect(testGroupCharacteristicComponent.hasValueCodeableConcept()).toBe(false);
         expect(testGroupCharacteristicComponent.hasValueBooleanType()).toBe(false);
@@ -510,9 +524,9 @@ describe('GroupCharacteristicComponent', () => {
 
         testGroupCharacteristicComponent.setValue(VALID_REFERENCE_VALUE_1);
         expect(testGroupCharacteristicComponent.hasValue()).toBe(true);
-        expect(testGroupCharacteristicComponent.getValue()).toMatchObject(VALID_REFERENCE_VALUE_1);
+        expect(testGroupCharacteristicComponent.getValue()).toEqual(VALID_REFERENCE_VALUE_1);
         expect(testGroupCharacteristicComponent.hasValueReference()).toBe(true);
-        expect(testGroupCharacteristicComponent.getValueReference()).toMatchObject(VALID_REFERENCE_VALUE_1);
+        expect(testGroupCharacteristicComponent.getValueReference()).toEqual(VALID_REFERENCE_VALUE_1);
 
         expect(testGroupCharacteristicComponent.hasValueCodeableConcept()).toBe(false);
         expect(testGroupCharacteristicComponent.hasValueBooleanType()).toBe(false);
@@ -570,34 +584,40 @@ describe('GroupCharacteristicComponent', () => {
       expect(testGroupCharacteristicComponent.constructor.name).toStrictEqual('GroupCharacteristicComponent');
       expect(testGroupCharacteristicComponent.fhirType()).toStrictEqual('Group.characteristic');
       expect(testGroupCharacteristicComponent.isEmpty()).toBe(false);
+      const expectedsJson = {
+        code: {
+          text: 'This is a valid string.',
+        },
+        exclude: true,
+        valueBoolean: false,
+      };
+      expect(testGroupCharacteristicComponent.toJSON()).toEqual(expectedsJson);
 
       // inherited properties from BackboneElement
       expect(testGroupCharacteristicComponent.hasId()).toBe(false);
       expect(testGroupCharacteristicComponent.getId()).toBeUndefined();
       expect(testGroupCharacteristicComponent.hasExtension()).toBe(false);
-      expect(testGroupCharacteristicComponent.getExtension()).toMatchObject([] as Extension[]);
+      expect(testGroupCharacteristicComponent.getExtension()).toEqual([] as Extension[]);
       expect(testGroupCharacteristicComponent.hasModifierExtension()).toBe(false);
-      expect(testGroupCharacteristicComponent.getModifierExtension()).toMatchObject([] as Extension[]);
+      expect(testGroupCharacteristicComponent.getModifierExtension()).toEqual([] as Extension[]);
 
       // GroupMemberComponent properties
       expect(testGroupCharacteristicComponent.hasCode()).toBe(true);
-      expect(testGroupCharacteristicComponent.getCode()).toMatchObject(VALID_CODEABLECONCEPT_1);
+      expect(testGroupCharacteristicComponent.getCode()).toEqual(VALID_CODEABLECONCEPT_1);
       expect(testGroupCharacteristicComponent.hasPeriod()).toBe(false);
-      expect(testGroupCharacteristicComponent.getPeriod()).toMatchObject(new Period());
+      expect(testGroupCharacteristicComponent.getPeriod()).toEqual(new Period());
 
       expect(testGroupCharacteristicComponent.hasValue()).toBe(true);
-      expect(testGroupCharacteristicComponent.getValue()).toMatchObject(new BooleanType(VALID_BOOLEAN_FALSE));
+      expect(testGroupCharacteristicComponent.getValue()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
       expect(testGroupCharacteristicComponent.hasValueBooleanType()).toBe(true);
-      expect(testGroupCharacteristicComponent.getValueBooleanType()).toMatchObject(
-        new BooleanType(VALID_BOOLEAN_FALSE),
-      );
+      expect(testGroupCharacteristicComponent.getValueBooleanType()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
       expect(testGroupCharacteristicComponent.hasValueCodeableConcept()).toBe(false);
       expect(testGroupCharacteristicComponent.hasValueQuantity()).toBe(false);
       expect(testGroupCharacteristicComponent.hasValueRange()).toBe(false);
       expect(testGroupCharacteristicComponent.hasValueReference()).toBe(false);
 
       expect(testGroupCharacteristicComponent.hasExcludeElement()).toBe(true);
-      expect(testGroupCharacteristicComponent.getExcludeElement()).toMatchObject(new BooleanType(VALID_BOOLEAN_TRUE));
+      expect(testGroupCharacteristicComponent.getExcludeElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
       expect(testGroupCharacteristicComponent.hasExclude()).toBe(true);
       expect(testGroupCharacteristicComponent.getExclude()).toStrictEqual(VALID_BOOLEAN_TRUE);
     });
@@ -613,23 +633,21 @@ describe('GroupCharacteristicComponent', () => {
       expect(testGroupCharacteristicComponent.isEmpty()).toBe(false);
 
       expect(testGroupCharacteristicComponent.hasCode()).toBe(true);
-      expect(testGroupCharacteristicComponent.getCode()).toMatchObject(VALID_CODEABLECONCEPT_1);
+      expect(testGroupCharacteristicComponent.getCode()).toEqual(VALID_CODEABLECONCEPT_1);
       expect(testGroupCharacteristicComponent.hasPeriod()).toBe(true);
-      expect(testGroupCharacteristicComponent.getPeriod()).toMatchObject(VALID_PERIOD_1);
+      expect(testGroupCharacteristicComponent.getPeriod()).toEqual(VALID_PERIOD_1);
 
       expect(testGroupCharacteristicComponent.hasValue()).toBe(true);
-      expect(testGroupCharacteristicComponent.getValue()).toMatchObject(new BooleanType(VALID_BOOLEAN_FALSE));
+      expect(testGroupCharacteristicComponent.getValue()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
       expect(testGroupCharacteristicComponent.hasValueBooleanType()).toBe(true);
-      expect(testGroupCharacteristicComponent.getValueBooleanType()).toMatchObject(
-        new BooleanType(VALID_BOOLEAN_FALSE),
-      );
+      expect(testGroupCharacteristicComponent.getValueBooleanType()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
       expect(testGroupCharacteristicComponent.hasValueCodeableConcept()).toBe(false);
       expect(testGroupCharacteristicComponent.hasValueQuantity()).toBe(false);
       expect(testGroupCharacteristicComponent.hasValueRange()).toBe(false);
       expect(testGroupCharacteristicComponent.hasValueReference()).toBe(false);
 
       expect(testGroupCharacteristicComponent.hasExcludeElement()).toBe(true);
-      expect(testGroupCharacteristicComponent.getExcludeElement()).toMatchObject(new BooleanType(VALID_BOOLEAN_TRUE));
+      expect(testGroupCharacteristicComponent.getExcludeElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
       expect(testGroupCharacteristicComponent.hasExclude()).toBe(true);
       expect(testGroupCharacteristicComponent.getExclude()).toStrictEqual(VALID_BOOLEAN_TRUE);
 
@@ -642,21 +660,21 @@ describe('GroupCharacteristicComponent', () => {
       expect(testGroupCharacteristicComponent.isEmpty()).toBe(false);
 
       expect(testGroupCharacteristicComponent.hasCode()).toBe(true);
-      expect(testGroupCharacteristicComponent.getCode()).toMatchObject(VALID_CODEABLECONCEPT_2);
+      expect(testGroupCharacteristicComponent.getCode()).toEqual(VALID_CODEABLECONCEPT_2);
       expect(testGroupCharacteristicComponent.hasPeriod()).toBe(true);
-      expect(testGroupCharacteristicComponent.getPeriod()).toMatchObject(VALID_PERIOD_2);
+      expect(testGroupCharacteristicComponent.getPeriod()).toEqual(VALID_PERIOD_2);
 
       expect(testGroupCharacteristicComponent.hasValue()).toBe(true);
-      expect(testGroupCharacteristicComponent.getValue()).toMatchObject(new BooleanType(VALID_BOOLEAN_TRUE));
+      expect(testGroupCharacteristicComponent.getValue()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
       expect(testGroupCharacteristicComponent.hasValueBooleanType()).toBe(true);
-      expect(testGroupCharacteristicComponent.getValueBooleanType()).toMatchObject(new BooleanType(VALID_BOOLEAN_TRUE));
+      expect(testGroupCharacteristicComponent.getValueBooleanType()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
       expect(testGroupCharacteristicComponent.hasValueCodeableConcept()).toBe(false);
       expect(testGroupCharacteristicComponent.hasValueQuantity()).toBe(false);
       expect(testGroupCharacteristicComponent.hasValueRange()).toBe(false);
       expect(testGroupCharacteristicComponent.hasValueReference()).toBe(false);
 
       expect(testGroupCharacteristicComponent.hasExcludeElement()).toBe(true);
-      expect(testGroupCharacteristicComponent.getExcludeElement()).toMatchObject(new BooleanType(VALID_BOOLEAN_FALSE));
+      expect(testGroupCharacteristicComponent.getExcludeElement()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
       expect(testGroupCharacteristicComponent.hasExclude()).toBe(true);
       expect(testGroupCharacteristicComponent.getExclude()).toStrictEqual(VALID_BOOLEAN_FALSE);
     });
@@ -697,34 +715,40 @@ describe('GroupCharacteristicComponent', () => {
       expect(testGroupCharacteristicComponent.constructor.name).toStrictEqual('GroupCharacteristicComponent');
       expect(testGroupCharacteristicComponent.fhirType()).toStrictEqual('Group.characteristic');
       expect(testGroupCharacteristicComponent.isEmpty()).toBe(false);
+      const expectedsJson = {
+        code: {
+          text: 'This is a valid string.',
+        },
+        exclude: true,
+        valueBoolean: false,
+      };
+      expect(testGroupCharacteristicComponent.toJSON()).toEqual(expectedsJson);
 
       // inherited properties from BackboneElement
       expect(testGroupCharacteristicComponent.hasId()).toBe(false);
       expect(testGroupCharacteristicComponent.getId()).toBeUndefined();
       expect(testGroupCharacteristicComponent.hasExtension()).toBe(false);
-      expect(testGroupCharacteristicComponent.getExtension()).toMatchObject([] as Extension[]);
+      expect(testGroupCharacteristicComponent.getExtension()).toEqual([] as Extension[]);
       expect(testGroupCharacteristicComponent.hasModifierExtension()).toBe(false);
-      expect(testGroupCharacteristicComponent.getModifierExtension()).toMatchObject([] as Extension[]);
+      expect(testGroupCharacteristicComponent.getModifierExtension()).toEqual([] as Extension[]);
 
       // GroupMemberComponent properties
       expect(testGroupCharacteristicComponent.hasCode()).toBe(true);
-      expect(testGroupCharacteristicComponent.getCode()).toMatchObject(VALID_CODEABLECONCEPT_1);
+      expect(testGroupCharacteristicComponent.getCode()).toEqual(VALID_CODEABLECONCEPT_1);
       expect(testGroupCharacteristicComponent.hasPeriod()).toBe(false);
-      expect(testGroupCharacteristicComponent.getPeriod()).toMatchObject(new Period());
+      expect(testGroupCharacteristicComponent.getPeriod()).toEqual(new Period());
 
       expect(testGroupCharacteristicComponent.hasValue()).toBe(true);
-      expect(testGroupCharacteristicComponent.getValue()).toMatchObject(new BooleanType(VALID_BOOLEAN_FALSE));
+      expect(testGroupCharacteristicComponent.getValue()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
       expect(testGroupCharacteristicComponent.hasValueBooleanType()).toBe(true);
-      expect(testGroupCharacteristicComponent.getValueBooleanType()).toMatchObject(
-        new BooleanType(VALID_BOOLEAN_FALSE),
-      );
+      expect(testGroupCharacteristicComponent.getValueBooleanType()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
       expect(testGroupCharacteristicComponent.hasValueCodeableConcept()).toBe(false);
       expect(testGroupCharacteristicComponent.hasValueQuantity()).toBe(false);
       expect(testGroupCharacteristicComponent.hasValueRange()).toBe(false);
       expect(testGroupCharacteristicComponent.hasValueReference()).toBe(false);
 
       expect(testGroupCharacteristicComponent.hasExcludeElement()).toBe(true);
-      expect(testGroupCharacteristicComponent.getExcludeElement()).toMatchObject(new BooleanType(VALID_BOOLEAN_TRUE));
+      expect(testGroupCharacteristicComponent.getExcludeElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
       expect(testGroupCharacteristicComponent.hasExclude()).toBe(true);
       expect(testGroupCharacteristicComponent.getExclude()).toStrictEqual(VALID_BOOLEAN_TRUE);
     });
@@ -740,23 +764,21 @@ describe('GroupCharacteristicComponent', () => {
       expect(testGroupCharacteristicComponent.isEmpty()).toBe(false);
 
       expect(testGroupCharacteristicComponent.hasCode()).toBe(true);
-      expect(testGroupCharacteristicComponent.getCode()).toMatchObject(VALID_CODEABLECONCEPT_1);
+      expect(testGroupCharacteristicComponent.getCode()).toEqual(VALID_CODEABLECONCEPT_1);
       expect(testGroupCharacteristicComponent.hasPeriod()).toBe(true);
-      expect(testGroupCharacteristicComponent.getPeriod()).toMatchObject(VALID_PERIOD_1);
+      expect(testGroupCharacteristicComponent.getPeriod()).toEqual(VALID_PERIOD_1);
 
       expect(testGroupCharacteristicComponent.hasValue()).toBe(true);
-      expect(testGroupCharacteristicComponent.getValue()).toMatchObject(new BooleanType(VALID_BOOLEAN_FALSE));
+      expect(testGroupCharacteristicComponent.getValue()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
       expect(testGroupCharacteristicComponent.hasValueBooleanType()).toBe(true);
-      expect(testGroupCharacteristicComponent.getValueBooleanType()).toMatchObject(
-        new BooleanType(VALID_BOOLEAN_FALSE),
-      );
+      expect(testGroupCharacteristicComponent.getValueBooleanType()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
       expect(testGroupCharacteristicComponent.hasValueCodeableConcept()).toBe(false);
       expect(testGroupCharacteristicComponent.hasValueQuantity()).toBe(false);
       expect(testGroupCharacteristicComponent.hasValueRange()).toBe(false);
       expect(testGroupCharacteristicComponent.hasValueReference()).toBe(false);
 
       expect(testGroupCharacteristicComponent.hasExcludeElement()).toBe(true);
-      expect(testGroupCharacteristicComponent.getExcludeElement()).toMatchObject(new BooleanType(VALID_BOOLEAN_TRUE));
+      expect(testGroupCharacteristicComponent.getExcludeElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
       expect(testGroupCharacteristicComponent.hasExclude()).toBe(true);
       expect(testGroupCharacteristicComponent.getExclude()).toStrictEqual(VALID_BOOLEAN_TRUE);
 
@@ -769,21 +791,21 @@ describe('GroupCharacteristicComponent', () => {
       expect(testGroupCharacteristicComponent.isEmpty()).toBe(false);
 
       expect(testGroupCharacteristicComponent.hasCode()).toBe(true);
-      expect(testGroupCharacteristicComponent.getCode()).toMatchObject(VALID_CODEABLECONCEPT_2);
+      expect(testGroupCharacteristicComponent.getCode()).toEqual(VALID_CODEABLECONCEPT_2);
       expect(testGroupCharacteristicComponent.hasPeriod()).toBe(true);
-      expect(testGroupCharacteristicComponent.getPeriod()).toMatchObject(VALID_PERIOD_2);
+      expect(testGroupCharacteristicComponent.getPeriod()).toEqual(VALID_PERIOD_2);
 
       expect(testGroupCharacteristicComponent.hasValue()).toBe(true);
-      expect(testGroupCharacteristicComponent.getValue()).toMatchObject(new BooleanType(VALID_BOOLEAN_TRUE));
+      expect(testGroupCharacteristicComponent.getValue()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
       expect(testGroupCharacteristicComponent.hasValueBooleanType()).toBe(true);
-      expect(testGroupCharacteristicComponent.getValueBooleanType()).toMatchObject(new BooleanType(VALID_BOOLEAN_TRUE));
+      expect(testGroupCharacteristicComponent.getValueBooleanType()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
       expect(testGroupCharacteristicComponent.hasValueCodeableConcept()).toBe(false);
       expect(testGroupCharacteristicComponent.hasValueQuantity()).toBe(false);
       expect(testGroupCharacteristicComponent.hasValueRange()).toBe(false);
       expect(testGroupCharacteristicComponent.hasValueReference()).toBe(false);
 
       expect(testGroupCharacteristicComponent.hasExcludeElement()).toBe(true);
-      expect(testGroupCharacteristicComponent.getExcludeElement()).toMatchObject(new BooleanType(VALID_BOOLEAN_FALSE));
+      expect(testGroupCharacteristicComponent.getExcludeElement()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
       expect(testGroupCharacteristicComponent.hasExclude()).toBe(true);
       expect(testGroupCharacteristicComponent.getExclude()).toStrictEqual(VALID_BOOLEAN_FALSE);
     });
