@@ -21,6 +21,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.9.0] - 2024-10-26
+
+### Added
+
+- Added support for serialization via `toJSON()` class methods
+  - Added generic JSON helpers
+  - Added FHIR specific serialization JSON helpers
+  - Added FHIR Type assertions for core abstract model classes
+- Added Base/IBase "isXXX" methods
+
+### Changed
+
+- Updated dependencies
+- Replaced typedoc.json with typedoc.mjs to allow custom tags
+- Streamlined FhirDataTypes.ts
+
+### Fixed
+
+- Resolved circular dependencies
+
+
 ## [0.8.0] - 2024-10-10
 
 ### Added

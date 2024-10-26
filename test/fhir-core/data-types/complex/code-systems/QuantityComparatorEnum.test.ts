@@ -44,27 +44,27 @@ describe('QuantityComparatorEnum', () => {
 
     let enumValue = testQuantityComparatorEnum.fromCode('<');
     expect(enumValue).toBeDefined();
-    expect(enumValue).toMatchObject(QuantityComparatorEnum.LESS_THAN);
+    expect(enumValue).toEqual(QuantityComparatorEnum.LESS_THAN);
 
     enumValue = testQuantityComparatorEnum.fromCode('<=');
     expect(enumValue).toBeDefined();
-    expect(enumValue).toMatchObject(QuantityComparatorEnum.LESS_THAN_EQUAL);
+    expect(enumValue).toEqual(QuantityComparatorEnum.LESS_THAN_EQUAL);
 
     enumValue = testQuantityComparatorEnum.fromCode('>=');
     expect(enumValue).toBeDefined();
-    expect(enumValue).toMatchObject(QuantityComparatorEnum.GREATER_THAN_EQUAL);
+    expect(enumValue).toEqual(QuantityComparatorEnum.GREATER_THAN_EQUAL);
 
     enumValue = testQuantityComparatorEnum.fromCode('>');
     expect(enumValue).toBeDefined();
-    expect(enumValue).toMatchObject(QuantityComparatorEnum.GREATER_THAN);
+    expect(enumValue).toEqual(QuantityComparatorEnum.GREATER_THAN);
 
     enumValue = testQuantityComparatorEnum.fromCode('ad');
     expect(enumValue).toBeDefined();
-    expect(enumValue).toMatchObject(QuantityComparatorEnum.AD);
+    expect(enumValue).toEqual(QuantityComparatorEnum.AD);
 
     enumValue = testQuantityComparatorEnum.fromCode('null');
     expect(enumValue).toBeDefined();
-    expect(enumValue).toMatchObject(QuantityComparatorEnum.NULL);
+    expect(enumValue).toEqual(QuantityComparatorEnum.NULL);
   });
 
   it('should throw InvalidCodeError when executing fromCode() with undefined code value', () => {

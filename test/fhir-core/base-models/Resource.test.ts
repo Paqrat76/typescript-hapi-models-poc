@@ -28,8 +28,8 @@ import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { MockTask } from '../../test-utils';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { MockTask } from '../../test-utils';
 
 describe('Resource', () => {
   const VALID_ID = `a-432.E-12345`;
@@ -65,23 +65,25 @@ describe('Resource', () => {
     expect(testResource.constructor.name).toStrictEqual('MockTask');
     expect(testResource.resourceType()).toStrictEqual('Task');
     expect(testResource.fhirType()).toStrictEqual('MockTask');
+    expect(testResource.isResource()).toBe(true);
     expect(testResource.isEmpty()).toBe(true);
+    expect(testResource.toJSON()).toBeUndefined();
 
     expect(testResource.hasId()).toBe(false);
     expect(testResource.getId()).toBeUndefined();
     expect(testResource.hasMeta()).toBe(false);
-    expect(testResource.getMeta()).toMatchObject(new Meta());
+    expect(testResource.getMeta()).toEqual(new Meta());
     expect(testResource.hasImplicitRules()).toBe(false);
     expect(testResource.getImplicitRules()).toBeUndefined();
     expect(testResource.hasLanguage()).toBe(false);
     expect(testResource.getLanguage()).toBeUndefined();
 
     expect(testResource.hasIdElement()).toBe(false);
-    expect(testResource.getIdElement()).toMatchObject(new IdType());
+    expect(testResource.getIdElement()).toEqual(new IdType());
     expect(testResource.hasImplicitRulesElement()).toBe(false);
-    expect(testResource.getImplicitRulesElement()).toMatchObject(new UriType());
+    expect(testResource.getImplicitRulesElement()).toEqual(new UriType());
     expect(testResource.hasLanguageElement()).toBe(false);
-    expect(testResource.getLanguageElement()).toMatchObject(new CodeType());
+    expect(testResource.getLanguageElement()).toEqual(new CodeType());
   });
 
   it('should be properly instantiated with primitive values', () => {
@@ -97,23 +99,34 @@ describe('Resource', () => {
     expect(testResource.constructor.name).toStrictEqual('MockTask');
     expect(testResource.resourceType()).toStrictEqual('Task');
     expect(testResource.fhirType()).toStrictEqual('MockTask');
+    expect(testResource.isResource()).toBe(true);
     expect(testResource.isEmpty()).toBe(false);
+    const expectedJson = {
+      resourceType: 'Task',
+      id: 'a-432.E-12345',
+      meta: {
+        versionId: 'v1',
+      },
+      implicitRules: 'testUriType',
+      language: 'testCodeType',
+    };
+    expect(testResource.toJSON()).toEqual(expectedJson);
 
     expect(testResource.hasId()).toBe(true);
     expect(testResource.getId()).toStrictEqual(VALID_ID);
     expect(testResource.hasMeta()).toBe(true);
-    expect(testResource.getMeta()).toMatchObject(VALID_META);
+    expect(testResource.getMeta()).toEqual(VALID_META);
     expect(testResource.hasImplicitRules()).toBe(true);
     expect(testResource.getImplicitRules()).toStrictEqual(VALID_URI);
     expect(testResource.hasLanguage()).toBe(true);
     expect(testResource.getLanguage()).toStrictEqual(VALID_CODE);
 
     expect(testResource.hasIdElement()).toBe(true);
-    expect(testResource.getIdElement()).toMatchObject(new IdType(VALID_ID));
+    expect(testResource.getIdElement()).toEqual(new IdType(VALID_ID));
     expect(testResource.hasImplicitRulesElement()).toBe(true);
-    expect(testResource.getImplicitRulesElement()).toMatchObject(new UriType(VALID_URI));
+    expect(testResource.getImplicitRulesElement()).toEqual(new UriType(VALID_URI));
     expect(testResource.hasLanguageElement()).toBe(true);
-    expect(testResource.getLanguageElement()).toMatchObject(new CodeType(VALID_CODE));
+    expect(testResource.getLanguageElement()).toEqual(new CodeType(VALID_CODE));
   });
 
   it('should be properly reset by modifying all properties with primitive values', () => {
@@ -134,18 +147,18 @@ describe('Resource', () => {
     expect(testResource.hasId()).toBe(true);
     expect(testResource.getId()).toStrictEqual(VALID_ID_2);
     expect(testResource.hasMeta()).toBe(true);
-    expect(testResource.getMeta()).toMatchObject(VALID_META_2);
+    expect(testResource.getMeta()).toEqual(VALID_META_2);
     expect(testResource.hasImplicitRules()).toBe(true);
     expect(testResource.getImplicitRules()).toStrictEqual(VALID_URI_2);
     expect(testResource.hasLanguage()).toBe(true);
     expect(testResource.getLanguage()).toStrictEqual(VALID_CODE_2);
 
     expect(testResource.hasIdElement()).toBe(true);
-    expect(testResource.getIdElement()).toMatchObject(new IdType(VALID_ID_2));
+    expect(testResource.getIdElement()).toEqual(new IdType(VALID_ID_2));
     expect(testResource.hasImplicitRulesElement()).toBe(true);
-    expect(testResource.getImplicitRulesElement()).toMatchObject(new UriType(VALID_URI_2));
+    expect(testResource.getImplicitRulesElement()).toEqual(new UriType(VALID_URI_2));
     expect(testResource.hasLanguageElement()).toBe(true);
-    expect(testResource.getLanguageElement()).toMatchObject(new CodeType(VALID_CODE_2));
+    expect(testResource.getLanguageElement()).toEqual(new CodeType(VALID_CODE_2));
 
     testResource.setId(UNDEFINED_VALUE);
     testResource.setMeta(UNDEFINED_VALUE);
@@ -157,18 +170,18 @@ describe('Resource', () => {
     expect(testResource.hasId()).toBe(false);
     expect(testResource.getId()).toBeUndefined();
     expect(testResource.hasMeta()).toBe(false);
-    expect(testResource.getMeta()).toMatchObject(new Meta());
+    expect(testResource.getMeta()).toEqual(new Meta());
     expect(testResource.hasImplicitRules()).toBe(false);
     expect(testResource.getImplicitRules()).toBeUndefined();
     expect(testResource.hasLanguage()).toBe(false);
     expect(testResource.getLanguage()).toBeUndefined();
 
     expect(testResource.hasIdElement()).toBe(false);
-    expect(testResource.getIdElement()).toMatchObject(new IdType());
+    expect(testResource.getIdElement()).toEqual(new IdType());
     expect(testResource.hasImplicitRulesElement()).toBe(false);
-    expect(testResource.getImplicitRulesElement()).toMatchObject(new UriType());
+    expect(testResource.getImplicitRulesElement()).toEqual(new UriType());
     expect(testResource.hasLanguageElement()).toBe(false);
-    expect(testResource.getLanguageElement()).toMatchObject(new CodeType());
+    expect(testResource.getLanguageElement()).toEqual(new CodeType());
   });
 
   it('should throw PrimitiveTypeError when reset with invalid primitive Resource.id value', () => {
@@ -211,23 +224,34 @@ describe('Resource', () => {
     expect(testResource.constructor.name).toStrictEqual('MockTask');
     expect(testResource.resourceType()).toStrictEqual('Task');
     expect(testResource.fhirType()).toStrictEqual('MockTask');
+    expect(testResource.isResource()).toBe(true);
     expect(testResource.isEmpty()).toBe(false);
+    const expectedJson = {
+      resourceType: 'Task',
+      id: 'a-432.E-12345',
+      meta: {
+        versionId: 'v1',
+      },
+      implicitRules: 'testUriType',
+      language: 'testCodeType',
+    };
+    expect(testResource.toJSON()).toEqual(expectedJson);
 
     expect(testResource.hasId()).toBe(true);
     expect(testResource.getId()).toStrictEqual(VALID_ID);
     expect(testResource.hasMeta()).toBe(true);
-    expect(testResource.getMeta()).toMatchObject(VALID_META);
+    expect(testResource.getMeta()).toEqual(VALID_META);
     expect(testResource.hasImplicitRules()).toBe(true);
     expect(testResource.getImplicitRules()).toStrictEqual(VALID_URI);
     expect(testResource.hasLanguage()).toBe(true);
     expect(testResource.getLanguage()).toStrictEqual(VALID_CODE);
 
     expect(testResource.hasIdElement()).toBe(true);
-    expect(testResource.getIdElement()).toMatchObject(new IdType(VALID_ID));
+    expect(testResource.getIdElement()).toEqual(new IdType(VALID_ID));
     expect(testResource.hasImplicitRulesElement()).toBe(true);
-    expect(testResource.getImplicitRulesElement()).toMatchObject(new UriType(VALID_URI));
+    expect(testResource.getImplicitRulesElement()).toEqual(new UriType(VALID_URI));
     expect(testResource.hasLanguageElement()).toBe(true);
-    expect(testResource.getLanguageElement()).toMatchObject(new CodeType(VALID_CODE));
+    expect(testResource.getLanguageElement()).toEqual(new CodeType(VALID_CODE));
   });
 
   it('should be properly reset by modifying all properties with PrimitiveType values', () => {
@@ -248,18 +272,18 @@ describe('Resource', () => {
     expect(testResource.hasId()).toBe(true);
     expect(testResource.getId()).toStrictEqual(VALID_ID_2);
     expect(testResource.hasMeta()).toBe(true);
-    expect(testResource.getMeta()).toMatchObject(VALID_META_2);
+    expect(testResource.getMeta()).toEqual(VALID_META_2);
     expect(testResource.hasImplicitRules()).toBe(true);
     expect(testResource.getImplicitRules()).toStrictEqual(VALID_URI_2);
     expect(testResource.hasLanguage()).toBe(true);
     expect(testResource.getLanguage()).toStrictEqual(VALID_CODE_2);
 
     expect(testResource.hasIdElement()).toBe(true);
-    expect(testResource.getIdElement()).toMatchObject(new IdType(VALID_ID_2));
+    expect(testResource.getIdElement()).toEqual(new IdType(VALID_ID_2));
     expect(testResource.hasImplicitRulesElement()).toBe(true);
-    expect(testResource.getImplicitRulesElement()).toMatchObject(new UriType(VALID_URI_2));
+    expect(testResource.getImplicitRulesElement()).toEqual(new UriType(VALID_URI_2));
     expect(testResource.hasLanguageElement()).toBe(true);
-    expect(testResource.getLanguageElement()).toMatchObject(new CodeType(VALID_CODE_2));
+    expect(testResource.getLanguageElement()).toEqual(new CodeType(VALID_CODE_2));
   });
 
   it('should properly copy()', () => {
@@ -276,23 +300,34 @@ describe('Resource', () => {
     expect(testResource.constructor.name).toStrictEqual('MockTask');
     expect(testResource.resourceType()).toStrictEqual('Task');
     expect(testResource.fhirType()).toStrictEqual('MockTask');
+    expect(testResource.isResource()).toBe(true);
     expect(testResource.isEmpty()).toBe(false);
+    const expectedJson = {
+      resourceType: 'Task',
+      id: 'a-432.E-12345',
+      meta: {
+        versionId: 'v1',
+      },
+      implicitRules: 'testUriType',
+      language: 'testCodeType',
+    };
+    expect(testResource.toJSON()).toEqual(expectedJson);
 
     expect(testResource.hasId()).toBe(true);
     expect(testResource.getId()).toStrictEqual(VALID_ID);
     expect(testResource.hasMeta()).toBe(true);
-    expect(testResource.getMeta()).toMatchObject(VALID_META);
+    expect(testResource.getMeta()).toEqual(VALID_META);
     expect(testResource.hasImplicitRules()).toBe(true);
     expect(testResource.getImplicitRules()).toStrictEqual(VALID_URI);
     expect(testResource.hasLanguage()).toBe(true);
     expect(testResource.getLanguage()).toStrictEqual(VALID_CODE);
 
     expect(testResource.hasIdElement()).toBe(true);
-    expect(testResource.getIdElement()).toMatchObject(new IdType(VALID_ID));
+    expect(testResource.getIdElement()).toEqual(new IdType(VALID_ID));
     expect(testResource.hasImplicitRulesElement()).toBe(true);
-    expect(testResource.getImplicitRulesElement()).toMatchObject(new UriType(VALID_URI));
+    expect(testResource.getImplicitRulesElement()).toEqual(new UriType(VALID_URI));
     expect(testResource.hasLanguageElement()).toBe(true);
-    expect(testResource.getLanguageElement()).toMatchObject(new CodeType(VALID_CODE));
+    expect(testResource.getLanguageElement()).toEqual(new CodeType(VALID_CODE));
   });
 
   it('should throw InvalidTypeError for invalid IdType type for Resource.setIdElement()', () => {

@@ -21,10 +21,15 @@
  *
  */
 
-import { DataType } from '@src/fhir-core/base-models/core-fhir-models';
+import {
+  DataType,
+  setFhirComplexListJson,
+  setFhirPrimitiveJson,
+  setFhirPrimitiveListJson,
+} from '@src/fhir-core/base-models/core-fhir-models';
 import { IBase } from '@src/fhir-core/base-models/IBase';
-import { CanonicalType } from '@src/fhir-core/data-types/primitive/CanonicalType';
 import { Coding } from '@src/fhir-core/data-types/complex/Coding';
+import { CanonicalType } from '@src/fhir-core/data-types/primitive/CanonicalType';
 import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
 import { InstantType } from '@src/fhir-core/data-types/primitive/InstantType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
@@ -40,6 +45,7 @@ import {
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
+import * as JSON from '@src/fhir-core/utility/json-helpers';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -532,14 +538,14 @@ export class Meta extends DataType implements IBase {
   }
 
   /**
-   * {@inheritDoc Base.fhirType}
+   * {@inheritDoc IBase.fhirType}
    */
   public override fhirType(): string {
     return 'Meta';
   }
 
   /**
-   * {@inheritDoc Base.isEmpty}
+   * {@inheritDoc IBase.isEmpty}
    */
   public override isEmpty(): boolean {
     return (
@@ -589,6 +595,53 @@ export class Meta extends DataType implements IBase {
     } else {
       dest.tag = undefined;
     }
+  }
+
+  /**
+   * {@inheritDoc IBase.isComplexDataType}
+   */
+  public override isComplexDataType(): boolean {
+    return true;
+  }
+
+  /**
+   * {@inheritDoc IBase.toJSON}
+   */
+  public override toJSON(): JSON.Value | undefined {
+    if (this.isEmpty()) {
+      return undefined;
+    }
+
+    let jsonObj = super.toJSON() as JSON.Object | undefined;
+    if (jsonObj === undefined) {
+      jsonObj = {} as JSON.Object;
+    }
+
+    if (this.hasVersionIdElement()) {
+      setFhirPrimitiveJson<fhirId>(this.getVersionIdElement(), 'versionId', jsonObj);
+    }
+
+    if (this.hasLastUpdatedElement()) {
+      setFhirPrimitiveJson<fhirInstant>(this.getLastUpdatedElement(), 'lastUpdated', jsonObj);
+    }
+
+    if (this.hasSourceElement()) {
+      setFhirPrimitiveJson<fhirUri>(this.getSourceElement(), 'source', jsonObj);
+    }
+
+    if (this.hasProfileElement()) {
+      setFhirPrimitiveListJson<fhirCanonical>(this.getProfileElement(), 'profile', jsonObj);
+    }
+
+    if (this.hasSecurity()) {
+      setFhirComplexListJson(this.getSecurity(), 'security', jsonObj);
+    }
+
+    if (this.hasTag()) {
+      setFhirComplexListJson(this.getTag(), 'tag', jsonObj);
+    }
+
+    return jsonObj;
   }
 }
 

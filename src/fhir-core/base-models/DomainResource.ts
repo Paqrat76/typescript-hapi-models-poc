@@ -23,12 +23,19 @@
 
 import { strict as assert } from 'node:assert';
 import { IBase } from '@src/fhir-core/base-models/IBase';
-import { assertFhirResourceType, Resource } from '@src/fhir-core/base-models/Resource';
+import { assertFhirResourceType, Resource, setFhirResourceListJson } from '@src/fhir-core/base-models/Resource';
 import { Narrative } from '@src/fhir-core/data-types/complex/Narrative';
-import { Extension, IBaseExtension, IBaseModifierExtension } from '@src/fhir-core/base-models/core-fhir-models';
+import {
+  Extension,
+  IBaseExtension,
+  IBaseModifierExtension,
+  setFhirComplexJson,
+  setFhirExtensionJson,
+} from '@src/fhir-core/base-models/core-fhir-models';
 import { fhirUri } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty, validateUrl } from '@src/fhir-core/utility/fhir-util';
 import { assertFhirType } from '@src/fhir-core/utility/type-guards';
+import * as JSON from '@src/fhir-core/utility/json-helpers';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -461,6 +468,32 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
         dest.modifierExtension.push(modifierExtension.copy());
       }
     }
+  }
+
+  /**
+   * {@inheritDoc Base.toJSON}
+   */
+  public override toJSON(): JSON.Value | undefined {
+    // super.toJson() will always be defined if only to contain the resourceType property
+    const jsonObj = super.toJSON() as JSON.Object;
+
+    if (this.hasText()) {
+      setFhirComplexJson(this.getText(), 'text', jsonObj);
+    }
+
+    if (this.hasContained()) {
+      setFhirResourceListJson(this.getContained(), 'contained', jsonObj);
+    }
+
+    if (this.hasExtension()) {
+      setFhirExtensionJson(this.getExtension(), jsonObj);
+    }
+
+    if (this.hasModifierExtension()) {
+      setFhirExtensionJson(this.getModifierExtension(), jsonObj, true);
+    }
+
+    return jsonObj;
   }
 }
 

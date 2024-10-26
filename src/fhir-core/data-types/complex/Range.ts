@@ -21,10 +21,11 @@
  *
  */
 
-import { DataType } from '@src/fhir-core/base-models/core-fhir-models';
+import { DataType, setFhirComplexJson } from '@src/fhir-core/base-models/core-fhir-models';
 import { IBase } from '@src/fhir-core/base-models/IBase';
 import { SimpleQuantity } from '@src/fhir-core/data-types/complex/SimpleQuantity';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
+import * as JSON from '@src/fhir-core/utility/json-helpers';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -133,14 +134,14 @@ export class Range extends DataType implements IBase {
   }
 
   /**
-   * {@inheritDoc Base.fhirType}
+   * {@inheritDoc IBase.fhirType}
    */
   public override fhirType(): string {
     return 'Range';
   }
 
   /**
-   * {@inheritDoc Base.isEmpty}
+   * {@inheritDoc IBase.isEmpty}
    */
   public override isEmpty(): boolean {
     return super.isEmpty() && isElementEmpty(this.low, this.high);
@@ -162,6 +163,37 @@ export class Range extends DataType implements IBase {
     super.copyValues(dest);
     dest.low = this.low?.copy();
     dest.high = this.high?.copy();
+  }
+
+  /**
+   * {@inheritDoc IBase.isComplexDataType}
+   */
+  public override isComplexDataType(): boolean {
+    return true;
+  }
+
+  /**
+   * {@inheritDoc IBase.toJSON}
+   */
+  public override toJSON(): JSON.Value | undefined {
+    if (this.isEmpty()) {
+      return undefined;
+    }
+
+    let jsonObj = super.toJSON() as JSON.Object | undefined;
+    if (jsonObj === undefined) {
+      jsonObj = {} as JSON.Object;
+    }
+
+    if (this.hasLow()) {
+      setFhirComplexJson(this.getLow(), 'low', jsonObj);
+    }
+
+    if (this.hasHigh()) {
+      setFhirComplexJson(this.getHigh(), 'high', jsonObj);
+    }
+
+    return jsonObj;
   }
 }
 

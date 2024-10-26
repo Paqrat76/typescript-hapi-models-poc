@@ -2,13 +2,13 @@
 
 // TODO: After all complex datatype classes are created, convert this file to template documentation!
 
-import { IBase } from '@src/fhir-core/base-models/IBase';
+import { Base } from '@src/fhir-core/base-models/Base';
+import { Value } from '@src/fhir-core/utility/json-helpers';
 import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
 import { CanonicalType } from '@src/fhir-core/data-types/primitive/CanonicalType';
-import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { DateTimeType } from '@src/fhir-core/data-types/primitive/DateTimeType';
 import { DecimalType } from '@src/fhir-core/data-types/primitive/DecimalType';
-import { EnumCodeType } from '@src/fhir-core/data-types/primitive/EnumCodeType';
 import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
 import { InstantType } from '@src/fhir-core/data-types/primitive/InstantType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
@@ -1294,9 +1294,11 @@ export class TempTemplateTypeMethods {
   //endregion
 }
 
-class MockFhirModel implements IBase {
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor,@typescript-eslint/no-empty-function
-  constructor() {}
+class MockFhirModel extends Base {
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
+  constructor() {
+    super();
+  }
 
   public fhirType(): string {
     return 'MockFhirModel';
@@ -1304,5 +1306,24 @@ class MockFhirModel implements IBase {
 
   public isEmpty(): boolean {
     return true;
+  }
+
+  // NOT USED
+  public copy(): MockFhirModel {
+    const dest = new MockFhirModel();
+    this.copyValues(dest);
+    return dest;
+  }
+
+  // NOT USED
+  // @ts-expect-error: ignore param for test purposes
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected copyValues(dest: MockFhirModel): void {
+    return;
+  }
+
+  // NOT USED
+  public toJSON(): Value | undefined {
+    return undefined;
   }
 }

@@ -24,6 +24,7 @@
 import { DataType, Extension } from '@src/fhir-core/base-models/core-fhir-models';
 import { Range } from '@src/fhir-core/data-types/complex/Range';
 import { SimpleQuantity } from '@src/fhir-core/data-types/complex/SimpleQuantity';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 
 describe('Range', () => {
   const VALID_DECIMAL = 13.579;
@@ -48,76 +49,218 @@ describe('Range', () => {
   SIMPLE_QUANTITY_2.setSystem(VALID_URI_2);
   SIMPLE_QUANTITY_2.setCode(VALID_CODE_2);
 
-  //const UNDEFINED_VALUE = undefined;
+  const UNDEFINED_VALUE = undefined;
 
-  it('should be properly instantiated as empty', () => {
-    const testRange = new Range();
-    expect(testRange).toBeDefined();
-    expect(testRange).toBeInstanceOf(DataType);
-    expect(testRange).toBeInstanceOf(Range);
-    expect(testRange.constructor.name).toStrictEqual('Range');
-    expect(testRange.fhirType()).toStrictEqual('Range');
-    expect(testRange.isEmpty()).toBe(true);
+  describe('Core', () => {
+    const expectedJson1 = {
+      low: {
+        value: 13.579,
+        unit: 'This is a valid string.',
+        system: 'testUriType',
+        code: 'testCodeType',
+      },
+      high: {
+        value: 24.68,
+        unit: 'This is another valid string!',
+        system: 'testUriType2',
+        code: 'testCodeType2',
+      },
+    };
+    const expectedJson2 = {
+      low: {
+        value: 24.68,
+        unit: 'This is another valid string!',
+        system: 'testUriType2',
+        code: 'testCodeType2',
+      },
+      high: {
+        value: 13.579,
+        unit: 'This is a valid string.',
+        system: 'testUriType',
+        code: 'testCodeType',
+      },
+    };
 
-    // inherited properties from Element
-    expect(testRange.hasId()).toBe(false);
-    expect(testRange.getId()).toBeUndefined();
-    expect(testRange.hasExtension()).toBe(false);
-    expect(testRange.getExtension()).toMatchObject([] as Extension[]);
+    it('should be properly instantiated as empty', () => {
+      const testRange = new Range();
+      expect(testRange).toBeDefined();
+      expect(testRange).toBeInstanceOf(DataType);
+      expect(testRange).toBeInstanceOf(Range);
+      expect(testRange.constructor.name).toStrictEqual('Range');
+      expect(testRange.fhirType()).toStrictEqual('Range');
+      expect(testRange.isEmpty()).toBe(true);
+      expect(testRange.isComplexDataType()).toBe(true);
+      expect(testRange.toJSON()).toBeUndefined();
 
-    // Range properties
-    expect(testRange.hasLow()).toBe(false);
-    expect(testRange.getLow()).toMatchObject(new SimpleQuantity());
-    expect(testRange.hasHigh()).toBe(false);
-    expect(testRange.getHigh()).toMatchObject(new SimpleQuantity());
+      // inherited properties from Element
+      expect(testRange.hasId()).toBe(false);
+      expect(testRange.getId()).toBeUndefined();
+      expect(testRange.hasExtension()).toBe(false);
+      expect(testRange.getExtension()).toEqual([] as Extension[]);
+
+      // Range properties
+      expect(testRange.hasLow()).toBe(false);
+      expect(testRange.getLow()).toEqual(new SimpleQuantity());
+      expect(testRange.hasHigh()).toBe(false);
+      expect(testRange.getHigh()).toEqual(new SimpleQuantity());
+    });
+
+    it('should properly copy()', () => {
+      const rangeType = new Range();
+      rangeType.setLow(SIMPLE_QUANTITY_1);
+      rangeType.setHigh(SIMPLE_QUANTITY_2);
+      let testRange = rangeType.copy();
+
+      expect(testRange).toBeDefined();
+      expect(testRange).toBeInstanceOf(DataType);
+      expect(testRange).toBeInstanceOf(Range);
+      expect(testRange.constructor.name).toStrictEqual('Range');
+      expect(testRange.fhirType()).toStrictEqual('Range');
+      expect(testRange.isEmpty()).toBe(false);
+      expect(testRange.isComplexDataType()).toBe(true);
+      expect(testRange.toJSON()).toEqual(expectedJson1);
+
+      // inherited properties from Element
+      expect(testRange.hasId()).toBe(false);
+      expect(testRange.getId()).toBeUndefined();
+      expect(testRange.hasExtension()).toBe(false);
+      expect(testRange.getExtension()).toEqual([] as Extension[]);
+
+      // Range properties
+      expect(testRange.hasLow()).toBe(true);
+      expect(testRange.getLow()).toEqual(SIMPLE_QUANTITY_1);
+      expect(testRange.hasHigh()).toBe(true);
+      expect(testRange.getHigh()).toEqual(SIMPLE_QUANTITY_2);
+
+      rangeType.setLow(SIMPLE_QUANTITY_2);
+      rangeType.setHigh(SIMPLE_QUANTITY_1);
+      testRange = rangeType.copy();
+
+      expect(testRange).toBeDefined();
+      expect(testRange).toBeInstanceOf(DataType);
+      expect(testRange).toBeInstanceOf(Range);
+      expect(testRange.constructor.name).toStrictEqual('Range');
+      expect(testRange.fhirType()).toStrictEqual('Range');
+      expect(testRange.isEmpty()).toBe(false);
+      expect(testRange.isComplexDataType()).toBe(true);
+      expect(testRange.toJSON()).toEqual(expectedJson2);
+
+      // inherited properties from Element
+      expect(testRange.hasId()).toBe(false);
+      expect(testRange.getId()).toBeUndefined();
+      expect(testRange.hasExtension()).toBe(false);
+      expect(testRange.getExtension()).toEqual([] as Extension[]);
+
+      // Range properties
+      expect(testRange.hasLow()).toBe(true);
+      expect(testRange.getLow()).toEqual(SIMPLE_QUANTITY_2);
+      expect(testRange.hasHigh()).toBe(true);
+      expect(testRange.getHigh()).toEqual(SIMPLE_QUANTITY_1);
+
+      rangeType.setLow(UNDEFINED_VALUE);
+      rangeType.setHigh(UNDEFINED_VALUE);
+      testRange = rangeType.copy();
+
+      expect(testRange).toBeDefined();
+      expect(testRange).toBeInstanceOf(DataType);
+      expect(testRange).toBeInstanceOf(Range);
+      expect(testRange.constructor.name).toStrictEqual('Range');
+      expect(testRange.fhirType()).toStrictEqual('Range');
+      expect(testRange.isEmpty()).toBe(true);
+      expect(testRange.isComplexDataType()).toBe(true);
+      expect(testRange.toJSON()).toBeUndefined();
+
+      // inherited properties from Element
+      expect(testRange.hasId()).toBe(false);
+      expect(testRange.getId()).toBeUndefined();
+      expect(testRange.hasExtension()).toBe(false);
+      expect(testRange.getExtension()).toEqual([] as Extension[]);
+
+      // Range properties
+      expect(testRange.hasLow()).toBe(false);
+      expect(testRange.getLow()).toEqual(new SimpleQuantity());
+      expect(testRange.hasHigh()).toBe(false);
+      expect(testRange.getHigh()).toEqual(new SimpleQuantity());
+    });
   });
 
-  it('should properly copy()', () => {
-    const rangeType = new Range();
-    rangeType.setLow(SIMPLE_QUANTITY_1);
-    rangeType.setHigh(SIMPLE_QUANTITY_2);
-    let testRange = rangeType.copy();
+  describe('Serialization/Deserialization', () => {
+    it('should properly create serialized content', () => {
+      const lowType = new SimpleQuantity();
+      lowType.setValue(VALID_DECIMAL);
+      lowType.setUnit(VALID_STRING);
+      lowType.setSystem(VALID_URI);
+      lowType.setCode(VALID_CODE);
 
-    expect(testRange).toBeDefined();
-    expect(testRange).toBeInstanceOf(DataType);
-    expect(testRange).toBeInstanceOf(Range);
-    expect(testRange.constructor.name).toStrictEqual('Range');
-    expect(testRange.fhirType()).toStrictEqual('Range');
-    expect(testRange.isEmpty()).toBe(false);
+      const lowId = 'L1357';
+      const lowExtension = new Extension('lowUrl', new StringType('low extension string value'));
+      lowType.setId(lowId);
+      lowType.addExtension(lowExtension);
 
-    // inherited properties from Element
-    expect(testRange.hasId()).toBe(false);
-    expect(testRange.getId()).toBeUndefined();
-    expect(testRange.hasExtension()).toBe(false);
-    expect(testRange.getExtension()).toMatchObject([] as Extension[]);
+      const testRange = new Range();
+      const testId = 'id1234';
+      testRange.setId(testId);
+      const testExtension1 = new Extension('testUrl1', new StringType('base extension string value 1'));
+      testRange.addExtension(testExtension1);
+      const testExtension2 = new Extension('testUrl2', new StringType('base extension string value 2'));
+      testRange.addExtension(testExtension2);
 
-    // Range properties
-    expect(testRange.hasLow()).toBe(true);
-    expect(testRange.getLow()).toMatchObject(SIMPLE_QUANTITY_1);
-    expect(testRange.hasHigh()).toBe(true);
-    expect(testRange.getHigh()).toMatchObject(SIMPLE_QUANTITY_2);
+      testRange.setLow(lowType);
+      testRange.setHigh(SIMPLE_QUANTITY_2);
 
-    rangeType.setLow(SIMPLE_QUANTITY_2);
-    rangeType.setHigh(SIMPLE_QUANTITY_1);
-    testRange = rangeType.copy();
+      expect(testRange).toBeDefined();
+      expect(testRange).toBeInstanceOf(DataType);
+      expect(testRange).toBeInstanceOf(Range);
+      expect(testRange.constructor.name).toStrictEqual('Range');
+      expect(testRange.fhirType()).toStrictEqual('Range');
+      expect(testRange.isEmpty()).toBe(false);
+      expect(testRange.isComplexDataType()).toBe(true);
 
-    expect(testRange).toBeDefined();
-    expect(testRange).toBeInstanceOf(DataType);
-    expect(testRange).toBeInstanceOf(Range);
-    expect(testRange.constructor.name).toStrictEqual('Range');
-    expect(testRange.fhirType()).toStrictEqual('Range');
-    expect(testRange.isEmpty()).toBe(false);
+      // inherited properties from Element
+      expect(testRange.hasId()).toBe(true);
+      expect(testRange.getId()).toStrictEqual(testId);
+      expect(testRange.hasExtension()).toBe(true);
+      expect(testRange.getExtension()).toEqual([testExtension1, testExtension2]);
 
-    // inherited properties from Element
-    expect(testRange.hasId()).toBe(false);
-    expect(testRange.getId()).toBeUndefined();
-    expect(testRange.hasExtension()).toBe(false);
-    expect(testRange.getExtension()).toMatchObject([] as Extension[]);
+      // Range properties
+      expect(testRange.hasLow()).toBe(true);
+      expect(testRange.getLow()).toEqual(lowType);
+      expect(testRange.hasHigh()).toBe(true);
+      expect(testRange.getHigh()).toEqual(SIMPLE_QUANTITY_2);
 
-    // Range properties
-    expect(testRange.hasLow()).toBe(true);
-    expect(testRange.getLow()).toMatchObject(SIMPLE_QUANTITY_2);
-    expect(testRange.hasHigh()).toBe(true);
-    expect(testRange.getHigh()).toMatchObject(SIMPLE_QUANTITY_1);
+      const expectedJson = {
+        id: 'id1234',
+        extension: [
+          {
+            url: 'testUrl1',
+            valueString: 'base extension string value 1',
+          },
+          {
+            url: 'testUrl2',
+            valueString: 'base extension string value 2',
+          },
+        ],
+        low: {
+          id: 'L1357',
+          extension: [
+            {
+              url: 'lowUrl',
+              valueString: 'low extension string value',
+            },
+          ],
+          value: 13.579,
+          unit: 'This is a valid string.',
+          system: 'testUriType',
+          code: 'testCodeType',
+        },
+        high: {
+          value: 24.68,
+          unit: 'This is another valid string!',
+          system: 'testUriType2',
+          code: 'testCodeType2',
+        },
+      };
+      expect(testRange.toJSON()).toEqual(expectedJson);
+    });
   });
 });

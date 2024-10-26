@@ -2,7 +2,7 @@
 
 ## POC Feature Set
 
-- Investigate and implement serialization/parsing (deserialization) for all FHIR data models
+- Investigate and implement parsing (deserialization) for all FHIR data models
   - For inspiration, see HAPI FHIR [Parsing and Serialization](https://hapifhir.io/hapi-fhir/docs/model/parsers.html)
 - Setup functional testing to verify implementation of HAPI FHIR features
   - Adding simple and complex and multiple extensions and modifierExtensions within DataTypes and Resources

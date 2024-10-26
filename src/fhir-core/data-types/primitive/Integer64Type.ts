@@ -23,6 +23,7 @@
 
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { fhirInteger64, fhirInteger64Schema, parseFhirPrimitiveData } from './primitive-types';
+import * as JSON from '@src/fhir-core/utility/json-helpers';
 
 /**
  * Integer64 Class
@@ -66,6 +67,10 @@ export class Integer64Type extends PrimitiveType<fhirInteger64> {
     return 'integer64';
   }
 
+  public override isBigIntPrimitive(): boolean {
+    return true;
+  }
+
   public override copy(): Integer64Type {
     const dest = new Integer64Type();
     this.copyValues(dest);
@@ -75,6 +80,16 @@ export class Integer64Type extends PrimitiveType<fhirInteger64> {
   protected override copyValues(dest: Integer64Type): void {
     super.copyValues(dest);
     dest.setValueAsString(this.getValueAsString());
+  }
+
+  public override toJSON(): JSON.Value | undefined {
+    // Ref: https://hl7.org/fhir/json.html#primitive
+    // The FHIR types integer, unsignedInt, positiveInt and decimal are represented as a JSON number,
+    // the FHIR type boolean as a JSON boolean, and all other types
+    //   (including integer64)
+    // are represented as a JSON string which has the same content as that specified for the relevant
+    // datatype. Whitespace is always significant (i.e. no leading and trailing spaces for non-strings).
+    return this.hasValue() ? (String(this.getValue()) as JSON.Value) : undefined;
   }
 
   private assignValue(value: fhirInteger64 | undefined): void {

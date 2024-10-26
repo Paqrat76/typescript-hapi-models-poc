@@ -43,23 +43,23 @@ describe('NarrativeStatusEnum', () => {
 
     let enumValue = testNarrativeStatusEnum.fromCode('generated');
     expect(enumValue).toBeDefined();
-    expect(enumValue).toMatchObject(NarrativeStatusEnum.GENERATED);
+    expect(enumValue).toEqual(NarrativeStatusEnum.GENERATED);
 
     enumValue = testNarrativeStatusEnum.fromCode('extensions');
     expect(enumValue).toBeDefined();
-    expect(enumValue).toMatchObject(NarrativeStatusEnum.EXTENSIONS);
+    expect(enumValue).toEqual(NarrativeStatusEnum.EXTENSIONS);
 
     enumValue = testNarrativeStatusEnum.fromCode('additional');
     expect(enumValue).toBeDefined();
-    expect(enumValue).toMatchObject(NarrativeStatusEnum.ADDITIONAL);
+    expect(enumValue).toEqual(NarrativeStatusEnum.ADDITIONAL);
 
     enumValue = testNarrativeStatusEnum.fromCode('empty');
     expect(enumValue).toBeDefined();
-    expect(enumValue).toMatchObject(NarrativeStatusEnum.EMPTY);
+    expect(enumValue).toEqual(NarrativeStatusEnum.EMPTY);
 
     enumValue = testNarrativeStatusEnum.fromCode('null');
     expect(enumValue).toBeDefined();
-    expect(enumValue).toMatchObject(NarrativeStatusEnum.NULL);
+    expect(enumValue).toEqual(NarrativeStatusEnum.NULL);
   });
 
   it('should throw InvalidCodeError when executing fromCode() with undefined code value', () => {

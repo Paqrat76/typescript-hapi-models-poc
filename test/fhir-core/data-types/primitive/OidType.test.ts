@@ -22,6 +22,7 @@
  */
 
 import { OidType } from '@src/fhir-core/data-types/primitive/OidType';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 
@@ -38,12 +39,15 @@ describe('OidType', () => {
     expect(testOidType.constructor.name).toStrictEqual('OidType');
     expect(testOidType.fhirType()).toStrictEqual('oid');
     expect(testOidType.isEmpty()).toBe(true);
+    expect(testOidType.isPrimitive()).toBe(true);
+    expect(testOidType.isStringPrimitive()).toBe(true);
+    expect(testOidType.toJSON()).toBeUndefined();
 
     // inherited properties from Element
     expect(testOidType.hasId()).toBe(false);
     expect(testOidType.getId()).toBeUndefined();
     expect(testOidType.hasExtension()).toBe(false);
-    expect(testOidType.getExtension()).toMatchObject([] as Extension[]);
+    expect(testOidType.getExtension()).toEqual([] as Extension[]);
     // primitive value properties
     expect(testOidType.hasValue()).toBe(false);
     expect(testOidType.getValue()).toBeUndefined();
@@ -52,12 +56,35 @@ describe('OidType', () => {
 
   it('should be properly initialized', () => {
     const testOidType = new OidType(VALID_OID);
+    const testId = 'id1234';
+    testOidType.setId(testId);
+    const testExtension = new Extension('testUrl', new StringType('extension string value'));
+    testOidType.addExtension(testExtension);
+
     expect(testOidType).toBeDefined();
     expect(testOidType).toBeInstanceOf(OidType);
     expect(testOidType.constructor.name).toStrictEqual('OidType');
     expect(testOidType.fhirType()).toStrictEqual('oid');
     expect(testOidType.isEmpty()).toBe(false);
+    expect(testOidType.isPrimitive()).toBe(true);
+    expect(testOidType.isStringPrimitive()).toBe(true);
+    expect(testOidType.toJSON()).toStrictEqual(VALID_OID);
+    expect(testOidType.toSiblingJSON()).toEqual({
+      id: 'id1234',
+      extension: [
+        {
+          url: 'testUrl',
+          valueString: 'extension string value',
+        },
+      ],
+    });
 
+    // inherited properties from Element
+    expect(testOidType.hasId()).toBe(true);
+    expect(testOidType.getId()).toStrictEqual(testId);
+    expect(testOidType.hasExtension()).toBe(true);
+    expect(testOidType.getExtension()).toEqual([testExtension]);
+    // primitive value properties
     expect(testOidType.hasValue()).toBe(true);
     expect(testOidType.getValue()).toBeDefined();
     expect(testOidType.getValue()).toStrictEqual(VALID_OID);
@@ -156,6 +183,9 @@ describe('OidType', () => {
     expect(testOidType.constructor.name).toStrictEqual('OidType');
     expect(testOidType.fhirType()).toStrictEqual('oid');
     expect(testOidType.isEmpty()).toBe(false);
+    expect(testOidType.isPrimitive()).toBe(true);
+    expect(testOidType.isStringPrimitive()).toBe(true);
+    expect(testOidType.toJSON()).toStrictEqual(VALID_OID);
     expect(testOidType.hasValue()).toBe(true);
     expect(testOidType.getValue()).toBeDefined();
     expect(testOidType.getValue()).toStrictEqual(VALID_OID);

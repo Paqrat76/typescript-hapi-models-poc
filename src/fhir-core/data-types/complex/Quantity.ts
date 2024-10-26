@@ -21,11 +21,10 @@
  *
  */
 
-import { DataType } from '@src/fhir-core/base-models/core-fhir-models';
+import { DataType, setFhirPrimitiveJson } from '@src/fhir-core/base-models/core-fhir-models';
 import { IBase } from '@src/fhir-core/base-models/IBase';
-import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { DecimalType } from '@src/fhir-core/data-types/primitive/DecimalType';
-import { EnumCodeType } from '@src/fhir-core/data-types/primitive/EnumCodeType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
@@ -41,6 +40,7 @@ import {
   fhirUriSchema,
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
+import * as JSON from '@src/fhir-core/utility/json-helpers';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -452,14 +452,14 @@ export class Quantity extends DataType implements IBase {
   }
 
   /**
-   * {@inheritDoc Base.fhirType}
+   * {@inheritDoc IBase.fhirType}
    */
   public override fhirType(): string {
     return 'Quantity';
   }
 
   /**
-   * {@inheritDoc Base.isEmpty}
+   * {@inheritDoc IBase.isEmpty}
    */
   public override isEmpty(): boolean {
     return super.isEmpty() && isElementEmpty(this.value, this.comparator, this.unit, this.system, this.code);
@@ -484,6 +484,50 @@ export class Quantity extends DataType implements IBase {
     dest.unit = this.unit?.copy();
     dest.system = this.system?.copy();
     dest.code = this.code?.copy();
+  }
+
+  /**
+   * {@inheritDoc IBase.isComplexDataType}
+   */
+  public override isComplexDataType(): boolean {
+    return true;
+  }
+
+  /**
+   * {@inheritDoc IBase.toJSON}
+   */
+  public override toJSON(): JSON.Value | undefined {
+    if (this.isEmpty()) {
+      return undefined;
+    }
+
+    let jsonObj = super.toJSON() as JSON.Object | undefined;
+    if (jsonObj === undefined) {
+      jsonObj = {} as JSON.Object;
+    }
+
+    if (this.hasValueElement()) {
+      setFhirPrimitiveJson<fhirDecimal>(this.getValueElement(), 'value', jsonObj);
+    }
+
+    if (this.hasComparatorElement()) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      setFhirPrimitiveJson<fhirCode>(this.getComparatorElement()!, 'comparator', jsonObj);
+    }
+
+    if (this.hasUnitElement()) {
+      setFhirPrimitiveJson<fhirString>(this.getUnitElement(), 'unit', jsonObj);
+    }
+
+    if (this.hasSystemElement()) {
+      setFhirPrimitiveJson<fhirUri>(this.getSystemElement(), 'system', jsonObj);
+    }
+
+    if (this.hasCodeElement()) {
+      setFhirPrimitiveJson<fhirCode>(this.getCodeElement(), 'code', jsonObj);
+    }
+
+    return jsonObj;
   }
 }
 

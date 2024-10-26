@@ -85,6 +85,10 @@ export class XhtmlType extends PrimitiveType<fhirXhtml> {
     return 'xhtml';
   }
 
+  public override isStringPrimitive(): boolean {
+    return true;
+  }
+
   public override copy(): XhtmlType {
     const dest = new XhtmlType();
     this.copyValues(dest);

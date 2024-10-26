@@ -38,17 +38,19 @@ describe('Extension', () => {
     expect(testExtension.constructor.name).toStrictEqual('Extension');
     expect(testExtension.fhirType()).toStrictEqual('Extension');
     expect(testExtension.isEmpty()).toBe(true);
+    expect(testExtension.toJSON()).toBeUndefined();
 
     // inherited properties from Element
     expect(testExtension.hasId()).toBe(false);
     expect(testExtension.getId()).toBeUndefined();
     expect(testExtension.hasExtension()).toBe(false);
-    expect(testExtension.getExtension()).toMatchObject([] as Extension[]);
+    expect(testExtension.getExtension()).toEqual([] as Extension[]);
     // Extension properties
     expect(testExtension.hasUrl()).toBe(false);
     expect(testExtension.getUrl()).toBeNull();
     expect(testExtension.hasValue()).toBe(false);
     expect(testExtension.getValue()).toBeUndefined();
+    expect(testExtension.toJSON()).toBeUndefined();
   });
 
   it('should be properly instantiated', () => {
@@ -61,16 +63,64 @@ describe('Extension', () => {
     expect(testExtension.fhirType()).toStrictEqual('Extension');
     expect(testExtension.isEmpty()).toBe(false);
 
+    const expectedJson = { url: 'testUrl' };
+    expect(testExtension.toJSON()).toStrictEqual(expectedJson);
+
     // inherited properties from Element
     expect(testExtension.hasId()).toBe(false);
     expect(testExtension.getId()).toBeUndefined();
     expect(testExtension.hasExtension()).toBe(false);
-    expect(testExtension.getExtension()).toMatchObject([] as Extension[]);
+    expect(testExtension.getExtension()).toEqual([] as Extension[]);
     // Extension properties
     expect(testExtension.hasUrl()).toBe(true);
     expect(testExtension.getUrl()).toStrictEqual(testUrl);
     expect(testExtension.hasValue()).toBe(false);
     expect(testExtension.getValue()).toBeUndefined();
+  });
+
+  it('should be properly instantiated with id and multiple extensions', () => {
+    const testId = 'id1234';
+    const testUrl1 = 'childUrl1';
+    const testValue1 = new StringType('testString1');
+    const testExtension1 = new Extension(testUrl1, testValue1);
+    const testUrl2 = 'childUrl2';
+    const testValue2 = new StringType('testString2');
+    const testExtension2 = new Extension(testUrl2, testValue2);
+    const childExtensions: Extension[] = [testExtension1, testExtension2];
+
+    const testUrl = 'testUrl';
+    const testExtension = new Extension(testUrl);
+    testExtension.setId(testId);
+    testExtension.addExtension(testExtension1);
+    testExtension.addExtension(testExtension2);
+
+    expect(testExtension).toBeDefined();
+    expect(testExtension).toBeInstanceOf(Extension);
+    expect(testExtension).toBeInstanceOf(Element);
+    expect(testExtension.constructor.name).toStrictEqual('Extension');
+    expect(testExtension.fhirType()).toStrictEqual('Extension');
+    expect(testExtension.isEmpty()).toBe(false);
+
+    // inherited properties from Element
+    expect(testExtension.hasId()).toBe(true);
+    expect(testExtension.getId()).toStrictEqual(testId);
+    expect(testExtension.hasExtension()).toBe(true);
+    expect(testExtension.getExtension()).toEqual(childExtensions);
+    // Extension properties
+    expect(testExtension.hasUrl()).toBe(true);
+    expect(testExtension.getUrl()).toStrictEqual(testUrl);
+    expect(testExtension.hasValue()).toBe(false);
+    expect(testExtension.getValue()).toBeUndefined();
+
+    const expectedJson = {
+      id: 'id1234',
+      url: 'testUrl',
+      extension: [
+        { url: 'childUrl1', valueString: 'testString1' },
+        { url: 'childUrl2', valueString: 'testString2' },
+      ],
+    };
+    expect(testExtension.toJSON()).toStrictEqual(expectedJson);
   });
 
   it('should be properly initialized with primitive value', () => {
@@ -84,11 +134,14 @@ describe('Extension', () => {
     expect(testExtension.fhirType()).toStrictEqual('Extension');
     expect(testExtension.isEmpty()).toBe(false);
 
+    const expectedJson = { url: 'testUrl', valueString: 'testString' };
+    expect(testExtension.toJSON()).toStrictEqual(expectedJson);
+
     // inherited properties from Element
     expect(testExtension.hasId()).toBe(false);
     expect(testExtension.getId()).toBeUndefined();
     expect(testExtension.hasExtension()).toBe(false);
-    expect(testExtension.getExtension()).toMatchObject([] as Extension[]);
+    expect(testExtension.getExtension()).toEqual([] as Extension[]);
     // Extension properties
     expect(testExtension.hasUrl()).toBe(true);
     expect(testExtension.getUrl()).toStrictEqual(testUrl);
@@ -109,6 +162,8 @@ describe('Extension', () => {
   it('should be properly modified with new primitive value', () => {
     const testUrl1 = 'testUrl1';
     const testValue1 = new StringType('testString1');
+    const expectedJson1 = { url: 'testUrl1', valueString: 'testString1' };
+
     const testExtension = new Extension(testUrl1, testValue1);
     expect(testExtension).toBeDefined();
     expect(testExtension).toBeInstanceOf(Extension);
@@ -120,24 +175,29 @@ describe('Extension', () => {
     expect(testExtension.getUrl()).toStrictEqual(testUrl1);
     expect(testExtension.hasValue()).toBe(true);
     expect(testExtension.getValue()).toStrictEqual(testValue1);
+    expect(testExtension.toJSON()).toStrictEqual(expectedJson1);
 
     const testUrl2 = 'testUrl2';
     testExtension.setUrl(testUrl2);
     const testValue2 = new StringType('testString2');
     testExtension.setValue(testValue2);
+    const expectedJson2 = { url: 'testUrl2', valueString: 'testString2' };
     expect(testExtension.isEmpty()).toBe(false);
     expect(testExtension.hasUrl()).toBe(true);
     expect(testExtension.getUrl()).toStrictEqual(testUrl2);
     expect(testExtension.hasValue()).toBe(true);
     expect(testExtension.getValue()).toStrictEqual(testValue2);
+    expect(testExtension.toJSON()).toStrictEqual(expectedJson2);
 
     const testValue3 = undefined;
     testExtension.setValue(testValue3);
+    const expectedJson3 = { url: 'testUrl2' };
     expect(testExtension.isEmpty()).toBe(false);
     expect(testExtension.hasUrl()).toBe(true);
     expect(testExtension.getUrl()).toStrictEqual(testUrl2);
     expect(testExtension.hasValue()).toBe(false);
     expect(testExtension.getValue()).toBeUndefined();
+    expect(testExtension.toJSON()).toStrictEqual(expectedJson3);
   });
 
   it('should throw PrimitiveTypeError when modified with invalid url value', () => {
@@ -176,6 +236,7 @@ describe('Extension', () => {
   it('should be properly copied when instantiated without a value', () => {
     const testUrl = 'testUrl';
     const testExtension = new Extension(testUrl);
+    const expectedJson = { url: 'testUrl' };
     expect(testExtension).toBeDefined();
     expect(testExtension).toBeInstanceOf(Extension);
     expect(testExtension).toBeInstanceOf(Element);
@@ -186,6 +247,7 @@ describe('Extension', () => {
     expect(testExtension.getUrl()).toStrictEqual(testUrl);
     expect(testExtension.hasValue()).toBe(false);
     expect(testExtension.getValue()).toBeUndefined();
+    expect(testExtension.toJSON()).toStrictEqual(expectedJson);
 
     const copiedExtension = testExtension.copy();
     expect(copiedExtension).toBeDefined();
@@ -198,12 +260,14 @@ describe('Extension', () => {
     expect(copiedExtension.getUrl()).toStrictEqual(testUrl);
     expect(copiedExtension.hasValue()).toBe(false);
     expect(copiedExtension.getValue()).toBeUndefined();
+    expect(copiedExtension.toJSON()).toStrictEqual(expectedJson);
   });
 
   it('should be properly copied when instantiated with primitive value', () => {
     const testUrl = 'testUrl';
     const testValue = new StringType('testString');
     const testExtension = new Extension(testUrl, testValue);
+    const expectedJson = { url: 'testUrl', valueString: 'testString' };
     expect(testExtension).toBeDefined();
     expect(testExtension).toBeInstanceOf(Extension);
     expect(testExtension).toBeInstanceOf(Element);
@@ -214,6 +278,7 @@ describe('Extension', () => {
     expect(testExtension.getUrl()).toStrictEqual(testUrl);
     expect(testExtension.hasValue()).toBe(true);
     expect(testExtension.getValue()).toStrictEqual(testValue);
+    expect(testExtension.toJSON()).toStrictEqual(expectedJson);
 
     const copiedExtension = testExtension.copy();
     expect(copiedExtension).toBeDefined();
@@ -226,6 +291,7 @@ describe('Extension', () => {
     expect(copiedExtension.getUrl()).toStrictEqual(testUrl);
     expect(copiedExtension.hasValue()).toBe(true);
     expect(copiedExtension.getValue()).toStrictEqual(testValue);
+    expect(copiedExtension.toJSON()).toStrictEqual(expectedJson);
   });
 
   it('should be properly initialized with complex value', () => {
@@ -234,6 +300,10 @@ describe('Extension', () => {
     testValue.setStart('2024-01-01T00:00:00Z');
     testValue.setEnd('2024-01-01T01:00:00Z');
     const testExtension = new Extension(testUrl, testValue);
+    const expectedJson = {
+      url: 'testUrl',
+      valuePeriod: { start: '2024-01-01T00:00:00Z', end: '2024-01-01T01:00:00Z' },
+    };
     expect(testExtension).toBeDefined();
     expect(testExtension).toBeInstanceOf(Extension);
     expect(testExtension).toBeInstanceOf(Element);
@@ -241,16 +311,18 @@ describe('Extension', () => {
     expect(testExtension.fhirType()).toStrictEqual('Extension');
     expect(testExtension.isEmpty()).toBe(false);
 
+    expect(testExtension.toJSON()).toStrictEqual(expectedJson);
+
     // inherited properties from Element
     expect(testExtension.hasId()).toBe(false);
     expect(testExtension.getId()).toBeUndefined();
     expect(testExtension.hasExtension()).toBe(false);
-    expect(testExtension.getExtension()).toMatchObject([] as Extension[]);
+    expect(testExtension.getExtension()).toEqual([] as Extension[]);
     // Extension properties
     expect(testExtension.hasUrl()).toBe(true);
     expect(testExtension.getUrl()).toStrictEqual(testUrl);
     expect(testExtension.hasValue()).toBe(true);
-    expect(testExtension.getValue()).toMatchObject(testValue);
+    expect(testExtension.getValue()).toEqual(testValue);
   });
 
   it('should be properly modified with new complex value', () => {
@@ -259,6 +331,10 @@ describe('Extension', () => {
     testValue1.setStart('2024-01-01T00:00:00Z');
     testValue1.setEnd('2024-01-01T01:00:00Z');
     const testExtension = new Extension(testUrl1, testValue1);
+    const expectedJson1 = {
+      url: 'testUrl1',
+      valuePeriod: { start: '2024-01-01T00:00:00Z', end: '2024-01-01T01:00:00Z' },
+    };
     expect(testExtension).toBeDefined();
     expect(testExtension).toBeInstanceOf(Extension);
     expect(testExtension).toBeInstanceOf(Element);
@@ -268,7 +344,8 @@ describe('Extension', () => {
     expect(testExtension.hasUrl()).toBe(true);
     expect(testExtension.getUrl()).toStrictEqual(testUrl1);
     expect(testExtension.hasValue()).toBe(true);
-    expect(testExtension.getValue()).toMatchObject(testValue1);
+    expect(testExtension.getValue()).toEqual(testValue1);
+    expect(testExtension.toJSON()).toStrictEqual(expectedJson1);
 
     const testUrl2 = 'testUrl2';
     testExtension.setUrl(testUrl2);
@@ -276,19 +353,26 @@ describe('Extension', () => {
     testValue2.setStart('2024-02-02T00:00:00Z');
     testValue2.setEnd('2024-02-02T01:00:00Z');
     testExtension.setValue(testValue2);
+    const expectedJson2 = {
+      url: 'testUrl2',
+      valuePeriod: { start: '2024-02-02T00:00:00Z', end: '2024-02-02T01:00:00Z' },
+    };
     expect(testExtension.isEmpty()).toBe(false);
     expect(testExtension.hasUrl()).toBe(true);
     expect(testExtension.getUrl()).toStrictEqual(testUrl2);
     expect(testExtension.hasValue()).toBe(true);
-    expect(testExtension.getValue()).toMatchObject(testValue2);
+    expect(testExtension.getValue()).toEqual(testValue2);
+    expect(testExtension.toJSON()).toStrictEqual(expectedJson2);
 
     const testValue3 = undefined;
     testExtension.setValue(testValue3);
+    const expectedJson3 = { url: 'testUrl2' };
     expect(testExtension.isEmpty()).toBe(false);
     expect(testExtension.hasUrl()).toBe(true);
     expect(testExtension.getUrl()).toStrictEqual(testUrl2);
     expect(testExtension.hasValue()).toBe(false);
     expect(testExtension.getValue()).toBeUndefined();
+    expect(testExtension.toJSON()).toStrictEqual(expectedJson3);
   });
 
   it('should be properly copied when instantiated with complex value', () => {
@@ -297,6 +381,10 @@ describe('Extension', () => {
     testValue.setStart('2024-01-01T00:00:00Z');
     testValue.setEnd('2024-01-01T01:00:00Z');
     const testExtension = new Extension(testUrl, testValue);
+    const expectedJson1 = {
+      url: 'testUrl',
+      valuePeriod: { start: '2024-01-01T00:00:00Z', end: '2024-01-01T01:00:00Z' },
+    };
     expect(testExtension).toBeDefined();
     expect(testExtension).toBeInstanceOf(Extension);
     expect(testExtension).toBeInstanceOf(Element);
@@ -306,7 +394,8 @@ describe('Extension', () => {
     expect(testExtension.hasUrl()).toBe(true);
     expect(testExtension.getUrl()).toStrictEqual(testUrl);
     expect(testExtension.hasValue()).toBe(true);
-    expect(testExtension.getValue()).toMatchObject(testValue);
+    expect(testExtension.getValue()).toEqual(testValue);
+    expect(testExtension.toJSON()).toStrictEqual(expectedJson1);
 
     const copiedExtension = testExtension.copy();
     expect(copiedExtension).toBeDefined();
@@ -318,6 +407,7 @@ describe('Extension', () => {
     expect(copiedExtension.hasUrl()).toBe(true);
     expect(copiedExtension.getUrl()).toStrictEqual(testUrl);
     expect(copiedExtension.hasValue()).toBe(true);
-    expect(copiedExtension.getValue()).toMatchObject(testValue);
+    expect(copiedExtension.getValue()).toEqual(testValue);
+    expect(copiedExtension.toJSON()).toStrictEqual(expectedJson1);
   });
 });

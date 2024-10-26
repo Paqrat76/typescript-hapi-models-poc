@@ -39,7 +39,7 @@ import { fhirBoolean, fhirBooleanSchema, parseFhirPrimitiveData } from './primit
  * @see [FHIR boolean](http://hl7.org/fhir/StructureDefinition/boolean)
  */
 export class BooleanType extends PrimitiveType<fhirBoolean> {
-  private boolValue: boolean | undefined;
+  private boolValue: fhirBoolean | undefined;
 
   /**
    * @param value - the value of the primitive `fhirBoolean`
@@ -87,6 +87,10 @@ export class BooleanType extends PrimitiveType<fhirBoolean> {
     return 'boolean';
   }
 
+  public override isBooleanPrimitive(): boolean {
+    return true;
+  }
+
   public override copy(): BooleanType {
     const dest = new BooleanType();
     this.copyValues(dest);
@@ -95,7 +99,7 @@ export class BooleanType extends PrimitiveType<fhirBoolean> {
 
   protected override copyValues(dest: BooleanType): void {
     super.copyValues(dest);
-    dest.setValueAsString(this.getValueAsString());
+    dest.setValue(this.getValue());
   }
 
   private assignValue(value: fhirBoolean | undefined): void {

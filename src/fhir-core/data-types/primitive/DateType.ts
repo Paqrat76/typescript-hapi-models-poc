@@ -102,6 +102,10 @@ export class DateType extends PrimitiveType<fhirDate> implements DateTypeImpl {
     return 'date';
   }
 
+  public override isDateTimePrimitive(): boolean {
+    return true;
+  }
+
   public override copy(): DateType {
     const dest = new DateType();
     this.copyValues(dest);

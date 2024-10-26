@@ -21,7 +21,7 @@
  *
  */
 
-import { DataType } from '@src/fhir-core/base-models/core-fhir-models';
+import { DataType, setFhirComplexListJson, setFhirPrimitiveJson } from '@src/fhir-core/base-models/core-fhir-models';
 import { IBase } from '@src/fhir-core/base-models/IBase';
 import { Coding } from '@src/fhir-core/data-types/complex/Coding';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
@@ -31,6 +31,7 @@ import {
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
+import * as JSON from '@src/fhir-core/utility/json-helpers';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -194,14 +195,14 @@ export class CodeableConcept extends DataType implements IBase {
   }
 
   /**
-   * {@inheritDoc Base.fhirType}
+   * {@inheritDoc IBase.fhirType}
    */
   public override fhirType(): string {
     return 'CodeableConcept';
   }
 
   /**
-   * {@inheritDoc Base.isEmpty}
+   * {@inheritDoc IBase.isEmpty}
    */
   public override isEmpty(): boolean {
     return super.isEmpty() && isElementEmpty(this.coding, this.text);
@@ -230,6 +231,37 @@ export class CodeableConcept extends DataType implements IBase {
       dest.coding = undefined;
     }
     dest.text = this.text?.copy();
+  }
+
+  /**
+   * {@inheritDoc IBase.isComplexDataType}
+   */
+  public override isComplexDataType(): boolean {
+    return true;
+  }
+
+  /**
+   * {@inheritDoc IBase.toJSON}
+   */
+  public override toJSON(): JSON.Value | undefined {
+    if (this.isEmpty()) {
+      return undefined;
+    }
+
+    let jsonObj = super.toJSON() as JSON.Object | undefined;
+    if (jsonObj === undefined) {
+      jsonObj = {} as JSON.Object;
+    }
+
+    if (this.hasCoding()) {
+      setFhirComplexListJson(this.getCoding(), 'coding', jsonObj);
+    }
+
+    if (this.hasTextElement()) {
+      setFhirPrimitiveJson<fhirString>(this.getTextElement(), 'text', jsonObj);
+    }
+
+    return jsonObj;
   }
 }
 

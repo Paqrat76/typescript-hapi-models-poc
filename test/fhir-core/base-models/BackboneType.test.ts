@@ -22,8 +22,9 @@
  */
 
 import { Base } from '@src/fhir-core/base-models/Base';
-import { BackboneType, Element, Extension } from '@src/fhir-core/base-models/core-fhir-models';
+import { Element, Extension } from '@src/fhir-core/base-models/core-fhir-models';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { MockBackboneType } from '../../test-utils';
 
 describe('BackboneType', () => {
   const testUrl = 'testUrl';
@@ -38,8 +39,9 @@ describe('BackboneType', () => {
     expect(mockType.constructor.name).toStrictEqual('MockBackboneType');
     expect(mockType.fhirType()).toStrictEqual('BackboneType');
     expect(mockType.hasModifierExtension()).toBe(false);
-    expect(mockType.getModifierExtension()).toMatchObject([] as Extension[]);
+    expect(mockType.getModifierExtension()).toEqual([] as Extension[]);
     expect(mockType.isEmpty()).toBe(true);
+    expect(mockType.toJSON()).toBeUndefined();
   });
 
   it('should correctly add an Extension', () => {
@@ -47,38 +49,49 @@ describe('BackboneType', () => {
     expect(mockType).toBeDefined();
     expect(mockType.hasModifierExtension()).toBe(false);
     expect(mockType.hasModifierExtension(testUrl)).toBe(false);
-    expect(mockType.getModifierExtension()).toMatchObject([] as Extension[]);
+    expect(mockType.getModifierExtension()).toEqual([] as Extension[]);
     expect(mockType.isEmpty()).toBe(true);
+    expect(mockType.toJSON()).toBeUndefined();
 
     mockType.addModifierExtension();
     expect(mockType.hasModifierExtension()).toBe(false);
     expect(mockType.hasModifierExtension(testUrl)).toBe(false);
-    expect(mockType.getModifierExtension()).toMatchObject([] as Extension[]);
+    expect(mockType.getModifierExtension()).toEqual([] as Extension[]);
     expect(mockType.isEmpty()).toBe(true);
+    expect(mockType.toJSON()).toBeUndefined();
 
     mockType.addModifierExtension(testExtension);
     expect(mockType.hasModifierExtension()).toBe(true);
     expect(mockType.hasModifierExtension(testUrl)).toBe(true);
-    expect(mockType.getModifierExtension()).toMatchObject([testExtension]);
+    expect(mockType.getModifierExtension()).toEqual([testExtension]);
     expect(mockType.isEmpty()).toBe(false);
+    const expectedJson = {
+      modifierExtension: [
+        {
+          url: 'testUrl',
+          valueString: 'testString',
+        },
+      ],
+    };
+    expect(mockType.toJSON()).toEqual(expectedJson);
   });
 
   it('should correctly remove an Extension', () => {
     const mockType = new MockBackboneType();
     expect(mockType).toBeDefined();
     expect(mockType.hasModifierExtension()).toBe(false);
-    expect(mockType.getModifierExtension()).toMatchObject([] as Extension[]);
+    expect(mockType.getModifierExtension()).toEqual([] as Extension[]);
     expect(mockType.isEmpty()).toBe(true);
 
     mockType.addModifierExtension(testExtension);
     expect(mockType.hasModifierExtension()).toBe(true);
-    expect(mockType.getModifierExtension()).toMatchObject([testExtension]);
+    expect(mockType.getModifierExtension()).toEqual([testExtension]);
     expect(mockType.isEmpty()).toBe(false);
 
     // no-op
     mockType.removeModifierExtension('nonExistentUrl');
     expect(mockType.hasModifierExtension()).toBe(true);
-    expect(mockType.getModifierExtension()).toMatchObject([testExtension]);
+    expect(mockType.getModifierExtension()).toEqual([testExtension]);
     expect(mockType.isEmpty()).toBe(false);
 
     mockType.removeModifierExtension(testUrl);
@@ -91,13 +104,13 @@ describe('BackboneType', () => {
     expect(mockType).toBeDefined();
     expect(mockType.hasModifierExtension()).toBe(false);
     expect(mockType.hasModifierExtension(testUrl)).toBe(false);
-    expect(mockType.getModifierExtension()).toMatchObject([] as Extension[]);
+    expect(mockType.getModifierExtension()).toEqual([] as Extension[]);
     expect(mockType.isEmpty()).toBe(true);
 
     mockType.addModifierExtension(testExtension);
     expect(mockType.hasModifierExtension()).toBe(true);
     expect(mockType.hasModifierExtension(testUrl)).toBe(true);
-    expect(mockType.getModifierExtension()).toMatchObject([testExtension]);
+    expect(mockType.getModifierExtension()).toEqual([testExtension]);
     expect(mockType.isEmpty()).toBe(false);
   });
 
@@ -105,7 +118,7 @@ describe('BackboneType', () => {
     const mockType = new MockBackboneType();
     expect(mockType).toBeDefined();
     expect(mockType.hasModifierExtension()).toBe(false);
-    expect(mockType.getModifierExtension()).toMatchObject([] as Extension[]);
+    expect(mockType.getModifierExtension()).toEqual([] as Extension[]);
     expect(mockType.isEmpty()).toBe(true);
 
     const undefExtensionPath1 = mockType.getModifierExtensionByUrl('nonExistentUrl');
@@ -113,7 +126,7 @@ describe('BackboneType', () => {
 
     mockType.addModifierExtension(testExtension);
     expect(mockType.hasModifierExtension()).toBe(true);
-    expect(mockType.getModifierExtension()).toMatchObject([testExtension]);
+    expect(mockType.getModifierExtension()).toEqual([testExtension]);
     expect(mockType.isEmpty()).toBe(false);
 
     const undefExtensionPath2 = mockType.getModifierExtensionByUrl('nonExistentUrl');
@@ -121,37 +134,33 @@ describe('BackboneType', () => {
 
     const returnedExtension = mockType.getModifierExtensionByUrl(testUrl);
     expect(returnedExtension).toBeDefined();
-    expect(returnedExtension).toMatchObject(testExtension);
+    expect(returnedExtension).toEqual(testExtension);
   });
 
   it('should correctly execute copy()', () => {
+    const expectedJson = {
+      modifierExtension: [
+        {
+          url: 'testUrl',
+          valueString: 'testString',
+        },
+      ],
+    };
+
     const mockType = new MockBackboneType();
     expect(mockType).toBeDefined();
     // An actual BackboneElement will not be instantiated. The setters will be used to set modifierExtension
     mockType.setModifierExtension([testExtension]);
     expect(mockType.isEmpty()).toBe(false);
     expect(mockType.hasModifierExtension()).toBe(true);
-    expect(mockType.getModifierExtension()).toMatchObject([testExtension]);
+    expect(mockType.getModifierExtension()).toEqual([testExtension]);
+    expect(mockType.toJSON()).toEqual(expectedJson);
 
     const testType = mockType.copy();
     expect(testType).toBeDefined();
     expect(testType.isEmpty()).toBe(false);
     expect(testType.hasModifierExtension()).toBe(true);
-    expect(testType.getModifierExtension()).toMatchObject([testExtension]);
+    expect(testType.getModifierExtension()).toEqual([testExtension]);
+    expect(testType.toJSON()).toEqual(expectedJson);
   });
 });
-
-class MockBackboneType extends BackboneType {
-  constructor(modifierExtension?: Extension[]) {
-    super();
-    if (modifierExtension !== undefined) {
-      this.modifierExtension = modifierExtension;
-    }
-  }
-
-  public copy(): MockBackboneType {
-    const dest = new MockBackboneType();
-    this.copyValues(dest);
-    return dest;
-  }
-}

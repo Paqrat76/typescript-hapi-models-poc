@@ -24,20 +24,20 @@
 /**
  * Common FHIR related TypeScript type guards and assertion functions
  *
- * @remarks
+ * @privateRemarks
  * All TypeScript type guards and type assertion functions should be included in this module.
  * However, due to TypeScript circular references, the following have been moved to the
  * indicated module:
  * - assertFhirResourceType() placed in Resource.ts
+ * - assertFhirDataType() placed in core-fhir-models.ts
+ * - assertFhirPrimitiveType() placed in core-fhir-models.ts
+ * - assertEnumCodeType() placed in CodeType.ts
  *
  * @module
  */
 
 import { AssertionError } from 'node:assert';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
-import { DataType } from '@src/fhir-core/base-models/core-fhir-models';
-import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
-import { EnumCodeType } from '@src/fhir-core/data-types/primitive/EnumCodeType';
 
 /**
  * Assertion that the value is defined (i.e., not `undefined` and not `null`)
@@ -99,49 +99,6 @@ export function assertFhirType<T>(
 ): asserts classInstance is T {
   if (!FhirTypeGuard(classInstance, className)) {
     const errMsg = errorMessage ?? `Provided instance is not an instance of ${className.name}.`;
-    throw new InvalidTypeError(errMsg);
-  }
-}
-
-/**
- * FHIR DataType assertion for any FHIR data type class
- *
- * @param classInstance - class instance to evaluate
- * @param errorMessage - optional error message to override the default
- * @throws InvalidTypeError when DataType assertion is false
- *
- * @category Type Guards/Assertions
- */
-export function assertFhirDataType(classInstance: unknown, errorMessage?: string): asserts classInstance is DataType {
-  if (!(classInstance instanceof DataType)) {
-    const errMsg = errorMessage ?? `Provided instance is not an instance of DataType.`;
-    throw new InvalidTypeError(errMsg);
-  }
-}
-
-/**
- * EnumCodeType assertion for any EnumCodeType class
- *
- * @param type - class instance to evaluate
- * @param enumCodeType - class name for evaluation
- * @param errorMessagePrefix - optional error message prefix for the error mesage
- * @throws InvalidTypeError when EnumCodeType assertion is false
- *
- * @category Type Guards/Assertions
- */
-export function assertEnumCodeType<T>(
-  type: unknown,
-  enumCodeType: Class<T>,
-  errorMessagePrefix?: string,
-): asserts type is T {
-  const prefix = errorMessagePrefix ? `${errorMessagePrefix}: ` : '';
-  if (type instanceof EnumCodeType) {
-    if (type.enumSource() !== enumCodeType.name) {
-      const errMsg = `${prefix}Invalid type parameter: ${type.enumSource()}; Should be ${enumCodeType.name}.`;
-      throw new InvalidCodeError(errMsg);
-    }
-  } else {
-    const errMsg = `${prefix}Provided type is not an instance of ${EnumCodeType.name}.`;
     throw new InvalidTypeError(errMsg);
   }
 }

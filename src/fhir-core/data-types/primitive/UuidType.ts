@@ -66,6 +66,10 @@ export class UuidType extends PrimitiveType<fhirUuid> {
     return 'uuid';
   }
 
+  public override isStringPrimitive(): boolean {
+    return true;
+  }
+
   public override copy(): UuidType {
     const dest = new UuidType();
     this.copyValues(dest);

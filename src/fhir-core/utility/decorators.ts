@@ -24,7 +24,7 @@
 /**
  * TypeScript decorators
  *
- * @remarks
+ * @privateRemarks
  * All TypeScript decorators should be included in this module.
  * However, due to TypeScript circular references, the following have been moved to the
  * indicated module:

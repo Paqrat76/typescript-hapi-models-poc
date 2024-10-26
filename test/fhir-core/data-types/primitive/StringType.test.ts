@@ -21,10 +21,10 @@
  *
  */
 
-import { TOO_BIG_STRING } from '../../../test-utils';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
+import { TOO_BIG_STRING } from '../../../test-utils';
 
 describe('StringType', () => {
   const VALID_STRING = 'This is a valid string.';
@@ -39,12 +39,15 @@ describe('StringType', () => {
     expect(testStringType.constructor.name).toStrictEqual('StringType');
     expect(testStringType.fhirType()).toStrictEqual('string');
     expect(testStringType.isEmpty()).toBe(true);
+    expect(testStringType.isPrimitive()).toBe(true);
+    expect(testStringType.isStringPrimitive()).toBe(true);
+    expect(testStringType.toJSON()).toBeUndefined();
 
     // inherited properties from Element
     expect(testStringType.hasId()).toBe(false);
     expect(testStringType.getId()).toBeUndefined();
     expect(testStringType.hasExtension()).toBe(false);
-    expect(testStringType.getExtension()).toMatchObject([] as Extension[]);
+    expect(testStringType.getExtension()).toEqual([] as Extension[]);
     // primitive value properties
     expect(testStringType.hasValue()).toBe(false);
     expect(testStringType.getValue()).toBeUndefined();
@@ -53,12 +56,35 @@ describe('StringType', () => {
 
   it('should be properly initialized', () => {
     const testStringType = new StringType(VALID_STRING);
+    const testId = 'id1234';
+    testStringType.setId(testId);
+    const testExtension = new Extension('testUrl', new StringType('extension string value'));
+    testStringType.addExtension(testExtension);
+
     expect(testStringType).toBeDefined();
     expect(testStringType).toBeInstanceOf(StringType);
     expect(testStringType.constructor.name).toStrictEqual('StringType');
     expect(testStringType.fhirType()).toStrictEqual('string');
     expect(testStringType.isEmpty()).toBe(false);
+    expect(testStringType.isPrimitive()).toBe(true);
+    expect(testStringType.isStringPrimitive()).toBe(true);
+    expect(testStringType.toJSON()).toStrictEqual(VALID_STRING);
+    expect(testStringType.toSiblingJSON()).toEqual({
+      id: 'id1234',
+      extension: [
+        {
+          url: 'testUrl',
+          valueString: 'extension string value',
+        },
+      ],
+    });
 
+    // inherited properties from Element
+    expect(testStringType.hasId()).toBe(true);
+    expect(testStringType.getId()).toStrictEqual(testId);
+    expect(testStringType.hasExtension()).toBe(true);
+    expect(testStringType.getExtension()).toEqual([testExtension]);
+    // primitive value properties
     expect(testStringType.hasValue()).toBe(true);
     expect(testStringType.getValue()).toBeDefined();
     expect(testStringType.getValue()).toStrictEqual(VALID_STRING);
@@ -201,6 +227,9 @@ describe('StringType', () => {
     expect(testStringType.constructor.name).toStrictEqual('StringType');
     expect(testStringType.fhirType()).toStrictEqual('string');
     expect(testStringType.isEmpty()).toBe(false);
+    expect(testStringType.isPrimitive()).toBe(true);
+    expect(testStringType.isStringPrimitive()).toBe(true);
+    expect(testStringType.toJSON()).toStrictEqual(VALID_STRING);
     expect(testStringType.hasValue()).toBe(true);
     expect(testStringType.getValue()).toBeDefined();
     expect(testStringType.getValue()).toStrictEqual(VALID_STRING);

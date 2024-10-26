@@ -21,13 +21,25 @@
  *
  */
 
-import { FHIR_MAX_STRING_LENGTH, fhirCode } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { IBase } from '@src/fhir-core/base-models/IBase';
-import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
-import { FhirResourceType } from '../src/fhir-core/base-models/FhirResourceType';
-import { FhirCodeDefinition, IFhirCodeDefinition, IFhirCodeEnum } from '@src/fhir-core/base-models/core-fhir-codes';
+import { isEmpty as _isEmpty } from 'lodash';
+import { FHIR_MAX_STRING_LENGTH, fhirCode, fhirString } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { Base } from '@src/fhir-core/base-models/Base';
 import { Resource } from '@src/fhir-core/base-models/Resource';
-import { DataType } from '@src/fhir-core/base-models/core-fhir-models';
+import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { Period } from '@src/fhir-core/data-types/complex/Period';
+import { FhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
+import { FhirCodeDefinition, IFhirCodeDefinition, IFhirCodeEnum } from '@src/fhir-core/base-models/core-fhir-codes';
+import {
+  BackboneElement,
+  BackboneType,
+  DataType,
+  Element,
+  Extension,
+  setFhirComplexJson,
+  setFhirPrimitiveJson,
+} from '@src/fhir-core/base-models/core-fhir-models';
+import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 
 export {
@@ -54,9 +66,101 @@ export function getString(maxLength: number): string {
   return str;
 }
 
-export class MockFhirModel implements IBase {
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor,@typescript-eslint/no-empty-function
-  constructor() {}
+export class MockBase extends Base {
+  public mockValue: string | undefined = undefined;
+
+  constructor(value?: string) {
+    super();
+    if (value) {
+      this.mockValue = value;
+    }
+  }
+
+  public fhirType(): string {
+    return 'MockBase';
+  }
+
+  public isEmpty(): boolean {
+    return _isEmpty(this.mockValue);
+  }
+
+  public copy(): MockBase {
+    const dest = new MockBase();
+    this.copyValues(dest);
+    return dest;
+  }
+
+  protected copyValues(dest: MockBase): void {
+    dest.mockValue = this.mockValue;
+  }
+
+  // NOT USED
+  public toJSON(): JSON.Value | undefined {
+    return undefined;
+  }
+}
+
+export class MockElement extends Element {
+  constructor(id?: fhirString, extension?: Extension[]) {
+    super();
+    if (id !== undefined) {
+      this.id = id;
+    }
+    if (extension !== undefined) {
+      this.extension = extension;
+    }
+  }
+
+  public copy(): MockElement {
+    const dest = new MockElement();
+    this.copyValues(dest);
+    return dest;
+  }
+}
+
+export class MockBackboneElement extends BackboneElement {
+  constructor(modifierExtension?: Extension[]) {
+    super();
+    if (modifierExtension !== undefined) {
+      this.modifierExtension = modifierExtension;
+    }
+  }
+
+  public override isEmpty(): boolean {
+    return super.isEmpty() && _isEmpty(this.modifierExtension);
+  }
+
+  public copy(): MockBackboneElement {
+    const dest = new MockBackboneElement();
+    this.copyValues(dest);
+    return dest;
+  }
+}
+
+export class MockBackboneType extends BackboneType {
+  constructor(modifierExtension?: Extension[]) {
+    super();
+    if (modifierExtension !== undefined) {
+      this.modifierExtension = modifierExtension;
+    }
+  }
+
+  public override isEmpty(): boolean {
+    return super.isEmpty() && _isEmpty(this.modifierExtension);
+  }
+
+  public copy(): MockBackboneType {
+    const dest = new MockBackboneType();
+    this.copyValues(dest);
+    return dest;
+  }
+}
+
+export class MockFhirModel extends Base {
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
+  constructor() {
+    super();
+  }
 
   public fhirType(): string {
     return 'MockFhirModel';
@@ -64,6 +168,25 @@ export class MockFhirModel implements IBase {
 
   public isEmpty(): boolean {
     return true;
+  }
+
+  // NOT USED
+  public copy(): MockFhirModel {
+    const dest = new MockFhirModel();
+    this.copyValues(dest);
+    return dest;
+  }
+
+  // NOT USED
+  // @ts-expect-error: ignore param for test purposes
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected copyValues(dest: MockFhirModel): void {
+    return;
+  }
+
+  // NOT USED
+  public toJSON(): JSON.Value | undefined {
+    return undefined;
   }
 }
 
@@ -75,24 +198,71 @@ export class MockResource extends Resource {
 
   public resourceType(): FhirResourceType {
     // @ts-expect-error: allow for testing purposes
+    return 'Resource';
+  }
+
+  public fhirType(): string {
     return 'MockResource';
   }
 
-  public override fhirType(): string {
-    return 'MockResource';
-  }
-
+  // NOT USED
   public copy(): MockResource {
     const dest = new MockResource();
     this.copyValues(dest);
     return dest;
   }
+
+  // NOT USED
+  // @ts-expect-error: ignore param for test purposes
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected copyValues(dest: MockResource): void {
+    return;
+  }
 }
 
+// export class MockTask extends DomainResource {
+//   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
+//   constructor() {
+//     super();
+//   }
+//
+//   public resourceType(): FhirResourceType {
+//     return 'Task';
+//   }
+//
+//   public fhirType(): string {
+//     return 'MockTask';
+//   }
+//
+//   public copy(): MockTask {
+//     const dest = new MockTask();
+//     this.copyValues(dest);
+//     return dest;
+//   }
+//
+//   protected override copyValues(dest: MockTask): void {
+//     super.copyValues(dest);
+//     return;
+//   }
+//
+//   // NOT USED
+//   public override toJSON(): JSON.Value | undefined {
+//     return undefined;
+//   }
+// }
+
 export class MockTask extends DomainResource {
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-  constructor() {
+  public mockPrimitive: StringType | undefined = undefined;
+  public mockComplex: Period | undefined = undefined;
+
+  constructor(stringValue?: StringType, periodValue?: Period) {
     super();
+    if (stringValue) {
+      this.mockPrimitive = stringValue;
+    }
+    if (periodValue) {
+      this.mockComplex = periodValue;
+    }
   }
 
   public resourceType(): FhirResourceType {
@@ -108,16 +278,62 @@ export class MockTask extends DomainResource {
     this.copyValues(dest);
     return dest;
   }
+
+  protected override copyValues(dest: MockTask): void {
+    super.copyValues(dest);
+    dest.mockPrimitive = this.mockPrimitive?.copy();
+    dest.mockComplex = this.mockComplex?.copy();
+    return;
+  }
+
+  public override toJSON(): JSON.Value | undefined {
+    // Will always have, at least, the 'resourceType' property from Resource
+    const jsonObj = super.toJSON() as JSON.Object;
+
+    if (this.mockPrimitive !== undefined) {
+      setFhirPrimitiveJson<fhirString>(this.mockPrimitive, 'mockPrimitive', jsonObj);
+    }
+
+    if (this.mockComplex !== undefined) {
+      setFhirComplexJson(this.mockComplex, 'mockComplex', jsonObj);
+    }
+
+    // jsonObj will always have, at least, the 'resourceType' property from Resource.
+    // If that is all jsonObj has, return undefined.
+    return Object.keys(jsonObj).length > 1 ? jsonObj : undefined;
+  }
 }
 
 export class MockComplexDataType extends DataType {
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-  constructor() {
+  public mockValue: string | undefined = undefined;
+
+  constructor(value?: string) {
     super();
+    if (value) {
+      this.mockValue = value;
+    }
   }
 
-  copy(): MockComplexDataType {
-    return new MockComplexDataType();
+  public override fhirType(): string {
+    return 'MockComplexDataType';
+  }
+
+  public override isEmpty(): boolean {
+    return _isEmpty(this.mockValue);
+  }
+
+  // NOT USED
+  public copy(): MockComplexDataType {
+    const dest = new MockComplexDataType();
+    this.copyValues(dest);
+    return dest;
+  }
+
+  // NOT USED
+  // @ts-expect-error: ignore param for test purposes
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected copyValues(dest: MockComplexDataType): void {
+    return;
   }
 }
 

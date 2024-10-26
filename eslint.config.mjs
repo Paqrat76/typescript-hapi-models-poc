@@ -72,12 +72,13 @@ export default tseslint.config(
       'jsdoc/check-tag-names': [
         'error',
         {
-          // TypeDoc tags (https://typedoc.org/guides/tags/)
+          // TypeDoc tags (https://typedoc.org/guides/tags/) plus configured custom tags
           definedTags: [
             'alpha',
             'beta',
             'category',
             'categoryDescription',
+            'decorator',
             'defaultValue',
             'deprecated',
             'document',
@@ -112,6 +113,7 @@ export default tseslint.config(
             'satisfies',
             'sealed',
             'see',
+            'since',
             'template',
             'throws',
             'typeParam',

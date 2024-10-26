@@ -33,8 +33,8 @@ import { Meta } from '@src/fhir-core/data-types/complex/Meta';
 import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
-import { MockTask } from '../../test-utils';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { MockTask } from '../../test-utils';
 
 describe('DomainResource', () => {
   const VALID_XHTML = '<div xmlns="http://www.w3.org/1999/xhtml">text</div>';
@@ -64,34 +64,36 @@ describe('DomainResource', () => {
     expect(testDomainResource.constructor.name).toStrictEqual('MockTask');
     expect(testDomainResource.resourceType()).toStrictEqual('Task');
     expect(testDomainResource.fhirType()).toStrictEqual('MockTask');
+    expect(testDomainResource.isResource()).toBe(true);
     expect(testDomainResource.isEmpty()).toBe(true);
+    expect(testDomainResource.toJSON()).toBeUndefined();
 
     // Resource properties
     expect(testDomainResource.hasId()).toBe(false);
     expect(testDomainResource.getId()).toBeUndefined();
     expect(testDomainResource.hasMeta()).toBe(false);
-    expect(testDomainResource.getMeta()).toMatchObject(new Meta());
+    expect(testDomainResource.getMeta()).toEqual(new Meta());
     expect(testDomainResource.hasImplicitRules()).toBe(false);
     expect(testDomainResource.getImplicitRules()).toBeUndefined();
     expect(testDomainResource.hasLanguage()).toBe(false);
     expect(testDomainResource.getLanguage()).toBeUndefined();
 
     expect(testDomainResource.hasIdElement()).toBe(false);
-    expect(testDomainResource.getIdElement()).toMatchObject(new IdType());
+    expect(testDomainResource.getIdElement()).toEqual(new IdType());
     expect(testDomainResource.hasImplicitRulesElement()).toBe(false);
-    expect(testDomainResource.getImplicitRulesElement()).toMatchObject(new UriType());
+    expect(testDomainResource.getImplicitRulesElement()).toEqual(new UriType());
     expect(testDomainResource.hasLanguageElement()).toBe(false);
-    expect(testDomainResource.getLanguageElement()).toMatchObject(new CodeType());
+    expect(testDomainResource.getLanguageElement()).toEqual(new CodeType());
 
     // DomainResources
     expect(testDomainResource.hasText()).toBe(false);
-    expect(testDomainResource.getText()).toMatchObject(new Narrative(null, null));
+    expect(testDomainResource.getText()).toEqual(new Narrative(null, null));
     expect(testDomainResource.hasContained()).toBe(false);
-    expect(testDomainResource.getContained()).toMatchObject([] as Resource[]);
+    expect(testDomainResource.getContained()).toEqual([] as Resource[]);
     expect(testDomainResource.hasExtension()).toBe(false);
-    expect(testDomainResource.getExtension()).toMatchObject([] as Extension[]);
+    expect(testDomainResource.getExtension()).toEqual([] as Extension[]);
     expect(testDomainResource.hasModifierExtension()).toBe(false);
-    expect(testDomainResource.getModifierExtension()).toMatchObject([] as Extension[]);
+    expect(testDomainResource.getModifierExtension()).toEqual([] as Extension[]);
   });
 
   it('should be properly instantiated with all DomainResource properties', () => {
@@ -103,10 +105,47 @@ describe('DomainResource', () => {
     testDomainResource.addModifierExtension(VALID_EXTENSION_3);
 
     expect(testDomainResource).toBeDefined();
+    expect(testDomainResource).toBeInstanceOf(DomainResource);
+    expect(testDomainResource).toBeInstanceOf(Resource);
+    expect(testDomainResource).toBeInstanceOf(Base);
+    expect(testDomainResource.constructor.name).toStrictEqual('MockTask');
+    expect(testDomainResource.resourceType()).toStrictEqual('Task');
+    expect(testDomainResource.fhirType()).toStrictEqual('MockTask');
+    expect(testDomainResource.isResource()).toBe(true);
     expect(testDomainResource.isEmpty()).toBe(false);
+    const expectedJson = {
+      resourceType: 'Task',
+      text: {
+        status: 'generated',
+        div: '<div xmlns="http://www.w3.org/1999/xhtml">text</div>',
+      },
+      contained: [
+        {
+          resourceType: 'Task',
+          id: 'Resource-1',
+        },
+      ],
+      extension: [
+        {
+          url: 'url1',
+          valueString: 'ext string1',
+        },
+      ],
+      modifierExtension: [
+        {
+          url: 'url2',
+          valueString: 'ext string2',
+        },
+        {
+          url: 'url3',
+          valueString: 'ext string3',
+        },
+      ],
+    };
+    expect(testDomainResource.toJSON()).toEqual(expectedJson);
 
     expect(testDomainResource.hasText()).toBe(true);
-    expect(testDomainResource.getText()).toMatchObject(VALID_NARRATIVE_1);
+    expect(testDomainResource.getText()).toEqual(VALID_NARRATIVE_1);
     expect(testDomainResource.hasContained()).toBe(true);
     expect(testDomainResource.getContained()).toHaveLength(1);
     expect(testDomainResource.getContained()).toEqual(expect.arrayContaining([VALID_RESOURCE_1]));
@@ -131,7 +170,7 @@ describe('DomainResource', () => {
     expect(testDomainResource.isEmpty()).toBe(false);
 
     expect(testDomainResource.hasText()).toBe(true);
-    expect(testDomainResource.getText()).toMatchObject(VALID_NARRATIVE_1);
+    expect(testDomainResource.getText()).toEqual(VALID_NARRATIVE_1);
     expect(testDomainResource.hasContained()).toBe(true);
     expect(testDomainResource.getContained()).toHaveLength(1);
     expect(testDomainResource.getContained()).toEqual(expect.arrayContaining([VALID_RESOURCE_1]));
@@ -162,7 +201,7 @@ describe('DomainResource', () => {
     testDomainResource.setModifierExtension([VALID_EXTENSION_1]);
 
     expect(testDomainResource.hasText()).toBe(true);
-    expect(testDomainResource.getText()).toMatchObject(VALID_NARRATIVE_2);
+    expect(testDomainResource.getText()).toEqual(VALID_NARRATIVE_2);
     expect(testDomainResource.hasContained()).toBe(true);
     expect(testDomainResource.getContained()).toHaveLength(1);
     expect(testDomainResource.getContained()).toEqual(expect.arrayContaining([VALID_RESOURCE_2]));
@@ -179,13 +218,13 @@ describe('DomainResource', () => {
     testDomainResource.setModifierExtension(UNDEFINED_VALUE);
 
     expect(testDomainResource.hasText()).toBe(false);
-    expect(testDomainResource.getText()).toMatchObject(new Narrative(null, null));
+    expect(testDomainResource.getText()).toEqual(new Narrative(null, null));
     expect(testDomainResource.hasContained()).toBe(false);
-    expect(testDomainResource.getContained()).toMatchObject([] as Resource[]);
+    expect(testDomainResource.getContained()).toEqual([] as Resource[]);
     expect(testDomainResource.hasExtension()).toBe(false);
-    expect(testDomainResource.getExtension()).toMatchObject([] as Extension[]);
+    expect(testDomainResource.getExtension()).toEqual([] as Extension[]);
     expect(testDomainResource.hasModifierExtension()).toBe(false);
-    expect(testDomainResource.getModifierExtension()).toMatchObject([] as Extension[]);
+    expect(testDomainResource.getModifierExtension()).toEqual([] as Extension[]);
   });
 
   it('should properly copy()', () => {
@@ -204,10 +243,41 @@ describe('DomainResource', () => {
     expect(testDomainResource.constructor.name).toStrictEqual('MockTask');
     expect(testDomainResource.resourceType()).toStrictEqual('Task');
     expect(testDomainResource.fhirType()).toStrictEqual('MockTask');
+    expect(testDomainResource.isResource()).toBe(true);
     expect(testDomainResource.isEmpty()).toBe(false);
+    const expectedJson = {
+      resourceType: 'Task',
+      text: {
+        status: 'generated',
+        div: '<div xmlns="http://www.w3.org/1999/xhtml">text</div>',
+      },
+      contained: [
+        {
+          resourceType: 'Task',
+          id: 'Resource-1',
+        },
+      ],
+      extension: [
+        {
+          url: 'url1',
+          valueString: 'ext string1',
+        },
+      ],
+      modifierExtension: [
+        {
+          url: 'url2',
+          valueString: 'ext string2',
+        },
+        {
+          url: 'url3',
+          valueString: 'ext string3',
+        },
+      ],
+    };
+    expect(testDomainResource.toJSON()).toEqual(expectedJson);
 
     expect(testDomainResource.hasText()).toBe(true);
-    expect(testDomainResource.getText()).toMatchObject(VALID_NARRATIVE_1);
+    expect(testDomainResource.getText()).toEqual(VALID_NARRATIVE_1);
     expect(testDomainResource.hasContained()).toBe(true);
     expect(testDomainResource.getContained()).toHaveLength(1);
     expect(testDomainResource.getContained()).toEqual(expect.arrayContaining([VALID_RESOURCE_1]));
@@ -233,16 +303,18 @@ describe('DomainResource', () => {
     expect(testDomainResourceCopyEmpty.constructor.name).toStrictEqual('MockTask');
     expect(testDomainResourceCopyEmpty.resourceType()).toStrictEqual('Task');
     expect(testDomainResourceCopyEmpty.fhirType()).toStrictEqual('MockTask');
-    expect(testDomainResourceCopyEmpty.isEmpty()).toBe(true);
+    expect(testDomainResource.isResource()).toBe(true);
+    expect(testDomainResource.isEmpty()).toBe(true);
+    expect(testDomainResource.toJSON()).toBeUndefined();
 
     expect(testDomainResource.hasText()).toBe(false);
-    expect(testDomainResource.getText()).toMatchObject(new Narrative(null, null));
+    expect(testDomainResource.getText()).toEqual(new Narrative(null, null));
     expect(testDomainResource.hasContained()).toBe(false);
-    expect(testDomainResource.getContained()).toMatchObject([] as Resource[]);
+    expect(testDomainResource.getContained()).toEqual([] as Resource[]);
     expect(testDomainResource.hasExtension()).toBe(false);
-    expect(testDomainResource.getExtension()).toMatchObject([] as Extension[]);
+    expect(testDomainResource.getExtension()).toEqual([] as Extension[]);
     expect(testDomainResource.hasModifierExtension()).toBe(false);
-    expect(testDomainResource.getModifierExtension()).toMatchObject([] as Extension[]);
+    expect(testDomainResource.getModifierExtension()).toEqual([] as Extension[]);
   });
 
   it('should add instances to properties defined as arrays', () => {
@@ -285,9 +357,9 @@ describe('DomainResource', () => {
     testDomainResource.setModifierExtension(UNDEFINED_VALUE);
 
     expect(testDomainResource.hasExtension()).toBe(false);
-    expect(testDomainResource.getExtension()).toMatchObject([] as Extension[]);
+    expect(testDomainResource.getExtension()).toEqual([] as Extension[]);
     expect(testDomainResource.hasModifierExtension()).toBe(false);
-    expect(testDomainResource.getModifierExtension()).toMatchObject([] as Extension[]);
+    expect(testDomainResource.getModifierExtension()).toEqual([] as Extension[]);
   });
 
   it('should properly verify has extensions work as expected with and without a provided URL', () => {
@@ -321,12 +393,12 @@ describe('DomainResource', () => {
 
     testDomainResource.addExtension(VALID_EXTENSION_1);
     expect(testDomainResource.hasExtension('url1')).toBe(true);
-    expect(testDomainResource.getExtensionByUrl('url1')).toMatchObject(VALID_EXTENSION_1);
+    expect(testDomainResource.getExtensionByUrl('url1')).toEqual(VALID_EXTENSION_1);
     expect(testDomainResource.getExtensionByUrl('url2')).toBeUndefined();
 
     testDomainResource.addModifierExtension(VALID_EXTENSION_2);
     expect(testDomainResource.hasModifierExtension('url2')).toBe(true);
-    expect(testDomainResource.getModifierExtensionByUrl('url2')).toMatchObject(VALID_EXTENSION_2);
+    expect(testDomainResource.getModifierExtensionByUrl('url2')).toEqual(VALID_EXTENSION_2);
     expect(testDomainResource.getModifierExtensionByUrl('url1')).toBeUndefined();
   });
 

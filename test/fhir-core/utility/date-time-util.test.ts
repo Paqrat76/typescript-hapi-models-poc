@@ -129,7 +129,7 @@ describe('date-time-util', () => {
         expect(dt.hour).toStrictEqual(0);
         expect(dt.minute).toStrictEqual(0);
         expect(dt.second).toStrictEqual(0);
-        expect(dt.zone).toMatchObject(expectedZone);
+        expect(dt.zone).toEqual(expectedZone);
         expect(dt.zone.type).toStrictEqual(expectedZoneType);
         expect(dt.zoneName).toStrictEqual(expectedZoneName);
         expect(dt.offset).toStrictEqual(expectedOffset);
@@ -152,7 +152,7 @@ describe('date-time-util', () => {
         expect(dt.hour).toStrictEqual(0);
         expect(dt.minute).toStrictEqual(0);
         expect(dt.second).toStrictEqual(0);
-        expect(dt.zone).toMatchObject(expectedZone);
+        expect(dt.zone).toEqual(expectedZone);
         expect(dt.zone.type).toStrictEqual(expectedZoneType);
         expect(dt.zoneName).toStrictEqual(expectedZoneName);
         expect(dt.offset).toStrictEqual(expectedOffset);
@@ -175,7 +175,7 @@ describe('date-time-util', () => {
         expect(dt.hour).toStrictEqual(0);
         expect(dt.minute).toStrictEqual(0);
         expect(dt.second).toStrictEqual(0);
-        expect(dt.zone).toMatchObject(expectedZone);
+        expect(dt.zone).toEqual(expectedZone);
         expect(dt.zone.type).toStrictEqual(expectedZoneType);
         expect(dt.zoneName).toStrictEqual(expectedZoneName);
         expect(dt.offset).toStrictEqual(expectedOffset);
@@ -198,7 +198,7 @@ describe('date-time-util', () => {
         expect(dt.hour).toStrictEqual(23);
         expect(dt.minute).toStrictEqual(57);
         expect(dt.second).toStrictEqual(0);
-        expect(dt.zone).toMatchObject(expectedZone);
+        expect(dt.zone).toEqual(expectedZone);
         expect(dt.zone.type).toStrictEqual(expectedZoneType);
         expect(dt.zoneName).toStrictEqual(expectedZoneName);
         expect(dt.offset).toStrictEqual(expectedOffset);
@@ -223,7 +223,7 @@ describe('date-time-util', () => {
         expect(dt.hour).toStrictEqual(2);
         expect(dt.minute).toStrictEqual(57);
         expect(dt.second).toStrictEqual(0);
-        expect(dt.zone).toMatchObject(expectedZone);
+        expect(dt.zone).toEqual(expectedZone);
         expect(dt.zone.type).toStrictEqual(expectedZoneType);
         expect(dt.zoneName).toStrictEqual(expectedZoneName);
         expect(dt.offset).toStrictEqual(expectedOffset);
@@ -246,7 +246,7 @@ describe('date-time-util', () => {
         expect(dt.hour).toStrictEqual(23 + expectedOffset / 60);
         expect(dt.minute).toStrictEqual(57);
         expect(dt.second).toStrictEqual(0);
-        expect(dt.zone).toMatchObject(expectedZone);
+        expect(dt.zone).toEqual(expectedZone);
         expect(dt.zone.type).toStrictEqual(expectedZoneType);
         expect(dt.zoneName).toStrictEqual(expectedZoneName);
         expect(dt.offset).toStrictEqual(expectedOffset);
@@ -290,7 +290,7 @@ describe('date-time-util', () => {
         expect(dt.hour).toStrictEqual(0);
         expect(dt.minute).toStrictEqual(0);
         expect(dt.second).toStrictEqual(0);
-        expect(dt.zone).toMatchObject(testZone);
+        expect(dt.zone).toEqual(testZone);
         expect(dt.zone.type).toStrictEqual(expectedZoneType);
         expect(dt.zoneName).toStrictEqual(expectedZoneName);
         expect(dt.offset).toStrictEqual(expectedOffset);
@@ -313,7 +313,7 @@ describe('date-time-util', () => {
         expect(dt.hour).toStrictEqual(0);
         expect(dt.minute).toStrictEqual(0);
         expect(dt.second).toStrictEqual(0);
-        expect(dt.zone).toMatchObject(testZone);
+        expect(dt.zone).toEqual(testZone);
         expect(dt.zone.type).toStrictEqual(expectedZoneType);
         expect(dt.zoneName).toStrictEqual(expectedZoneName);
         expect(dt.offset).toStrictEqual(expectedOffset);
@@ -336,7 +336,7 @@ describe('date-time-util', () => {
         expect(dt.hour).toStrictEqual(0);
         expect(dt.minute).toStrictEqual(0);
         expect(dt.second).toStrictEqual(0);
-        expect(dt.zone).toMatchObject(testZone);
+        expect(dt.zone).toEqual(testZone);
         expect(dt.zone.type).toStrictEqual(expectedZoneType);
         expect(dt.zoneName).toStrictEqual(expectedZoneName);
         expect(dt.offset).toStrictEqual(expectedOffset);
@@ -359,7 +359,7 @@ describe('date-time-util', () => {
         expect(dt.hour).toStrictEqual(23);
         expect(dt.minute).toStrictEqual(57);
         expect(dt.second).toStrictEqual(0);
-        expect(dt.zone).toMatchObject(testZone);
+        expect(dt.zone).toEqual(testZone);
         expect(dt.zone.type).toStrictEqual(expectedZoneType);
         expect(dt.zoneName).toStrictEqual(expectedZoneName);
         expect(dt.offset).toStrictEqual(expectedOffset);
@@ -384,7 +384,7 @@ describe('date-time-util', () => {
         expect(dt.hour).toStrictEqual(0);
         expect(dt.minute).toStrictEqual(57);
         expect(dt.second).toStrictEqual(0);
-        expect(dt.zone).toMatchObject(testZone);
+        expect(dt.zone).toEqual(testZone);
         expect(dt.zone.type).toStrictEqual(expectedZoneType);
         expect(dt.zoneName).toStrictEqual(expectedZoneName);
         expect(dt.offset).toStrictEqual(expectedOffset);
@@ -409,7 +409,7 @@ describe('date-time-util', () => {
         expect(dt.hour).toStrictEqual(23 + expectedOffset / 60);
         expect(dt.minute).toStrictEqual(57);
         expect(dt.second).toStrictEqual(0);
-        expect(dt.zone).toMatchObject(testZone);
+        expect(dt.zone).toEqual(testZone);
         expect(dt.zone.type).toStrictEqual(expectedZoneType);
         expect(dt.zoneName).toStrictEqual(expectedZoneName);
         expect(dt.offset).toStrictEqual(expectedOffset);
@@ -450,7 +450,7 @@ describe('date-time-util', () => {
         expect(dt.hour).toStrictEqual(0);
         expect(dt.minute).toStrictEqual(0);
         expect(dt.second).toStrictEqual(0);
-        expect(dt.zone).toMatchObject(expectedZone);
+        expect(dt.zone).toEqual(expectedZone);
         expect(dt.zone.type).toStrictEqual(expectedZoneType);
         expect(dt.zoneName).toStrictEqual(expectedZoneName);
         expect(dt.offset).toStrictEqual(expectedOffset);
@@ -473,7 +473,7 @@ describe('date-time-util', () => {
         expect(dt.hour).toStrictEqual(0);
         expect(dt.minute).toStrictEqual(0);
         expect(dt.second).toStrictEqual(0);
-        expect(dt.zone).toMatchObject(expectedZone);
+        expect(dt.zone).toEqual(expectedZone);
         expect(dt.zone.type).toStrictEqual(expectedZoneType);
         expect(dt.zoneName).toStrictEqual(expectedZoneName);
         expect(dt.offset).toStrictEqual(expectedOffset);
@@ -496,7 +496,7 @@ describe('date-time-util', () => {
         expect(dt.hour).toStrictEqual(0);
         expect(dt.minute).toStrictEqual(0);
         expect(dt.second).toStrictEqual(0);
-        expect(dt.zone).toMatchObject(expectedZone);
+        expect(dt.zone).toEqual(expectedZone);
         expect(dt.zone.type).toStrictEqual(expectedZoneType);
         expect(dt.zoneName).toStrictEqual(expectedZoneName);
         expect(dt.offset).toStrictEqual(expectedOffset);
@@ -519,7 +519,7 @@ describe('date-time-util', () => {
         expect(dt.hour).toStrictEqual(23);
         expect(dt.minute).toStrictEqual(57);
         expect(dt.second).toStrictEqual(0);
-        expect(dt.zone).toMatchObject(expectedZone);
+        expect(dt.zone).toEqual(expectedZone);
         expect(dt.zone.type).toStrictEqual(expectedZoneType);
         expect(dt.zoneName).toStrictEqual(expectedZoneName);
         expect(dt.offset).toStrictEqual(expectedOffset);
@@ -544,7 +544,7 @@ describe('date-time-util', () => {
         expect(dt.hour).toStrictEqual(23);
         expect(dt.minute).toStrictEqual(57);
         expect(dt.second).toStrictEqual(0);
-        expect(dt.zone).toMatchObject(expectedZone);
+        expect(dt.zone).toEqual({ fixed: -420 });
         expect(dt.zone.type).toStrictEqual('fixed');
         expect(dt.zoneName).toStrictEqual('UTC-7');
         expect(dt.offset).toStrictEqual(expectedOffset);
@@ -569,7 +569,7 @@ describe('date-time-util', () => {
         expect(dt.hour).toStrictEqual(23);
         expect(dt.minute).toStrictEqual(57);
         expect(dt.second).toStrictEqual(0);
-        expect(dt.zone).toMatchObject(expectedZone);
+        expect(dt.zone).toEqual({ fixed: 0 });
         expect(dt.zone.type).toStrictEqual('fixed');
         expect(dt.zoneName).toStrictEqual('UTC');
         expect(dt.offset).toStrictEqual(expectedOffset);
@@ -661,7 +661,7 @@ describe('date-time-util', () => {
         expect(dt.hour).toStrictEqual(0);
         expect(dt.minute).toStrictEqual(0);
         expect(dt.second).toStrictEqual(0);
-        expect(dt.zone).toMatchObject(expectedZone);
+        expect(dt.zone).toEqual(expectedZone);
         expect(dt.zone.type).toStrictEqual(expectedZoneType);
         expect(dt.zoneName).toStrictEqual(expectedZoneName);
         expect(dt.offset).toStrictEqual(expectedZoneOffset);
@@ -682,7 +682,7 @@ describe('date-time-util', () => {
         expect(dt.hour).toStrictEqual(0);
         expect(dt.minute).toStrictEqual(0);
         expect(dt.second).toStrictEqual(0);
-        expect(dt.zone).toMatchObject(expectedZone);
+        expect(dt.zone).toEqual(expectedZone);
         expect(dt.zone.type).toStrictEqual(expectedZoneType);
         expect(dt.zoneName).toStrictEqual(expectedZoneName);
         expect(dt.offset).toStrictEqual(expectedZoneOffset);
@@ -703,7 +703,7 @@ describe('date-time-util', () => {
         expect(dt.hour).toStrictEqual(0);
         expect(dt.minute).toStrictEqual(0);
         expect(dt.second).toStrictEqual(0);
-        expect(dt.zone).toMatchObject(expectedZone);
+        expect(dt.zone).toEqual(expectedZone);
         expect(dt.zone.type).toStrictEqual(expectedZoneType);
         expect(dt.zoneName).toStrictEqual(expectedZoneName);
         expect(dt.offset).toStrictEqual(expectedZoneOffset);
@@ -724,7 +724,7 @@ describe('date-time-util', () => {
         expect(dt.hour).toStrictEqual(23);
         expect(dt.minute).toStrictEqual(57);
         expect(dt.second).toStrictEqual(0);
-        expect(dt.zone).toMatchObject(expectedZone);
+        expect(dt.zone).toEqual(expectedZone);
         expect(dt.zone.type).toStrictEqual(expectedZoneType);
         expect(dt.zoneName).toStrictEqual(expectedZoneName);
         expect(dt.offset).toStrictEqual(expectedZoneOffset);
@@ -747,7 +747,7 @@ describe('date-time-util', () => {
         expect(dt.hour).toStrictEqual(6);
         expect(dt.minute).toStrictEqual(57);
         expect(dt.second).toStrictEqual(0);
-        expect(dt.zone).toMatchObject(expectedZone);
+        expect(dt.zone).toEqual(expectedZone);
         expect(dt.zone.type).toStrictEqual(expectedZoneType);
         expect(dt.zoneName).toStrictEqual(expectedZoneName);
         expect(dt.offset).toStrictEqual(expectedZoneOffset);
@@ -768,7 +768,7 @@ describe('date-time-util', () => {
         expect(dt.hour).toStrictEqual(23);
         expect(dt.minute).toStrictEqual(57);
         expect(dt.second).toStrictEqual(0);
-        expect(dt.zone).toMatchObject(expectedZone);
+        expect(dt.zone).toEqual(expectedZone);
         expect(dt.zone.type).toStrictEqual(expectedZoneType);
         expect(dt.zoneName).toStrictEqual(expectedZoneName);
         expect(dt.offset).toStrictEqual(expectedZoneOffset);

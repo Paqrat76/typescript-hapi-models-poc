@@ -66,6 +66,10 @@ export class MarkdownType extends PrimitiveType<fhirMarkdown> {
     return 'markdown';
   }
 
+  public override isStringPrimitive(): boolean {
+    return true;
+  }
+
   public override copy(): MarkdownType {
     const dest = new MarkdownType();
     this.copyValues(dest);

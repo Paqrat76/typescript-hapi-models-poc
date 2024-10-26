@@ -89,6 +89,10 @@ export class InstantType extends PrimitiveType<fhirInstant> implements InstantTy
     return 'instant';
   }
 
+  public override isDateTimePrimitive(): boolean {
+    return true;
+  }
+
   public override copy(): InstantType {
     const dest = new InstantType();
     this.copyValues(dest);

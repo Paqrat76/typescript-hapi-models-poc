@@ -129,13 +129,49 @@ GitHub: [hapifhir/org.hl7.fhir.core](https://github.com/hapifhir/org.hl7.fhir.co
 
 ## JavaScript Object Serialization/Deserialization References
 
+### FHIR Guidance
+
+- FHIR [JSON representation of primitive elements](https://hl7.org/fhir/R5/json.html#primitive)
+
+  - **Representation**
+    - FHIR elements with primitive datatypes are represented in two parts:
+      - A JSON property with the name of the element, which has a JSON type of `number`, `boolean`, or `string`
+      - a JSON property with \_ prepended to the name of the element, which, if present, contains the value's `id` and/or `extensions`
+    - The FHIR types `integer`, `unsignedInt`, `positiveInt` and `decimal` are represented as a `JSON number`,
+      the FHIR type `boolean` as a `JSON boolean`, and all other types (including `integer64`) are represented as a
+      `JSON string` which has the same content as that specified for the relevant datatype. Whitespace is always
+      significant (i.e. no leading and trailing spaces for non-strings).
+  - **Repeating Primitives (`x..*`)**
+
+    - In the case where the primitive element may repeat, it is represented in two arrays. `JSON null` values are used
+      to fill out both arrays so that the `id` and/or `extension` are aligned with the matching value in the first array.
+
+      ```json
+        "code": [ "au", "nz" ],
+        "_code": [
+          null,
+          {
+            "extension" : [ {
+              "url" : "http://hl7.org/fhir/StructureDefinition/display",
+              "valueString" : "New Zealand a.k.a Kiwiland"
+            }]
+          }
+        ]
+      ```
+
+### Libraries
+
 - [One naïve man’s struggle with TypeScript class serialization](https://medium.com/@aems/one-mans-struggle-with-typescript-class-serialization-478d4bbb5826)
 - [Mastering Type-Safe JSON Serialization in TypeScript](https://hackernoon.com/mastering-type-safe-json-serialization-in-typescript)
   - Consider superstruct library above?
+- [Deserializing JSON in TypeScrip](https://www.bytefish.de/blog/json_deserizaltion_with_typescript.html)
 - [typescript-json-serializer](https://www.npmjs.com/package/typescript-json-serializer) - uses experimentalDecorators
 - [ts-jackson](https://www.npmjs.com/package/ts-jackson) - uses experimentalDecorators
 - [ts-serializable](https://www.npmjs.com/package/ts-serializable) - uses experimentalDecorators
 - [serializr](https://www.npmjs.com/package/serializr) - uses experimentalDecorators
+- [TypeSerializer](https://www.npmjs.com/package/typeserializer) - VERY OLD!
+- NPM [keywords:JSON reviver](https://www.npmjs.com/search?q=keywords%3AJSON%20reviver)
+  - [Custom Types Serializer](https://www.npmjs.com/package/custom-types-serializer)
 - [DeepKit Framework](https://deepkit.io/) - High-quality TypeScript libraries and next-gen backend framework; Perpetual "alpha" since 2020
   - [Documentation](https://deepkit.io/documentation)
   - [Deepkit Runtime Types](https://deepkit.io/library/type) - @deepkit/type; Rich runtime type system for TypeScript with reflection,
@@ -151,6 +187,9 @@ GitHub: [hapifhir/org.hl7.fhir.core](https://github.com/hapifhir/org.hl7.fhir.co
 - [TypeScript Enums and Serialization](https://blog.mavnn.co.uk/2022/11/24/typescript_enums_and_serialization.html)
   - [schemawax](https://www.npmjs.com/package/schemawax)
 - [Recreating advanced Enum types in Typescript](https://medium.com/swlh/recreating-advanced-enum-types-in-typescript-7a267a2a885)
+- [ts-typed-json](https://www.npmjs.com/package/ts-typed-json)
+- [typedjson](https://www.npmjs.com/package/typedjson)
+- [typescript-json-decoder](https://www.npmjs.com/package/typescript-json-decoder)
 
 ## Date/DateTime Handling
 

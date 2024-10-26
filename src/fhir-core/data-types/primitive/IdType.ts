@@ -66,6 +66,10 @@ export class IdType extends PrimitiveType<fhirId> {
     return 'id';
   }
 
+  public override isStringPrimitive(): boolean {
+    return true;
+  }
+
   public override copy(): IdType {
     const dest = new IdType();
     this.copyValues(dest);

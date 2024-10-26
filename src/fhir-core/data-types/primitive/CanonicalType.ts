@@ -65,6 +65,10 @@ export class CanonicalType extends PrimitiveType<fhirCanonical> {
     return 'canonical';
   }
 
+  public override isStringPrimitive(): boolean {
+    return true;
+  }
+
   public override copy(): CanonicalType {
     const dest = new CanonicalType();
     this.copyValues(dest);

@@ -23,6 +23,7 @@
 
 import { DateTime } from 'luxon';
 import { DateTimeType } from '@src/fhir-core/data-types/primitive/DateTimeType';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 
@@ -41,12 +42,15 @@ describe('DateTimeType', () => {
       expect(testDateTimeType.constructor.name).toStrictEqual('DateTimeType');
       expect(testDateTimeType.fhirType()).toStrictEqual('dateTime');
       expect(testDateTimeType.isEmpty()).toBe(true);
+      expect(testDateTimeType.isPrimitive()).toBe(true);
+      expect(testDateTimeType.isDateTimePrimitive()).toBe(true);
+      expect(testDateTimeType.toJSON()).toBeUndefined();
 
       // inherited properties from Element
       expect(testDateTimeType.hasId()).toBe(false);
       expect(testDateTimeType.getId()).toBeUndefined();
       expect(testDateTimeType.hasExtension()).toBe(false);
-      expect(testDateTimeType.getExtension()).toMatchObject([] as Extension[]);
+      expect(testDateTimeType.getExtension()).toEqual([] as Extension[]);
       // primitive value properties
       expect(testDateTimeType.hasValue()).toBe(false);
       expect(testDateTimeType.getValue()).toBeUndefined();
@@ -55,12 +59,35 @@ describe('DateTimeType', () => {
 
     it('should be properly initialized', () => {
       const testDateTimeType = new DateTimeType(VALID_DATETIME);
+      const testId = 'id1234';
+      testDateTimeType.setId(testId);
+      const testExtension = new Extension('testUrl', new StringType('extension string value'));
+      testDateTimeType.addExtension(testExtension);
+
       expect(testDateTimeType).toBeDefined();
       expect(testDateTimeType).toBeInstanceOf(DateTimeType);
       expect(testDateTimeType.constructor.name).toStrictEqual('DateTimeType');
       expect(testDateTimeType.fhirType()).toStrictEqual('dateTime');
       expect(testDateTimeType.isEmpty()).toBe(false);
+      expect(testDateTimeType.isPrimitive()).toBe(true);
+      expect(testDateTimeType.isDateTimePrimitive()).toBe(true);
+      expect(testDateTimeType.toJSON()).toStrictEqual(VALID_DATETIME);
+      expect(testDateTimeType.toSiblingJSON()).toEqual({
+        id: 'id1234',
+        extension: [
+          {
+            url: 'testUrl',
+            valueString: 'extension string value',
+          },
+        ],
+      });
 
+      // inherited properties from Element
+      expect(testDateTimeType.hasId()).toBe(true);
+      expect(testDateTimeType.getId()).toStrictEqual(testId);
+      expect(testDateTimeType.hasExtension()).toBe(true);
+      expect(testDateTimeType.getExtension()).toEqual([testExtension]);
+      // primitive value properties
       expect(testDateTimeType.hasValue()).toBe(true);
       expect(testDateTimeType.getValue()).toBeDefined();
       expect(testDateTimeType.getValue()).toStrictEqual(VALID_DATETIME);
@@ -159,6 +186,9 @@ describe('DateTimeType', () => {
       expect(testDateTimeType.constructor.name).toStrictEqual('DateTimeType');
       expect(testDateTimeType.fhirType()).toStrictEqual('dateTime');
       expect(testDateTimeType.isEmpty()).toBe(false);
+      expect(testDateTimeType.isPrimitive()).toBe(true);
+      expect(testDateTimeType.isDateTimePrimitive()).toBe(true);
+      expect(testDateTimeType.toJSON()).toStrictEqual(VALID_DATETIME);
       expect(testDateTimeType.hasValue()).toBe(true);
       expect(testDateTimeType.getValue()).toBeDefined();
       expect(testDateTimeType.getValue()).toStrictEqual(VALID_DATETIME);

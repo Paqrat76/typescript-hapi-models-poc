@@ -45,31 +45,31 @@ describe('GroupTypeEnum', () => {
 
     let enumValue = testGroupTypeEnum.fromCode('person');
     expect(enumValue).toBeDefined();
-    expect(enumValue).toMatchObject(GroupTypeEnum.PERSON);
+    expect(enumValue).toEqual(GroupTypeEnum.PERSON);
 
     enumValue = testGroupTypeEnum.fromCode('animal');
     expect(enumValue).toBeDefined();
-    expect(enumValue).toMatchObject(GroupTypeEnum.ANIMAL);
+    expect(enumValue).toEqual(GroupTypeEnum.ANIMAL);
 
     enumValue = testGroupTypeEnum.fromCode('practitioner');
     expect(enumValue).toBeDefined();
-    expect(enumValue).toMatchObject(GroupTypeEnum.PRACTITIONER);
+    expect(enumValue).toEqual(GroupTypeEnum.PRACTITIONER);
 
     enumValue = testGroupTypeEnum.fromCode('device');
     expect(enumValue).toBeDefined();
-    expect(enumValue).toMatchObject(GroupTypeEnum.DEVICE);
+    expect(enumValue).toEqual(GroupTypeEnum.DEVICE);
 
     enumValue = testGroupTypeEnum.fromCode('medication');
     expect(enumValue).toBeDefined();
-    expect(enumValue).toMatchObject(GroupTypeEnum.MEDICATION);
+    expect(enumValue).toEqual(GroupTypeEnum.MEDICATION);
 
     enumValue = testGroupTypeEnum.fromCode('substance');
     expect(enumValue).toBeDefined();
-    expect(enumValue).toMatchObject(GroupTypeEnum.SUBSTANCE);
+    expect(enumValue).toEqual(GroupTypeEnum.SUBSTANCE);
 
     enumValue = testGroupTypeEnum.fromCode('null');
     expect(enumValue).toBeDefined();
-    expect(enumValue).toMatchObject(GroupTypeEnum.NULL);
+    expect(enumValue).toEqual(GroupTypeEnum.NULL);
   });
 
   it('should throw InvalidCodeError when executing fromCode() with undefined code value', () => {

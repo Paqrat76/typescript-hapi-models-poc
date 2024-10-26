@@ -66,6 +66,10 @@ export class OidType extends PrimitiveType<fhirOid> {
     return 'oid';
   }
 
+  public override isStringPrimitive(): boolean {
+    return true;
+  }
+
   public override copy(): OidType {
     const dest = new OidType();
     this.copyValues(dest);

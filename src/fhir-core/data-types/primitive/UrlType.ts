@@ -65,6 +65,10 @@ export class UrlType extends PrimitiveType<fhirUrl> {
     return 'url';
   }
 
+  public override isStringPrimitive(): boolean {
+    return true;
+  }
+
   public override copy(): UrlType {
     const dest = new UrlType();
     this.copyValues(dest);

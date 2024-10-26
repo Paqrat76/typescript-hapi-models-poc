@@ -65,6 +65,10 @@ export class UnsignedIntType extends PrimitiveType<fhirUnsignedInt> {
     return 'unsignedInt';
   }
 
+  public override isNumberPrimitive(): boolean {
+    return true;
+  }
+
   public override copy(): UnsignedIntType {
     const dest = new UnsignedIntType();
     this.copyValues(dest);

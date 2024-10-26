@@ -23,6 +23,7 @@
 
 import { DateTime } from 'luxon';
 import { InstantType } from '@src/fhir-core/data-types/primitive/InstantType';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 
@@ -41,12 +42,15 @@ describe('InstantType', () => {
       expect(testInstantType.constructor.name).toStrictEqual('InstantType');
       expect(testInstantType.fhirType()).toStrictEqual('instant');
       expect(testInstantType.isEmpty()).toBe(true);
+      expect(testInstantType.isPrimitive()).toBe(true);
+      expect(testInstantType.isDateTimePrimitive()).toBe(true);
+      expect(testInstantType.toJSON()).toBeUndefined();
 
       // inherited properties from Element
       expect(testInstantType.hasId()).toBe(false);
       expect(testInstantType.getId()).toBeUndefined();
       expect(testInstantType.hasExtension()).toBe(false);
-      expect(testInstantType.getExtension()).toMatchObject([] as Extension[]);
+      expect(testInstantType.getExtension()).toEqual([] as Extension[]);
       // primitive value properties
       expect(testInstantType.hasValue()).toBe(false);
       expect(testInstantType.getValue()).toBeUndefined();
@@ -55,12 +59,35 @@ describe('InstantType', () => {
 
     it('should be properly initialized', () => {
       const testInstantType = new InstantType(VALID_INSTANT);
+      const testId = 'id1234';
+      testInstantType.setId(testId);
+      const testExtension = new Extension('testUrl', new StringType('extension string value'));
+      testInstantType.addExtension(testExtension);
+
       expect(testInstantType).toBeDefined();
       expect(testInstantType).toBeInstanceOf(InstantType);
       expect(testInstantType.constructor.name).toStrictEqual('InstantType');
       expect(testInstantType.fhirType()).toStrictEqual('instant');
       expect(testInstantType.isEmpty()).toBe(false);
+      expect(testInstantType.isPrimitive()).toBe(true);
+      expect(testInstantType.isDateTimePrimitive()).toBe(true);
+      expect(testInstantType.toJSON()).toStrictEqual(VALID_INSTANT);
+      expect(testInstantType.toSiblingJSON()).toEqual({
+        id: 'id1234',
+        extension: [
+          {
+            url: 'testUrl',
+            valueString: 'extension string value',
+          },
+        ],
+      });
 
+      // inherited properties from Element
+      expect(testInstantType.hasId()).toBe(true);
+      expect(testInstantType.getId()).toStrictEqual(testId);
+      expect(testInstantType.hasExtension()).toBe(true);
+      expect(testInstantType.getExtension()).toEqual([testExtension]);
+      // primitive value properties
       expect(testInstantType.hasValue()).toBe(true);
       expect(testInstantType.getValue()).toBeDefined();
       expect(testInstantType.getValue()).toStrictEqual(VALID_INSTANT);
@@ -159,6 +186,9 @@ describe('InstantType', () => {
       expect(testInstantType.constructor.name).toStrictEqual('InstantType');
       expect(testInstantType.fhirType()).toStrictEqual('instant');
       expect(testInstantType.isEmpty()).toBe(false);
+      expect(testInstantType.isPrimitive()).toBe(true);
+      expect(testInstantType.isDateTimePrimitive()).toBe(true);
+      expect(testInstantType.toJSON()).toStrictEqual(VALID_INSTANT);
       expect(testInstantType.hasValue()).toBe(true);
       expect(testInstantType.getValue()).toBeDefined();
       expect(testInstantType.getValue()).toStrictEqual(VALID_INSTANT);
