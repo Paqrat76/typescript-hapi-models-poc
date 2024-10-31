@@ -685,7 +685,7 @@ describe('GroupCharacteristicComponent', () => {
         new GroupCharacteristicComponent(null, null, INVALID_BOOLEAN);
       };
       expect(t).toThrow(PrimitiveTypeError);
-      expect(t).toThrow(`Invalid GroupCharacteristicComponent.exclude parameter (${INVALID_BOOLEAN})`);
+      expect(t).toThrow(`Invalid GroupCharacteristicComponent.exclude (${INVALID_BOOLEAN})`);
     });
 
     it('should throw PrimitiveTypeError when setExclude() with non-boolean value', () => {
@@ -824,7 +824,7 @@ describe('GroupCharacteristicComponent', () => {
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(
-        `GroupCharacteristicComponent.setCode(): The provided argument is not an instance of CodeableConcept.`,
+        `Invalid GroupCharacteristicComponent.code; Provided value is not an instance of CodeableConcept.`,
       );
     });
 
@@ -837,7 +837,7 @@ describe('GroupCharacteristicComponent', () => {
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(
-        `GroupCharacteristicComponent.setExcludeElement(): The provided argument is not an instance of BooleanType.`,
+        `Invalid GroupCharacteristicComponent.exclude; Provided value is not an instance of BooleanType.`,
       );
     });
 
@@ -849,9 +849,7 @@ describe('GroupCharacteristicComponent', () => {
         testGroupCharacteristicComponent.setPeriod(invalidPeriod);
       };
       expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(
-        `GroupCharacteristicComponent.setPeriod(): The provided argument is not an instance of Period.`,
-      );
+      expect(t).toThrow(`Invalid GroupCharacteristicComponent.period; Provided value is not an instance of Period.`);
     });
   });
 });

@@ -25,7 +25,9 @@ import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConce
 import { DataType, Extension } from '@src/fhir-core/base-models/core-fhir-models';
 import { Coding } from '@src/fhir-core/data-types/complex/Coding';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
 describe('CodeableConcept', () => {
   const VALID_URI = `testUriType`;
@@ -161,7 +163,41 @@ describe('CodeableConcept', () => {
         testCodeableConcept.setText(INVALID_STRING);
       };
       expect(t).toThrow(PrimitiveTypeError);
-      expect(t).toThrow(`Invalid CodeableConcept.text`);
+      expect(t).toThrow(`Invalid CodeableConcept.text (invalid value provided)`);
+    });
+
+    it('should throw PrimitiveTypeError when initialized with invalid PrimitiveType text value', () => {
+      const testCodeableConcept = new CodeableConcept();
+      const t = () => {
+        // @ts-expect-error: ignore invalid type for test
+        testCodeableConcept.setTextElement(INVALID_STRING);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid CodeableConcept.text; Provided element is not an instance of StringType.`);
+    });
+
+    it('should throw InvalidTypeError when initialized with invalid Coding[] value', () => {
+      const testCodeableConcept = new CodeableConcept();
+      const invalidCodingType = new UriType(VALID_URI);
+      const t = () => {
+        // @ts-expect-error: ignore invalid type for test
+        testCodeableConcept.setCoding([invalidCodingType]);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(
+        `Invalid CodeableConcept.coding; Provided value array has an element that is not an instance of Coding.`,
+      );
+    });
+
+    it('should throw InvalidTypeError when adding invalid PrimitiveType CodeableConcept.coding value', () => {
+      const testCodeableConcept = new CodeableConcept();
+      const invalidCodingType = new UriType(VALID_URI);
+      const t = () => {
+        // @ts-expect-error: ignore invalid type for test
+        testCodeableConcept.addCoding(invalidCodingType);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid CodeableConcept.coding; Provided value is not an instance of Coding.`);
     });
 
     it('should be properly reset by modifying all properties', () => {

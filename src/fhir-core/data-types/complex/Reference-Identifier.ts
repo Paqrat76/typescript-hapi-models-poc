@@ -52,7 +52,7 @@ import {
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import { RESOURCE_TYPES, FhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
-import { FhirTypeGuard } from '@src/fhir-core/utility/type-guards';
+import { assertFhirType, FhirTypeGuard } from '@src/fhir-core/utility/type-guards';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 
@@ -156,6 +156,8 @@ export class Reference extends DataType implements IBase {
    * @returns this
    */
   public setReferenceElement(element: StringType | undefined): this {
+    const optErrMsg = `Invalid Reference.reference; Provided element is not an instance of StringType.`;
+    assertFhirType<StringType>(element, StringType, optErrMsg);
     this.reference = element;
     return this;
   }
@@ -209,6 +211,8 @@ export class Reference extends DataType implements IBase {
    * @returns this
    */
   public setTypeElement(element: UriType | undefined): this {
+    const optErrMsg = `Invalid Reference.type; Provided element is not an instance of UriType.`;
+    assertFhirType<UriType>(element, UriType, optErrMsg);
     this.type = element;
     return this;
   }
@@ -261,6 +265,8 @@ export class Reference extends DataType implements IBase {
    * @returns this
    */
   public setIdentifier(value: Identifier | undefined): this {
+    const optErrMsg = `Invalid Reference.identifier; Provided value is not an instance of Identifier.`;
+    assertFhirType<Identifier>(value, Identifier, optErrMsg);
     this.identifier = value;
     return this;
   }
@@ -286,6 +292,8 @@ export class Reference extends DataType implements IBase {
    * @returns this
    */
   public setDisplayElement(element: StringType | undefined): this {
+    const optErrMsg = `Invalid Reference.display; Provided element is not an instance of StringType.`;
+    assertFhirType<StringType>(element, StringType, optErrMsg);
     this.display = element;
     return this;
   }
@@ -530,6 +538,8 @@ export class Identifier extends DataType implements IBase {
    * @returns this
    */
   public setUseElement(element: CodeType | undefined): this {
+    const optErrMsg = `Invalid Identifier.use; Provided element is not an instance of CodeType.`;
+    assertFhirType<CodeType>(element, CodeType, optErrMsg);
     this.use = element;
     return this;
   }
@@ -582,6 +592,8 @@ export class Identifier extends DataType implements IBase {
    * @returns this
    */
   public setType(value: CodeableConcept | undefined): this {
+    const optErrMsg = `Invalid Identifier.type; Provided element is not an instance of CodeableConcept.`;
+    assertFhirType<CodeableConcept>(value, CodeableConcept, optErrMsg);
     this.type = value;
     return this;
   }
@@ -607,6 +619,8 @@ export class Identifier extends DataType implements IBase {
    * @returns this
    */
   public setSystemElement(element: UriType | undefined): this {
+    const optErrMsg = `Invalid Identifier.system; Provided element is not an instance of UriType.`;
+    assertFhirType<UriType>(element, UriType, optErrMsg);
     this.system = element;
     return this;
   }
@@ -660,6 +674,8 @@ export class Identifier extends DataType implements IBase {
    * @returns this
    */
   public setValueElement(element: StringType | undefined): this {
+    const optErrMsg = `Invalid Identifier.value; Provided element is not an instance of StringType.`;
+    assertFhirType<StringType>(element, StringType, optErrMsg);
     this.value = element;
     return this;
   }
@@ -713,6 +729,8 @@ export class Identifier extends DataType implements IBase {
    * @returns this
    */
   public setPeriod(value: Period | undefined): this {
+    const optErrMsg = `Invalid Identifier.period; Provided element is not an instance of Period.`;
+    assertFhirType<Period>(value, Period, optErrMsg);
     this.period = value;
     return this;
   }
@@ -741,6 +759,7 @@ export class Identifier extends DataType implements IBase {
    */
   @ReferenceTargets(['Organization'])
   public setAssigner(value: Reference | undefined): this {
+    // assertFhirType<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
     this.assigner = value;
     return this;
   }

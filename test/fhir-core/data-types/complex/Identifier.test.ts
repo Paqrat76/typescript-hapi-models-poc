@@ -37,22 +37,26 @@ describe('Identifier Tests', () => {
   const VALID_CODE_2 = `testCodeType2`;
   const VALID_CODE_TYPE_2 = new CodeType(VALID_CODE_2);
   const INVALID_CODE = ' invalid CodeType ';
+  const INVALID_CODE_TYPE = new StringType(`Invalid CodeType`);
 
   const VALID_URI = `testUriType`;
   const VALID_URI_TYPE = new UriType(VALID_URI);
   const VALID_URI_2 = `testUriType2`;
   const VALID_URI_TYPE_2 = new UriType(VALID_URI_2);
   const INVALID_URI = ' invalid Uri ';
+  const INVALID_URI_TYPE = new StringType(`Invalid UriType`);
 
   const VALID_STRING = 'This is a valid string.';
   const VALID_STRING_TYPE = new StringType(VALID_STRING);
   const VALID_STRING_2 = 'This is another valid string!';
   const VALID_STRING_TYPE_2 = new StringType(VALID_STRING_2);
   const INVALID_STRING = '';
+  const INVALID_STRING_TYPE = new UriType(VALID_URI);
 
   const VALID_CODEABLECONCEPT_TEXT_1 = 'CodeableConcept text 1';
   const VALID_CODEABLECONCEPT_VALUE_1 = new CodeableConcept();
   VALID_CODEABLECONCEPT_VALUE_1.setText(VALID_CODEABLECONCEPT_TEXT_1);
+  const INVALID_CODEABLECONCEPT_TYPE = new StringType(`Invalid CODEABLECONCEPT`);
 
   const VALID_CODEABLECONCEPT_TEXT_2 = 'CodeableConcept text 2';
   const VALID_CODEABLECONCEPT_VALUE_2 = new CodeableConcept();
@@ -61,6 +65,7 @@ describe('Identifier Tests', () => {
   const VALID_PERIOD_START_1 = '2017-01-01T00:00:00.000Z';
   const VALID_PERIOD_VALUE_1 = new Period();
   VALID_PERIOD_VALUE_1.setStart(VALID_PERIOD_START_1);
+  const INVALID_PERIOD_TYPE = new StringType(`Invalid Period`);
 
   const VALID_PERIOD_START_2 = '2017-01-01T01:15:00.000Z';
   const VALID_PERIOD_VALUE_2 = new Period();
@@ -386,7 +391,7 @@ describe('Identifier Tests', () => {
       expect(t).toThrow(`Invalid Identifier.value (${INVALID_STRING})`);
     });
 
-    it('should throw InvalidTypeError when reset with invalid Identifier.assigner reference type', () => {
+    it('should throw InvalidTypeError when reset with invalid Identifier.assigner reference value', () => {
       const testIdentifier = new Identifier();
       const t = () => {
         testIdentifier.setAssigner(INVALID_REFERENCE_VALUE);
@@ -523,6 +528,56 @@ describe('Identifier Tests', () => {
       expect(testIdentifier.getSystem()).toStrictEqual(VALID_URI_2);
       expect(testIdentifier.hasValue()).toBe(true);
       expect(testIdentifier.getValue()).toStrictEqual(VALID_STRING_2);
+    });
+
+    it('should throw InvalidTypeError when reset with invalid PrimitiveType Identifier.use value', () => {
+      const testIdentifier = new Identifier();
+      const t = () => {
+        // @ts-expect-error: allow invalid type for testing
+        testIdentifier.setUseElement(INVALID_CODE_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Identifier.use; Provided element is not an instance of CodeType.`);
+    });
+
+    it('should throw InvalidTypeError when reset with invalid PrimitiveType Identifier.type value', () => {
+      const testIdentifier = new Identifier();
+      const t = () => {
+        // @ts-expect-error: allow invalid type for testing
+        testIdentifier.setType(INVALID_CODEABLECONCEPT_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Identifier.type; Provided element is not an instance of CodeableConcept.`);
+    });
+
+    it('should throw InvalidTypeError when reset with invalid PrimitiveType Identifier.system value', () => {
+      const testIdentifier = new Identifier();
+      const t = () => {
+        // @ts-expect-error: allow invalid type for testing
+        testIdentifier.setSystemElement(INVALID_URI_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Identifier.system; Provided element is not an instance of UriType.`);
+    });
+
+    it('should throw InvalidTypeError when reset with invalid PrimitiveType Identifier.value value', () => {
+      const testIdentifier = new Identifier();
+      const t = () => {
+        // @ts-expect-error: allow invalid type for testing
+        testIdentifier.setValueElement(INVALID_STRING_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Identifier.value; Provided element is not an instance of StringType.`);
+    });
+
+    it('should throw InvalidTypeError when reset with invalid PrimitiveType Identifier.period value', () => {
+      const testIdentifier = new Identifier();
+      const t = () => {
+        // @ts-expect-error: allow invalid type for testing
+        testIdentifier.setPeriod(INVALID_PERIOD_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Identifier.period; Provided element is not an instance of Period.`);
     });
   });
 

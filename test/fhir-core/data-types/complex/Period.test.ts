@@ -26,6 +26,7 @@ import { DataType, Extension } from '@src/fhir-core/base-models/core-fhir-models
 import { DateTimeType } from '@src/fhir-core/data-types/primitive/DateTimeType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
 describe('Period', () => {
   const VALID_START_DATETIME = `2017-01-01T00:00:00.000Z`;
@@ -33,6 +34,7 @@ describe('Period', () => {
   const VALID_END_DATETIME = `2017-01-01T01:00:00.000Z`;
   const VALID_END_DATETIME_2 = `2017-01-01T01:15:00.000Z`;
   const INVALID_DATETIME = `invalid date time`;
+  const INVALID_DATETIME_TYPE = new StringType(`invalid date time`);
   const UNDEFINED_DATETIME = undefined;
 
   describe('Core', () => {
@@ -474,6 +476,26 @@ describe('Period', () => {
       expect(testPeriod.getStart()).toBeUndefined();
       expect(testPeriod.hasEnd()).toBe(true);
       expect(testPeriod.getEnd()).toStrictEqual(VALID_END_DATETIME);
+    });
+
+    it('should throw InvalidTypeError when reset with invalid PrimitiveType Period.start value', () => {
+      const testPeriod = new Period();
+      const t = () => {
+        // @ts-expect-error: ignore invalid type for test
+        testPeriod.setStartElement(INVALID_DATETIME_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Period.start; Provided element is not an instance of DateTimeType.`);
+    });
+
+    it('should throw InvalidTypeError when reset with invalid PrimitiveType Period.end value', () => {
+      const testPeriod = new Period();
+      const t = () => {
+        // @ts-expect-error: ignore invalid type for test
+        testPeriod.setEndElement(INVALID_DATETIME_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Period.end; Provided element is not an instance of DateTimeType.`);
     });
 
     it('should throw TypeError when initialized with DataType element Period.start > Period.end', () => {

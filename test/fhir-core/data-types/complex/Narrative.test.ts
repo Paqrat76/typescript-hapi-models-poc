@@ -23,28 +23,30 @@
 
 import { Narrative } from '@src/fhir-core/data-types/complex/Narrative';
 import { DataType, Extension } from '@src/fhir-core/base-models/core-fhir-models';
-// import { EnumCodeType } from '@src/fhir-core/data-types/primitive/EnumCodeType';
 import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { XhtmlType } from '@src/fhir-core/data-types/primitive/XhtmlType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { NarrativeStatusEnum } from '@src/fhir-core/data-types/complex/code-systems/NarrativeStatusEnum';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
 describe('Narrative', () => {
   const VALID_CODE_GENERATED = `generated`;
   const VALID_CODE_GENERATED_TYPE = new CodeType(VALID_CODE_GENERATED);
   const VALID_CODE_ADDITIONAL = `additional`;
   const VALID_CODE_ADDITIONAL_TYPE_2 = new CodeType(VALID_CODE_ADDITIONAL);
-  const UNSUPPORTED_ENUM_CODE = 'unsupporedEnumCode';
-  const UNDEFINED_ENUM_CODE_VALUE = `undefined`;
-  const INVALID_CODE = ' invalid CodeType ';
+  const UNSUPPORTED_ENUM_CODE = 'unsupportedEnumCode';
+  const INVALID_CODE = ' invalid fhirCode ';
+  const INVALID_CODE_TYPE = new StringType('invalid CodeType');
+  const INVALID_ENUM_CODE_TYPE = new StringType('invalid EnumCodeType');
 
   const VALID_XHTML = '<div xmlns="http://www.w3.org/1999/xhtml">text</div>';
   const VALID_XHTML_TYPE = new XhtmlType(VALID_XHTML);
   const VALID_XHTML_2 = ` any\tstring\r\nlike this that passes the regex `;
   const VALID_XHTML_TYPE_2 = new XhtmlType(VALID_XHTML_2);
   const INVALID_XHTML = '';
+  const INVALID_XHTML_TYPE = new StringType('invalid XhtmlType');
 
   let narrativeStatusEnum: NarrativeStatusEnum;
   beforeAll(() => {
@@ -185,7 +187,7 @@ describe('Narrative', () => {
         new Narrative(UNSUPPORTED_ENUM_CODE, VALID_XHTML);
       };
       expect(t).toThrow(InvalidCodeError);
-      expect(t).toThrow(`Invalid Narrative.status (${UNSUPPORTED_ENUM_CODE})`);
+      expect(t).toThrow(`Invalid Narrative.status; Unknown NarrativeStatusEnum 'code' value 'unsupportedEnumCode'`);
     });
 
     it('should throw InvalidCodeError when initialized with unsupported PrimitiveType Narrative.status value', () => {
@@ -193,13 +195,13 @@ describe('Narrative', () => {
         new Narrative(new CodeType(UNSUPPORTED_ENUM_CODE), VALID_XHTML);
       };
       expect(t).toThrow(InvalidCodeError);
-      expect(t).toThrow(`Invalid Narrative.status (${UNSUPPORTED_ENUM_CODE})`);
+      expect(t).toThrow(`Unknown NarrativeStatusEnum 'code' value '${UNSUPPORTED_ENUM_CODE}'`);
 
       t = () => {
         new Narrative(new CodeType(), VALID_XHTML);
       };
       expect(t).toThrow(InvalidCodeError);
-      expect(t).toThrow(`Invalid Narrative.status (${UNDEFINED_ENUM_CODE_VALUE})`);
+      expect(t).toThrow(`The provided 'code' value is undefined`);
     });
 
     it('should throw InvalidCodeError when initialized with unsupported EnumCodeType Narrative.status value', () => {
@@ -215,7 +217,7 @@ describe('Narrative', () => {
         new Narrative(INVALID_CODE, VALID_XHTML);
       };
       expect(t).toThrow(InvalidCodeError);
-      expect(t).toThrow(`Invalid Narrative.status (${INVALID_CODE})`);
+      expect(t).toThrow(`Invalid Narrative.status; Invalid value for CodeType ( invalid fhirCode )`);
     });
 
     it('should throw PrimitiveTypeError when initialized with invalid PrimitiveType Narrative.status value', () => {
@@ -234,31 +236,33 @@ describe('Narrative', () => {
       expect(t).toThrow(`Invalid value for CodeType (${INVALID_CODE})`);
     });
 
+    it('should throw InvalidTypeError when reset with invalid PrimitiveType Narrative.status value', () => {
+      const testNarrative = new Narrative(VALID_CODE_GENERATED, VALID_XHTML);
+      const t = () => {
+        // @ts-expect-error: allow invalid type for testing
+        testNarrative.setStatueEnumType(INVALID_ENUM_CODE_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Narrative.status; Provided type is not an instance of NarrativeStatusEnum.`);
+    });
+
+    it('should throw InvalidTypeError when reset with invalid PrimitiveType Narrative.status value', () => {
+      const testNarrative = new Narrative(VALID_CODE_GENERATED, VALID_XHTML);
+      const t = () => {
+        // @ts-expect-error: allow invalid type for testing
+        testNarrative.setStatusElement(INVALID_CODE_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Narrative.status; Provided element is not an instance of CodeType.`);
+    });
+
     it('should throw PrimitiveTypeError when reset with invalid primitive Narrative.status value', () => {
       const testNarrative = new Narrative(VALID_CODE_GENERATED, VALID_XHTML);
       const t = () => {
         testNarrative.setStatus(INVALID_CODE);
       };
       expect(t).toThrow(PrimitiveTypeError);
-      expect(t).toThrow(`Invalid value for CodeType (${INVALID_CODE})`);
-    });
-
-    it('should throw PrimitiveTypeError when reset with invalid PrimitiveType Narrative.status value', () => {
-      const testNarrative = new Narrative(VALID_CODE_GENERATED, VALID_XHTML);
-      const t = () => {
-        testNarrative.setStatusElement(new CodeType(INVALID_CODE));
-      };
-      expect(t).toThrow(PrimitiveTypeError);
-      expect(t).toThrow(`Invalid value for CodeType (${INVALID_CODE})`);
-    });
-
-    it('should throw PrimitiveTypeError when reset with invalid EnumCodeType Narrative.status value', () => {
-      const testNarrative = new Narrative(VALID_CODE_GENERATED, VALID_XHTML);
-      const t = () => {
-        testNarrative.setStatueEnumType(new EnumCodeType(INVALID_CODE, narrativeStatusEnum));
-      };
-      expect(t).toThrow(PrimitiveTypeError);
-      expect(t).toThrow(`Invalid value for CodeType (${INVALID_CODE})`);
+      expect(t).toThrow(`Invalid Narrative.status (${INVALID_CODE})`);
     });
 
     it('should throw PrimitiveTypeError when initialized with invalid primitive Narrative.div value', () => {
@@ -267,14 +271,6 @@ describe('Narrative', () => {
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid Narrative.div`);
-    });
-
-    it('should throw PrimitiveTypeError when initialized with invalid PrimitiveType Narrative.div value', () => {
-      const t = () => {
-        new Narrative(VALID_CODE_GENERATED, new XhtmlType(INVALID_XHTML));
-      };
-      expect(t).toThrow(PrimitiveTypeError);
-      expect(t).toThrow(`Invalid value for XhtmlType`);
     });
 
     it('should be properly reset by modifying Narrative.status and Narrative.div with primitive values', () => {
@@ -448,16 +444,17 @@ describe('Narrative', () => {
         testNarrative.setDiv(INVALID_XHTML);
       };
       expect(t).toThrow(PrimitiveTypeError);
-      expect(t).toThrow(`Invalid Narrative.div`);
+      expect(t).toThrow(`Invalid Narrative.div (invalid value provided)`);
     });
 
-    it('should throw PrimitiveTypeError when reset with invalid PrimitiveType Narrative.div value', () => {
+    it('should throw InvalidTypeError when reset with invalid PrimitiveType Narrative.div value', () => {
       const testNarrative = new Narrative(VALID_CODE_GENERATED, VALID_XHTML);
       const t = () => {
-        testNarrative.setDivElement(new XhtmlType(INVALID_XHTML));
+        // @ts-expect-error: allow invalid type for testing
+        testNarrative.setDivElement(INVALID_XHTML_TYPE);
       };
-      expect(t).toThrow(PrimitiveTypeError);
-      expect(t).toThrow(`Invalid value for XhtmlType`);
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Narrative.div; Provided element is not an instance of XhtmlType.`);
     });
 
     it('should properly copy()', () => {

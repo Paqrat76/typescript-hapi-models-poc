@@ -29,7 +29,6 @@ import { DecimalType } from '@src/fhir-core/data-types/primitive/DecimalType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
-//import { EnumCodeType } from '@src/fhir-core/data-types/primitive/EnumCodeType';
 import { QuantityComparatorEnum } from '@src/fhir-core/data-types/complex/code-systems/QuantityComparatorEnum';
 
 describe('SimpleQuantity', () => {

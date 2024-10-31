@@ -34,7 +34,7 @@ import {
 } from '@src/fhir-core/base-models/core-fhir-models';
 import { fhirUri } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty, validateUrl } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirType } from '@src/fhir-core/utility/type-guards';
+import { assertFhirType, assertFhirTypeList } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
@@ -137,11 +137,8 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
    * @returns this
    */
   public setText(value: Narrative | undefined): this {
-    assertFhirType(
-      value,
-      Narrative,
-      `DomainResource.setText(): The provided argument is not an instance of Narrative.`,
-    );
+    const optErrMsg = `Invalid DomainResource.text; Provided value is not an instance of Narrative.`;
+    assertFhirType<Narrative>(value, Narrative, optErrMsg);
     this.text = value;
     return this;
   }
@@ -167,11 +164,9 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
    * @returns this
    */
   public setContained(value: Resource[] | undefined): this {
+    const optErrMsg = `DomainResource.contained; Provided value array has an element that is not a valid instance of Resource.`;
     value?.forEach((containedResource) => {
-      assertFhirResourceType(
-        containedResource,
-        `DomainResource.setContained(): At least one array item in the provided argument is not an instance of Resource.`,
-      );
+      assertFhirResourceType(containedResource, optErrMsg);
     });
     this.contained = value;
     return this;
@@ -187,7 +182,8 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
     if (value === undefined) {
       return this;
     }
-    assertFhirResourceType(value, `DomainResource.addContained(): Provided argument is not an instance of Resource.`);
+    const optErrMsg = `Invalid DomainResource.contained; Provided value is not a valid instance of Resource.`;
+    assertFhirResourceType(value, optErrMsg);
     this.initContained();
     this.contained?.push(value);
     return this;
@@ -210,7 +206,7 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
    * @private
    */
   private initContained(): void {
-    if (this.contained === undefined) {
+    if (!this.hasContained()) {
       this.contained = [] as Resource[];
     }
   }
@@ -226,13 +222,8 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
    * {@inheritDoc IBaseExtension.setExtension}
    */
   public setExtension(extension: Extension[] | undefined): this {
-    extension?.forEach((ext) => {
-      assertFhirType(
-        ext,
-        Extension,
-        `DomainResource.setExtension(): At least one array item in the provided argument is not an instance of Extension.`,
-      );
-    });
+    const optErrMsg = `Invalid DomainResource.extension; Provided extension array has an element that is not an instance of Extension.`;
+    assertFhirTypeList<Extension>(extension, Extension, optErrMsg);
     this.extension = extension;
     return this;
   }
@@ -269,11 +260,8 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
    */
   public addExtension(extension?: Extension): this {
     if (extension !== undefined) {
-      assertFhirType(
-        extension,
-        Extension,
-        `DomainResource.addExtension(): The provided argument is not an instance of Extension.`,
-      );
+      const optErrMsg = `Invalid DomainResource.extension; Provided extension is not an instance of Extension.`;
+      assertFhirType<Extension>(extension, Extension, optErrMsg);
       this.initExtension();
       // @ts-expect-error: initExtension() ensures this.extension exists
       this.extension.push(extension);
@@ -298,7 +286,7 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
    * @private
    */
   private initExtension(): void {
-    if (!this.extension) {
+    if (!this.hasExtension()) {
       this.extension = [] as Extension[];
     }
   }
@@ -328,13 +316,8 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
    * {@inheritDoc IBaseModifierExtension.setModifierExtension}
    */
   public setModifierExtension(extension: Extension[] | undefined): this {
-    extension?.forEach((ext) => {
-      assertFhirType(
-        ext,
-        Extension,
-        `DomainResource.setModifierExtension(): At least one array item in the provided argument is not an instance of Extension.`,
-      );
-    });
+    const optErrMsg = `Invalid DomainResource.modifierExtension; Provided extension array has an element that is not an instance of Extension.`;
+    assertFhirTypeList<Extension>(extension, Extension, optErrMsg);
     this.modifierExtension = extension;
     return this;
   }
@@ -371,11 +354,8 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
    */
   public addModifierExtension(extension: Extension | undefined): this {
     if (extension !== undefined) {
-      assertFhirType(
-        extension,
-        Extension,
-        `DomainResource.addModifierExtension(): The provided argument is not an instance of Extension.`,
-      );
+      const optErrMsg = `Invalid DomainResource.modifierExtension; Provided extension is not an instance of Extension.`;
+      assertFhirType<Extension>(extension, Extension, optErrMsg);
       this.initModifierExtension();
       // @ts-expect-error: initExtension() ensures this.modifierExtension exists
       this.modifierExtension.push(extension);
@@ -400,7 +380,7 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
    * @private
    */
   private initModifierExtension(): void {
-    if (!this.modifierExtension) {
+    if (!this.hasModifierExtension()) {
       this.modifierExtension = [] as Extension[];
     }
   }

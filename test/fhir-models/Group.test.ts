@@ -44,6 +44,7 @@ import { GroupTypeEnum } from '@src/fhir-models/code-systems/GroupTypeEnum';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { MockCodeEnum } from '../test-utils';
 
 describe('Group', () => {
   const VALID_STRING_1 = 'This is a valid string.';
@@ -127,8 +128,10 @@ describe('Group', () => {
   const UNDEFINED_VALUE = undefined;
 
   let groupTypeEnum: GroupTypeEnum;
+  let inValidTypeEnum: MockCodeEnum;
   beforeAll(() => {
     groupTypeEnum = new GroupTypeEnum();
+    inValidTypeEnum = new MockCodeEnum();
   });
 
   describe('Base Tests', () => {
@@ -802,28 +805,55 @@ describe('Group', () => {
         new Group(UNSUPPORTED_ENUM_CODE, null);
       };
       expect(t).toThrow(InvalidCodeError);
-      expect(t).toThrow(`Invalid Group.type parameter: Unknown GroupTypeEnum 'code' value '${UNSUPPORTED_ENUM_CODE}'`);
+      expect(t).toThrow(`Invalid Group.type; Unknown GroupTypeEnum 'code' value '${UNSUPPORTED_ENUM_CODE}'`);
 
       t = () => {
         new Group(UNDEFINED_ENUM_CODE_VALUE, null);
       };
       expect(t).toThrow(InvalidCodeError);
-      expect(t).toThrow(
-        `Invalid Group.type parameter: Unknown GroupTypeEnum 'code' value '${UNDEFINED_ENUM_CODE_VALUE}'`,
-      );
+      expect(t).toThrow(`Invalid Group.type; Unknown GroupTypeEnum 'code' value '${UNDEFINED_ENUM_CODE_VALUE}'`);
 
       t = () => {
         new Group(INVALID_CODE, null);
       };
       expect(t).toThrow(InvalidCodeError);
-      expect(t).toThrow(`Invalid Group.type parameter (${INVALID_CODE})`);
+      expect(t).toThrow(`Invalid Group.type; Invalid value for CodeType (${INVALID_CODE})`);
 
       t = () => {
         // @ts-expect-error: allow for testing
         new Group(null, INVALID_BOOLEAN);
       };
       expect(t).toThrow(PrimitiveTypeError);
-      expect(t).toThrow(`Invalid Group.actual parameter (${INVALID_BOOLEAN})`);
+      expect(t).toThrow(`Invalid Group.actual (${INVALID_BOOLEAN})`);
+    });
+
+    it('should throw PrimitiveTypeError when setters invoked with invalid primitive values', () => {
+      const group = new Group(null, null);
+      let t = () => {
+        // @ts-expect-error: allow for testing
+        group.setActive(INVALID_BOOLEAN);
+      };
+      expect(t).toThrow(PrimitiveTypeError);
+      expect(t).toThrow(`Invalid Group.active (${String(INVALID_BOOLEAN)})`);
+
+      t = () => {
+        // @ts-expect-error: allow for testing
+        group.setActual(INVALID_BOOLEAN);
+      };
+      expect(t).toThrow(PrimitiveTypeError);
+      expect(t).toThrow(`Invalid Group.actual (${String(INVALID_BOOLEAN)})`);
+
+      t = () => {
+        group.setName(INVALID_STRING);
+      };
+      expect(t).toThrow(PrimitiveTypeError);
+      expect(t).toThrow(`Invalid Group.name (${INVALID_STRING})`);
+
+      t = () => {
+        group.setQuantity(INVALID_UNSIGNED_INT);
+      };
+      expect(t).toThrow(PrimitiveTypeError);
+      expect(t).toThrow(`Invalid Group.quantity (${String(INVALID_UNSIGNED_INT)})`);
     });
 
     // Tests using DataType elements
@@ -1526,33 +1556,32 @@ describe('Group', () => {
       expect(testGroup.getMember()).toEqual([testGroupMemberComponent1, testGroupMemberComponent2]);
     });
 
-    it('should throw PrimitiveTypeError when setters invoked with invalid primitive values', () => {
-      const group = new Group(null, null);
+    it('should throw InvalidCodeError when instantiated with invalid PrimitiveType values', () => {
       let t = () => {
-        // @ts-expect-error: allow for testing
-        group.setActive(INVALID_BOOLEAN);
+        new Group(new EnumCodeType('generated', inValidTypeEnum), null);
       };
-      expect(t).toThrow(PrimitiveTypeError);
-      expect(t).toThrow(`Invalid Group.active (${String(INVALID_BOOLEAN)})`);
+      expect(t).toThrow(InvalidCodeError);
+      expect(t).toThrow(`Invalid Group.type; Invalid type parameter (MockCodeEnum); Should be GroupTypeEnum.`);
+
+      t = () => {
+        // @ts-expect-error: allow invalid type for testing
+        new Group(new StringType('invalidCode'), null);
+      };
+      expect(t).toThrow(InvalidCodeError);
+      expect(t).toThrow(`Invalid Group.type; Provided code value is not an instance of CodeType`);
+
+      t = () => {
+        new Group(INVALID_CODE, null);
+      };
+      expect(t).toThrow(InvalidCodeError);
+      expect(t).toThrow(`Invalid Group.type; Invalid value for CodeType (${INVALID_CODE})`);
 
       t = () => {
         // @ts-expect-error: allow for testing
-        group.setActual(INVALID_BOOLEAN);
+        new Group(null, INVALID_BOOLEAN);
       };
       expect(t).toThrow(PrimitiveTypeError);
-      expect(t).toThrow(`Invalid Group.actual (${String(INVALID_BOOLEAN)})`);
-
-      t = () => {
-        group.setName(INVALID_STRING);
-      };
-      expect(t).toThrow(PrimitiveTypeError);
-      expect(t).toThrow(`Invalid Group.name (${INVALID_STRING})`);
-
-      t = () => {
-        group.setQuantity(INVALID_UNSIGNED_INT);
-      };
-      expect(t).toThrow(PrimitiveTypeError);
-      expect(t).toThrow(`Invalid Group.quantity (${String(INVALID_UNSIGNED_INT)})`);
+      expect(t).toThrow(`Invalid Group.actual (${INVALID_BOOLEAN})`);
     });
 
     it('should throw InvalidTypeError when setManagingEntity() with invalid reference type', () => {
@@ -1577,7 +1606,9 @@ describe('Group', () => {
         testGroup.setIdentifier([VALID_IDENTIFIER_1, invalidIdentifier]);
       };
       expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`Group.setIdentifier(): At least one provided array item is not an instance of Identifier.`);
+      expect(t).toThrow(
+        `Invalid Group.identifier; Provided value array has an element that is not an instance of Identifier.`,
+      );
     });
 
     it('should throw InvalidTypeError for Group.addIdentifier()', () => {
@@ -1588,7 +1619,7 @@ describe('Group', () => {
         testGroup.addIdentifier(invalidIdentifier);
       };
       expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`Group.addIdentifier(): The provided argument is not an instance of Identifier.`);
+      expect(t).toThrow(`Invalid Group.identifier; Provided value is not an instance of Identifier.`);
     });
 
     it('should throw InvalidTypeError for Group.setActiveElement()', () => {
@@ -1599,7 +1630,7 @@ describe('Group', () => {
         testGroup.setActiveElement(invalidBooleanType);
       };
       expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`Group.setActiveElement(): The provided argument is not an instance of BooleanType.`);
+      expect(t).toThrow(`Invalid Group.active; Provided value is not an instance of BooleanType.`);
     });
 
     it('should throw InvalidTypeError for Group.setTypeEnumType()', () => {
@@ -1610,7 +1641,7 @@ describe('Group', () => {
         testGroup.setTypeEnumType(invalidEnumCodeType);
       };
       expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`Group.setTypeEnumType(): Provided type is not an instance of EnumCodeType.`);
+      expect(t).toThrow(`Invalid Group.type; Provided type is not an instance of GroupTypeEnum.`);
     });
 
     it('should throw InvalidTypeError for Group.setTypeElement()', () => {
@@ -1621,7 +1652,7 @@ describe('Group', () => {
         testGroup.setTypeElement(invalidEnumCodeType);
       };
       expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`Group.setTypeElement(): The provided argument is not an instance of CodeType.`);
+      expect(t).toThrow(`Invalid Group.type; Provided value is not an instance of CodeType.`);
     });
 
     it('should throw InvalidTypeError for Group.setActualElement()', () => {
@@ -1632,7 +1663,7 @@ describe('Group', () => {
         testGroup.setActualElement(invalidBooleanType);
       };
       expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`Group.setActualElement(): The provided argument is not an instance of BooleanType.`);
+      expect(t).toThrow(`Invalid Group.actual; Provided value is not an instance of BooleanType.`);
     });
 
     it('should throw InvalidTypeError for Group.setCode()', () => {
@@ -1643,7 +1674,7 @@ describe('Group', () => {
         testGroup.setCode(invalidCodeableConcept);
       };
       expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`Group.setCode(): The provided argument is not an instance of CodeableConcept.`);
+      expect(t).toThrow(`Invalid Group.code; Provided value is not an instance of CodeableConcept.`);
     });
 
     it('should throw InvalidTypeError for Group.setNameElement()', () => {
@@ -1654,7 +1685,7 @@ describe('Group', () => {
         testGroup.setNameElement(invalidStringType);
       };
       expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`Group.setNameElement(): The provided argument is not an instance of StringType.`);
+      expect(t).toThrow(`Invalid Group.name; Provided value is not an instance of StringType.`);
     });
 
     it('should throw InvalidTypeError for Group.setQuantityElement()', () => {
@@ -1665,7 +1696,7 @@ describe('Group', () => {
         testGroup.setQuantityElement(invalidUnsignedIntType);
       };
       expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`Group.setQuantityElement(): The provided argument is not an instance of UnsignedIntType.`);
+      expect(t).toThrow(`Invalid Group.quantity; Provided value is not an instance of UnsignedIntType.`);
     });
 
     it('should throw InvalidTypeError for Group.setCharacteristic()', () => {
@@ -1678,7 +1709,7 @@ describe('Group', () => {
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(
-        `Group.setCharacteristic(): At least one provided array item is not an instance of GroupCharacteristicComponent.`,
+        `Invalid Group.characteristic; Provided value array has an element that is not an instance of GroupCharacteristicComponent.`,
       );
     });
 
@@ -1691,7 +1722,7 @@ describe('Group', () => {
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(
-        `Group.addCharacteristic(): The provided argument is not an instance of GroupCharacteristicComponent.`,
+        `Invalid Group.characteristic; Provided value is not an instance of GroupCharacteristicComponent.`,
       );
     });
 
@@ -1705,7 +1736,7 @@ describe('Group', () => {
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(
-        `Group.setMember(): At least one provided array item is not an instance of GroupMemberComponent.`,
+        `Invalid Group.member; Provided value array has an element that is not an instance of GroupMemberComponent.`,
       );
     });
 
@@ -1717,7 +1748,7 @@ describe('Group', () => {
         testGroup.addMember(invalidGroupMemberComponent);
       };
       expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`Group.addMember(): The provided argument is not an instance of GroupMemberComponent.`);
+      expect(t).toThrow(`Invalid Group.member; Provided value is not an instance of GroupMemberComponent.`);
     });
   });
 });

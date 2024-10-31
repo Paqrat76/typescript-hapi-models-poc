@@ -102,3 +102,37 @@ export function assertFhirType<T>(
     throw new InvalidTypeError(errMsg);
   }
 }
+
+/**
+ * FHIR type assertion for a list of any FHIR class (PrimitiveTypes, complex Types, resources)
+ *
+ * @param listInstance - array of class instances to evaluate
+ * @param className - class name for evaluation
+ * @param errorMessage - optional error message to override the default
+ * @throws InvalidTypeError when FhirTypeGuard assertion is false
+ *
+ * @category Type Guards/Assertions
+ */
+export function assertFhirTypeList<T>(
+  listInstance: unknown[] | undefined | null,
+  className: Class<T>,
+  errorMessage?: string,
+): asserts listInstance is [T] {
+  if (listInstance === undefined || listInstance === null) {
+    return;
+  }
+  let invalidItemCount = 0;
+  for (const classInstance of listInstance) {
+    if (!FhirTypeGuard(classInstance, className)) {
+      invalidItemCount++;
+    }
+  }
+  if (invalidItemCount > 0) {
+    const defaultMsg: string =
+      invalidItemCount === 1
+        ? `Provided instance array has an element that is not an instance of ${className.name}.`
+        : `Provided instance array has ${String(invalidItemCount)} elements that are not an instance of ${className.name}.`;
+    const errMsg = errorMessage ?? defaultMsg;
+    throw new InvalidTypeError(errMsg);
+  }
+}

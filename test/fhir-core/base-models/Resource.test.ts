@@ -337,7 +337,7 @@ describe('Resource', () => {
       testResource.setIdElement(VALID_URI_TYPE);
     };
     expect(t).toThrow(InvalidTypeError);
-    expect(t).toThrow(`Resource.setIdElement(): The provided argument is not an instance of IdType.`);
+    expect(t).toThrow(`Invalid Resource.id; Provided value is not an instance of IdType.`);
   });
 
   it('should throw InvalidTypeError for invalid Meta type for Resource.setMeta()', () => {
@@ -347,7 +347,7 @@ describe('Resource', () => {
       testResource.setMeta(VALID_URI_TYPE);
     };
     expect(t).toThrow(InvalidTypeError);
-    expect(t).toThrow(`Resource.setMeta(): The provided argument is not an instance of Meta.`);
+    expect(t).toThrow(`Invalid Resource.meta; Provided value is not an instance of Meta.`);
   });
 
   it('should throw InvalidTypeError for invalid UriType type for Resource.setImplicitRulesElement()', () => {
@@ -357,7 +357,7 @@ describe('Resource', () => {
       testResource.setImplicitRulesElement(VALID_ID_TYPE);
     };
     expect(t).toThrow(InvalidTypeError);
-    expect(t).toThrow(`Resource.setImplicitRulesElement(): The provided argument is not an instance of UriType.`);
+    expect(t).toThrow(`Invalid Resource.implicitRules; Provided value is not an instance of UriType.`);
   });
 
   it('should throw InvalidTypeError for invalid CodeType type for Resource.setLanguageElement()', () => {
@@ -367,6 +367,6 @@ describe('Resource', () => {
       testResource.setLanguageElement(VALID_ID_TYPE);
     };
     expect(t).toThrow(InvalidTypeError);
-    expect(t).toThrow(`Resource.setLanguageElement(): The provided argument is not an instance of CodeType.`);
+    expect(t).toThrow(`Invalid Resource.language; Provided value is not an instance of CodeType.`);
   });
 });

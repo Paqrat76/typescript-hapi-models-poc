@@ -22,7 +22,7 @@
  */
 
 import { AssertionError } from 'node:assert';
-import { assertFhirType, assertIsDefined, FhirTypeGuard } from '@src/fhir-core/utility/type-guards';
+import { assertFhirType, assertFhirTypeList, assertIsDefined, FhirTypeGuard } from '@src/fhir-core/utility/type-guards';
 import {
   assertFhirDataType,
   assertFhirPrimitiveType,
@@ -84,82 +84,150 @@ describe('type-guards', () => {
     });
   });
 
-  describe('FhirTypeGuard/assertFhirType', () => {
-    it('should return true for undefined type instance', () => {
-      const primitiveType = undefined;
-      expect(FhirTypeGuard(primitiveType, StringType)).toBe(true);
+  describe('FhirTypeGuard/assertFhirType/assertFhirTypeList', () => {
+    describe('FhirTypeGuard', () => {
+      it('should return true for undefined type instance', () => {
+        const primitiveType = undefined;
+        expect(FhirTypeGuard(primitiveType, StringType)).toBe(true);
+      });
+
+      it('should return true for null type instance', () => {
+        const primitiveType = null;
+        expect(FhirTypeGuard(primitiveType, StringType)).toBe(true);
+      });
+
+      it('should return true for valid primitive type instance', () => {
+        const primitiveType = new StringType();
+        expect(FhirTypeGuard(primitiveType, StringType)).toBe(true);
+      });
+
+      it('should return true for valid EnumCodeType type instance', () => {
+        const enumType = new EnumCodeType('generated', new MockCodeEnum());
+        expect(FhirTypeGuard(enumType, EnumCodeType)).toBe(true);
+      });
+
+      it('should return true for valid complex type instance', () => {
+        const complexType = new Period();
+        expect(FhirTypeGuard(complexType, Period)).toBe(true);
+      });
+
+      it('should return true for valid resource instance', () => {
+        const resourceType = new MockTask();
+        expect(FhirTypeGuard(resourceType, MockTask)).toBe(true);
+      });
+
+      it('should return false for invalid instance', () => {
+        const stringValue = 'test stringValue';
+        expect(FhirTypeGuard(stringValue, Period)).toBe(false);
+      });
     });
 
-    it('should return true for null type instance', () => {
-      const primitiveType = null;
-      expect(FhirTypeGuard(primitiveType, StringType)).toBe(true);
+    describe('assertFhirType', () => {
+      it('should not throw InvalidTypeError for undefined type instance', () => {
+        const primitiveType = undefined;
+        const t = () => {
+          assertFhirType(primitiveType, StringType);
+        };
+        expect(t).not.toThrow(InvalidTypeError);
+      });
+
+      it('should not throw InvalidTypeError for null type instance', () => {
+        const primitiveType = null;
+        const t = () => {
+          assertFhirType(primitiveType, StringType);
+        };
+        expect(t).not.toThrow(InvalidTypeError);
+      });
+
+      it('should not throw InvalidTypeError for valid type instance', () => {
+        const primitiveType = new StringType();
+        const t = () => {
+          assertFhirType(primitiveType, StringType);
+        };
+        expect(t).not.toThrow(InvalidTypeError);
+      });
+
+      it('should throw InvalidTypeError for invalid type instance', () => {
+        const stringValue = 'test stringValue';
+        const t = () => {
+          assertFhirType(stringValue, Period);
+        };
+        expect(t).toThrow(InvalidTypeError);
+        expect(t).toThrow(`Provided instance is not an instance of Period.`);
+      });
+
+      it('should throw InvalidTypeError for invalid type instance with error message override', () => {
+        const stringValue = 'test stringValue';
+        const t = () => {
+          assertFhirType(stringValue, Period, 'The stringValue instance is not an instance of Period.');
+        };
+        expect(t).toThrow(InvalidTypeError);
+        expect(t).toThrow(`The stringValue instance is not an instance of Period.`);
+      });
     });
 
-    it('should return true for valid primitive type instance', () => {
-      const primitiveType = new StringType();
-      expect(FhirTypeGuard(primitiveType, StringType)).toBe(true);
-    });
+    describe('assertFhirTypeList', () => {
+      it('should not throw InvalidTypeError for undefined type instance array', () => {
+        const type = undefined;
+        const t = () => {
+          assertFhirTypeList(type, StringType);
+        };
+        expect(t).not.toThrow(InvalidTypeError);
+      });
 
-    it('should return true for valid EnumCodeType type instance', () => {
-      const enumType = new EnumCodeType('generated', new MockCodeEnum());
-      expect(FhirTypeGuard(enumType, EnumCodeType)).toBe(true);
-    });
+      it('should not throw InvalidTypeError for null type instance array', () => {
+        const type = null;
+        const t = () => {
+          assertFhirTypeList(type, StringType);
+        };
+        expect(t).not.toThrow(InvalidTypeError);
+      });
 
-    it('should return true for valid complex type instance', () => {
-      const complexType = new Period();
-      expect(FhirTypeGuard(complexType, Period)).toBe(true);
-    });
+      it('should not throw InvalidTypeError for valid primitive type instance array', () => {
+        const primitiveType = new StringType();
+        const t = () => {
+          assertFhirTypeList([primitiveType], StringType);
+        };
+        expect(t).not.toThrow(InvalidTypeError);
+      });
 
-    it('should return true for valid resource instance', () => {
-      const resourceType = new MockTask();
-      expect(FhirTypeGuard(resourceType, MockTask)).toBe(true);
-    });
+      it('should not throw InvalidTypeError for valid primitive type instance array', () => {
+        const complexType = new Period();
+        const t = () => {
+          assertFhirTypeList([complexType], Period);
+        };
+        expect(t).not.toThrow(InvalidTypeError);
+      });
 
-    it('should return false for invalid instance', () => {
-      const stringValue = 'test stringValue';
-      expect(FhirTypeGuard(stringValue, Period)).toBe(false);
-    });
+      it('should throw InvalidTypeError for one invalid type instance array', () => {
+        const stringValue = 'test stringValue';
+        const complexType = new Period();
+        const t = () => {
+          assertFhirTypeList([stringValue, complexType], Period);
+        };
+        expect(t).toThrow(InvalidTypeError);
+        expect(t).toThrow(`Provided instance array has an element that is not an instance of Period.`);
+      });
 
-    it('should not throw InvalidTypeError for undefined type instance', () => {
-      const primitiveType = undefined;
-      const t = () => {
-        assertFhirType(primitiveType, StringType);
-      };
-      expect(t).not.toThrow(InvalidTypeError);
-    });
+      it('should throw InvalidTypeError for multiple invalid type instance array', () => {
+        const stringValue = 'test stringValue';
+        const stringType = new StringType();
+        const complexType = new Period();
+        const t = () => {
+          assertFhirTypeList([stringValue, stringType, complexType], Period);
+        };
+        expect(t).toThrow(InvalidTypeError);
+        expect(t).toThrow(`Provided instance array has 2 elements that are not an instance of Period.`);
+      });
 
-    it('should not throw InvalidTypeError for null type instance', () => {
-      const primitiveType = null;
-      const t = () => {
-        assertFhirType(primitiveType, StringType);
-      };
-      expect(t).not.toThrow(InvalidTypeError);
-    });
-
-    it('should not throw InvalidTypeError for valid type instance', () => {
-      const primitiveType = new StringType();
-      const t = () => {
-        assertFhirType(primitiveType, StringType);
-      };
-      expect(t).not.toThrow(InvalidTypeError);
-    });
-
-    it('should throw InvalidTypeError for invalid type instance', () => {
-      const stringValue = 'test stringValue';
-      const t = () => {
-        assertFhirType(stringValue, Period);
-      };
-      expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`Provided instance is not an instance of Period.`);
-    });
-
-    it('should throw InvalidTypeError for invalid type instance with error message override', () => {
-      const stringValue = 'test stringValue';
-      const t = () => {
-        assertFhirType(stringValue, Period, 'The stringValue instance is not an instance of Period.');
-      };
-      expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`The stringValue instance is not an instance of Period.`);
+      it('should throw InvalidTypeError for invalid type instance array with error message override', () => {
+        const stringValue = 'test stringValue';
+        const t = () => {
+          assertFhirTypeList([stringValue], Period, 'The stringValue instance is not an instance of Period.');
+        };
+        expect(t).toThrow(InvalidTypeError);
+        expect(t).toThrow(`The stringValue instance is not an instance of Period.`);
+      });
     });
   });
 
@@ -339,7 +407,7 @@ describe('type-guards', () => {
     it('should not throw InvalidCodeError for valid EnumCodeType', () => {
       const enumCodeType = new MockCodeEnum();
       const t = () => {
-        assertEnumCodeType(enumCodeType, MockCodeEnum);
+        assertEnumCodeType<MockCodeEnum>(enumCodeType, MockCodeEnum);
       };
       expect(t).not.toThrow(InvalidCodeError);
     });
@@ -347,39 +415,39 @@ describe('type-guards', () => {
     it('should throw InvalidCodeError for invalid EnumCodeType', () => {
       const enumCodeType = new EnumCodeType('<', new QuantityComparatorEnum());
       const t = () => {
-        assertEnumCodeType(enumCodeType, MockCodeEnum);
+        assertEnumCodeType<MockCodeEnum>(enumCodeType, MockCodeEnum);
       };
       expect(t).toThrow(InvalidCodeError);
-      expect(t).toThrow(`Invalid type parameter: QuantityComparatorEnum; Should be MockCodeEnum.`);
+      expect(t).toThrow(`Invalid type parameter (QuantityComparatorEnum); Should be MockCodeEnum.`);
     });
 
     it('should throw InvalidCodeError for invalid EnumCodeType with error message prefix', () => {
       const enumCodeType = new EnumCodeType('<', new QuantityComparatorEnum());
       const prefix = 'Test Prefix';
       const t = () => {
-        assertEnumCodeType(enumCodeType, MockCodeEnum, prefix);
+        assertEnumCodeType<MockCodeEnum>(enumCodeType, MockCodeEnum, prefix);
       };
       expect(t).toThrow(InvalidCodeError);
-      expect(t).toThrow(`${prefix}: Invalid type parameter: QuantityComparatorEnum; Should be MockCodeEnum.`);
+      expect(t).toThrow(`${prefix}; Invalid type parameter (QuantityComparatorEnum); Should be MockCodeEnum.`);
     });
 
     it('should throw InvalidTypeError for invalid type', () => {
       const enumCodeType = String('Invalid type');
       const t = () => {
-        assertEnumCodeType(enumCodeType, MockCodeEnum);
+        assertEnumCodeType<MockCodeEnum>(enumCodeType, MockCodeEnum);
       };
       expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`Provided type is not an instance of ${EnumCodeType.name}.`);
+      expect(t).toThrow(`Provided type is not an instance of ${MockCodeEnum.name}.`);
     });
 
     it('should throw InvalidTypeError for invalid type with error message prefix', () => {
       const enumCodeType = String('Invalid type');
       const prefix = 'Test Prefix';
       const t = () => {
-        assertEnumCodeType(enumCodeType, MockCodeEnum, prefix);
+        assertEnumCodeType<MockCodeEnum>(enumCodeType, MockCodeEnum, prefix);
       };
       expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`${prefix}: Provided type is not an instance of ${EnumCodeType.name}.`);
+      expect(t).toThrow(`${prefix}; Provided type is not an instance of ${MockCodeEnum.name}.`);
     });
   });
 });

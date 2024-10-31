@@ -450,7 +450,7 @@ describe('GroupMemberComponent', () => {
         testGroupMemberComponent.setPeriod(invalidPeriod);
       };
       expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`GroupMemberComponent.setPeriod(): The provided argument is not an instance of Period.`);
+      expect(t).toThrow(`Invalid GroupMemberComponent.period; Provided value is not an instance of Period.`);
     });
 
     it('should throw InvalidTypeError for GroupMemberComponent.setInactiveElement()', () => {
@@ -461,9 +461,7 @@ describe('GroupMemberComponent', () => {
         testGroupMemberComponent.setInactiveElement(invalidBooleanType);
       };
       expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(
-        `GroupMemberComponent.setInactiveElement(): The provided argument is not an instance of BooleanType.`,
-      );
+      expect(t).toThrow(`Invalid GroupMemberComponent.inactive; Provided element is not an instance of BooleanType.`);
     });
   });
 });

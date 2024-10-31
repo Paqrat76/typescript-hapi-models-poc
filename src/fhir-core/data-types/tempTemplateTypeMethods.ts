@@ -6,7 +6,7 @@ import { Base } from '@src/fhir-core/base-models/Base';
 import { Value } from '@src/fhir-core/utility/json-helpers';
 import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
 import { CanonicalType } from '@src/fhir-core/data-types/primitive/CanonicalType';
-import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { assertEnumCodeType, CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { DateTimeType } from '@src/fhir-core/data-types/primitive/DateTimeType';
 import { DecimalType } from '@src/fhir-core/data-types/primitive/DecimalType';
 import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
@@ -42,6 +42,8 @@ import {
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
+import { assertFhirType, assertFhirTypeList } from '@src/fhir-core/utility/type-guards';
+import { GroupTypeEnum } from '@src/fhir-models/code-systems/GroupTypeEnum';
 
 //region FhirCodeEnum
 // import { fhirCode } from '@src/fhir-core/data-types/primitive/primitive-types';
@@ -92,7 +94,7 @@ export class XxxxEnum implements IFhirCodeEnum {
     } else if (XxxxEnum.NULL.code === code) {
       return XxxxEnum.NULL;
     } else {
-      throw new InvalidCodeError(`Unknown XxxxEnum 'code' value '${code}'`);
+      throw new InvalidCodeError(`Unknown XxxxEnum 'code' value '${String(code)}'`);
     }
   }
 }
@@ -121,6 +123,8 @@ export class TempTemplateTypeMethods {
    * @returns this
    */
   public setXxxxBooleanElement(element: BooleanType | undefined): this {
+    const optErrMsg = `Invalid XxxClass.xxxxBoolean; Provided element is not an instance of BooleanType.`;
+    assertFhirType<BooleanType>(element, BooleanType, optErrMsg);
     this.xxxxBoolean = element;
     return this;
   }
@@ -183,6 +187,8 @@ export class TempTemplateTypeMethods {
   public setXxxxBooleanReqElement(element: BooleanType): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (element !== null) {
+      const optErrMsg = `Invalid XxxClass.xxxxBoolean; Provided element is not an instance of BooleanType.`;
+      assertFhirType<BooleanType>(element, BooleanType, optErrMsg);
       this.xxxxBooleanReq = element;
     }
     return this;
@@ -250,6 +256,8 @@ export class TempTemplateTypeMethods {
    * @returns this
    */
   public setXxxxCanonicalElement(element: CanonicalType | undefined): this {
+    const optErrMsg = `Invalid XxxClass.xxxxCanonical; Provided element is not an instance of CanonicalType.`;
+    assertFhirType<CanonicalType>(element, CanonicalType, optErrMsg);
     this.xxxxCanonical = element;
     return this;
   }
@@ -312,6 +320,8 @@ export class TempTemplateTypeMethods {
    * @returns this
    */
   public setXxxxCodeElement(element: CodeType | undefined): this {
+    const optErrMsg = `Invalid XxxClass.xxxxCode; Provided element is not an instance of CodeType.`;
+    assertFhirType<CodeType>(element, CodeType, optErrMsg);
     this.xxxxCode = element;
     return this;
   }
@@ -373,9 +383,8 @@ export class TempTemplateTypeMethods {
    * @returns this
    */
   public setXxxxValueEnumType(enumType: EnumCodeType | undefined): this {
-    if (enumType === undefined) {
-      return this;
-    }
+    const errMsgPrefix = 'EnumCodeType.xxxxValue';
+    assertEnumCodeType<GroupTypeEnum>(enumType, GroupTypeEnum, errMsgPrefix);
     this.xxxxValue = enumType;
     return this;
   }
@@ -405,8 +414,11 @@ export class TempTemplateTypeMethods {
    */
   public setXxxxValueElement(element: CodeType | undefined): this {
     if (element === undefined) {
+      this.xxxxValue = undefined;
       return this;
     }
+    const optErrMsg = `Invalid XxxClass.xxxxValue; Provided element is not an instance of CodeType.`;
+    assertFhirType<CodeType>(element, CodeType, optErrMsg);
     this.xxxxValue = new EnumCodeType(element, this.xxxEnum);
     return this;
   }
@@ -436,6 +448,7 @@ export class TempTemplateTypeMethods {
    */
   public setXxxxValue(value: fhirCode | undefined): this {
     if (value === undefined) {
+      this.xxxxValue = undefined;
       return this;
     }
     this.xxxxValue = new EnumCodeType(value, this.xxxEnum);
@@ -473,6 +486,8 @@ export class TempTemplateTypeMethods {
   public setXxxxValueReqEnumType(enumType: EnumCodeType): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (enumType !== null) {
+      const errMsgPrefix = 'EnumCodeType.xxxxValueReq';
+      assertEnumCodeType<GroupTypeEnum>(enumType, GroupTypeEnum, errMsgPrefix);
       this.xxxxValueReq = enumType;
     }
     return this;
@@ -506,6 +521,8 @@ export class TempTemplateTypeMethods {
   public setXxxxValueReqElement(element: CodeType): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (element !== null) {
+      const optErrMsg = `Invalid XxxClass.xxxxValueReq; Provided element is not an instance of CodeType.`;
+      assertFhirType<CodeType>(element, CodeType, optErrMsg);
       this.xxxxValueReq = new EnumCodeType(element, this.xxxEnumReq);
     }
     return this;
@@ -570,6 +587,8 @@ export class TempTemplateTypeMethods {
    * @returns this
    */
   public setXxxxDataTimeElement(element: DateTimeType | undefined): this {
+    const optErrMsg = `Invalid XxxClass.xxxxDataTime; Provided element is not an instance of DateTimeType.`;
+    assertFhirType<DateTimeType>(element, DateTimeType, optErrMsg);
     this.xxxxDataTime = element;
     return this;
   }
@@ -630,6 +649,8 @@ export class TempTemplateTypeMethods {
    * @returns this
    */
   public setXxxxDecimalElement(element: DecimalType | undefined): this {
+    const optErrMsg = `Invalid XxxClass.xxxxDecimal; Provided element is not an instance of DecimalType.`;
+    assertFhirType<DecimalType>(element, DecimalType, optErrMsg);
     this.xxxxDecimal = element;
     return this;
   }
@@ -690,6 +711,8 @@ export class TempTemplateTypeMethods {
    * @returns this
    */
   public setXxxxIdElement(element: IdType | undefined): this {
+    const optErrMsg = `Invalid XxxClass.xxxxId; Provided element is not an instance of IdType.`;
+    assertFhirType<IdType>(element, IdType, optErrMsg);
     this.xxxxId = element;
     return this;
   }
@@ -749,6 +772,8 @@ export class TempTemplateTypeMethods {
    * @returns this
    */
   public setXxxxInstantElement(element: InstantType | undefined): this {
+    const optErrMsg = `Invalid XxxClass.xxxxInstant; Provided element is not an instance of InstantType.`;
+    assertFhirType<InstantType>(element, InstantType, optErrMsg);
     this.xxxxInstant = element;
     return this;
   }
@@ -809,6 +834,8 @@ export class TempTemplateTypeMethods {
    * @returns this
    */
   public setXxxxStringElement(element: StringType | undefined): this {
+    const optErrMsg = `Invalid XxxClass.xxxxString; Provided element is not an instance of StringType.`;
+    assertFhirType<StringType>(element, StringType, optErrMsg);
     this.xxxxString = element;
     return this;
   }
@@ -931,6 +958,8 @@ export class TempTemplateTypeMethods {
    * @returns this
    */
   public setXxxxUriElement(element: UriType | undefined): this {
+    const optErrMsg = `Invalid XxxClass.xxxxUri; Provided element is not an instance of UriType.`;
+    assertFhirType<UriType>(element, UriType, optErrMsg);
     this.xxxxUri = element;
     return this;
   }
@@ -991,6 +1020,8 @@ export class TempTemplateTypeMethods {
    * @returns this
    */
   public setXxxxXhtmlElement(element: XhtmlType | undefined): this {
+    const optErrMsg = `Invalid XxxClass.xxxxXhtml; Provided element is not an instance of XhtmlType.`;
+    assertFhirType<XhtmlType>(element, XhtmlType, optErrMsg);
     this.xxxxXhtml = element;
     return this;
   }
@@ -1053,6 +1084,8 @@ export class TempTemplateTypeMethods {
   public setXxxxXhtmlReqElement(element: XhtmlType): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (element !== null) {
+      const optErrMsg = `Invalid XxxClass.xxxxXhtmlReq; Provided element is not an instance of XhtmlType.`;
+      assertFhirType<XhtmlType>(element, XhtmlType, optErrMsg);
       this.xxxxXhtmlReq = element;
     }
     return this;
@@ -1120,6 +1153,8 @@ export class TempTemplateTypeMethods {
    * @returns this
    */
   public setXxxxModel(value: MockFhirModel | undefined): this {
+    const optErrMsg = `Invalid MockFhirModel.xxxxModel; Provided element is not an instance of MockFhirModel.`;
+    assertFhirType<MockFhirModel>(value, MockFhirModel, optErrMsg);
     this.xxxxModel = value;
     return this;
   }
@@ -1154,6 +1189,8 @@ export class TempTemplateTypeMethods {
   public setXxxxModelReq(value: MockFhirModel): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (value !== null) {
+      const optErrMsg = `Invalid MockFhirModel.xxxxModelReq; Provided element is not an instance of MockFhirModel.`;
+      assertFhirType<MockFhirModel>(value, MockFhirModel, optErrMsg);
       this.xxxxModelReq = value;
     }
     return this;
@@ -1187,6 +1224,8 @@ export class TempTemplateTypeMethods {
    * @returns this
    */
   public setXxxxModelArray(value: MockFhirModel[] | undefined): this {
+    const optErrMsg = `Invalid MockFhirModel.xxxxModelArray; Provided value array has an element that is not an instance of MockFhirModel.`;
+    assertFhirTypeList<MockFhirModel>(value, MockFhirModel, optErrMsg);
     this.xxxxModelArray = value;
     return this;
   }
@@ -1199,6 +1238,8 @@ export class TempTemplateTypeMethods {
    */
   public addXxxxModelArray(value?: MockFhirModel): this {
     if (value !== undefined) {
+      const optErrMsg = `Invalid MockFhirModel.xxxxModelArray; Provided element is not an instance of MockFhirModel.`;
+      assertFhirType<MockFhirModel>(value, MockFhirModel, optErrMsg);
       this.initXxxxModelArray();
       this.xxxxModelArray?.push(value);
     }
@@ -1250,6 +1291,8 @@ export class TempTemplateTypeMethods {
   public setXxxxModelArrayReq(value: MockFhirModel[]): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (value !== null) {
+      const optErrMsg = `Invalid MockFhirModel.xxxxModelArrayReq; Provided value array has an element that is not an instance of MockFhirModel.`;
+      assertFhirTypeList<MockFhirModel>(value, MockFhirModel, optErrMsg);
       this.xxxxModelArrayReq = value;
     }
     return this;
@@ -1264,6 +1307,8 @@ export class TempTemplateTypeMethods {
   public addXxxxModelArrayReq(value: MockFhirModel): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (value !== null) {
+      const optErrMsg = `Invalid MockFhirModel.xxxxModelArrayReq; Provided element is not an instance of MockFhirModel.`;
+      assertFhirType<MockFhirModel>(value, MockFhirModel, optErrMsg);
       this.initXxxxModelArrayReq();
       this.xxxxModelArrayReq?.push(value);
     }

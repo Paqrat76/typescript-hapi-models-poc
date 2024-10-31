@@ -27,8 +27,8 @@ import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
-//import { fhirBoolean } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
 describe('Coding', () => {
   const VALID_URI = `testUriType`;
@@ -36,25 +36,30 @@ describe('Coding', () => {
   const VALID_URI_2 = `testUriType2`;
   const VALID_URI_TYPE_2 = new UriType(VALID_URI_2);
   const INVALID_URI = ' invalid Uri ';
+  const INVALID_URI_TYPE = new StringType(VALID_URI);
 
   const VALID_CODE = `testCodeType`;
   const VALID_CODE_TYPE = new CodeType(VALID_CODE);
   const VALID_CODE_2 = `testCodeType2`;
   const VALID_CODE_TYPE_2 = new CodeType(VALID_CODE_2);
   const INVALID_CODE = ' invalid CodeType ';
+  const INVALID_CODE_TYPE = new StringType(VALID_CODE);
 
   const VALID_STRING = 'This is a valid string.';
   const VALID_STRING_TYPE = new StringType(VALID_STRING);
   const VALID_STRING_2 = 'This is another valid string!';
   const VALID_STRING_TYPE_2 = new StringType(VALID_STRING_2);
   const INVALID_STRING = '';
+  const INVALID_STRING_TYPE = new UriType(VALID_URI);
 
   const VALID_VERSION = 'validVersion';
   const VALID_VERSION_TYPE = new StringType(VALID_VERSION);
+  const INVALID_VERSION_TYPE = new UriType(VALID_URI);
 
   //const VALID_BOOLEAN_FALSE = false as fhirBoolean;
   const VALID_BOOLEAN_TYPE_FALSE = new BooleanType(false);
   const INVALID_BOOLEAN = 'invalidBoolean';
+  const INVALID_BOOLEAN_TYPE = new UriType(VALID_URI);
 
   const UNDEFINED_VALUE = undefined;
 
@@ -329,6 +334,16 @@ describe('Coding', () => {
       expect(t).toThrow(`Invalid Coding.system (${INVALID_URI})`);
     });
 
+    it('should throw InvalidTypeError when reset with invalid PrimitiveType Coding.system value', () => {
+      const testCoding = new Coding();
+      const t = () => {
+        // @ts-expect-error: allow invalid type for test
+        testCoding.setSystemElement(INVALID_URI_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Coding.system; Provided element is not an instance of UriType.`);
+    });
+
     it('should throw PrimitiveTypeError when reset with invalid primitive Coding.version value', () => {
       const testCoding = new Coding();
       const t = () => {
@@ -336,6 +351,16 @@ describe('Coding', () => {
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid Coding.version (${INVALID_STRING})`);
+    });
+
+    it('should throw InvalidTypeError when reset with invalid PrimitiveType Coding.version value', () => {
+      const testCoding = new Coding();
+      const t = () => {
+        // @ts-expect-error: allow invalid type for test
+        testCoding.setVersionElement(INVALID_VERSION_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Coding.version; Provided element is not an instance of StringType.`);
     });
 
     it('should throw PrimitiveTypeError when reset with invalid primitive Coding.code value', () => {
@@ -347,6 +372,16 @@ describe('Coding', () => {
       expect(t).toThrow(`Invalid Coding.code (${INVALID_CODE})`);
     });
 
+    it('should throw InvalidTypeError when reset with invalid PrimitiveType Coding.code value', () => {
+      const testCoding = new Coding();
+      const t = () => {
+        // @ts-expect-error: allow invalid type for test
+        testCoding.setCodeElement(INVALID_CODE_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Coding.code; Provided element is not an instance of CodeType.`);
+    });
+
     it('should throw PrimitiveTypeError when reset with invalid primitive Coding.display value', () => {
       const testCoding = new Coding();
       const t = () => {
@@ -354,6 +389,16 @@ describe('Coding', () => {
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid Coding.display (${INVALID_STRING})`);
+    });
+
+    it('should throw InvalidTypeError when reset with invalid PrimitiveType Coding.display value', () => {
+      const testCoding = new Coding();
+      const t = () => {
+        // @ts-expect-error: allow invalid type for test
+        testCoding.setDisplayElement(INVALID_STRING_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Coding.display; Provided element is not an instance of StringType.`);
     });
 
     it('should throw PrimitiveTypeError when reset with invalid primitive Coding.userSelected value', () => {
@@ -364,6 +409,16 @@ describe('Coding', () => {
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid Coding.userSelected (${INVALID_BOOLEAN})`);
+    });
+
+    it('should throw InvalidTypeError when reset with invalid PrimitiveType Coding.userSelected value', () => {
+      const testCoding = new Coding();
+      const t = () => {
+        // @ts-expect-error: allow invalid type for test
+        testCoding.setUserSelectedElement(INVALID_BOOLEAN_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Coding.userSelected; Provided element is not an instance of BooleanType.`);
     });
 
     // Tests using DataType elements

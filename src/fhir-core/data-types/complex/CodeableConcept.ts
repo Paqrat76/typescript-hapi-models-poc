@@ -31,6 +31,7 @@ import {
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
+import { assertFhirType, assertFhirTypeList } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
@@ -105,6 +106,8 @@ export class CodeableConcept extends DataType implements IBase {
    * @returns this
    */
   public setCoding(value: Coding[] | undefined): this {
+    const optErrMsg = `Invalid CodeableConcept.coding; Provided value array has an element that is not an instance of Coding.`;
+    assertFhirTypeList<Coding>(value, Coding, optErrMsg);
     this.coding = value;
     return this;
   }
@@ -117,6 +120,8 @@ export class CodeableConcept extends DataType implements IBase {
    */
   public addCoding(value?: Coding): this {
     if (value !== undefined) {
+      const optErrMsg = `Invalid CodeableConcept.coding; Provided value is not an instance of Coding.`;
+      assertFhirType<Coding>(value, Coding, optErrMsg);
       this.initCoding();
       this.coding?.push(value);
     }
@@ -155,6 +160,8 @@ export class CodeableConcept extends DataType implements IBase {
    * @returns this
    */
   public setTextElement(element: StringType | undefined): this {
+    const optErrMsg = `Invalid CodeableConcept.text; Provided element is not an instance of StringType.`;
+    assertFhirType<StringType>(element, StringType, optErrMsg);
     this.text = element;
     return this;
   }
@@ -181,7 +188,7 @@ export class CodeableConcept extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setText(value: fhirString | undefined): this {
-    const optErrMsg = `Invalid CodeableConcept.text`;
+    const optErrMsg = `Invalid CodeableConcept.text (invalid value provided)`;
     this.text =
       value === undefined ? undefined : new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
     return this;

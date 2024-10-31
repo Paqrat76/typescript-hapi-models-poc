@@ -171,7 +171,8 @@ export abstract class Resource extends Base implements IBase {
    * @returns this
    */
   public setIdElement(element: IdType | undefined): this {
-    assertFhirType(element, IdType, `Resource.setIdElement(): The provided argument is not an instance of IdType.`);
+    const optErrMsg = `Invalid Resource.id; Provided value is not an instance of IdType.`;
+    assertFhirType<IdType>(element, IdType, optErrMsg);
     this.id = element;
     return this;
   }
@@ -226,7 +227,8 @@ export abstract class Resource extends Base implements IBase {
    * @returns this
    */
   public setMeta(value: Meta | undefined): this {
-    assertFhirType(value, Meta, `Resource.setMeta(): The provided argument is not an instance of Meta.`);
+    const optErrMsg = `Invalid Resource.meta; Provided value is not an instance of Meta.`;
+    assertFhirType<Meta>(value, Meta, optErrMsg);
     this.meta = value;
     return this;
   }
@@ -252,11 +254,8 @@ export abstract class Resource extends Base implements IBase {
    * @returns this
    */
   public setImplicitRulesElement(element: UriType | undefined): this {
-    assertFhirType(
-      element,
-      UriType,
-      `Resource.setImplicitRulesElement(): The provided argument is not an instance of UriType.`,
-    );
+    const optErrMsg = `Invalid Resource.implicitRules; Provided value is not an instance of UriType.`;
+    assertFhirType<UriType>(element, UriType, optErrMsg);
     this.implicitRules = element;
     return this;
   }
@@ -311,11 +310,8 @@ export abstract class Resource extends Base implements IBase {
    * @returns this
    */
   public setLanguageElement(element: CodeType | undefined): this {
-    assertFhirType(
-      element,
-      CodeType,
-      `Resource.setLanguageElement(): The provided argument is not an instance of CodeType.`,
-    );
+    const optErrMsg = `Invalid Resource.language; Provided value is not an instance of CodeType.`;
+    assertFhirType<CodeType>(element, CodeType, optErrMsg);
     this.language = element;
     return this;
   }

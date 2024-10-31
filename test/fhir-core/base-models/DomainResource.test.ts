@@ -431,7 +431,7 @@ describe('DomainResource', () => {
       testDomainResource.setText(INVALID_NARRATIVE);
     };
     expect(t).toThrow(InvalidTypeError);
-    expect(t).toThrow(`DomainResource.setText(): The provided argument is not an instance of Narrative.`);
+    expect(t).toThrow(`Invalid DomainResource.text; Provided value is not an instance of Narrative.`);
   });
 
   it('should throw InvalidTypeError for invalid Resource type for DomainResource.addContained()', () => {
@@ -441,7 +441,7 @@ describe('DomainResource', () => {
       testDomainResource.addContained(VALID_NARRATIVE_1);
     };
     expect(t).toThrow(InvalidTypeError);
-    expect(t).toThrow(`DomainResource.addContained(): Provided argument is not an instance of Resource.`);
+    expect(t).toThrow(`Invalid DomainResource.contained; Provided value is not a valid instance of Resource.`);
   });
 
   it('should throw InvalidTypeError for invalid Resource type for DomainResource.setContained()', () => {
@@ -452,7 +452,7 @@ describe('DomainResource', () => {
     };
     expect(t).toThrow(InvalidTypeError);
     expect(t).toThrow(
-      `DomainResource.setContained(): At least one array item in the provided argument is not an instance of Resource.`,
+      `DomainResource.contained; Provided value array has an element that is not a valid instance of Resource.`,
     );
   });
 
@@ -463,7 +463,7 @@ describe('DomainResource', () => {
       testDomainResource.addExtension(VALID_NARRATIVE_1);
     };
     expect(t).toThrow(InvalidTypeError);
-    expect(t).toThrow(`DomainResource.addExtension(): The provided argument is not an instance of Extension.`);
+    expect(t).toThrow(`Invalid DomainResource.extension; Provided extension is not an instance of Extension.`);
   });
 
   it('should throw InvalidTypeError for invalid Extension type for DomainResource.setExtension()', () => {
@@ -474,7 +474,7 @@ describe('DomainResource', () => {
     };
     expect(t).toThrow(InvalidTypeError);
     expect(t).toThrow(
-      `DomainResource.setExtension(): At least one array item in the provided argument is not an instance of Extension.`,
+      `nvalid DomainResource.extension; Provided extension array has an element that is not an instance of Extension.`,
     );
   });
 
@@ -485,7 +485,7 @@ describe('DomainResource', () => {
       testDomainResource.addModifierExtension(VALID_NARRATIVE_1);
     };
     expect(t).toThrow(InvalidTypeError);
-    expect(t).toThrow(`DomainResource.addModifierExtension(): The provided argument is not an instance of Extension.`);
+    expect(t).toThrow(`Invalid DomainResource.modifierExtension; Provided extension is not an instance of Extension.`);
   });
 
   it('should throw InvalidTypeError for invalid Extension type for DomainResource.setModifierExtension()', () => {
@@ -496,7 +496,7 @@ describe('DomainResource', () => {
     };
     expect(t).toThrow(InvalidTypeError);
     expect(t).toThrow(
-      `DomainResource.setModifierExtension(): At least one array item in the provided argument is not an instance of Extension.`,
+      `Invalid DomainResource.modifierExtension; Provided extension array has an element that is not an instance of Extension.`,
     );
   });
 });

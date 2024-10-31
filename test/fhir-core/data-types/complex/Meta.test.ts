@@ -31,6 +31,7 @@ import { CanonicalType } from '@src/fhir-core/data-types/primitive/CanonicalType
 import { Coding } from '@src/fhir-core/data-types/complex/Coding';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
 describe('Meta', () => {
   const VALID_ID = `a-432.E-12345`;
@@ -38,29 +39,34 @@ describe('Meta', () => {
   const VALID_ID_2 = `ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz.0123456789`;
   const VALID_ID_TYPE_2 = new IdType(VALID_ID_2);
   const INVALID_ID = `a[432]!E{12345}`;
+  const INVALID_ID_TYPE = new UriType(`testUriType`);
 
   const VALID_INSTANT = `2015-02-07T13:28:17.239+02:00`;
   const VALID_INSTANT_TYPE = new InstantType(VALID_INSTANT);
   const VALID_INSTANT_2 = `2017-01-01T00:00:00Z`;
   const VALID_INSTANT_TYPE_2 = new InstantType(VALID_INSTANT_2);
   const INVALID_INSTANT = `invalid instant`;
+  const INVALID_INSTANT_TYPE = new IdType(VALID_ID);
 
   const VALID_URI = `testUriType`;
   const VALID_URI_TYPE = new UriType(VALID_URI);
   const VALID_URI_2 = `testUriType2`;
   const VALID_URI_TYPE_2 = new UriType(VALID_URI_2);
   const INVALID_URI = ' invalid Uri ';
+  const INVALID_URI_TYPE = new IdType(VALID_ID);
 
   const VALID_CANONICAL = `testCanonical` as fhirCanonical;
   const VALID_CANONICAL_TYPE = new CanonicalType(VALID_CANONICAL);
   const VALID_CANONICAL_2 = `testCanonical2` as fhirCanonical;
   const VALID_CANONICAL_TYPE_2 = new CanonicalType(VALID_CANONICAL_2);
   const INVALID_CANONICAL = ' invalid Uri ' as fhirCanonical;
+  const INVALID_CANONICAL_TYPE = new IdType(VALID_ID);
 
   const VALID_CODING_SECURITY = new Coding();
   VALID_CODING_SECURITY.setSystem('testSystemSecurity');
   VALID_CODING_SECURITY.setCode('testCodeSecurity');
   VALID_CODING_SECURITY.setDisplay('testDisplaySecurity');
+  const INVALID_CODING_SECURITY_TYPE = new IdType(VALID_ID);
 
   const VALID_CODING_SECURITY_2 = new Coding();
   VALID_CODING_SECURITY_2.setSystem('testSystemSecurity2');
@@ -71,6 +77,7 @@ describe('Meta', () => {
   VALID_CODING_TAG.setSystem('testSystemTag');
   VALID_CODING_TAG.setCode('testCodeTag');
   VALID_CODING_TAG.setDisplay('testDisplayTag');
+  const INVALID_CODING_TAG_TYPE = new IdType(VALID_ID);
 
   const VALID_CODING_TAG_2 = new Coding();
   VALID_CODING_TAG_2.setSystem('testSystemTag2');
@@ -271,6 +278,16 @@ describe('Meta', () => {
       expect(t).toThrow(`Invalid Meta.versionId (${INVALID_ID})`);
     });
 
+    it('should throw InvalidTypeError when reset with invalid PrimitiveType Meta.versionId value', () => {
+      const testMeta = new Meta();
+      const t = () => {
+        // @ts-expect-error: ignore invalid type for test
+        testMeta.setVersionIdElement(INVALID_ID_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Meta.versionId; Provided element is not an instance of IdType.`);
+    });
+
     it('should throw PrimitiveTypeError when reset with invalid primitive Meta.lastUpdated value', () => {
       const testMeta = new Meta();
       const t = () => {
@@ -280,6 +297,16 @@ describe('Meta', () => {
       expect(t).toThrow(`Invalid Meta.lastUpdated (${INVALID_INSTANT})`);
     });
 
+    it('should throw InvalidTypeError when reset with invalid PrimitiveType Meta.lastUpdated value', () => {
+      const testMeta = new Meta();
+      const t = () => {
+        // @ts-expect-error: ignore invalid type for test
+        testMeta.setLastUpdatedElement(INVALID_INSTANT_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Meta.lastUpdated; Provided element is not an instance of InstantType.`);
+    });
+
     it('should throw PrimitiveTypeError when reset with invalid primitive Meta.source value', () => {
       const testMeta = new Meta();
       const t = () => {
@@ -287,6 +314,16 @@ describe('Meta', () => {
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid Meta.source (${INVALID_URI})`);
+    });
+
+    it('should throw InvalidTypeError when reset with invalid PrimitiveType Meta.source value', () => {
+      const testMeta = new Meta();
+      const t = () => {
+        // @ts-expect-error: ignore invalid type for test
+        testMeta.setSourceElement(INVALID_URI_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Meta.source; Provided element is not an instance of UriType.`);
     });
 
     it('should throw PrimitiveTypeError when reset with invalid primitive Meta.profile value', () => {
@@ -305,6 +342,68 @@ describe('Meta', () => {
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid Meta.profile array item (${INVALID_URI})`);
+    });
+
+    it('should throw InvalidTypeError when reset with invalid PrimitiveType Meta.profile value', () => {
+      const testMeta = new Meta();
+      const t = () => {
+        // @ts-expect-error: ignore invalid type for test
+        testMeta.setProfileElement([INVALID_CANONICAL_TYPE]);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(
+        `Invalid Meta.profile; Provided element array has an element that is not an instance of CanonicalType.`,
+      );
+    });
+
+    it('should throw InvalidTypeError when adding invalid PrimitiveType Meta.profile value', () => {
+      const testMeta = new Meta();
+      const t = () => {
+        // @ts-expect-error: ignore invalid type for test
+        testMeta.addProfileElement(INVALID_CANONICAL_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Meta.profile; Provided element is not an instance of CanonicalType.`);
+    });
+
+    it('should throw InvalidTypeError when reset with invalid PrimitiveType Meta.security value', () => {
+      const testMeta = new Meta();
+      const t = () => {
+        // @ts-expect-error: ignore invalid type for test
+        testMeta.setSecurity([INVALID_CODING_SECURITY_TYPE]);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Meta.security; Provided value array has an element that is not an instance of Coding.`);
+    });
+
+    it('should throw InvalidTypeError when adding invalid PrimitiveType Meta.security value', () => {
+      const testMeta = new Meta();
+      const t = () => {
+        // @ts-expect-error: ignore invalid type for test
+        testMeta.addSecurity(INVALID_CODING_SECURITY_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Meta.security; Provided value is not an instance of CodeType.`);
+    });
+
+    it('should throw InvalidTypeError when reset with invalid PrimitiveType Meta.tag value', () => {
+      const testMeta = new Meta();
+      const t = () => {
+        // @ts-expect-error: ignore invalid type for test
+        testMeta.setTag([INVALID_CODING_TAG_TYPE]);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Meta.tag; Provided value array has an element that is not an instance of Coding.`);
+    });
+
+    it('should throw InvalidTypeError when adding invalid PrimitiveType Meta.tag value', () => {
+      const testMeta = new Meta();
+      const t = () => {
+        // @ts-expect-error: ignore invalid type for test
+        testMeta.addTag(INVALID_CODING_TAG_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Meta.tag; Provided value is not an instance of CodeType.`);
     });
 
     it('should properly reset by modifying all properties with primitive values', () => {
@@ -381,7 +480,7 @@ describe('Meta', () => {
       expect(testMeta.getTag()).toHaveLength(0); // always returns an array
     });
 
-    it('should properly by adding array elements', () => {
+    it('should properly add array elements', () => {
       const testMeta = new Meta();
       expect(testMeta).toBeDefined();
       expect(testMeta.isEmpty()).toBe(true);

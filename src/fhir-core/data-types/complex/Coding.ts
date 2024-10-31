@@ -39,6 +39,7 @@ import {
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
+import { assertFhirType } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
@@ -158,6 +159,8 @@ export class Coding extends DataType implements IBase {
    * @returns this
    */
   public setSystemElement(element: UriType | undefined): this {
+    const optErrMsg = `Invalid Coding.system; Provided element is not an instance of UriType.`;
+    assertFhirType<UriType>(element, UriType, optErrMsg);
     this.system = element;
     return this;
   }
@@ -211,6 +214,8 @@ export class Coding extends DataType implements IBase {
    * @returns this
    */
   public setVersionElement(element: StringType | undefined): this {
+    const optErrMsg = `Invalid Coding.version; Provided element is not an instance of StringType.`;
+    assertFhirType<StringType>(element, StringType, optErrMsg);
     this.version = element;
     return this;
   }
@@ -264,6 +269,8 @@ export class Coding extends DataType implements IBase {
    * @returns this
    */
   public setCodeElement(element: CodeType | undefined): this {
+    const optErrMsg = `Invalid Coding.code; Provided element is not an instance of CodeType.`;
+    assertFhirType<CodeType>(element, CodeType, optErrMsg);
     this.code = element;
     return this;
   }
@@ -317,6 +324,8 @@ export class Coding extends DataType implements IBase {
    * @returns this
    */
   public setDisplayElement(element: StringType | undefined): this {
+    const optErrMsg = `Invalid Coding.display; Provided element is not an instance of StringType.`;
+    assertFhirType<StringType>(element, StringType, optErrMsg);
     this.display = element;
     return this;
   }
@@ -370,6 +379,8 @@ export class Coding extends DataType implements IBase {
    * @returns this
    */
   public setUserSelectedElement(element: BooleanType | undefined): this {
+    const optErrMsg = `Invalid Coding.userSelected; Provided element is not an instance of BooleanType.`;
+    assertFhirType<BooleanType>(element, BooleanType, optErrMsg);
     this.userSelected = element;
     return this;
   }

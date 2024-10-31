@@ -23,11 +23,10 @@
 
 import { DataType, setFhirPrimitiveJson } from '@src/fhir-core/base-models/core-fhir-models';
 import { IBase } from '@src/fhir-core/base-models/IBase';
-import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { assertEnumCodeType, CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { DecimalType } from '@src/fhir-core/data-types/primitive/DecimalType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
-import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import { QuantityComparatorEnum } from '@src/fhir-core/data-types/complex/code-systems/QuantityComparatorEnum';
 import {
   fhirCode,
@@ -40,6 +39,8 @@ import {
   fhirUriSchema,
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
+import { assertFhirType } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
@@ -162,6 +163,8 @@ export class Quantity extends DataType implements IBase {
    * @returns this
    */
   public setValueElement(element: DecimalType | undefined): this {
+    const optErrMsg = `Invalid Quantity.value; Provided element is not an instance of DecimalType.`;
+    assertFhirType<DecimalType>(element, DecimalType, optErrMsg);
     this.value = element;
     return this;
   }
@@ -215,6 +218,8 @@ export class Quantity extends DataType implements IBase {
    * @returns this
    */
   public setComparatorEnumType(enumType: EnumCodeType | undefined): this {
+    const errMsgPrefix = 'Invalid Quantity.comparator';
+    assertEnumCodeType<QuantityComparatorEnum>(enumType, QuantityComparatorEnum, errMsgPrefix);
     this.comparator = enumType;
     return this;
   }
@@ -249,6 +254,8 @@ export class Quantity extends DataType implements IBase {
       this.comparator = undefined;
       return this;
     }
+    const optErrMsg = `Invalid Quantity.comparator; Provided element is not an instance of CodeType.`;
+    assertFhirType<CodeType>(element, CodeType, optErrMsg);
     this.comparator = new EnumCodeType(element, this.quantityComparatorEnum);
     return this;
   }
@@ -306,6 +313,8 @@ export class Quantity extends DataType implements IBase {
    * @returns this
    */
   public setUnitElement(element: StringType | undefined): this {
+    const optErrMsg = `Invalid Quantity.unit; Provided element is not an instance of StringType.`;
+    assertFhirType<StringType>(element, StringType, optErrMsg);
     this.unit = element;
     return this;
   }
@@ -359,6 +368,8 @@ export class Quantity extends DataType implements IBase {
    * @returns this
    */
   public setSystemElement(element: UriType | undefined): this {
+    const optErrMsg = `Invalid Quantity.system; Provided element is not an instance of UriType.`;
+    assertFhirType<UriType>(element, UriType, optErrMsg);
     this.system = element;
     return this;
   }
@@ -412,6 +423,8 @@ export class Quantity extends DataType implements IBase {
    * @returns this
    */
   public setCodeElement(element: CodeType | undefined): this {
+    const optErrMsg = `Invalid Quantity.code; Provided element is not an instance of CodeType.`;
+    assertFhirType<CodeType>(element, CodeType, optErrMsg);
     this.code = element;
     return this;
   }
