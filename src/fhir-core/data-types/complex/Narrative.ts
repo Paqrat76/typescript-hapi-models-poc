@@ -21,20 +21,26 @@
  *
  */
 
-import { DataType, setFhirPrimitiveJson } from '@src/fhir-core/base-models/core-fhir-models';
+import { DataType, PrimitiveType, setFhirPrimitiveJson } from '@src/fhir-core/base-models/core-fhir-models';
 import { IBase } from '@src/fhir-core/base-models/IBase';
-import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import {
+  assertEnumCodeType,
+  CodeType,
+  EnumCodeType,
+  constructorCodeValueAsEnumCodeType,
+} from '@src/fhir-core/data-types/primitive/CodeType';
 import { NarrativeStatusEnum } from '@src/fhir-core/data-types/complex/code-systems/NarrativeStatusEnum';
 import { XhtmlType } from '@src/fhir-core/data-types/primitive/XhtmlType';
 import {
   fhirCode,
+  fhirCodeSchema,
   fhirXhtml,
   fhirXhtmlSchema,
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
+import { assertFhirType } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
-import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -69,34 +75,20 @@ export class Narrative extends DataType implements IBase {
 
     this.narrativeStatusEnum = new NarrativeStatusEnum();
 
-    if (status === null) {
-      this.status = null;
-    } else if (status instanceof EnumCodeType) {
-      this.status = status;
-    } else {
-      try {
-        this.status = new EnumCodeType(status, this.narrativeStatusEnum);
-      } catch (err) {
-        // fromCode() in EnumCodeType() will throw InvalidCodeError
-        // if the provided code is undefined or is unknown
-        let errMsg: string;
-        if (status instanceof CodeType) {
-          const val = status.getValueAsString();
-          errMsg = `Invalid Narrative.status (${val ? val : 'undefined'})`;
-        } else {
-          errMsg = `Invalid Narrative.status (${status})`;
-        }
-        throw new InvalidCodeError(errMsg, err as Error);
-      }
-    }
+    this.status = constructorCodeValueAsEnumCodeType<NarrativeStatusEnum>(
+      status,
+      NarrativeStatusEnum,
+      this.narrativeStatusEnum,
+      'Narrative.status',
+    );
 
-    if (div === null) {
-      this.div = null;
-    } else if (div instanceof XhtmlType) {
-      this.div = div;
-    } else {
-      const optErrMsg = `Invalid Narrative.div`;
-      this.div = new XhtmlType(parseFhirPrimitiveData(div, fhirXhtmlSchema, optErrMsg));
+    this.div = null;
+    if (div !== null) {
+      if (div instanceof PrimitiveType) {
+        this.setDivElement(div);
+      } else {
+        this.setDiv(div);
+      }
     }
   }
 
@@ -147,6 +139,8 @@ export class Narrative extends DataType implements IBase {
   public setStatueEnumType(enumType: EnumCodeType): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (enumType !== null) {
+      const errMsgPrefix = 'Invalid Narrative.status';
+      assertEnumCodeType<NarrativeStatusEnum>(enumType, NarrativeStatusEnum, errMsgPrefix);
       this.status = enumType;
     }
     return this;
@@ -178,6 +172,8 @@ export class Narrative extends DataType implements IBase {
   public setStatusElement(element: CodeType): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (element !== null) {
+      const optErrMsg = `Invalid Narrative.status; Provided element is not an instance of CodeType.`;
+      assertFhirType<CodeType>(element, CodeType, optErrMsg);
       this.status = new EnumCodeType(element, this.narrativeStatusEnum);
     }
     return this;
@@ -209,7 +205,11 @@ export class Narrative extends DataType implements IBase {
   public setStatus(value: fhirCode): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (value !== null) {
-      this.status = new EnumCodeType(value, this.narrativeStatusEnum);
+      const optErrMsg = `Invalid Narrative.status (${String(value)})`;
+      this.status = new EnumCodeType(
+        parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg),
+        this.narrativeStatusEnum,
+      );
     }
     return this;
   }
@@ -237,6 +237,8 @@ export class Narrative extends DataType implements IBase {
   public setDivElement(element: XhtmlType): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (element !== null) {
+      const optErrMsg = `Invalid Narrative.div; Provided element is not an instance of XhtmlType.`;
+      assertFhirType<XhtmlType>(element, XhtmlType, optErrMsg);
       this.div = element;
     }
     return this;
@@ -270,7 +272,7 @@ export class Narrative extends DataType implements IBase {
   public setDiv(value: fhirXhtml): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (value !== null) {
-      const optErrMsg = `Invalid Narrative.div`;
+      const optErrMsg = `Invalid Narrative.div (invalid value provided)`;
       this.div = new XhtmlType(parseFhirPrimitiveData(value, fhirXhtmlSchema, optErrMsg));
     }
     return this;

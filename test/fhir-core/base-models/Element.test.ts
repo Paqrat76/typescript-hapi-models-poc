@@ -219,7 +219,7 @@ describe('Element', () => {
     };
     expect(t).toThrow(InvalidTypeError);
     expect(t).toThrow(
-      `Element.setExtension(): At least one array item in the provided argument is not an instance of Extension.`,
+      `Invalid Element.extension; Provided extension array has an element that is not an instance of Extension.`,
     );
   });
 
@@ -231,6 +231,6 @@ describe('Element', () => {
       testElement.addExtension(INVALID_EXT);
     };
     expect(t).toThrow(InvalidTypeError);
-    expect(t).toThrow(`Element.addExtension(): The provided argument is not an instance of Extension.`);
+    expect(t).toThrow(`Invalid Element.extension; Provided extension is not an instance of Extension.`);
   });
 });

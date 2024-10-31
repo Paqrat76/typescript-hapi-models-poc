@@ -45,6 +45,7 @@ import {
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
+import { assertFhirType, assertFhirTypeList } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
@@ -176,6 +177,8 @@ export class Meta extends DataType implements IBase {
    * @returns this
    */
   public setVersionIdElement(element: IdType | undefined): this {
+    const optErrMsg = `Invalid Meta.versionId; Provided element is not an instance of IdType.`;
+    assertFhirType<IdType>(element, IdType, optErrMsg);
     this.versionId = element;
     return this;
   }
@@ -229,6 +232,8 @@ export class Meta extends DataType implements IBase {
    * @returns this
    */
   public setLastUpdatedElement(element: InstantType | undefined): this {
+    const optErrMsg = `Invalid Meta.lastUpdated; Provided element is not an instance of InstantType.`;
+    assertFhirType<InstantType>(element, InstantType, optErrMsg);
     this.lastUpdated = element;
     return this;
   }
@@ -282,6 +287,8 @@ export class Meta extends DataType implements IBase {
    * @returns this
    */
   public setSourceElement(element: UriType | undefined): this {
+    const optErrMsg = `Invalid Meta.source; Provided element is not an instance of UriType.`;
+    assertFhirType<UriType>(element, UriType, optErrMsg);
     this.source = element;
     return this;
   }
@@ -335,6 +342,8 @@ export class Meta extends DataType implements IBase {
    * @returns this
    */
   public setProfileElement(element: CanonicalType[] | undefined): this {
+    const optErrMsg = `Invalid Meta.profile; Provided element array has an element that is not an instance of CanonicalType.`;
+    assertFhirTypeList<CanonicalType>(element, CanonicalType, optErrMsg);
     this.profile = element;
     return this;
   }
@@ -347,6 +356,8 @@ export class Meta extends DataType implements IBase {
    */
   public addProfileElement(value?: CanonicalType): this {
     if (value !== undefined) {
+      const optErrMsg = `Invalid Meta.profile; Provided element is not an instance of CanonicalType.`;
+      assertFhirType<CanonicalType>(value, CanonicalType, optErrMsg);
       this.initProfile();
       this.profile?.push(value);
     }
@@ -449,6 +460,8 @@ export class Meta extends DataType implements IBase {
    * @returns this
    */
   public setSecurity(value: Coding[] | undefined): this {
+    const optErrMsg = `Invalid Meta.security; Provided value array has an element that is not an instance of Coding.`;
+    assertFhirTypeList<Coding>(value, Coding, optErrMsg);
     this.security = value;
     return this;
   }
@@ -461,6 +474,8 @@ export class Meta extends DataType implements IBase {
    */
   public addSecurity(value?: Coding): this {
     if (value !== undefined) {
+      const optErrMsg = `Invalid Meta.security; Provided value is not an instance of CodeType.`;
+      assertFhirType<Coding>(value, Coding, optErrMsg);
       this.initSecurity();
       this.security?.push(value);
     }
@@ -501,6 +516,8 @@ export class Meta extends DataType implements IBase {
    * @returns this
    */
   public setTag(value: Coding[] | undefined): this {
+    const optErrMsg = `Invalid Meta.tag; Provided value array has an element that is not an instance of Coding.`;
+    assertFhirTypeList<Coding>(value, Coding, optErrMsg);
     this.tag = value;
     return this;
   }
@@ -513,6 +530,8 @@ export class Meta extends DataType implements IBase {
    */
   public addTag(value?: Coding): this {
     if (value !== undefined) {
+      const optErrMsg = `Invalid Meta.tag; Provided value is not an instance of CodeType.`;
+      assertFhirType<Coding>(value, Coding, optErrMsg);
       this.initTag();
       this.tag?.push(value);
     }

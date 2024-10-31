@@ -164,7 +164,7 @@ GitHub: [hapifhir/org.hl7.fhir.core](https://github.com/hapifhir/org.hl7.fhir.co
 - [One naïve man’s struggle with TypeScript class serialization](https://medium.com/@aems/one-mans-struggle-with-typescript-class-serialization-478d4bbb5826)
 - [Mastering Type-Safe JSON Serialization in TypeScript](https://hackernoon.com/mastering-type-safe-json-serialization-in-typescript)
   - Consider superstruct library above?
-- [Deserializing JSON in TypeScrip](https://www.bytefish.de/blog/json_deserizaltion_with_typescript.html)
+- [Deserializing JSON in TypeScript](https://www.bytefish.de/blog/json_deserizaltion_with_typescript.html)
 - [typescript-json-serializer](https://www.npmjs.com/package/typescript-json-serializer) - uses experimentalDecorators
 - [ts-jackson](https://www.npmjs.com/package/ts-jackson) - uses experimentalDecorators
 - [ts-serializable](https://www.npmjs.com/package/ts-serializable) - uses experimentalDecorators

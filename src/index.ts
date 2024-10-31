@@ -47,7 +47,6 @@ export * from '@src/fhir-core/data-types/primitive/CodeType';
 export * from '@src/fhir-core/data-types/primitive/DateTimeType';
 export * from '@src/fhir-core/data-types/primitive/DateType';
 export * from '@src/fhir-core/data-types/primitive/DecimalType';
-export * from '@src/fhir-core/data-types/primitive/EnumCodeType';
 export * from '@src/fhir-core/data-types/primitive/IdType';
 export * from '@src/fhir-core/data-types/primitive/InstantType';
 export * from '@src/fhir-core/data-types/primitive/Integer64Type';

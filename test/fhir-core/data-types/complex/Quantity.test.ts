@@ -27,10 +27,10 @@ import { DecimalType } from '@src/fhir-core/data-types/primitive/DecimalType';
 import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
-//import { EnumCodeType } from '@src/fhir-core/data-types/primitive/EnumCodeType';
 import { QuantityComparatorEnum } from '@src/fhir-core/data-types/complex/code-systems/QuantityComparatorEnum';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
 describe('Quantity', () => {
   const VALID_DECIMAL = 13.579;
@@ -38,6 +38,7 @@ describe('Quantity', () => {
   const VALID_DECIMAL_2 = 24.68;
   const VALID_DECIMAL_TYPE_2 = new DecimalType(VALID_DECIMAL_2);
   const INVALID_DECIMAL = Number.MAX_VALUE;
+  const INVALID_DECIMAL_TYPE = new StringType('invalid Decimal');
 
   const VALID_CODE_LESS_THAN = `<`;
   const VALID_CODE_LESS_THAN_TYPE = new CodeType(VALID_CODE_LESS_THAN);
@@ -46,18 +47,22 @@ describe('Quantity', () => {
   const VALID_CODE_AD = `ad`;
   const VALID_CODE_AD_TYPE = new CodeType(VALID_CODE_AD);
   const UNSUPPORTED_ENUM_CODE = 'unsupportedEnumCode';
+  const INVALID_ENUM_CODE_TYPE = new StringType('invalid EnumCodeType');
+  const INVALID_CODE_TYPE = new StringType('invalid CodeType');
 
   const VALID_STRING = 'This is a valid string.';
   const VALID_STRING_TYPE = new StringType(VALID_STRING);
   const VALID_STRING_2 = 'This is another valid string!';
   const VALID_STRING_TYPE_2 = new StringType(VALID_STRING_2);
   const INVALID_STRING = '';
+  const INVALID_STRING_TYPE = new CodeType(VALID_CODE_AD);
 
   const VALID_URI = `testUriType`;
   const VALID_URI_TYPE = new UriType(VALID_URI);
   const VALID_URI_2 = `testUriType2`;
   const VALID_URI_TYPE_2 = new UriType(VALID_URI_2);
   const INVALID_URI = ' invalid Uri ';
+  const INVALID_URI_TYPE = new StringType('invalid UriType');
 
   const VALID_CODE = `testCodeType`;
   const VALID_CODE_TYPE = new CodeType(VALID_CODE);
@@ -524,6 +529,66 @@ describe('Quantity', () => {
       testQuantity.setComparatorEnumType(new EnumCodeType(VALID_CODE_AD, quantityComparatorEnum));
       expect(testQuantity.hasComparatorEnumType()).toBe(true);
       expect(testQuantity.getComparatorEnumType()).toEqual(new EnumCodeType(VALID_CODE_AD, quantityComparatorEnum));
+    });
+
+    it('should throw InvalidTypeError when reset with invalid PrimitiveType Quantity.value value', () => {
+      const testQuantity = new Quantity();
+      const t = () => {
+        // @ts-expect-error: allow invalid type for testing
+        testQuantity.setValueElement(INVALID_DECIMAL_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Quantity.value; Provided element is not an instance of DecimalType.`);
+    });
+
+    it('should throw InvalidTypeError when reset with invalid PrimitiveType Quantity.comparator value', () => {
+      const testQuantity = new Quantity();
+      const t = () => {
+        // @ts-expect-error: allow invalid type for testing
+        testQuantity.setComparatorEnumType(INVALID_ENUM_CODE_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Quantity.comparator; Provided type is not an instance of QuantityComparatorEnum.`);
+    });
+
+    it('should throw InvalidTypeError when reset with invalid PrimitiveType Quantity.comparator value', () => {
+      const testQuantity = new Quantity();
+      const t = () => {
+        // @ts-expect-error: allow invalid type for testing
+        testQuantity.setComparatorElement(INVALID_CODE_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Quantity.comparator; Provided element is not an instance of CodeType.`);
+    });
+
+    it('should throw InvalidTypeError when reset with invalid PrimitiveType Quantity.unit value', () => {
+      const testQuantity = new Quantity();
+      const t = () => {
+        // @ts-expect-error: allow invalid type for testing
+        testQuantity.setUnitElement(INVALID_STRING_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Quantity.unit; Provided element is not an instance of StringType.`);
+    });
+
+    it('should throw InvalidTypeError when reset with invalid PrimitiveType Quantity.system value', () => {
+      const testQuantity = new Quantity();
+      const t = () => {
+        // @ts-expect-error: allow invalid type for testing
+        testQuantity.setSystemElement(INVALID_URI_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Quantity.system; Provided element is not an instance of UriType.`);
+    });
+
+    it('should throw InvalidTypeError when reset with invalid PrimitiveType Quantity.code value', () => {
+      const testQuantity = new Quantity();
+      const t = () => {
+        // @ts-expect-error: allow invalid type for testing
+        testQuantity.setCodeElement(INVALID_CODE_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Quantity.code; Provided element is not an instance of CodeType.`);
     });
   });
 

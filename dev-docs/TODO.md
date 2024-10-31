@@ -2,6 +2,7 @@
 
 ## POC Feature Set
 
+- Investigate TypeScript-based decorators for serialization/deserialization
 - Investigate and implement parsing (deserialization) for all FHIR data models
   - For inspiration, see HAPI FHIR [Parsing and Serialization](https://hapifhir.io/hapi-fhir/docs/model/parsers.html)
 - Setup functional testing to verify implementation of HAPI FHIR features
@@ -12,6 +13,8 @@
 
 ## Possible Considerations (future roadmap)
 
+- Investigate serialization output to only include FHIR "summary" fields
+  - Ref: [Summary](https://hl7.org/fhir/r4/search.html#summary)
 - HAPI FHIR Features
   - [Custom Structures](https://hapifhir.io/hapi-fhir/docs/model/custom_structures.html)
   - [Bundle Builder](https://hapifhir.io/hapi-fhir/docs/model/bundle_builder.html)

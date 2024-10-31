@@ -28,6 +28,15 @@ import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { fhirUrl } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty, validateUrl } from '@src/fhir-core/utility/fhir-util';
+import {
+  CodeType,
+  constructorCodeValueAsEnumCodeType,
+  EnumCodeType,
+} from '@src/fhir-core/data-types/primitive/CodeType';
+import { GroupTypeEnum } from '@src/fhir-models/code-systems/GroupTypeEnum';
+import { IFhirCodeDefinition } from '@src/fhir-core/base-models/core-fhir-codes';
+import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
+import { MockCodeEnum } from '../../test-utils';
 
 describe('fhir-util', () => {
   describe('isElementEmpty', () => {
@@ -155,6 +164,108 @@ describe('fhir-util', () => {
       };
       expect(t).toThrow(AssertionError);
       expect(t).toThrow(`The url must be defined and cannot be blank`);
+    });
+  });
+
+  describe('constructorCodeValueAsEnumCodeType', () => {
+    const property = 'ClassName.propName';
+    const mockTypeEnum = new MockCodeEnum();
+    const validCode = 'generated';
+    const validCodeType = new CodeType(validCode);
+    const validEnumCodeType = new EnumCodeType(validCode, mockTypeEnum);
+    const groupTypeEnum = new GroupTypeEnum();
+    const invalidEnumCodeType = new EnumCodeType('person', groupTypeEnum);
+    const expectedFhirCode = {
+      name: 'GENERATED',
+      code: `generated`,
+      system: `http://hl7.org/fhir/narrative-status`,
+      display: `Generated`,
+      definition: `The contents of the narrative are entirely generated from the core elements in the content.`,
+    } as IFhirCodeDefinition;
+
+    it('should return null for null code', () => {
+      const result: EnumCodeType | null = constructorCodeValueAsEnumCodeType(
+        null,
+        MockCodeEnum,
+        mockTypeEnum,
+        property,
+      );
+      expect(result).toBeNull();
+    });
+
+    it('should return valid EnumCodeType for valid code', () => {
+      const result: EnumCodeType | null = constructorCodeValueAsEnumCodeType(
+        validCode,
+        MockCodeEnum,
+        mockTypeEnum,
+        property,
+      );
+      expect(result).not.toBeNull();
+      expect(result).toBeDefined();
+      expect(result?.fhirType()).toStrictEqual('code');
+      expect(result?.getValueAsString()).toStrictEqual(validCode);
+      expect(result?.fhirCode).toEqual(expectedFhirCode);
+    });
+
+    it('should return valid EnumCodeType for valid CodeType', () => {
+      const result: EnumCodeType | null = constructorCodeValueAsEnumCodeType(
+        validCodeType,
+        MockCodeEnum,
+        mockTypeEnum,
+        property,
+      );
+      expect(result).not.toBeNull();
+      expect(result).toBeDefined();
+      expect(result?.fhirType()).toStrictEqual('code');
+      expect(result?.getValueAsString()).toStrictEqual(validCode);
+      expect(result?.fhirCode).toEqual(expectedFhirCode);
+    });
+
+    it('should return valid EnumCodeType for MockCodeEnum', () => {
+      const result: EnumCodeType | null = constructorCodeValueAsEnumCodeType(
+        validEnumCodeType,
+        MockCodeEnum,
+        mockTypeEnum,
+        property,
+      );
+      expect(result).not.toBeNull();
+      expect(result).toBeDefined();
+      expect(result?.fhirType()).toStrictEqual('code');
+      expect(result?.getValueAsString()).toStrictEqual(validCode);
+      expect(result?.fhirCode).toEqual(expectedFhirCode);
+    });
+
+    it('should throw InvalidCodeError when instantiated with invalid EnumCodeType value', () => {
+      const t = () => {
+        constructorCodeValueAsEnumCodeType(invalidEnumCodeType, MockCodeEnum, mockTypeEnum, property);
+      };
+      expect(t).toThrow(InvalidCodeError);
+      expect(t).toThrow(`Invalid ${property}; Invalid type parameter (GroupTypeEnum); Should be MockCodeEnum.`);
+    });
+
+    it('should throw InvalidCodeError when instantiated with invalid CodeType value', () => {
+      const t = () => {
+        constructorCodeValueAsEnumCodeType(new CodeType('invalidCodeType'), MockCodeEnum, mockTypeEnum, property);
+      };
+      expect(t).toThrow(InvalidCodeError);
+      expect(t).toThrow(`Invalid ${property}; Unknown MockCodeEnum 'code' value 'invalidCodeType'`);
+    });
+
+    it('should throw InvalidCodeError when instantiated with invalid fhirCode value', () => {
+      const t = () => {
+        constructorCodeValueAsEnumCodeType('invalidFhirCode', MockCodeEnum, mockTypeEnum, property);
+      };
+      expect(t).toThrow(InvalidCodeError);
+      expect(t).toThrow(`Invalid ${property}; Unknown MockCodeEnum 'code' value 'invalidFhirCode'`);
+    });
+
+    it('should throw InvalidCodeError when instantiated with non-CodeType value', () => {
+      const t = () => {
+        // @ts-expect-error: allow invalid type for testing
+        constructorCodeValueAsEnumCodeType(new StringType('invalidCodeType'), MockCodeEnum, mockTypeEnum, property);
+      };
+      expect(t).toThrow(InvalidCodeError);
+      expect(t).toThrow(`Invalid ${property}; Provided code value is not an instance of CodeType`);
     });
   });
 });

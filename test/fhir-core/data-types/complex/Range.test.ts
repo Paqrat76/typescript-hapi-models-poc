@@ -25,6 +25,7 @@ import { DataType, Extension } from '@src/fhir-core/base-models/core-fhir-models
 import { Range } from '@src/fhir-core/data-types/complex/Range';
 import { SimpleQuantity } from '@src/fhir-core/data-types/complex/SimpleQuantity';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
 describe('Range', () => {
   const VALID_DECIMAL = 13.579;
@@ -50,6 +51,7 @@ describe('Range', () => {
   SIMPLE_QUANTITY_2.setCode(VALID_CODE_2);
 
   const UNDEFINED_VALUE = undefined;
+  const INVALID_SIMPLE_QUANTITY = new StringType('Invalid SimpleQuantity');
 
   describe('Core', () => {
     const expectedJson1 = {
@@ -181,6 +183,26 @@ describe('Range', () => {
       expect(testRange.getLow()).toEqual(new SimpleQuantity());
       expect(testRange.hasHigh()).toBe(false);
       expect(testRange.getHigh()).toEqual(new SimpleQuantity());
+    });
+
+    it('should throw InvalidTypeError when reset with invalid PrimitiveType Range.low value', () => {
+      const testRange = new Range();
+      const t = () => {
+        // @ts-expect-error: ignore invalid type for test
+        testRange.setLow(INVALID_SIMPLE_QUANTITY);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Range.low; Provided value is not an instance of SimpleQuantity.`);
+    });
+
+    it('should throw InvalidTypeError when reset with invalid PrimitiveType Range.high value', () => {
+      const testRange = new Range();
+      const t = () => {
+        // @ts-expect-error: ignore invalid type for test
+        testRange.setHigh(INVALID_SIMPLE_QUANTITY);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Range.high; Provided value is not an instance of SimpleQuantity.`);
     });
   });
 

@@ -53,7 +53,7 @@ import {
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { OPEN_DATA_TYPES } from '@src/fhir-core/data-types/FhirDataType';
 import { isElementEmpty, validateUrl } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirType } from '@src/fhir-core/utility/type-guards';
+import { assertFhirType, assertFhirTypeList } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
@@ -267,13 +267,8 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
    * {@inheritDoc IBaseExtension.setExtension}
    */
   public setExtension(extension: Extension[] | undefined): this {
-    extension?.forEach((ext) => {
-      if (!(ext instanceof Extension)) {
-        throw new InvalidTypeError(
-          `Element.setExtension(): At least one array item in the provided argument is not an instance of Extension.`,
-        );
-      }
-    });
+    const optErrMsg = `Invalid Element.extension; Provided extension array has an element that is not an instance of Extension.`;
+    assertFhirTypeList<Extension>(extension, Extension, optErrMsg);
     this.extension = extension;
     return this;
   }
@@ -310,9 +305,8 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
    */
   public addExtension(extension?: Extension): this {
     if (extension !== undefined) {
-      if (!(extension instanceof Extension)) {
-        throw new InvalidTypeError(`Element.addExtension(): The provided argument is not an instance of Extension.`);
-      }
+      const optErrMsg = `Invalid Element.extension; Provided extension is not an instance of Extension.`;
+      assertFhirType<Extension>(extension, Extension, optErrMsg);
       this.initExtension();
       // @ts-expect-error: initExtension() ensures this.extension exists
       this.extension.push(extension);
@@ -337,7 +331,7 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
    * @private
    */
   private initExtension(): void {
-    if (!this.extension) {
+    if (!this.hasExtension()) {
       this.extension = [] as Extension[];
     }
   }
@@ -463,6 +457,8 @@ export abstract class BackboneElement extends Element implements IBase, IBaseMod
    * {@inheritDoc IBaseModifierExtension.setModifierExtension}
    */
   public setModifierExtension(modifierExtension: Extension[] | undefined): this {
+    const optErrMsg = `Invalid BackboneElement.modifierExtension; Provided extension array has an element that is not an instance of Extension.`;
+    assertFhirTypeList<Extension>(modifierExtension, Extension, optErrMsg);
     this.modifierExtension = modifierExtension;
     return this;
   }
@@ -499,6 +495,8 @@ export abstract class BackboneElement extends Element implements IBase, IBaseMod
    */
   public addModifierExtension(modifierExtension?: Extension): this {
     if (modifierExtension !== undefined) {
+      const optErrMsg = `Invalid BackboneElement.modifierExtension; Provided extension is not an instance of Extension.`;
+      assertFhirType<Extension>(modifierExtension, Extension, optErrMsg);
       this.initModifierExtension();
       // @ts-expect-error: initModifierExtension() ensures this.modifierExtension exists
       this.modifierExtension.push(modifierExtension);
@@ -523,7 +521,7 @@ export abstract class BackboneElement extends Element implements IBase, IBaseMod
    * @private
    */
   private initModifierExtension(): void {
-    if (!this.modifierExtension) {
+    if (!this.hasModifierExtension()) {
       this.modifierExtension = [] as Extension[];
     }
   }
@@ -674,6 +672,8 @@ export abstract class BackboneType extends DataType implements IBase, IBaseModif
    * {@inheritDoc IBaseModifierExtension.setModifierExtension}
    */
   public setModifierExtension(modifierExtension: Extension[] | undefined): this {
+    const optErrMsg = `Invalid BackboneType.modifierExtension; Provided extension array has an element that is not an instance of Extension.`;
+    assertFhirTypeList<Extension>(modifierExtension, Extension, optErrMsg);
     this.modifierExtension = modifierExtension;
     return this;
   }
@@ -710,6 +710,8 @@ export abstract class BackboneType extends DataType implements IBase, IBaseModif
    */
   public addModifierExtension(modifierExtension?: Extension): this {
     if (modifierExtension !== undefined) {
+      const optErrMsg = `Invalid BackboneType.modifierExtension; Provided extension is not an instance of Extension.`;
+      assertFhirType<Extension>(modifierExtension, Extension, optErrMsg);
       this.initModifierExtension();
       // @ts-expect-error: initModifierExtension() ensures this.modifierExtension exists
       this.modifierExtension.push(modifierExtension);
@@ -734,7 +736,7 @@ export abstract class BackboneType extends DataType implements IBase, IBaseModif
    * @private
    */
   private initModifierExtension(): void {
-    if (this.modifierExtension === undefined) {
+    if (!this.hasModifierExtension()) {
       this.modifierExtension = [] as Extension[];
     }
   }
@@ -1231,7 +1233,7 @@ export function setFhirExtensionJson(extensions: Extension[], jsonObj: JSON.Obje
 
   const jsonExtension = [] as JSON.Array;
   for (const extension of extensions) {
-    assertFhirType(extension, Extension, 'Provided item in extensions is not an instance of Extension');
+    assertFhirType<Extension>(extension, Extension, 'Provided item in extensions is not an instance of Extension');
     const extJson = extension.toJSON();
     if (!_isEmpty(extJson)) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

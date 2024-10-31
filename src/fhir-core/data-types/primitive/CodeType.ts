@@ -27,6 +27,7 @@ import { fhirCode, fhirCodeSchema, parseFhirPrimitiveData } from './primitive-ty
 import { Class } from '@src/fhir-core/utility/type-guards';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 
 /**
  * This module contains the CodeType and EnumCodeType classes along with the related assertEnumCodeType()
@@ -204,14 +205,63 @@ export function assertEnumCodeType<T>(
   enumCodeType: Class<T>,
   errorMessagePrefix?: string,
 ): asserts type is T {
-  const prefix = errorMessagePrefix ? `${errorMessagePrefix}: ` : '';
+  const prefix = errorMessagePrefix ? `${errorMessagePrefix}; ` : '';
   if (type instanceof EnumCodeType) {
     if (type.enumSource() !== enumCodeType.name) {
-      const errMsg = `${prefix}Invalid type parameter: ${type.enumSource()}; Should be ${enumCodeType.name}.`;
+      const errMsg = `${prefix}Invalid type parameter (${type.enumSource()}); Should be ${enumCodeType.name}.`;
       throw new InvalidCodeError(errMsg);
     }
   } else {
-    const errMsg = `${prefix}Provided type is not an instance of ${EnumCodeType.name}.`;
+    const errMsg = `${prefix}Provided type is not an instance of ${enumCodeType.name}.`;
     throw new InvalidTypeError(errMsg);
   }
+}
+
+/**
+ * Returns an instance of EnumCodeType for the provided constructor arguments.
+ *
+ * @param code - code value expressed as EnumCodeType | CodeType | fhirCode | null
+ * @param enumCodeType - code type enumeration class
+ * @param typeEnum - instance of type enumeration class (allowed code values)
+ * @param property - FHIR data model property (<class name>.<property name>)
+ * @returns instance of EnumCodeType
+ * @throws InvalidCodeError or InvalidTypeError
+ *
+ * @category Utilities
+ */
+export function constructorCodeValueAsEnumCodeType<T>(
+  code: EnumCodeType | CodeType | fhirCode | null,
+  enumCodeType: Class<T>,
+  typeEnum: IFhirCodeEnum,
+  property: string,
+): EnumCodeType | null {
+  let codeValue: EnumCodeType | null = null;
+  if (code instanceof EnumCodeType) {
+    const errMsgPrefix = `Invalid ${property}`;
+    assertEnumCodeType<T>(code, enumCodeType, errMsgPrefix);
+    codeValue = code;
+  } else {
+    try {
+      if (code !== null) {
+        codeValue = new EnumCodeType(code, typeEnum);
+      }
+    } catch (err) {
+      let errMsg: string;
+      if (err instanceof PrimitiveTypeError) {
+        // Error from parseFhirPrimitiveData(...) in CodeType.assignValue()
+        const errorCause = err.getDetails()[0];
+        if (errorCause?.includes('received object')) {
+          errMsg = `Invalid ${property}; Provided code value is not an instance of CodeType`;
+        } else {
+          errMsg = `Invalid ${property}; ${err.message}`;
+        }
+      } else if (err instanceof InvalidCodeError) {
+        errMsg = `Invalid ${property}; ${err.message}`;
+      } else {
+        errMsg = `Invalid ${property}; Unexpected error`;
+      }
+      throw new InvalidCodeError(errMsg, err as Error);
+    }
+  }
+  return codeValue;
 }
