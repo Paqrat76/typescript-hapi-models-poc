@@ -1089,10 +1089,7 @@ export class Extension extends Element implements IBase {
    */
   @OpenDataTypes()
   public setValue(value: DataType | undefined): this {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (value !== null) {
-      this.value = value;
-    }
+    this.value = value;
     return this;
   }
 

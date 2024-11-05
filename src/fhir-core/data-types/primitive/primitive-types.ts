@@ -288,7 +288,7 @@ export type fhirString = z.infer<typeof fhirStringSchema>;
 /**
  * @category Datatypes: Primitive Base Types
  */
-export const fhirMarkdownSchema = fhirStringSchema.brand<'fhirMarkdown'>();
+export const fhirMarkdownSchema = z.string().min(1).max(FHIR_MAX_STRING_LENGTH);
 /**
  * @category Datatypes: Primitive Base Types
  */
@@ -393,7 +393,7 @@ export type fhirUri = z.infer<typeof fhirUriSchema>;
 /**
  * @category Datatypes: Primitive Base Types
  */
-export const fhirUrlSchema = fhirUriSchema.brand<'fhirUrl'>();
+export const fhirUrlSchema = z.string().regex(FHIR_REGEX_URI);
 /**
  * @category Datatypes: Primitive Base Types
  */
@@ -402,7 +402,7 @@ export type fhirUrl = z.infer<typeof fhirUrlSchema>;
 /**
  * @category Datatypes: Primitive Base Types
  */
-export const fhirCanonicalSchema = fhirUriSchema.brand<'fhirCanonical'>();
+export const fhirCanonicalSchema = z.string().regex(FHIR_REGEX_URI);
 /**
  * @category Datatypes: Primitive Base Types
  */

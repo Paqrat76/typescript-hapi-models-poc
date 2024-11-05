@@ -21,12 +21,12 @@
  *
  */
 
-import { TOO_BIG_STRING } from '../../../test-utils';
 import { MarkdownType } from '@src/fhir-core/data-types/primitive/MarkdownType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { fhirMarkdown } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { TOO_BIG_STRING } from '../../../test-utils';
 
 describe('MarkdownType', () => {
   const VALID_MARKDOWN = 'This is a **valid** _string_.' as fhirMarkdown;
@@ -103,7 +103,7 @@ describe('MarkdownType', () => {
 
   it('should throw PrimitiveTypeError when initialized with too big value', () => {
     const t = () => {
-      new MarkdownType(TOO_BIG_STRING as fhirMarkdown);
+      new MarkdownType(TOO_BIG_STRING);
     };
     expect(t).toThrow(PrimitiveTypeError);
     expect(t).toThrow('Invalid value for MarkdownType');
@@ -143,7 +143,7 @@ describe('MarkdownType', () => {
   it('should throw PrimitiveTypeError when setValue() with too big value', () => {
     const testMarkdownType = new MarkdownType();
     const t = () => {
-      testMarkdownType.setValue(TOO_BIG_STRING as fhirMarkdown);
+      testMarkdownType.setValue(TOO_BIG_STRING);
     };
     expect(t).toThrow(PrimitiveTypeError);
     expect(t).toThrow('Invalid value for MarkdownType');
@@ -192,7 +192,7 @@ describe('MarkdownType', () => {
   it('should throw PrimitiveTypeError when encodeToString() with too big value', () => {
     const testMarkdownType = new MarkdownType();
     const t = () => {
-      testMarkdownType.encodeToString(TOO_BIG_STRING as fhirMarkdown);
+      testMarkdownType.encodeToString(TOO_BIG_STRING);
     };
     expect(t).toThrow(PrimitiveTypeError);
     expect(t).toThrow('Invalid value for MarkdownType');

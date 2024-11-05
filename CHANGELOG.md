@@ -20,6 +20,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [0.10.0] - 2024-11-??
+
+### Added
+
+- Added deserialization helper functions for PrimitiveTypes
+
+### Changed
+
+- Updated dependencies
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+
 ## [0.9.1] - 2024-10-31
 
 ### Changed

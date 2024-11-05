@@ -99,6 +99,13 @@ describe('json-helpers', () => {
       expect(t).toThrow(`Is not null.`);
 
       t = () => {
+        // @ts-expect-error: allow for testing
+        asNull(undefined);
+      };
+      expect(t).toThrow(TypeError);
+      expect(t).toThrow(`Is not null.`);
+
+      t = () => {
         asNull('null', 'Test value');
       };
       expect(t).toThrow(TypeError);
@@ -119,6 +126,13 @@ describe('json-helpers', () => {
 
       let t = () => {
         asBoolean('notBoolean');
+      };
+      expect(t).toThrow(TypeError);
+      expect(t).toThrow(`Is not a boolean.`);
+
+      t = () => {
+        // @ts-expect-error: allow for testing
+        asBoolean(undefined);
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`Is not a boolean.`);
@@ -149,6 +163,13 @@ describe('json-helpers', () => {
       expect(t).toThrow(`Is not a number.`);
 
       t = () => {
+        // @ts-expect-error: allow for testing
+        asNumber(undefined);
+      };
+      expect(t).toThrow(TypeError);
+      expect(t).toThrow(`Is not a number.`);
+
+      t = () => {
         asNumber('notNumber', 'Test value');
       };
       expect(t).toThrow(TypeError);
@@ -166,6 +187,13 @@ describe('json-helpers', () => {
 
       let t = () => {
         asString(123);
+      };
+      expect(t).toThrow(TypeError);
+      expect(t).toThrow(`Is not a string.`);
+
+      t = () => {
+        // @ts-expect-error: allow for testing
+        asString(undefined);
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`Is not a string.`);
@@ -202,6 +230,13 @@ describe('json-helpers', () => {
       expect(t).toThrow(`Is not a JSON object.`);
 
       t = () => {
+        // @ts-expect-error: allow for testing
+        asObject(undefined);
+      };
+      expect(t).toThrow(TypeError);
+      expect(t).toThrow(`Is not a JSON object.`);
+
+      t = () => {
         asObject(123, 'Test value');
       };
       expect(t).toThrow(TypeError);
@@ -232,6 +267,13 @@ describe('json-helpers', () => {
 
       let t = () => {
         asArray(null);
+      };
+      expect(t).toThrow(TypeError);
+      expect(t).toThrow(`Is not a JSON array.`);
+
+      t = () => {
+        // @ts-expect-error: allow for testing
+        asArray(undefined);
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`Is not a JSON array.`);
@@ -1612,7 +1654,7 @@ class MockPrimitiveDataType<fhirString> extends PrimitiveType<fhirString> {
     return 'MockPrimitiveDataType';
   }
 
-  public override isEmpty(): boolean {
+  override isEmpty(): boolean {
     return _isEmpty(this.mockValue);
   }
 
@@ -1627,14 +1669,14 @@ class MockPrimitiveDataType<fhirString> extends PrimitiveType<fhirString> {
   }
 
   // NOT USED
-  public copy(): MockPrimitiveDataType<fhirString> {
+  copy(): MockPrimitiveDataType<fhirString> {
     const dest = new MockPrimitiveDataType<fhirString>();
     this.copyValues(dest);
     return dest;
   }
 
   // Returns undefined for testing purposes
-  public override toJSON(): JSON.Value | undefined {
+  override toJSON(): JSON.Value | undefined {
     return undefined;
   }
 }
