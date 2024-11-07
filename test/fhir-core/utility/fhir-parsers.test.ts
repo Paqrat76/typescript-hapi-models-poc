@@ -22,39 +22,39 @@
  */
 
 import {
-  deserializeBase64BinaryType,
-  deserializeBooleanType,
-  deserializeCanonicalType,
-  deserializeCodeType,
-  deserializeDateTimeType,
-  deserializeDateType,
-  deserializeDecimalType,
-  deserializeExtension,
-  deserializeIdType,
-  deserializeInstantType,
-  deserializeInteger64Type,
-  deserializeIntegerType,
-  deserializeMarkdownType,
-  deserializeOidType,
-  deserializePositiveIntType,
-  deserializeStringType,
-  deserializeTimeType,
-  deserializeUnsignedIntType,
-  deserializeUriType,
-  deserializeUrlType,
-  deserializeUuidType,
-  deserializeXhtmlType,
-  deserializeCodeableConcept,
-  deserializeCoding,
-  deserializeIdentifier,
-  deserializeMeta,
-  deserializePeriod,
-  deserializeQuantity,
-  deserializeRange,
-  deserializeReference,
-  deserializeSimpleQuantity,
-  deserializeNarrative,
-} from '@src/fhir-core/utility/deserialization-helpers';
+  parseBase64BinaryType,
+  parseBooleanType,
+  parseCanonicalType,
+  parseCodeType,
+  parseDateTimeType,
+  parseDateType,
+  parseDecimalType,
+  parseExtension,
+  parseIdType,
+  parseInstantType,
+  parseInteger64Type,
+  parseIntegerType,
+  parseMarkdownType,
+  parseOidType,
+  parsePositiveIntType,
+  parseStringType,
+  parseTimeType,
+  parseUnsignedIntType,
+  parseUriType,
+  parseUrlType,
+  parseUuidType,
+  parseXhtmlType,
+  parseCodeableConcept,
+  parseCoding,
+  parseIdentifier,
+  parseMeta,
+  parsePeriod,
+  parseQuantity,
+  parseRange,
+  parseReference,
+  parseSimpleQuantity,
+  parseNarrative,
+} from '../../../src/fhir-core/utility/fhir-parsers';
 import { Extension } from '@src/fhir-core/base-models/core-fhir-models';
 import { Base64BinaryType } from '@src/fhir-core/data-types/primitive/Base64BinaryType';
 import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
@@ -95,7 +95,7 @@ import {
   TOO_BIG_STRING,
 } from '../../test-utils';
 
-describe('deserialization-helpers', () => {
+describe('fhir-parsers', () => {
   const EMPTY_STRING = '';
   const SIBLING_JSON_SIMPLE = {
     id: 'id1234',
@@ -134,16 +134,16 @@ describe('deserialization-helpers', () => {
   const EXPECTED_EXTENSION_CHILD_2 = new Extension('childUrl2', new StringType('child extension string value 2'));
   EXPECTED_EXTENSION_COMPLEX.setExtension([EXPECTED_EXTENSION_CHILD_1, EXPECTED_EXTENSION_CHILD_2]);
 
-  describe('deserializeExtension', () => {
+  describe('parseExtension', () => {
     it('should return undefined for empty json', () => {
-      let testType = deserializeExtension({});
+      let testType = parseExtension({});
       expect(testType).toBeUndefined();
 
-      testType = deserializeExtension(undefined);
+      testType = parseExtension(undefined);
       expect(testType).toBeUndefined();
 
       // @ts-expect-error: allow for testing
-      testType = deserializeExtension(null);
+      testType = parseExtension(null);
       expect(testType).toBeUndefined();
     });
 
@@ -158,30 +158,30 @@ describe('deserialization-helpers', () => {
       };
 
       const t = () => {
-        deserializeExtension(INVALID_EXTENSION_JSON);
+        parseExtension(INVALID_EXTENSION_JSON);
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`Extension.url is a required data element`);
     });
   });
 
-  describe('deserializeBase64BinaryType', () => {
+  describe('parseBase64BinaryType', () => {
     const VALID_BASE64BINARY = `dGVzdEJhc2U2NEJpbmFyeQ==`;
     const INVALID_BASE64BINARY = 'invalidBase64Binary';
 
     it('should return undefined for empty json', () => {
-      let testType = deserializeBase64BinaryType(EMPTY_STRING);
+      let testType = parseBase64BinaryType(EMPTY_STRING);
       expect(testType).toBeUndefined();
 
-      testType = deserializeBase64BinaryType(undefined);
+      testType = parseBase64BinaryType(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializeBase64BinaryType(null);
+      testType = parseBase64BinaryType(null);
       expect(testType).toBeUndefined();
     });
 
     it('should return Base64BinaryType for valid json', () => {
-      const testType = deserializeBase64BinaryType(VALID_BASE64BINARY);
+      const testType = parseBase64BinaryType(VALID_BASE64BINARY);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(Base64BinaryType);
       expect(testType?.constructor.name).toStrictEqual('Base64BinaryType');
@@ -195,7 +195,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return Base64BinaryType for valid json with simple siblingJson', () => {
-      const testType = deserializeBase64BinaryType(VALID_BASE64BINARY, SIBLING_JSON_SIMPLE);
+      const testType = parseBase64BinaryType(VALID_BASE64BINARY, SIBLING_JSON_SIMPLE);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(Base64BinaryType);
       expect(testType?.constructor.name).toStrictEqual('Base64BinaryType');
@@ -209,7 +209,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return Base64BinaryType for valid json with complex siblingJson', () => {
-      const testType = deserializeBase64BinaryType(VALID_BASE64BINARY, SIBLING_JSON_COMPLEX);
+      const testType = parseBase64BinaryType(VALID_BASE64BINARY, SIBLING_JSON_COMPLEX);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(Base64BinaryType);
       expect(testType?.constructor.name).toStrictEqual('Base64BinaryType');
@@ -224,7 +224,7 @@ describe('deserialization-helpers', () => {
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializeBase64BinaryType(123);
+        parseBase64BinaryType(123);
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`json argument for Base64BinaryType is not a string`);
@@ -232,26 +232,26 @@ describe('deserialization-helpers', () => {
 
     it('should throw PrimitiveTypeError for invalid json value', () => {
       const t = () => {
-        deserializeBase64BinaryType(INVALID_BASE64BINARY);
+        parseBase64BinaryType(INVALID_BASE64BINARY);
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid value for Base64BinaryType`);
     });
   });
 
-  describe('deserializeBooleanType', () => {
+  describe('parseBooleanType', () => {
     const INVALID_BOOLEAN = 'invalidBoolean';
 
     it('should return undefined for empty json', () => {
-      let testType = deserializeBooleanType(undefined);
+      let testType = parseBooleanType(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializeBooleanType(null);
+      testType = parseBooleanType(null);
       expect(testType).toBeUndefined();
     });
 
     it('should return BooleanType for valid json', () => {
-      const testType = deserializeBooleanType(true);
+      const testType = parseBooleanType(true);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(BooleanType);
       expect(testType?.constructor.name).toStrictEqual('BooleanType');
@@ -265,7 +265,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return BooleanType for valid json with simple siblingJson', () => {
-      const testType = deserializeBooleanType(false, SIBLING_JSON_SIMPLE);
+      const testType = parseBooleanType(false, SIBLING_JSON_SIMPLE);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(BooleanType);
       expect(testType?.constructor.name).toStrictEqual('BooleanType');
@@ -279,7 +279,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return BooleanType for valid json with complex siblingJson', () => {
-      const testType = deserializeBooleanType(false, SIBLING_JSON_COMPLEX);
+      const testType = parseBooleanType(false, SIBLING_JSON_COMPLEX);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(BooleanType);
       expect(testType?.constructor.name).toStrictEqual('BooleanType');
@@ -294,30 +294,30 @@ describe('deserialization-helpers', () => {
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializeBooleanType(INVALID_BOOLEAN);
+        parseBooleanType(INVALID_BOOLEAN);
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`json argument for BooleanType is not a boolean`);
     });
   });
 
-  describe('deserializeCanonicalType', () => {
+  describe('parseCanonicalType', () => {
     const VALID_CANONICAL = `testCanonicalType`;
     const INVALID_CANONICAL = ' invalid Url ';
 
     it('should return undefined for empty json', () => {
-      let testType = deserializeCanonicalType(EMPTY_STRING);
+      let testType = parseCanonicalType(EMPTY_STRING);
       expect(testType).toBeUndefined();
 
-      testType = deserializeCanonicalType(undefined);
+      testType = parseCanonicalType(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializeCanonicalType(null);
+      testType = parseCanonicalType(null);
       expect(testType).toBeUndefined();
     });
 
     it('should return CanonicalType for valid json', () => {
-      const testType = deserializeCanonicalType(VALID_CANONICAL);
+      const testType = parseCanonicalType(VALID_CANONICAL);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(CanonicalType);
       expect(testType?.constructor.name).toStrictEqual('CanonicalType');
@@ -331,7 +331,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return CanonicalType for valid json with simple siblingJson', () => {
-      const testType = deserializeCanonicalType(VALID_CANONICAL, SIBLING_JSON_SIMPLE);
+      const testType = parseCanonicalType(VALID_CANONICAL, SIBLING_JSON_SIMPLE);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(CanonicalType);
       expect(testType?.constructor.name).toStrictEqual('CanonicalType');
@@ -345,7 +345,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return CanonicalType for valid json with complex siblingJson', () => {
-      const testType = deserializeCanonicalType(VALID_CANONICAL, SIBLING_JSON_COMPLEX);
+      const testType = parseCanonicalType(VALID_CANONICAL, SIBLING_JSON_COMPLEX);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(CanonicalType);
       expect(testType?.constructor.name).toStrictEqual('CanonicalType');
@@ -360,7 +360,7 @@ describe('deserialization-helpers', () => {
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializeCanonicalType(123);
+        parseCanonicalType(123);
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`json argument for CanonicalType is not a string`);
@@ -368,30 +368,30 @@ describe('deserialization-helpers', () => {
 
     it('should throw PrimitiveTypeError for invalid json value', () => {
       const t = () => {
-        deserializeCanonicalType(INVALID_CANONICAL);
+        parseCanonicalType(INVALID_CANONICAL);
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid value for CanonicalType`);
     });
   });
 
-  describe('deserializeCodeType', () => {
+  describe('parseCodeType', () => {
     const VALID_CODE = `testCodeType`;
     const INVALID_CODE = ' invalid CodeType ';
 
     it('should return undefined for empty json', () => {
-      let testType = deserializeCodeType(EMPTY_STRING);
+      let testType = parseCodeType(EMPTY_STRING);
       expect(testType).toBeUndefined();
 
-      testType = deserializeCodeType(undefined);
+      testType = parseCodeType(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializeCodeType(null);
+      testType = parseCodeType(null);
       expect(testType).toBeUndefined();
     });
 
     it('should return CodeType for valid json', () => {
-      const testType = deserializeCodeType(VALID_CODE);
+      const testType = parseCodeType(VALID_CODE);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(CodeType);
       expect(testType?.constructor.name).toStrictEqual('CodeType');
@@ -405,7 +405,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return CodeType for valid json with simple siblingJson', () => {
-      const testType = deserializeCodeType(VALID_CODE, SIBLING_JSON_SIMPLE);
+      const testType = parseCodeType(VALID_CODE, SIBLING_JSON_SIMPLE);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(CodeType);
       expect(testType?.constructor.name).toStrictEqual('CodeType');
@@ -419,7 +419,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return CodeType for valid json with complex siblingJson', () => {
-      const testType = deserializeCodeType(VALID_CODE, SIBLING_JSON_COMPLEX);
+      const testType = parseCodeType(VALID_CODE, SIBLING_JSON_COMPLEX);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(CodeType);
       expect(testType?.constructor.name).toStrictEqual('CodeType');
@@ -434,7 +434,7 @@ describe('deserialization-helpers', () => {
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializeCodeType(123);
+        parseCodeType(123);
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`json argument for CodeType is not a string`);
@@ -442,30 +442,30 @@ describe('deserialization-helpers', () => {
 
     it('should throw PrimitiveTypeError for invalid json value', () => {
       const t = () => {
-        deserializeCodeType(INVALID_CODE);
+        parseCodeType(INVALID_CODE);
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid value for CodeType`);
     });
   });
 
-  describe('deserializeDateTimeType', () => {
+  describe('parseDateTimeType', () => {
     const VALID_DATETIME = `2015-02-07T13:28:17.239+02:00`;
     const INVALID_DATETIME = `invalid date time`;
 
     it('should return undefined for empty json', () => {
-      let testType = deserializeDateTimeType(EMPTY_STRING);
+      let testType = parseDateTimeType(EMPTY_STRING);
       expect(testType).toBeUndefined();
 
-      testType = deserializeDateTimeType(undefined);
+      testType = parseDateTimeType(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializeDateTimeType(null);
+      testType = parseDateTimeType(null);
       expect(testType).toBeUndefined();
     });
 
     it('should return DateTimeType for valid json', () => {
-      const testType = deserializeDateTimeType(VALID_DATETIME);
+      const testType = parseDateTimeType(VALID_DATETIME);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(DateTimeType);
       expect(testType?.constructor.name).toStrictEqual('DateTimeType');
@@ -479,7 +479,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return DateTimeType for valid json with simple siblingJson', () => {
-      const testType = deserializeDateTimeType(VALID_DATETIME, SIBLING_JSON_SIMPLE);
+      const testType = parseDateTimeType(VALID_DATETIME, SIBLING_JSON_SIMPLE);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(DateTimeType);
       expect(testType?.constructor.name).toStrictEqual('DateTimeType');
@@ -493,7 +493,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return DateTimeType for valid json with complex siblingJson', () => {
-      const testType = deserializeDateTimeType(VALID_DATETIME, SIBLING_JSON_COMPLEX);
+      const testType = parseDateTimeType(VALID_DATETIME, SIBLING_JSON_COMPLEX);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(DateTimeType);
       expect(testType?.constructor.name).toStrictEqual('DateTimeType');
@@ -508,7 +508,7 @@ describe('deserialization-helpers', () => {
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializeDateTimeType(123);
+        parseDateTimeType(123);
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`json argument for DateTimeType is not a string`);
@@ -516,30 +516,30 @@ describe('deserialization-helpers', () => {
 
     it('should throw PrimitiveTypeError for invalid json value', () => {
       const t = () => {
-        deserializeDateTimeType(INVALID_DATETIME);
+        parseDateTimeType(INVALID_DATETIME);
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid value for DateTimeType`);
     });
   });
 
-  describe('deserializeDateType', () => {
+  describe('parseDateType', () => {
     const VALID_DATE = `2015-02-07`;
     const INVALID_DATE = `invalid date`;
 
     it('should return undefined for empty json', () => {
-      let testType = deserializeDateType(EMPTY_STRING);
+      let testType = parseDateType(EMPTY_STRING);
       expect(testType).toBeUndefined();
 
-      testType = deserializeDateType(undefined);
+      testType = parseDateType(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializeDateType(null);
+      testType = parseDateType(null);
       expect(testType).toBeUndefined();
     });
 
     it('should return DateType for valid json', () => {
-      const testType = deserializeDateType(VALID_DATE);
+      const testType = parseDateType(VALID_DATE);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(DateType);
       expect(testType?.constructor.name).toStrictEqual('DateType');
@@ -553,7 +553,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return DateType for valid json with simple siblingJson', () => {
-      const testType = deserializeDateType(VALID_DATE, SIBLING_JSON_SIMPLE);
+      const testType = parseDateType(VALID_DATE, SIBLING_JSON_SIMPLE);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(DateType);
       expect(testType?.constructor.name).toStrictEqual('DateType');
@@ -567,7 +567,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return DateType for valid json with complex siblingJson', () => {
-      const testType = deserializeDateType(VALID_DATE, SIBLING_JSON_COMPLEX);
+      const testType = parseDateType(VALID_DATE, SIBLING_JSON_COMPLEX);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(DateType);
       expect(testType?.constructor.name).toStrictEqual('DateType');
@@ -582,7 +582,7 @@ describe('deserialization-helpers', () => {
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializeDateType(123);
+        parseDateType(123);
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`json argument for DateType is not a string`);
@@ -590,27 +590,27 @@ describe('deserialization-helpers', () => {
 
     it('should throw PrimitiveTypeError for invalid json value', () => {
       const t = () => {
-        deserializeDateType(INVALID_DATE);
+        parseDateType(INVALID_DATE);
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid value for DateType`);
     });
   });
 
-  describe('deserializeDecimalType', () => {
+  describe('parseDecimalType', () => {
     const VALID_DECIMAL = -1234.56789;
     const INVALID_DECIMAL = Number.MAX_VALUE;
 
     it('should return undefined for empty json', () => {
-      let testType = deserializeDecimalType(undefined);
+      let testType = parseDecimalType(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializeDecimalType(null);
+      testType = parseDecimalType(null);
       expect(testType).toBeUndefined();
     });
 
     it('should return DecimalType for valid json', () => {
-      const testType = deserializeDecimalType(VALID_DECIMAL);
+      const testType = parseDecimalType(VALID_DECIMAL);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(DecimalType);
       expect(testType?.constructor.name).toStrictEqual('DecimalType');
@@ -624,7 +624,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return DecimalType for valid json with simple siblingJson', () => {
-      const testType = deserializeDecimalType(VALID_DECIMAL, SIBLING_JSON_SIMPLE);
+      const testType = parseDecimalType(VALID_DECIMAL, SIBLING_JSON_SIMPLE);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(DecimalType);
       expect(testType?.constructor.name).toStrictEqual('DecimalType');
@@ -638,7 +638,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return DecimalType for valid json with complex siblingJson', () => {
-      const testType = deserializeDecimalType(VALID_DECIMAL, SIBLING_JSON_COMPLEX);
+      const testType = parseDecimalType(VALID_DECIMAL, SIBLING_JSON_COMPLEX);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(DecimalType);
       expect(testType?.constructor.name).toStrictEqual('DecimalType');
@@ -653,7 +653,7 @@ describe('deserialization-helpers', () => {
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializeDecimalType('abc');
+        parseDecimalType('abc');
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`json argument for DecimalType is not a number`);
@@ -661,30 +661,30 @@ describe('deserialization-helpers', () => {
 
     it('should throw PrimitiveTypeError for invalid json value', () => {
       const t = () => {
-        deserializeDecimalType(INVALID_DECIMAL);
+        parseDecimalType(INVALID_DECIMAL);
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid value for DecimalType`);
     });
   });
 
-  describe('deserializeIdType', () => {
+  describe('parseIdType', () => {
     const VALID_ID = `testIdType`;
     const INVALID_ID = ' invalid Uri ';
 
     it('should return undefined for empty json', () => {
-      let testType = deserializeIdType(EMPTY_STRING);
+      let testType = parseIdType(EMPTY_STRING);
       expect(testType).toBeUndefined();
 
-      testType = deserializeIdType(undefined);
+      testType = parseIdType(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializeIdType(null);
+      testType = parseIdType(null);
       expect(testType).toBeUndefined();
     });
 
     it('should return IdType for valid json', () => {
-      const testType = deserializeIdType(VALID_ID);
+      const testType = parseIdType(VALID_ID);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(IdType);
       expect(testType?.constructor.name).toStrictEqual('IdType');
@@ -698,7 +698,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return IdType for valid json with simple siblingJson', () => {
-      const testType = deserializeIdType(VALID_ID, SIBLING_JSON_SIMPLE);
+      const testType = parseIdType(VALID_ID, SIBLING_JSON_SIMPLE);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(IdType);
       expect(testType?.constructor.name).toStrictEqual('IdType');
@@ -712,7 +712,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return IdType for valid json with complex siblingJson', () => {
-      const testType = deserializeIdType(VALID_ID, SIBLING_JSON_COMPLEX);
+      const testType = parseIdType(VALID_ID, SIBLING_JSON_COMPLEX);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(IdType);
       expect(testType?.constructor.name).toStrictEqual('IdType');
@@ -727,7 +727,7 @@ describe('deserialization-helpers', () => {
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializeIdType(123);
+        parseIdType(123);
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`json argument for IdType is not a string`);
@@ -735,30 +735,30 @@ describe('deserialization-helpers', () => {
 
     it('should throw PrimitiveTypeError for invalid json value', () => {
       const t = () => {
-        deserializeIdType(INVALID_ID);
+        parseIdType(INVALID_ID);
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid value for IdType`);
     });
   });
 
-  describe('deserializeInstantType', () => {
+  describe('parseInstantType', () => {
     const VALID_INSTANT = `2015-02-07T13:28:17.239+02:00`;
     const INVALID_INSTANT = `invalid instant`;
 
     it('should return undefined for empty json', () => {
-      let testType = deserializeInstantType(EMPTY_STRING);
+      let testType = parseInstantType(EMPTY_STRING);
       expect(testType).toBeUndefined();
 
-      testType = deserializeInstantType(undefined);
+      testType = parseInstantType(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializeInstantType(null);
+      testType = parseInstantType(null);
       expect(testType).toBeUndefined();
     });
 
     it('should return InstantType for valid json', () => {
-      const testType = deserializeInstantType(VALID_INSTANT);
+      const testType = parseInstantType(VALID_INSTANT);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(InstantType);
       expect(testType?.constructor.name).toStrictEqual('InstantType');
@@ -772,7 +772,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return InstantType for valid json with simple siblingJson', () => {
-      const testType = deserializeInstantType(VALID_INSTANT, SIBLING_JSON_SIMPLE);
+      const testType = parseInstantType(VALID_INSTANT, SIBLING_JSON_SIMPLE);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(InstantType);
       expect(testType?.constructor.name).toStrictEqual('InstantType');
@@ -786,7 +786,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return InstantType for valid json with complex siblingJson', () => {
-      const testType = deserializeInstantType(VALID_INSTANT, SIBLING_JSON_COMPLEX);
+      const testType = parseInstantType(VALID_INSTANT, SIBLING_JSON_COMPLEX);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(InstantType);
       expect(testType?.constructor.name).toStrictEqual('InstantType');
@@ -801,7 +801,7 @@ describe('deserialization-helpers', () => {
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializeInstantType(123);
+        parseInstantType(123);
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`json argument for InstantType is not a string`);
@@ -809,29 +809,29 @@ describe('deserialization-helpers', () => {
 
     it('should throw PrimitiveTypeError for invalid json value', () => {
       const t = () => {
-        deserializeInstantType(INVALID_INSTANT);
+        parseInstantType(INVALID_INSTANT);
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid value for InstantType`);
     });
   });
 
-  describe('deserializeInteger64Type', () => {
+  describe('parseInteger64Type', () => {
     const VALID_INTEGER64 = BigInt(FHIR_MIN_INTEGER64);
     const INVALID_INTEGER64 = BigInt(FHIR_MAX_INTEGER64) + 1n;
     const VALID_INTEGER64_JSON = String(VALID_INTEGER64);
     const INVALID_INTEGER64_JSON = String(INVALID_INTEGER64);
 
     it('should return undefined for empty json', () => {
-      let testType = deserializeInteger64Type(undefined);
+      let testType = parseInteger64Type(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializeInteger64Type(null);
+      testType = parseInteger64Type(null);
       expect(testType).toBeUndefined();
     });
 
     it('should return Integer64Type for valid json', () => {
-      const testType = deserializeInteger64Type(VALID_INTEGER64_JSON);
+      const testType = parseInteger64Type(VALID_INTEGER64_JSON);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(Integer64Type);
       expect(testType?.constructor.name).toStrictEqual('Integer64Type');
@@ -845,7 +845,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return Integer64Type for valid json with simple siblingJson', () => {
-      const testType = deserializeInteger64Type(VALID_INTEGER64_JSON, SIBLING_JSON_SIMPLE);
+      const testType = parseInteger64Type(VALID_INTEGER64_JSON, SIBLING_JSON_SIMPLE);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(Integer64Type);
       expect(testType?.constructor.name).toStrictEqual('Integer64Type');
@@ -859,7 +859,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return Integer64Type for valid json with complex siblingJson', () => {
-      const testType = deserializeInteger64Type(VALID_INTEGER64_JSON, SIBLING_JSON_COMPLEX);
+      const testType = parseInteger64Type(VALID_INTEGER64_JSON, SIBLING_JSON_COMPLEX);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(Integer64Type);
       expect(testType?.constructor.name).toStrictEqual('Integer64Type');
@@ -874,7 +874,7 @@ describe('deserialization-helpers', () => {
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializeInteger64Type(123);
+        parseInteger64Type(123);
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`json argument for Integer64Type is not a string`);
@@ -882,27 +882,27 @@ describe('deserialization-helpers', () => {
 
     it('should throw PrimitiveTypeError for invalid json value', () => {
       const t = () => {
-        deserializeInteger64Type(INVALID_INTEGER64_JSON);
+        parseInteger64Type(INVALID_INTEGER64_JSON);
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid value for Integer64Type`);
     });
   });
 
-  describe('deserializeIntegerType', () => {
+  describe('parseIntegerType', () => {
     const VALID_INTEGER = FHIR_MIN_INTEGER;
     const INVALID_INTEGER = FHIR_MAX_INTEGER + 1;
 
     it('should return undefined for empty json', () => {
-      let testType = deserializeIntegerType(undefined);
+      let testType = parseIntegerType(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializeIntegerType(null);
+      testType = parseIntegerType(null);
       expect(testType).toBeUndefined();
     });
 
     it('should return IntegerType for valid json', () => {
-      const testType = deserializeIntegerType(VALID_INTEGER);
+      const testType = parseIntegerType(VALID_INTEGER);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(IntegerType);
       expect(testType?.constructor.name).toStrictEqual('IntegerType');
@@ -916,7 +916,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return IntegerType for valid json with simple siblingJson', () => {
-      const testType = deserializeIntegerType(VALID_INTEGER, SIBLING_JSON_SIMPLE);
+      const testType = parseIntegerType(VALID_INTEGER, SIBLING_JSON_SIMPLE);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(IntegerType);
       expect(testType?.constructor.name).toStrictEqual('IntegerType');
@@ -930,7 +930,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return IntegerType for valid json with complex siblingJson', () => {
-      const testType = deserializeIntegerType(VALID_INTEGER, SIBLING_JSON_COMPLEX);
+      const testType = parseIntegerType(VALID_INTEGER, SIBLING_JSON_COMPLEX);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(IntegerType);
       expect(testType?.constructor.name).toStrictEqual('IntegerType');
@@ -945,7 +945,7 @@ describe('deserialization-helpers', () => {
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializeIntegerType('abc');
+        parseIntegerType('abc');
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`json argument for IntegerType is not a number`);
@@ -953,30 +953,30 @@ describe('deserialization-helpers', () => {
 
     it('should throw PrimitiveTypeError for invalid json value', () => {
       const t = () => {
-        deserializeIntegerType(INVALID_INTEGER);
+        parseIntegerType(INVALID_INTEGER);
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid value for IntegerType`);
     });
   });
 
-  describe('deserializeMarkdownType', () => {
+  describe('parseMarkdownType', () => {
     const VALID_MARKDOWN = 'This is a **valid** _string_.';
     const INVALID_MARKDOWN = TOO_BIG_STRING;
 
     it('should return undefined for empty json', () => {
-      let testType = deserializeMarkdownType(EMPTY_STRING);
+      let testType = parseMarkdownType(EMPTY_STRING);
       expect(testType).toBeUndefined();
 
-      testType = deserializeMarkdownType(undefined);
+      testType = parseMarkdownType(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializeMarkdownType(null);
+      testType = parseMarkdownType(null);
       expect(testType).toBeUndefined();
     });
 
     it('should return MarkdownType for valid json', () => {
-      const testType = deserializeMarkdownType(VALID_MARKDOWN);
+      const testType = parseMarkdownType(VALID_MARKDOWN);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(MarkdownType);
       expect(testType?.constructor.name).toStrictEqual('MarkdownType');
@@ -990,7 +990,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return MarkdownType for valid json with simple siblingJson', () => {
-      const testType = deserializeMarkdownType(VALID_MARKDOWN, SIBLING_JSON_SIMPLE);
+      const testType = parseMarkdownType(VALID_MARKDOWN, SIBLING_JSON_SIMPLE);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(MarkdownType);
       expect(testType?.constructor.name).toStrictEqual('MarkdownType');
@@ -1004,7 +1004,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return MarkdownType for valid json with complex siblingJson', () => {
-      const testType = deserializeMarkdownType(VALID_MARKDOWN, SIBLING_JSON_COMPLEX);
+      const testType = parseMarkdownType(VALID_MARKDOWN, SIBLING_JSON_COMPLEX);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(MarkdownType);
       expect(testType?.constructor.name).toStrictEqual('MarkdownType');
@@ -1019,7 +1019,7 @@ describe('deserialization-helpers', () => {
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializeMarkdownType(123);
+        parseMarkdownType(123);
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`json argument for MarkdownType is not a string`);
@@ -1027,30 +1027,30 @@ describe('deserialization-helpers', () => {
 
     it('should throw PrimitiveTypeError for invalid json value', () => {
       const t = () => {
-        deserializeMarkdownType(INVALID_MARKDOWN);
+        parseMarkdownType(INVALID_MARKDOWN);
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid value for MarkdownType`);
     });
   });
 
-  describe('deserializeOidType', () => {
+  describe('parseOidType', () => {
     const VALID_OID = `urn:oid:1.2.3.4.5`;
     const INVALID_OID = '1.3.5.7.9';
 
     it('should return undefined for empty json', () => {
-      let testType = deserializeOidType(EMPTY_STRING);
+      let testType = parseOidType(EMPTY_STRING);
       expect(testType).toBeUndefined();
 
-      testType = deserializeOidType(undefined);
+      testType = parseOidType(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializeOidType(null);
+      testType = parseOidType(null);
       expect(testType).toBeUndefined();
     });
 
     it('should return OidType for valid json', () => {
-      const testType = deserializeOidType(VALID_OID);
+      const testType = parseOidType(VALID_OID);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(OidType);
       expect(testType?.constructor.name).toStrictEqual('OidType');
@@ -1064,7 +1064,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return OidType for valid json with simple siblingJson', () => {
-      const testType = deserializeOidType(VALID_OID, SIBLING_JSON_SIMPLE);
+      const testType = parseOidType(VALID_OID, SIBLING_JSON_SIMPLE);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(OidType);
       expect(testType?.constructor.name).toStrictEqual('OidType');
@@ -1078,7 +1078,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return OidType for valid json with complex siblingJson', () => {
-      const testType = deserializeOidType(VALID_OID, SIBLING_JSON_COMPLEX);
+      const testType = parseOidType(VALID_OID, SIBLING_JSON_COMPLEX);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(OidType);
       expect(testType?.constructor.name).toStrictEqual('OidType');
@@ -1093,7 +1093,7 @@ describe('deserialization-helpers', () => {
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializeOidType(123);
+        parseOidType(123);
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`json argument for OidType is not a string`);
@@ -1101,27 +1101,27 @@ describe('deserialization-helpers', () => {
 
     it('should throw PrimitiveTypeError for invalid json value', () => {
       const t = () => {
-        deserializeOidType(INVALID_OID);
+        parseOidType(INVALID_OID);
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid value for OidType`);
     });
   });
 
-  describe('deserializePositiveIntType', () => {
+  describe('parsePositiveIntType', () => {
     const VALID_INTEGER = 1;
     const INVALID_INTEGER = 0;
 
     it('should return undefined for empty json', () => {
-      let testType = deserializePositiveIntType(undefined);
+      let testType = parsePositiveIntType(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializePositiveIntType(null);
+      testType = parsePositiveIntType(null);
       expect(testType).toBeUndefined();
     });
 
     it('should return PositiveIntType for valid json', () => {
-      const testType = deserializePositiveIntType(VALID_INTEGER);
+      const testType = parsePositiveIntType(VALID_INTEGER);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(PositiveIntType);
       expect(testType?.constructor.name).toStrictEqual('PositiveIntType');
@@ -1135,7 +1135,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return PositiveIntType for valid json with simple siblingJson', () => {
-      const testType = deserializePositiveIntType(VALID_INTEGER, SIBLING_JSON_SIMPLE);
+      const testType = parsePositiveIntType(VALID_INTEGER, SIBLING_JSON_SIMPLE);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(PositiveIntType);
       expect(testType?.constructor.name).toStrictEqual('PositiveIntType');
@@ -1149,7 +1149,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return PositiveIntType for valid json with complex siblingJson', () => {
-      const testType = deserializePositiveIntType(VALID_INTEGER, SIBLING_JSON_COMPLEX);
+      const testType = parsePositiveIntType(VALID_INTEGER, SIBLING_JSON_COMPLEX);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(PositiveIntType);
       expect(testType?.constructor.name).toStrictEqual('PositiveIntType');
@@ -1164,7 +1164,7 @@ describe('deserialization-helpers', () => {
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializePositiveIntType('abc');
+        parsePositiveIntType('abc');
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`json argument for PositiveIntType is not a number`);
@@ -1172,30 +1172,30 @@ describe('deserialization-helpers', () => {
 
     it('should throw PrimitiveTypeError for invalid json value', () => {
       const t = () => {
-        deserializePositiveIntType(INVALID_INTEGER);
+        parsePositiveIntType(INVALID_INTEGER);
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid value for PositiveIntType`);
     });
   });
 
-  describe('deserializeStringType', () => {
+  describe('parseStringType', () => {
     const VALID_STRING = 'This is a valid string.';
     const INVALID_STRING = TOO_BIG_STRING;
 
     it('should return undefined for empty json', () => {
-      let testType = deserializeStringType(EMPTY_STRING);
+      let testType = parseStringType(EMPTY_STRING);
       expect(testType).toBeUndefined();
 
-      testType = deserializeStringType(undefined);
+      testType = parseStringType(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializeStringType(null);
+      testType = parseStringType(null);
       expect(testType).toBeUndefined();
     });
 
     it('should return StringType for valid json', () => {
-      const testType = deserializeStringType(VALID_STRING);
+      const testType = parseStringType(VALID_STRING);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(StringType);
       expect(testType?.constructor.name).toStrictEqual('StringType');
@@ -1209,7 +1209,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return StringType for valid json with simple siblingJson', () => {
-      const testType = deserializeStringType(VALID_STRING, SIBLING_JSON_SIMPLE);
+      const testType = parseStringType(VALID_STRING, SIBLING_JSON_SIMPLE);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(StringType);
       expect(testType?.constructor.name).toStrictEqual('StringType');
@@ -1223,7 +1223,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return StringType for valid json with complex siblingJson', () => {
-      const testType = deserializeStringType(VALID_STRING, SIBLING_JSON_COMPLEX);
+      const testType = parseStringType(VALID_STRING, SIBLING_JSON_COMPLEX);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(StringType);
       expect(testType?.constructor.name).toStrictEqual('StringType');
@@ -1238,7 +1238,7 @@ describe('deserialization-helpers', () => {
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializeStringType(123);
+        parseStringType(123);
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`json argument for StringType is not a string`);
@@ -1246,30 +1246,30 @@ describe('deserialization-helpers', () => {
 
     it('should throw PrimitiveTypeError for invalid json value', () => {
       const t = () => {
-        deserializeStringType(INVALID_STRING);
+        parseStringType(INVALID_STRING);
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid value for StringType`);
     });
   });
 
-  describe('deserializeTimeType', () => {
+  describe('parseTimeType', () => {
     const VALID_TIME = `13:28:17`;
     const INVALID_TIME = `invalid time`;
 
     it('should return undefined for empty json', () => {
-      let testType = deserializeTimeType(EMPTY_STRING);
+      let testType = parseTimeType(EMPTY_STRING);
       expect(testType).toBeUndefined();
 
-      testType = deserializeTimeType(undefined);
+      testType = parseTimeType(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializeTimeType(null);
+      testType = parseTimeType(null);
       expect(testType).toBeUndefined();
     });
 
     it('should return TimeType for valid json', () => {
-      const testType = deserializeTimeType(VALID_TIME);
+      const testType = parseTimeType(VALID_TIME);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(TimeType);
       expect(testType?.constructor.name).toStrictEqual('TimeType');
@@ -1283,7 +1283,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return TimeType for valid json with simple siblingJson', () => {
-      const testType = deserializeTimeType(VALID_TIME, SIBLING_JSON_SIMPLE);
+      const testType = parseTimeType(VALID_TIME, SIBLING_JSON_SIMPLE);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(TimeType);
       expect(testType?.constructor.name).toStrictEqual('TimeType');
@@ -1297,7 +1297,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return TimeType for valid json with complex siblingJson', () => {
-      const testType = deserializeTimeType(VALID_TIME, SIBLING_JSON_COMPLEX);
+      const testType = parseTimeType(VALID_TIME, SIBLING_JSON_COMPLEX);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(TimeType);
       expect(testType?.constructor.name).toStrictEqual('TimeType');
@@ -1312,7 +1312,7 @@ describe('deserialization-helpers', () => {
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializeTimeType(123);
+        parseTimeType(123);
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`json argument for TimeType is not a string`);
@@ -1320,27 +1320,27 @@ describe('deserialization-helpers', () => {
 
     it('should throw PrimitiveTypeError for invalid json value', () => {
       const t = () => {
-        deserializeTimeType(INVALID_TIME);
+        parseTimeType(INVALID_TIME);
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid value for TimeType`);
     });
   });
 
-  describe('deserializeUnsignedIntType', () => {
+  describe('parseUnsignedIntType', () => {
     const VALID_INTEGER = 0;
     const INVALID_INTEGER = -1;
 
     it('should return undefined for empty json', () => {
-      let testType = deserializeUnsignedIntType(undefined);
+      let testType = parseUnsignedIntType(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializeUnsignedIntType(null);
+      testType = parseUnsignedIntType(null);
       expect(testType).toBeUndefined();
     });
 
     it('should return UnsignedIntType for valid json', () => {
-      const testType = deserializeUnsignedIntType(VALID_INTEGER);
+      const testType = parseUnsignedIntType(VALID_INTEGER);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(UnsignedIntType);
       expect(testType?.constructor.name).toStrictEqual('UnsignedIntType');
@@ -1354,7 +1354,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return UnsignedIntType for valid json with simple siblingJson', () => {
-      const testType = deserializeUnsignedIntType(VALID_INTEGER, SIBLING_JSON_SIMPLE);
+      const testType = parseUnsignedIntType(VALID_INTEGER, SIBLING_JSON_SIMPLE);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(UnsignedIntType);
       expect(testType?.constructor.name).toStrictEqual('UnsignedIntType');
@@ -1368,7 +1368,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return UnsignedIntType for valid json with complex siblingJson', () => {
-      const testType = deserializeUnsignedIntType(VALID_INTEGER, SIBLING_JSON_COMPLEX);
+      const testType = parseUnsignedIntType(VALID_INTEGER, SIBLING_JSON_COMPLEX);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(UnsignedIntType);
       expect(testType?.constructor.name).toStrictEqual('UnsignedIntType');
@@ -1383,7 +1383,7 @@ describe('deserialization-helpers', () => {
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializeUnsignedIntType('abc');
+        parseUnsignedIntType('abc');
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`json argument for UnsignedIntType is not a number`);
@@ -1391,30 +1391,30 @@ describe('deserialization-helpers', () => {
 
     it('should throw PrimitiveTypeError for invalid json value', () => {
       const t = () => {
-        deserializeUnsignedIntType(INVALID_INTEGER);
+        parseUnsignedIntType(INVALID_INTEGER);
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid value for UnsignedIntType`);
     });
   });
 
-  describe('deserializeUriType', () => {
+  describe('parseUriType', () => {
     const VALID_URI = `testUriType`;
     const INVALID_URI = ' invalid Uri ';
 
     it('should return undefined for empty json', () => {
-      let testType = deserializeUriType(EMPTY_STRING);
+      let testType = parseUriType(EMPTY_STRING);
       expect(testType).toBeUndefined();
 
-      testType = deserializeUriType(undefined);
+      testType = parseUriType(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializeUriType(null);
+      testType = parseUriType(null);
       expect(testType).toBeUndefined();
     });
 
     it('should return UriType for valid json', () => {
-      const testType = deserializeUriType(VALID_URI);
+      const testType = parseUriType(VALID_URI);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(UriType);
       expect(testType?.constructor.name).toStrictEqual('UriType');
@@ -1428,7 +1428,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return UriType for valid json with simple siblingJson', () => {
-      const testType = deserializeUriType(VALID_URI, SIBLING_JSON_SIMPLE);
+      const testType = parseUriType(VALID_URI, SIBLING_JSON_SIMPLE);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(UriType);
       expect(testType?.constructor.name).toStrictEqual('UriType');
@@ -1442,7 +1442,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return UriType for valid json with complex siblingJson', () => {
-      const testType = deserializeUriType(VALID_URI, SIBLING_JSON_COMPLEX);
+      const testType = parseUriType(VALID_URI, SIBLING_JSON_COMPLEX);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(UriType);
       expect(testType?.constructor.name).toStrictEqual('UriType');
@@ -1457,7 +1457,7 @@ describe('deserialization-helpers', () => {
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializeUriType(123);
+        parseUriType(123);
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`json argument for UriType is not a string`);
@@ -1465,30 +1465,30 @@ describe('deserialization-helpers', () => {
 
     it('should throw PrimitiveTypeError for invalid json value', () => {
       const t = () => {
-        deserializeUriType(INVALID_URI);
+        parseUriType(INVALID_URI);
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid value for UriType`);
     });
   });
 
-  describe('deserializeUrlType', () => {
+  describe('parseUrlType', () => {
     const VALID_URL = `testUrlType`;
     const INVALID_URL = ' invalid Url ';
 
     it('should return undefined for empty json', () => {
-      let testType = deserializeUrlType(EMPTY_STRING);
+      let testType = parseUrlType(EMPTY_STRING);
       expect(testType).toBeUndefined();
 
-      testType = deserializeUrlType(undefined);
+      testType = parseUrlType(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializeUrlType(null);
+      testType = parseUrlType(null);
       expect(testType).toBeUndefined();
     });
 
     it('should return UrlType for valid json', () => {
-      const testType = deserializeUrlType(VALID_URL);
+      const testType = parseUrlType(VALID_URL);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(UrlType);
       expect(testType?.constructor.name).toStrictEqual('UrlType');
@@ -1502,7 +1502,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return UrlType for valid json with simple siblingJson', () => {
-      const testType = deserializeUrlType(VALID_URL, SIBLING_JSON_SIMPLE);
+      const testType = parseUrlType(VALID_URL, SIBLING_JSON_SIMPLE);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(UrlType);
       expect(testType?.constructor.name).toStrictEqual('UrlType');
@@ -1516,7 +1516,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return UrlType for valid json with complex siblingJson', () => {
-      const testType = deserializeUrlType(VALID_URL, SIBLING_JSON_COMPLEX);
+      const testType = parseUrlType(VALID_URL, SIBLING_JSON_COMPLEX);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(UrlType);
       expect(testType?.constructor.name).toStrictEqual('UrlType');
@@ -1531,7 +1531,7 @@ describe('deserialization-helpers', () => {
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializeUrlType(123);
+        parseUrlType(123);
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`json argument for UrlType is not a string`);
@@ -1539,30 +1539,30 @@ describe('deserialization-helpers', () => {
 
     it('should throw PrimitiveTypeError for invalid json value', () => {
       const t = () => {
-        deserializeUrlType(INVALID_URL);
+        parseUrlType(INVALID_URL);
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid value for UrlType`);
     });
   });
 
-  describe('deserializeUuidType', () => {
+  describe('parseUuidType', () => {
     const VALID_UUID = `urn:uuid:c757873d-ec9a-4326-a141-556f43239520`;
     const INVALID_UUID = '6AD7EDAD-8F73-4A43-9CCB-8D72679FFD9C';
 
     it('should return undefined for empty json', () => {
-      let testType = deserializeUuidType(EMPTY_STRING);
+      let testType = parseUuidType(EMPTY_STRING);
       expect(testType).toBeUndefined();
 
-      testType = deserializeUuidType(undefined);
+      testType = parseUuidType(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializeUuidType(null);
+      testType = parseUuidType(null);
       expect(testType).toBeUndefined();
     });
 
     it('should return UuidType for valid json', () => {
-      const testType = deserializeUuidType(VALID_UUID);
+      const testType = parseUuidType(VALID_UUID);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(UuidType);
       expect(testType?.constructor.name).toStrictEqual('UuidType');
@@ -1576,7 +1576,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return UuidType for valid json with simple siblingJson', () => {
-      const testType = deserializeUuidType(VALID_UUID, SIBLING_JSON_SIMPLE);
+      const testType = parseUuidType(VALID_UUID, SIBLING_JSON_SIMPLE);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(UuidType);
       expect(testType?.constructor.name).toStrictEqual('UuidType');
@@ -1590,7 +1590,7 @@ describe('deserialization-helpers', () => {
     });
 
     it('should return UuidType for valid json with complex siblingJson', () => {
-      const testType = deserializeUuidType(VALID_UUID, SIBLING_JSON_COMPLEX);
+      const testType = parseUuidType(VALID_UUID, SIBLING_JSON_COMPLEX);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(UuidType);
       expect(testType?.constructor.name).toStrictEqual('UuidType');
@@ -1605,7 +1605,7 @@ describe('deserialization-helpers', () => {
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializeUuidType(123);
+        parseUuidType(123);
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`json argument for UuidType is not a string`);
@@ -1613,27 +1613,27 @@ describe('deserialization-helpers', () => {
 
     it('should throw PrimitiveTypeError for invalid json value', () => {
       const t = () => {
-        deserializeUuidType(INVALID_UUID);
+        parseUuidType(INVALID_UUID);
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid value for UuidType`);
     });
   });
 
-  describe('deserializeXhtmlType', () => {
+  describe('parseXhtmlType', () => {
     const VALID_XHTML = `<div xmlns="http://www.w3.org/1999/xhtml">text</div>`;
     const INVALID_XHTML = '';
 
     it('should return undefined for empty json', () => {
-      let testType = deserializeXhtmlType(undefined);
+      let testType = parseXhtmlType(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializeXhtmlType(null);
+      testType = parseXhtmlType(null);
       expect(testType).toBeUndefined();
     });
 
     it('should return XhtmlType for valid json', () => {
-      const testType = deserializeXhtmlType(VALID_XHTML);
+      const testType = parseXhtmlType(VALID_XHTML);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(XhtmlType);
       expect(testType?.constructor.name).toStrictEqual('XhtmlType');
@@ -1648,7 +1648,7 @@ describe('deserialization-helpers', () => {
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializeXhtmlType(123);
+        parseXhtmlType(123);
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`json argument for XhtmlType is not a string`);
@@ -1656,7 +1656,7 @@ describe('deserialization-helpers', () => {
 
     it('should throw TypeError for adding an extension', () => {
       const t = () => {
-        deserializeXhtmlType(VALID_XHTML, SIBLING_JSON_SIMPLE);
+        parseXhtmlType(VALID_XHTML, SIBLING_JSON_SIMPLE);
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`According to the FHIR specification, Extensions are not permitted on the xhtml type`);
@@ -1664,28 +1664,28 @@ describe('deserialization-helpers', () => {
 
     it('should throw PrimitiveTypeError for invalid json value', () => {
       const t = () => {
-        deserializeXhtmlType(INVALID_XHTML);
+        parseXhtmlType(INVALID_XHTML);
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid value for XhtmlType`);
     });
   });
 
-  describe('deserializeCodeableConcept', () => {
+  describe('parseCodeableConcept', () => {
     it('should return undefined for empty json', () => {
-      let testType = deserializeCodeableConcept({});
+      let testType = parseCodeableConcept({});
       expect(testType).toBeUndefined();
 
-      testType = deserializeCodeableConcept(undefined);
+      testType = parseCodeableConcept(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializeCodeableConcept(null);
+      testType = parseCodeableConcept(null);
       expect(testType).toBeUndefined();
     });
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializeCodeableConcept('NOT AN OBJECT');
+        parseCodeableConcept('NOT AN OBJECT');
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`CodeableConcept JSON is not a JSON object.`);
@@ -1748,7 +1748,7 @@ describe('deserialization-helpers', () => {
         },
       };
 
-      const testType: CodeableConcept | undefined = deserializeCodeableConcept(VALID_JSON);
+      const testType: CodeableConcept | undefined = parseCodeableConcept(VALID_JSON);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(CodeableConcept);
       expect(testType?.constructor.name).toStrictEqual('CodeableConcept');
@@ -1759,21 +1759,21 @@ describe('deserialization-helpers', () => {
     });
   });
 
-  describe('deserializeCoding', () => {
+  describe('parseCoding', () => {
     it('should return undefined for empty json', () => {
-      let testType = deserializeCoding({});
+      let testType = parseCoding({});
       expect(testType).toBeUndefined();
 
-      testType = deserializeCoding(undefined);
+      testType = parseCoding(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializeCoding(null);
+      testType = parseCoding(null);
       expect(testType).toBeUndefined();
     });
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializeCoding('NOT AN OBJECT');
+        parseCoding('NOT AN OBJECT');
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`Coding JSON is not a JSON object.`);
@@ -1826,7 +1826,7 @@ describe('deserialization-helpers', () => {
         userSelected: false,
       };
 
-      const testType: Coding | undefined = deserializeCoding(VALID_JSON);
+      const testType: Coding | undefined = parseCoding(VALID_JSON);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(Coding);
       expect(testType?.constructor.name).toStrictEqual('Coding');
@@ -1837,21 +1837,21 @@ describe('deserialization-helpers', () => {
     });
   });
 
-  describe('deserializeIdentifier', () => {
+  describe('parseIdentifier', () => {
     it('should return undefined for empty json', () => {
-      let testType = deserializeIdentifier({});
+      let testType = parseIdentifier({});
       expect(testType).toBeUndefined();
 
-      testType = deserializeIdentifier(undefined);
+      testType = parseIdentifier(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializeIdentifier(null);
+      testType = parseIdentifier(null);
       expect(testType).toBeUndefined();
     });
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializeIdentifier('NOT AN OBJECT');
+        parseIdentifier('NOT AN OBJECT');
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`Identifier JSON is not a JSON object.`);
@@ -1922,7 +1922,7 @@ describe('deserialization-helpers', () => {
         },
       };
 
-      const testType: Identifier | undefined = deserializeIdentifier(VALID_JSON);
+      const testType: Identifier | undefined = parseIdentifier(VALID_JSON);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(Identifier);
       expect(testType?.constructor.name).toStrictEqual('Identifier');
@@ -1933,21 +1933,21 @@ describe('deserialization-helpers', () => {
     });
   });
 
-  describe('deserializeMeta', () => {
+  describe('parseMeta', () => {
     it('should return undefined for empty json', () => {
-      let testType = deserializeMeta({});
+      let testType = parseMeta({});
       expect(testType).toBeUndefined();
 
-      testType = deserializeMeta(undefined);
+      testType = parseMeta(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializeMeta(null);
+      testType = parseMeta(null);
       expect(testType).toBeUndefined();
     });
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializeMeta('NOT AN OBJECT');
+        parseMeta('NOT AN OBJECT');
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`Meta JSON is not a JSON object.`);
@@ -2028,7 +2028,7 @@ describe('deserialization-helpers', () => {
         ],
       };
 
-      const testType: Meta | undefined = deserializeMeta(VALID_JSON);
+      const testType: Meta | undefined = parseMeta(VALID_JSON);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(Meta);
       expect(testType?.constructor.name).toStrictEqual('Meta');
@@ -2039,21 +2039,21 @@ describe('deserialization-helpers', () => {
     });
   });
 
-  describe('deserializeNarrative', () => {
+  describe('parseNarrative', () => {
     it('should return undefined for empty json', () => {
-      let testType = deserializeNarrative({});
+      let testType = parseNarrative({});
       expect(testType).toBeUndefined();
 
-      testType = deserializeNarrative(undefined);
+      testType = parseNarrative(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializeNarrative(null);
+      testType = parseNarrative(null);
       expect(testType).toBeUndefined();
     });
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializeNarrative('NOT AN OBJECT');
+        parseNarrative('NOT AN OBJECT');
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`Narrative JSON is not a JSON object.`);
@@ -2073,7 +2073,7 @@ describe('deserialization-helpers', () => {
       };
 
       const t = () => {
-        deserializeNarrative(INVALID_JSON);
+        parseNarrative(INVALID_JSON);
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`According to the FHIR specification, Extensions are not permitted on the xhtml type`);
@@ -2117,7 +2117,7 @@ describe('deserialization-helpers', () => {
         },
       };
 
-      const testType: Narrative | undefined = deserializeNarrative(VALID_JSON);
+      const testType: Narrative | undefined = parseNarrative(VALID_JSON);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(Narrative);
       expect(testType?.constructor.name).toStrictEqual('Narrative');
@@ -2128,21 +2128,21 @@ describe('deserialization-helpers', () => {
     });
   });
 
-  describe('deserializePeriod', () => {
+  describe('parsePeriod', () => {
     it('should return undefined for empty json', () => {
-      let testType = deserializePeriod({});
+      let testType = parsePeriod({});
       expect(testType).toBeUndefined();
 
-      testType = deserializePeriod(undefined);
+      testType = parsePeriod(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializePeriod(null);
+      testType = parsePeriod(null);
       expect(testType).toBeUndefined();
     });
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializePeriod('NOT AN OBJECT');
+        parsePeriod('NOT AN OBJECT');
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`Period JSON is not a JSON object.`);
@@ -2192,7 +2192,7 @@ describe('deserialization-helpers', () => {
         },
       };
 
-      const testType: Period | undefined = deserializePeriod(VALID_JSON);
+      const testType: Period | undefined = parsePeriod(VALID_JSON);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(Period);
       expect(testType?.constructor.name).toStrictEqual('Period');
@@ -2203,21 +2203,21 @@ describe('deserialization-helpers', () => {
     });
   });
 
-  describe('deserializeQuantity', () => {
+  describe('parseQuantity', () => {
     it('should return undefined for empty json', () => {
-      let testType = deserializeQuantity({});
+      let testType = parseQuantity({});
       expect(testType).toBeUndefined();
 
-      testType = deserializeQuantity(undefined);
+      testType = parseQuantity(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializeQuantity(null);
+      testType = parseQuantity(null);
       expect(testType).toBeUndefined();
     });
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializeQuantity('NOT AN OBJECT');
+        parseQuantity('NOT AN OBJECT');
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`Quantity JSON is not a JSON object.`);
@@ -2270,7 +2270,7 @@ describe('deserialization-helpers', () => {
         code: 'codeValue',
       };
 
-      const testType: Quantity | undefined = deserializeQuantity(VALID_JSON);
+      const testType: Quantity | undefined = parseQuantity(VALID_JSON);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(Quantity);
       expect(testType?.constructor.name).toStrictEqual('Quantity');
@@ -2281,21 +2281,21 @@ describe('deserialization-helpers', () => {
     });
   });
 
-  describe('deserializeRange', () => {
+  describe('parseRange', () => {
     it('should return undefined for empty json', () => {
-      let testType = deserializeRange({});
+      let testType = parseRange({});
       expect(testType).toBeUndefined();
 
-      testType = deserializeRange(undefined);
+      testType = parseRange(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializeRange(null);
+      testType = parseRange(null);
       expect(testType).toBeUndefined();
     });
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializeRange('NOT AN OBJECT');
+        parseRange('NOT AN OBJECT');
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`Range JSON is not a JSON object.`);
@@ -2355,7 +2355,7 @@ describe('deserialization-helpers', () => {
         },
       };
 
-      const testType: Range | undefined = deserializeRange(VALID_JSON);
+      const testType: Range | undefined = parseRange(VALID_JSON);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(Range);
       expect(testType?.constructor.name).toStrictEqual('Range');
@@ -2366,21 +2366,21 @@ describe('deserialization-helpers', () => {
     });
   });
 
-  describe('deserializeReference', () => {
+  describe('parseReference', () => {
     it('should return undefined for empty json', () => {
-      let testType = deserializeReference({});
+      let testType = parseReference({});
       expect(testType).toBeUndefined();
 
-      testType = deserializeReference(undefined);
+      testType = parseReference(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializeReference(null);
+      testType = parseReference(null);
       expect(testType).toBeUndefined();
     });
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializeReference('NOT AN OBJECT');
+        parseReference('NOT AN OBJECT');
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`Reference JSON is not a JSON object.`);
@@ -2445,7 +2445,7 @@ describe('deserialization-helpers', () => {
         display: 'This is another valid string!',
       };
 
-      const testType: Reference | undefined = deserializeReference(VALID_JSON);
+      const testType: Reference | undefined = parseReference(VALID_JSON);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(Reference);
       expect(testType?.constructor.name).toStrictEqual('Reference');
@@ -2456,21 +2456,21 @@ describe('deserialization-helpers', () => {
     });
   });
 
-  describe('deserializeSimpleQuantity', () => {
+  describe('parseSimpleQuantity', () => {
     it('should return undefined for empty json', () => {
-      let testType = deserializeSimpleQuantity({});
+      let testType = parseSimpleQuantity({});
       expect(testType).toBeUndefined();
 
-      testType = deserializeSimpleQuantity(undefined);
+      testType = parseSimpleQuantity(undefined);
       expect(testType).toBeUndefined();
 
-      testType = deserializeSimpleQuantity(null);
+      testType = parseSimpleQuantity(null);
       expect(testType).toBeUndefined();
     });
 
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
-        deserializeSimpleQuantity('NOT AN OBJECT');
+        parseSimpleQuantity('NOT AN OBJECT');
       };
       expect(t).toThrow(TypeError);
       expect(t).toThrow(`SimpleQuantity JSON is not a JSON object.`);
@@ -2522,7 +2522,7 @@ describe('deserialization-helpers', () => {
         code: 'codeValue',
       };
 
-      const testType: SimpleQuantity | undefined = deserializeSimpleQuantity(VALID_JSON);
+      const testType: SimpleQuantity | undefined = parseSimpleQuantity(VALID_JSON);
       expect(testType).toBeDefined();
       expect(testType).toBeInstanceOf(SimpleQuantity);
       expect(testType?.constructor.name).toStrictEqual('SimpleQuantity');

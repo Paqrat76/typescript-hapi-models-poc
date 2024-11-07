@@ -22,7 +22,7 @@
  */
 
 /**
- * Deserialization utilities
+ * Parsing (deserialization) utilities
  *
  * @privateRemarks
  * Due to TypeScript circular references, these functions have been gathered here rather than
@@ -67,16 +67,17 @@ import { Quantity } from '@src/fhir-core/data-types/complex/Quantity';
 import { Range } from '@src/fhir-core/data-types/complex/Range';
 import { SimpleQuantity } from '@src/fhir-core/data-types/complex/SimpleQuantity';
 
-const INSTANCE_EMPTY_ERROR_MSG = `Deserialized instance is unexpectedly "empty"`;
+const INSTANCE_EMPTY_ERROR_MSG = `Parsed instance is unexpectedly "empty"`;
 
 //region CoreTypes
 
 /**
- * Deserialize the provided json into Extension data model.
+ * Parse the provided json into Extension data model.
  *
  * @remarks
  * Refer to the "Notes" section the linked "Extension Element" for rules for FHIR Extensions.
- * The following rules are applicable to deserializing JSON into an Extension:
+ * The following rules are applicable to parsing JSON into an Extension:
+ * The following rules are applicable to parsing JSON into an Extension:
  * - The `url` is a mandatory attribute / property
  * - An extension SHALL have either a value (i.e. a `value[x]` element) or sub-extensions, but not both.
  *   If present, the `value[x]` element SHALL have content (value attribute or other elements)
@@ -84,10 +85,10 @@ const INSTANCE_EMPTY_ERROR_MSG = `Deserialized instance is unexpectedly "empty"`
  * @param json - JSON representing Extension
  * @returns Extension data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  * @see [Extension Element](https://hl7.org/fhir/R4/extensibility.html#extension)
  */
-export function deserializeExtension(json: JSON.Object | undefined): Extension | undefined {
+export function parseExtension(json: JSON.Object | undefined): Extension | undefined {
   if (isNil(json) || (JSON.isObject(json) && isEmpty(json))) {
     return undefined;
   }
@@ -110,7 +111,7 @@ export function deserializeExtension(json: JSON.Object | undefined): Extension |
     // Extension has child extensions only
     const extensionJsonArray: JSON.Array = JSON.asArray(extensionJsonObj['extension']);
     extensionJsonArray.forEach((extensionJson: JSON.Value) => {
-      const extension: Extension | undefined = deserializeExtension(extensionJson as JSON.Object);
+      const extension: Extension | undefined = parseExtension(extensionJson as JSON.Object);
       if (extension !== undefined) {
         extensions.push(extension);
       }
@@ -170,7 +171,7 @@ function processElementJson(instance: DataType, dataTypeJson: JSON.Value | undef
     const extensions = [] as Extension[];
     const extensionArray = element['extension'] as JSON.Array;
     for (const extensionJson of extensionArray) {
-      const extension: Extension | undefined = deserializeExtension(extensionJson as JSON.Object);
+      const extension: Extension | undefined = parseExtension(extensionJson as JSON.Object);
       if (extension !== undefined) {
         extensions.push(extension);
       }
@@ -199,69 +200,69 @@ function getValueXData(extensionJsonObj: JSON.Object): DataType | undefined {
     if (dataValue !== undefined) {
       switch (valueXKey) {
         case 'valueBase64Binary':
-          return deserializeBase64BinaryType(dataValue, siblingDataValue);
+          return parseBase64BinaryType(dataValue, siblingDataValue);
         case 'valueBoolean':
-          return deserializeBooleanType(dataValue, siblingDataValue);
+          return parseBooleanType(dataValue, siblingDataValue);
         case 'valueCanonicalType':
-          return deserializeCanonicalType(dataValue, siblingDataValue);
+          return parseCanonicalType(dataValue, siblingDataValue);
         case 'valueCodeType':
-          // NOTE - EnumCodeType is a subclass of CodeType and will always be serialized/deserialized as a CodeType
-          return deserializeCodeType(dataValue, siblingDataValue);
+          // NOTE - EnumCodeType is a subclass of CodeType and will always be serialized/parsed as a CodeType
+          return parseCodeType(dataValue, siblingDataValue);
         case 'valueDateTimeType':
-          return deserializeDateTimeType(dataValue, siblingDataValue);
+          return parseDateTimeType(dataValue, siblingDataValue);
         case 'valueDateType':
-          return deserializeDateType(dataValue, siblingDataValue);
+          return parseDateType(dataValue, siblingDataValue);
         case 'valueDecimalType':
-          return deserializeDecimalType(dataValue, siblingDataValue);
+          return parseDecimalType(dataValue, siblingDataValue);
         case 'valueIdType':
-          return deserializeIdType(dataValue, siblingDataValue);
+          return parseIdType(dataValue, siblingDataValue);
         case 'valueInstantType':
-          return deserializeInstantType(dataValue, siblingDataValue);
+          return parseInstantType(dataValue, siblingDataValue);
         case 'valueInteger64Type':
-          return deserializeInteger64Type(dataValue, siblingDataValue);
+          return parseInteger64Type(dataValue, siblingDataValue);
         case 'valueIntegerType':
-          return deserializeIntegerType(dataValue, siblingDataValue);
+          return parseIntegerType(dataValue, siblingDataValue);
         case 'valueMarkdownType':
-          return deserializeMarkdownType(dataValue, siblingDataValue);
+          return parseMarkdownType(dataValue, siblingDataValue);
         case 'valueOidType':
-          return deserializeOidType(dataValue, siblingDataValue);
+          return parseOidType(dataValue, siblingDataValue);
         case 'valuePositiveIntType':
-          return deserializePositiveIntType(dataValue, siblingDataValue);
+          return parsePositiveIntType(dataValue, siblingDataValue);
         case 'valueString':
-          return deserializeStringType(dataValue, siblingDataValue);
+          return parseStringType(dataValue, siblingDataValue);
         case 'valueTimeType':
-          return deserializeTimeType(dataValue, siblingDataValue);
+          return parseTimeType(dataValue, siblingDataValue);
         case 'valueUnsignedIntType':
-          return deserializeUnsignedIntType(dataValue, siblingDataValue);
+          return parseUnsignedIntType(dataValue, siblingDataValue);
         case 'valueUriType':
-          return deserializeUriType(dataValue, siblingDataValue);
+          return parseUriType(dataValue, siblingDataValue);
         case 'valueUrlType':
-          return deserializeUrlType(dataValue, siblingDataValue);
+          return parseUrlType(dataValue, siblingDataValue);
         case 'valueUuidType':
-          return deserializeUuidType(dataValue, siblingDataValue);
+          return parseUuidType(dataValue, siblingDataValue);
         case 'valueXhtmlType':
-          return deserializeXhtmlType(dataValue, siblingDataValue);
+          return parseXhtmlType(dataValue, siblingDataValue);
 
         case 'valueCodeableConcept':
-          return deserializeCodeableConcept(dataValue);
+          return parseCodeableConcept(dataValue);
         case 'valueCoding':
-          return deserializeCoding(dataValue);
+          return parseCoding(dataValue);
         case 'valueIdentifier':
-          return deserializeIdentifier(dataValue);
+          return parseIdentifier(dataValue);
         case 'valueMeta':
-          return deserializeMeta(dataValue);
+          return parseMeta(dataValue);
         case 'valueNarrative':
-          return deserializeNarrative(dataValue);
+          return parseNarrative(dataValue);
         case 'valuePeriod':
-          return deserializePeriod(dataValue);
+          return parsePeriod(dataValue);
         case 'valueQuantity':
-          return deserializeQuantity(dataValue);
+          return parseQuantity(dataValue);
         case 'valueRange':
-          return deserializeRange(dataValue);
+          return parseRange(dataValue);
         case 'valueReference':
-          return deserializeReference(dataValue);
+          return parseReference(dataValue);
         case 'valueSimpleQuantity':
-          return deserializeSimpleQuantity(dataValue);
+          return parseSimpleQuantity(dataValue);
 
         default:
           return undefined;
@@ -382,15 +383,15 @@ function getPrimitiveTypeListJson(
 //region PrimitiveTypes
 
 /**
- * Deserialize the provided json into Base64BinaryType data model.
+ * Parse the provided json into Base64BinaryType data model.
  *
  * @param json - JSON representing Base64BinaryType
  * @param siblingJson - JSON representing the Base64BinaryType's inherited Element
  * @returns Base64BinaryType data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializeBase64BinaryType(
+export function parseBase64BinaryType(
   json: JSON.Value | undefined,
   siblingJson?: JSON.Value,
 ): Base64BinaryType | undefined {
@@ -407,18 +408,15 @@ export function deserializeBase64BinaryType(
 }
 
 /**
- * Deserialize the provided json into BooleanType data model.
+ * Parse the provided json into BooleanType data model.
  *
  * @param json - JSON representing BooleanType
  * @param siblingJson - JSON representing the BooleanType's inherited Element
  * @returns BooleanType data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializeBooleanType(
-  json: JSON.Value | undefined,
-  siblingJson?: JSON.Value,
-): BooleanType | undefined {
+export function parseBooleanType(json: JSON.Value | undefined, siblingJson?: JSON.Value): BooleanType | undefined {
   if (isNil(json)) {
     return undefined;
   }
@@ -432,18 +430,15 @@ export function deserializeBooleanType(
 }
 
 /**
- * Deserialize the provided json into a CanonicalType data model.
+ * Parse the provided json into a CanonicalType data model.
  *
  * @param json - JSON representing a CanonicalType
  * @param siblingJson - JSON representing the CanonicalType's inherited Element
  * @returns an CanonicalType data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializeCanonicalType(
-  json: JSON.Value | undefined,
-  siblingJson?: JSON.Value,
-): CanonicalType | undefined {
+export function parseCanonicalType(json: JSON.Value | undefined, siblingJson?: JSON.Value): CanonicalType | undefined {
   if (isNil(json) || (JSON.isString(json) && json.trim().length === 0)) {
     return undefined;
   }
@@ -457,18 +452,18 @@ export function deserializeCanonicalType(
 }
 
 /**
- * Deserialize the provided json into CodeType data model.
+ * Parse the provided json into CodeType data model.
  *
  * @remarks
- * EnumCodeType is a subclass of CodeType and will always be serialized/deserialized as a CodeType.
+ * EnumCodeType is a subclass of CodeType and will always be serialized/parsed as a CodeType.
  *
  * @param json - JSON representing CodeType
  * @param siblingJson - JSON representing the CodeType's inherited Element
  * @returns CodeType data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializeCodeType(json: JSON.Value | undefined, siblingJson?: JSON.Value): CodeType | undefined {
+export function parseCodeType(json: JSON.Value | undefined, siblingJson?: JSON.Value): CodeType | undefined {
   if (isNil(json) || (JSON.isString(json) && json.trim().length === 0)) {
     return undefined;
   }
@@ -482,18 +477,15 @@ export function deserializeCodeType(json: JSON.Value | undefined, siblingJson?: 
 }
 
 /**
- * Deserialize the provided json into DateTimeType data model.
+ * Parse the provided json into DateTimeType data model.
  *
  * @param json - JSON representing DateTimeType
  * @param siblingJson - JSON representing the DateTimeType's inherited Element
  * @returns DateTimeType data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializeDateTimeType(
-  json: JSON.Value | undefined,
-  siblingJson?: JSON.Value,
-): DateTimeType | undefined {
+export function parseDateTimeType(json: JSON.Value | undefined, siblingJson?: JSON.Value): DateTimeType | undefined {
   if (isNil(json) || (JSON.isString(json) && json.trim().length === 0)) {
     return undefined;
   }
@@ -507,15 +499,15 @@ export function deserializeDateTimeType(
 }
 
 /**
- * Deserialize the provided json into DateType data model.
+ * Parse the provided json into DateType data model.
  *
  * @param json - JSON representing DateType
  * @param siblingJson - JSON representing the DateType's inherited Element
  * @returns DateType data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializeDateType(json: JSON.Value | undefined, siblingJson?: JSON.Value): DateType | undefined {
+export function parseDateType(json: JSON.Value | undefined, siblingJson?: JSON.Value): DateType | undefined {
   if (isNil(json) || (JSON.isString(json) && json.trim().length === 0)) {
     return undefined;
   }
@@ -529,18 +521,15 @@ export function deserializeDateType(json: JSON.Value | undefined, siblingJson?: 
 }
 
 /**
- * Deserialize the provided json into DecimalType data model.
+ * Parse the provided json into DecimalType data model.
  *
  * @param json - JSON representing DecimalType
  * @param siblingJson - JSON representing the DecimalType's inherited Element
  * @returns DecimalType data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializeDecimalType(
-  json: JSON.Value | undefined,
-  siblingJson?: JSON.Value,
-): DecimalType | undefined {
+export function parseDecimalType(json: JSON.Value | undefined, siblingJson?: JSON.Value): DecimalType | undefined {
   if (isNil(json)) {
     return undefined;
   }
@@ -554,15 +543,15 @@ export function deserializeDecimalType(
 }
 
 /**
- * Deserialize the provided json into IdType data model.
+ * Parse the provided json into IdType data model.
  *
  * @param json - JSON representing IdType
  * @param siblingJson - JSON representing the IdType's inherited Element
  * @returns IdType data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializeIdType(json: JSON.Value | undefined, siblingJson?: JSON.Value): IdType | undefined {
+export function parseIdType(json: JSON.Value | undefined, siblingJson?: JSON.Value): IdType | undefined {
   if (isNil(json) || (JSON.isString(json) && json.trim().length === 0)) {
     return undefined;
   }
@@ -576,18 +565,15 @@ export function deserializeIdType(json: JSON.Value | undefined, siblingJson?: JS
 }
 
 /**
- * Deserialize the provided json into InstantType data model.
+ * Parse the provided json into InstantType data model.
  *
  * @param json - JSON representing InstantType
  * @param siblingJson - JSON representing the InstantType's inherited Element
  * @returns InstantType data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializeInstantType(
-  json: JSON.Value | undefined,
-  siblingJson?: JSON.Value,
-): InstantType | undefined {
+export function parseInstantType(json: JSON.Value | undefined, siblingJson?: JSON.Value): InstantType | undefined {
   if (isNil(json) || (JSON.isString(json) && json.trim().length === 0)) {
     return undefined;
   }
@@ -601,21 +587,18 @@ export function deserializeInstantType(
 }
 
 /**
- * Deserialize the provided json into Integer64Type data model.
+ * Parse the provided json into Integer64Type data model.
  *
  * @remarks
- * Integer64 serializes the underlying BigInt as a string. Therefore, deserialize a JSON string value into a BigInt.
+ * Integer64 serializes the underlying BigInt as a string. Therefore, parse a JSON string value into a BigInt.
  *
  * @param json - JSON representing Integer64Type
  * @param siblingJson - JSON representing the Integer64Type's inherited Element
  * @returns Integer64Type data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializeInteger64Type(
-  json: JSON.Value | undefined,
-  siblingJson?: JSON.Value,
-): Integer64Type | undefined {
+export function parseInteger64Type(json: JSON.Value | undefined, siblingJson?: JSON.Value): Integer64Type | undefined {
   if (isNil(json)) {
     return undefined;
   }
@@ -630,18 +613,15 @@ export function deserializeInteger64Type(
 }
 
 /**
- * Deserialize the provided json into IntegerType data model.
+ * Parse the provided json into IntegerType data model.
  *
  * @param json - JSON representing IntegerType
  * @param siblingJson - JSON representing the IntegerType's inherited Element
  * @returns IntegerType data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializeIntegerType(
-  json: JSON.Value | undefined,
-  siblingJson?: JSON.Value,
-): IntegerType | undefined {
+export function parseIntegerType(json: JSON.Value | undefined, siblingJson?: JSON.Value): IntegerType | undefined {
   if (isNil(json)) {
     return undefined;
   }
@@ -655,18 +635,15 @@ export function deserializeIntegerType(
 }
 
 /**
- * Deserialize the provided json into MarkdownType data model.
+ * Parse the provided json into MarkdownType data model.
  *
  * @param json - JSON representing MarkdownType
  * @param siblingJson - JSON representing the MarkdownType's inherited Element
  * @returns MarkdownType data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializeMarkdownType(
-  json: JSON.Value | undefined,
-  siblingJson?: JSON.Value,
-): MarkdownType | undefined {
+export function parseMarkdownType(json: JSON.Value | undefined, siblingJson?: JSON.Value): MarkdownType | undefined {
   if (isNil(json) || (JSON.isString(json) && json.trim().length === 0)) {
     return undefined;
   }
@@ -680,15 +657,15 @@ export function deserializeMarkdownType(
 }
 
 /**
- * Deserialize the provided json into OidType data model.
+ * Parse the provided json into OidType data model.
  *
  * @param json - JSON representing OidType
  * @param siblingJson - JSON representing the OidType's inherited Element
  * @returns OidType data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializeOidType(json: JSON.Value | undefined, siblingJson?: JSON.Value): OidType | undefined {
+export function parseOidType(json: JSON.Value | undefined, siblingJson?: JSON.Value): OidType | undefined {
   if (isNil(json) || (JSON.isString(json) && json.trim().length === 0)) {
     return undefined;
   }
@@ -702,15 +679,15 @@ export function deserializeOidType(json: JSON.Value | undefined, siblingJson?: J
 }
 
 /**
- * Deserialize the provided json into PositiveIntType data model.
+ * Parse the provided json into PositiveIntType data model.
  *
  * @param json - JSON representing PositiveIntType
  * @param siblingJson - JSON representing the PositiveIntType's inherited Element
  * @returns PositiveIntType data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializePositiveIntType(
+export function parsePositiveIntType(
   json: JSON.Value | undefined,
   siblingJson?: JSON.Value,
 ): PositiveIntType | undefined {
@@ -727,15 +704,15 @@ export function deserializePositiveIntType(
 }
 
 /**
- * Deserialize the provided json into StringType data model.
+ * Parse the provided json into StringType data model.
  *
  * @param json - JSON representing StringType
  * @param siblingJson - JSON representing the StringType's inherited Element
  * @returns StringType data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializeStringType(json: JSON.Value | undefined, siblingJson?: JSON.Value): StringType | undefined {
+export function parseStringType(json: JSON.Value | undefined, siblingJson?: JSON.Value): StringType | undefined {
   if (isNil(json) || (JSON.isString(json) && json.trim().length === 0)) {
     return undefined;
   }
@@ -749,15 +726,15 @@ export function deserializeStringType(json: JSON.Value | undefined, siblingJson?
 }
 
 /**
- * Deserialize the provided json into TimeType data model.
+ * Parse the provided json into TimeType data model.
  *
  * @param json - JSON representing TimeType
  * @param siblingJson - JSON representing the TimeType's inherited Element
  * @returns TimeType data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializeTimeType(json: JSON.Value | undefined, siblingJson?: JSON.Value): TimeType | undefined {
+export function parseTimeType(json: JSON.Value | undefined, siblingJson?: JSON.Value): TimeType | undefined {
   if (isNil(json) || (JSON.isString(json) && json.trim().length === 0)) {
     return undefined;
   }
@@ -771,15 +748,15 @@ export function deserializeTimeType(json: JSON.Value | undefined, siblingJson?: 
 }
 
 /**
- * Deserialize the provided json into UnsignedIntType data model.
+ * Parse the provided json into UnsignedIntType data model.
  *
  * @param json - JSON representing UnsignedIntType
  * @param siblingJson - JSON representing the UnsignedIntType's inherited Element
  * @returns UnsignedIntType data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializeUnsignedIntType(
+export function parseUnsignedIntType(
   json: JSON.Value | undefined,
   siblingJson?: JSON.Value,
 ): UnsignedIntType | undefined {
@@ -796,15 +773,15 @@ export function deserializeUnsignedIntType(
 }
 
 /**
- * Deserialize the provided json into UriType data model.
+ * Parse the provided json into UriType data model.
  *
  * @param json - JSON representing UriType
  * @param siblingJson - JSON representing the UriType's inherited Element
  * @returns UriType data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializeUriType(json: JSON.Value | undefined, siblingJson?: JSON.Value): UriType | undefined {
+export function parseUriType(json: JSON.Value | undefined, siblingJson?: JSON.Value): UriType | undefined {
   if (isNil(json) || (JSON.isString(json) && json.trim().length === 0)) {
     return undefined;
   }
@@ -818,15 +795,15 @@ export function deserializeUriType(json: JSON.Value | undefined, siblingJson?: J
 }
 
 /**
- * Deserialize the provided json into UrlType data model.
+ * Parse the provided json into UrlType data model.
  *
  * @param json - JSON representing UrlType
  * @param siblingJson - JSON representing the UrlType's inherited Element
  * @returns UrlType data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializeUrlType(json: JSON.Value | undefined, siblingJson?: JSON.Value): UrlType | undefined {
+export function parseUrlType(json: JSON.Value | undefined, siblingJson?: JSON.Value): UrlType | undefined {
   if (isNil(json) || (JSON.isString(json) && json.trim().length === 0)) {
     return undefined;
   }
@@ -840,15 +817,15 @@ export function deserializeUrlType(json: JSON.Value | undefined, siblingJson?: J
 }
 
 /**
- * Deserialize the provided json into UuidType data model.
+ * Parse the provided json into UuidType data model.
  *
  * @param json - JSON representing UuidType
  * @param siblingJson - JSON representing the UuidType's inherited Element
  * @returns UuidType data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializeUuidType(json: JSON.Value | undefined, siblingJson?: JSON.Value): UuidType | undefined {
+export function parseUuidType(json: JSON.Value | undefined, siblingJson?: JSON.Value): UuidType | undefined {
   if (isNil(json) || (JSON.isString(json) && json.trim().length === 0)) {
     return undefined;
   }
@@ -862,10 +839,10 @@ export function deserializeUuidType(json: JSON.Value | undefined, siblingJson?: 
 }
 
 /**
- * Deserialize the provided json into XhtmlType data model.
+ * Parse the provided json into XhtmlType data model.
  *
  * @remarks
- * The following rules are applicable to deserializing JSON into XhtmlType:
+ * The following rules are applicable to parsing JSON into XhtmlType:
  * - An empty string is an invalid xhtml value.
  * - According to the FHIR specification, Extensions are not permitted on the xhtml type.
  *
@@ -873,9 +850,9 @@ export function deserializeUuidType(json: JSON.Value | undefined, siblingJson?: 
  * @param siblingJson - JSON representing the XhtmlType's inherited Element
  * @returns XhtmlType data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializeXhtmlType(json: JSON.Value | undefined, siblingJson?: JSON.Value): XhtmlType | undefined {
+export function parseXhtmlType(json: JSON.Value | undefined, siblingJson?: JSON.Value): XhtmlType | undefined {
   if (isNil(json)) {
     return undefined;
   }
@@ -893,18 +870,15 @@ export function deserializeXhtmlType(json: JSON.Value | undefined, siblingJson?:
 //region ComplexTypes
 
 /**
- * Deserialize the provided json into CodeableConcept data model.
+ * Parse the provided json into CodeableConcept data model.
  *
  * @param json - JSON representing CodeableConcept
  * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to CodeableConcept
  * @returns CodeableConcept data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializeCodeableConcept(
-  json: JSON.Value | undefined,
-  sourceField?: string,
-): CodeableConcept | undefined {
+export function parseCodeableConcept(json: JSON.Value | undefined, sourceField?: string): CodeableConcept | undefined {
   if (isNil(json) || (JSON.isObject(json) && isEmpty(json))) {
     return undefined;
   }
@@ -919,14 +893,14 @@ export function deserializeCodeableConcept(
   if ('coding' in datatypeJsonObj) {
     const dataElementJsonArray: JSON.Array = JSON.asArray(datatypeJsonObj['coding'], `${source}.coding`);
     dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
-      const datatype: Coding | undefined = deserializeCoding(dataElementJson, `${source}.coding[${String(idx)}]`);
+      const datatype: Coding | undefined = parseCoding(dataElementJson, `${source}.coding[${String(idx)}]`);
       instance.addCoding(datatype);
     });
   }
 
   if ('text' in datatypeJsonObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'text', 'string');
-    const datatype: StringType | undefined = deserializeStringType(dtJson, dtSiblingJson);
+    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
     instance.setTextElement(datatype);
   }
 
@@ -935,15 +909,15 @@ export function deserializeCodeableConcept(
 }
 
 /**
- * Deserialize the provided json into Coding data model.
+ * Parse the provided json into Coding data model.
  *
  * @param json - JSON representing Coding
  * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Coding
  * @returns Coding data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializeCoding(json: JSON.Value | undefined, sourceField?: string): Coding | undefined {
+export function parseCoding(json: JSON.Value | undefined, sourceField?: string): Coding | undefined {
   if (isNil(json) || (JSON.isObject(json) && isEmpty(json))) {
     return undefined;
   }
@@ -957,31 +931,31 @@ export function deserializeCoding(json: JSON.Value | undefined, sourceField?: st
 
   if ('system' in datatypeJsonObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'system', 'string');
-    const datatype: UriType | undefined = deserializeUriType(dtJson, dtSiblingJson);
+    const datatype: UriType | undefined = parseUriType(dtJson, dtSiblingJson);
     instance.setSystemElement(datatype);
   }
 
   if ('version' in datatypeJsonObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'version', 'string');
-    const datatype: StringType | undefined = deserializeStringType(dtJson, dtSiblingJson);
+    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
     instance.setVersionElement(datatype);
   }
 
   if ('code' in datatypeJsonObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'code', 'string');
-    const datatype: CodeType | undefined = deserializeCodeType(dtJson, dtSiblingJson);
+    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
     instance.setCodeElement(datatype);
   }
 
   if ('display' in datatypeJsonObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'display', 'string');
-    const datatype: StringType | undefined = deserializeStringType(dtJson, dtSiblingJson);
+    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
     instance.setDisplayElement(datatype);
   }
 
   if ('userSelected' in datatypeJsonObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'userSelected', 'boolean');
-    const datatype: BooleanType | undefined = deserializeBooleanType(dtJson, dtSiblingJson);
+    const datatype: BooleanType | undefined = parseBooleanType(dtJson, dtSiblingJson);
     instance.setUserSelectedElement(datatype);
   }
 
@@ -990,15 +964,15 @@ export function deserializeCoding(json: JSON.Value | undefined, sourceField?: st
 }
 
 /**
- * Deserialize the provided json into Identifier data model.
+ * Parse the provided json into Identifier data model.
  *
  * @param json - JSON representing Identifier
  * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Identifier
  * @returns Identifier data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializeIdentifier(json: JSON.Value | undefined, sourceField?: string): Identifier | undefined {
+export function parseIdentifier(json: JSON.Value | undefined, sourceField?: string): Identifier | undefined {
   if (isNil(json) || (JSON.isObject(json) && isEmpty(json))) {
     return undefined;
   }
@@ -1012,34 +986,34 @@ export function deserializeIdentifier(json: JSON.Value | undefined, sourceField?
 
   if ('use' in datatypeJsonObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'use', 'string');
-    const datatype: CodeType | undefined = deserializeCodeType(dtJson, dtSiblingJson);
+    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
     instance.setUseElement(datatype);
   }
 
   if ('type' in datatypeJsonObj) {
-    const datatype: CodeableConcept | undefined = deserializeCodeableConcept(datatypeJsonObj['type'], `${source}.type`);
+    const datatype: CodeableConcept | undefined = parseCodeableConcept(datatypeJsonObj['type'], `${source}.type`);
     instance.setType(datatype);
   }
 
   if ('system' in datatypeJsonObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'system', 'string');
-    const datatype: UriType | undefined = deserializeUriType(dtJson, dtSiblingJson);
+    const datatype: UriType | undefined = parseUriType(dtJson, dtSiblingJson);
     instance.setSystemElement(datatype);
   }
 
   if ('value' in datatypeJsonObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'value', 'string');
-    const datatype: StringType | undefined = deserializeStringType(dtJson, dtSiblingJson);
+    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
     instance.setValueElement(datatype);
   }
 
   if ('period' in datatypeJsonObj) {
-    const datatype: Period | undefined = deserializePeriod(datatypeJsonObj['period'], `${source}.period`);
+    const datatype: Period | undefined = parsePeriod(datatypeJsonObj['period'], `${source}.period`);
     instance.setPeriod(datatype);
   }
 
   if ('assigner' in datatypeJsonObj) {
-    const datatype: Reference | undefined = deserializeReference(datatypeJsonObj['assigner'], `${source}.assigner`);
+    const datatype: Reference | undefined = parseReference(datatypeJsonObj['assigner'], `${source}.assigner`);
     instance.setAssigner(datatype);
   }
 
@@ -1048,15 +1022,15 @@ export function deserializeIdentifier(json: JSON.Value | undefined, sourceField?
 }
 
 /**
- * Deserialize the provided json into Meta data model.
+ * Parse the provided json into Meta data model.
  *
  * @param json - JSON representing Meta
  * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Meta
  * @returns Meta data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializeMeta(json: JSON.Value | undefined, sourceField?: string): Meta | undefined {
+export function parseMeta(json: JSON.Value | undefined, sourceField?: string): Meta | undefined {
   if (isNil(json) || (JSON.isObject(json) && isEmpty(json))) {
     return undefined;
   }
@@ -1070,26 +1044,26 @@ export function deserializeMeta(json: JSON.Value | undefined, sourceField?: stri
 
   if ('versionId' in datatypeJsonObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'versionId', 'string');
-    const datatype: IdType | undefined = deserializeIdType(dtJson, dtSiblingJson);
+    const datatype: IdType | undefined = parseIdType(dtJson, dtSiblingJson);
     instance.setVersionIdElement(datatype);
   }
 
   if ('lastUpdated' in datatypeJsonObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'lastUpdated', 'string');
-    const datatype: InstantType | undefined = deserializeInstantType(dtJson, dtSiblingJson);
+    const datatype: InstantType | undefined = parseInstantType(dtJson, dtSiblingJson);
     instance.setLastUpdatedElement(datatype);
   }
 
   if ('source' in datatypeJsonObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'source', 'string');
-    const datatype: UriType | undefined = deserializeUriType(dtJson, dtSiblingJson);
+    const datatype: UriType | undefined = parseUriType(dtJson, dtSiblingJson);
     instance.setSourceElement(datatype);
   }
 
   if ('profile' in datatypeJsonObj) {
     const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(datatypeJsonObj, source, 'profile', 'string');
     dataJsonArray.forEach((dataJson: PrimitiveTypeJson) => {
-      const datatype: CanonicalType | undefined = deserializeCanonicalType(dataJson.dtJson, dataJson.dtSiblingJson);
+      const datatype: CanonicalType | undefined = parseCanonicalType(dataJson.dtJson, dataJson.dtSiblingJson);
       instance.addProfileElement(datatype);
     });
   }
@@ -1097,7 +1071,7 @@ export function deserializeMeta(json: JSON.Value | undefined, sourceField?: stri
   if ('security' in datatypeJsonObj) {
     const dataElementJsonArray: JSON.Array = JSON.asArray(datatypeJsonObj['security'], `${source}.security`);
     dataElementJsonArray.forEach((dataElementJson: JSON.Value) => {
-      const datatype: Coding | undefined = deserializeCoding(dataElementJson, `${source}.security.coding`);
+      const datatype: Coding | undefined = parseCoding(dataElementJson, `${source}.security.coding`);
       instance.addSecurity(datatype);
     });
   }
@@ -1105,7 +1079,7 @@ export function deserializeMeta(json: JSON.Value | undefined, sourceField?: stri
   if ('tag' in datatypeJsonObj) {
     const dataElementJsonArray: JSON.Array = JSON.asArray(datatypeJsonObj['tag'], `${source}.tag`);
     dataElementJsonArray.forEach((dataElementJson: JSON.Value) => {
-      const datatype: Coding | undefined = deserializeCoding(dataElementJson, `${source}.tag.coding`);
+      const datatype: Coding | undefined = parseCoding(dataElementJson, `${source}.tag.coding`);
       instance.addTag(datatype);
     });
   }
@@ -1115,15 +1089,15 @@ export function deserializeMeta(json: JSON.Value | undefined, sourceField?: stri
 }
 
 /**
- * Deserialize the provided json into Narrative data model.
+ * Parse the provided json into Narrative data model.
  *
  * @param json - JSON representing Narrative
  * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Narrative
  * @returns Narrative data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializeNarrative(json: JSON.Value | undefined, sourceField?: string): Narrative | undefined {
+export function parseNarrative(json: JSON.Value | undefined, sourceField?: string): Narrative | undefined {
   if (isNil(json) || (JSON.isObject(json) && isEmpty(json))) {
     return undefined;
   }
@@ -1137,7 +1111,7 @@ export function deserializeNarrative(json: JSON.Value | undefined, sourceField?:
 
   if ('status' in datatypeJsonObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'status', 'string');
-    const datatype: CodeType | undefined = deserializeCodeType(dtJson, dtSiblingJson);
+    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
     if (datatype !== undefined) {
       // Narrative.status is required and cannot be set to undefined or null
       instance.setStatusElement(datatype);
@@ -1146,7 +1120,7 @@ export function deserializeNarrative(json: JSON.Value | undefined, sourceField?:
 
   if ('div' in datatypeJsonObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'div', 'string');
-    const datatype: XhtmlType | undefined = deserializeXhtmlType(dtJson, dtSiblingJson);
+    const datatype: XhtmlType | undefined = parseXhtmlType(dtJson, dtSiblingJson);
     if (datatype !== undefined) {
       // Narrative.div is required and cannot be set to undefined or null
       instance.setDivElement(datatype);
@@ -1158,15 +1132,15 @@ export function deserializeNarrative(json: JSON.Value | undefined, sourceField?:
 }
 
 /**
- * Deserialize the provided json into Period data model.
+ * Parse the provided json into Period data model.
  *
  * @param json - JSON representing Period
  * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Period
  * @returns Period data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializePeriod(json: JSON.Value | undefined, sourceField?: string): Period | undefined {
+export function parsePeriod(json: JSON.Value | undefined, sourceField?: string): Period | undefined {
   if (isNil(json) || (JSON.isObject(json) && isEmpty(json))) {
     return undefined;
   }
@@ -1180,13 +1154,13 @@ export function deserializePeriod(json: JSON.Value | undefined, sourceField?: st
 
   if ('start' in datatypeJsonObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'start', 'string');
-    const datatype: DateTimeType | undefined = deserializeDateTimeType(dtJson, dtSiblingJson);
+    const datatype: DateTimeType | undefined = parseDateTimeType(dtJson, dtSiblingJson);
     instance.setStartElement(datatype);
   }
 
   if ('end' in datatypeJsonObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'end', 'string');
-    const datatype: DateTimeType | undefined = deserializeDateTimeType(dtJson, dtSiblingJson);
+    const datatype: DateTimeType | undefined = parseDateTimeType(dtJson, dtSiblingJson);
     instance.setEndElement(datatype);
   }
 
@@ -1195,15 +1169,15 @@ export function deserializePeriod(json: JSON.Value | undefined, sourceField?: st
 }
 
 /**
- * Deserialize the provided json into Quantity data model.
+ * Parse the provided json into Quantity data model.
  *
  * @param json - JSON representing Quantity
  * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Quantity
  * @returns Quantity data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializeQuantity(json: JSON.Value | undefined, sourceField?: string): Quantity | undefined {
+export function parseQuantity(json: JSON.Value | undefined, sourceField?: string): Quantity | undefined {
   if (isNil(json) || (JSON.isObject(json) && isEmpty(json))) {
     return undefined;
   }
@@ -1217,31 +1191,31 @@ export function deserializeQuantity(json: JSON.Value | undefined, sourceField?: 
 
   if ('value' in datatypeJsonObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'value', 'number');
-    const datatype: DecimalType | undefined = deserializeDecimalType(dtJson, dtSiblingJson);
+    const datatype: DecimalType | undefined = parseDecimalType(dtJson, dtSiblingJson);
     instance.setValueElement(datatype);
   }
 
   if ('comparator' in datatypeJsonObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'comparator', 'string');
-    const datatype: CodeType | undefined = deserializeCodeType(dtJson, dtSiblingJson);
+    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
     instance.setComparatorElement(datatype);
   }
 
   if ('unit' in datatypeJsonObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'unit', 'string');
-    const datatype: StringType | undefined = deserializeStringType(dtJson, dtSiblingJson);
+    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
     instance.setUnitElement(datatype);
   }
 
   if ('system' in datatypeJsonObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'system', 'string');
-    const datatype: UriType | undefined = deserializeUriType(dtJson, dtSiblingJson);
+    const datatype: UriType | undefined = parseUriType(dtJson, dtSiblingJson);
     instance.setSystemElement(datatype);
   }
 
   if ('code' in datatypeJsonObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'code', 'string');
-    const datatype: CodeType | undefined = deserializeCodeType(dtJson, dtSiblingJson);
+    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
     instance.setCodeElement(datatype);
   }
 
@@ -1250,15 +1224,15 @@ export function deserializeQuantity(json: JSON.Value | undefined, sourceField?: 
 }
 
 /**
- * Deserialize the provided json into Range data model.
+ * Parse the provided json into Range data model.
  *
  * @param json - JSON representing Range
  * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Range
  * @returns Range data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializeRange(json: JSON.Value | undefined, sourceField?: string): Range | undefined {
+export function parseRange(json: JSON.Value | undefined, sourceField?: string): Range | undefined {
   if (isNil(json) || (JSON.isObject(json) && isEmpty(json))) {
     return undefined;
   }
@@ -1271,12 +1245,12 @@ export function deserializeRange(json: JSON.Value | undefined, sourceField?: str
   processElementJson(instance, datatypeJsonObj);
 
   if ('low' in datatypeJsonObj) {
-    const datatype: SimpleQuantity | undefined = deserializeSimpleQuantity(datatypeJsonObj['low'], `${source}.low`);
+    const datatype: SimpleQuantity | undefined = parseSimpleQuantity(datatypeJsonObj['low'], `${source}.low`);
     instance.setLow(datatype);
   }
 
   if ('high' in datatypeJsonObj) {
-    const datatype: SimpleQuantity | undefined = deserializeSimpleQuantity(datatypeJsonObj['high'], `${source}.high`);
+    const datatype: SimpleQuantity | undefined = parseSimpleQuantity(datatypeJsonObj['high'], `${source}.high`);
     instance.setHigh(datatype);
   }
 
@@ -1285,15 +1259,15 @@ export function deserializeRange(json: JSON.Value | undefined, sourceField?: str
 }
 
 /**
- * Deserialize the provided json into Reference data model.
+ * Parse the provided json into Reference data model.
  *
  * @param json - JSON representing Reference
  * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Reference
  * @returns Reference data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializeReference(json: JSON.Value | undefined, sourceField?: string): Reference | undefined {
+export function parseReference(json: JSON.Value | undefined, sourceField?: string): Reference | undefined {
   if (isNil(json) || (JSON.isObject(json) && isEmpty(json))) {
     return undefined;
   }
@@ -1307,27 +1281,24 @@ export function deserializeReference(json: JSON.Value | undefined, sourceField?:
 
   if ('reference' in datatypeJsonObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'reference', 'string');
-    const datatype: StringType | undefined = deserializeStringType(dtJson, dtSiblingJson);
+    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
     instance.setReferenceElement(datatype);
   }
 
   if ('type' in datatypeJsonObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'type', 'string');
-    const datatype: UriType | undefined = deserializeUriType(dtJson, dtSiblingJson);
+    const datatype: UriType | undefined = parseUriType(dtJson, dtSiblingJson);
     instance.setTypeElement(datatype);
   }
 
   if ('identifier' in datatypeJsonObj) {
-    const datatype: Identifier | undefined = deserializeIdentifier(
-      datatypeJsonObj['identifier'],
-      `${source}.identifier`,
-    );
+    const datatype: Identifier | undefined = parseIdentifier(datatypeJsonObj['identifier'], `${source}.identifier`);
     instance.setIdentifier(datatype);
   }
 
   if ('display' in datatypeJsonObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'display', 'string');
-    const datatype: StringType | undefined = deserializeStringType(dtJson, dtSiblingJson);
+    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
     instance.setDisplayElement(datatype);
   }
 
@@ -1336,18 +1307,15 @@ export function deserializeReference(json: JSON.Value | undefined, sourceField?:
 }
 
 /**
- * Deserialize the provided json into SimpleQuantity data model.
+ * Parse the provided json into SimpleQuantity data model.
  *
  * @param json - JSON representing SimpleQuantity
  * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to SimpleQuantity
  * @returns SimpleQuantity data model or undefined
  *
- * @category Utilities: Deserialization
+ * @category Utilities: FHIR Parsers
  */
-export function deserializeSimpleQuantity(
-  json: JSON.Value | undefined,
-  sourceField?: string,
-): SimpleQuantity | undefined {
+export function parseSimpleQuantity(json: JSON.Value | undefined, sourceField?: string): SimpleQuantity | undefined {
   if (isNil(json) || (JSON.isObject(json) && isEmpty(json))) {
     return undefined;
   }
@@ -1361,25 +1329,25 @@ export function deserializeSimpleQuantity(
 
   if ('value' in datatypeJsonObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'value', 'number');
-    const datatype: DecimalType | undefined = deserializeDecimalType(dtJson, dtSiblingJson);
+    const datatype: DecimalType | undefined = parseDecimalType(dtJson, dtSiblingJson);
     instance.setValueElement(datatype);
   }
 
   if ('unit' in datatypeJsonObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'unit', 'string');
-    const datatype: StringType | undefined = deserializeStringType(dtJson, dtSiblingJson);
+    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
     instance.setUnitElement(datatype);
   }
 
   if ('system' in datatypeJsonObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'system', 'string');
-    const datatype: UriType | undefined = deserializeUriType(dtJson, dtSiblingJson);
+    const datatype: UriType | undefined = parseUriType(dtJson, dtSiblingJson);
     instance.setSystemElement(datatype);
   }
 
   if ('code' in datatypeJsonObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'code', 'string');
-    const datatype: CodeType | undefined = deserializeCodeType(dtJson, dtSiblingJson);
+    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
     instance.setCodeElement(datatype);
   }
 
