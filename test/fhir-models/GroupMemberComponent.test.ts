@@ -32,6 +32,7 @@ import { Quantity } from '@src/fhir-core/data-types/complex/Quantity';
 import { Range } from '@src/fhir-core/data-types/complex/Range';
 import { SimpleQuantity } from '@src/fhir-core/data-types/complex/SimpleQuantity';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { FhirError } from '@src/fhir-core/errors/FhirError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
 describe('GroupMemberComponent', () => {
@@ -288,13 +289,6 @@ describe('GroupMemberComponent', () => {
       expect(testGroupMemberComponent.constructor.name).toStrictEqual('GroupMemberComponent');
       expect(testGroupMemberComponent.fhirType()).toStrictEqual('Group.member');
       expect(testGroupMemberComponent.isEmpty()).toBe(false);
-      const expectedJson = {
-        entity: {
-          reference: 'Practitioner/13579',
-        },
-        inactive: true,
-      };
-      expect(testGroupMemberComponent.toJSON()).toEqual(expectedJson);
 
       // inherited properties from BackboneElement
       expect(testGroupMemberComponent.hasId()).toBe(false);
@@ -374,13 +368,6 @@ describe('GroupMemberComponent', () => {
       expect(testGroupMemberComponent.constructor.name).toStrictEqual('GroupMemberComponent');
       expect(testGroupMemberComponent.fhirType()).toStrictEqual('Group.member');
       expect(testGroupMemberComponent.isEmpty()).toBe(false);
-      const expectedJson = {
-        entity: {
-          reference: 'Practitioner/13579',
-        },
-        inactive: true,
-      };
-      expect(testGroupMemberComponent.toJSON()).toEqual(expectedJson);
 
       // inherited properties from BackboneElement
       expect(testGroupMemberComponent.hasId()).toBe(false);
@@ -435,6 +422,126 @@ describe('GroupMemberComponent', () => {
       expect(testGroupMemberComponent.getInactiveElement()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
       expect(testGroupMemberComponent.hasInactive()).toBe(true);
       expect(testGroupMemberComponent.getInactive()).toStrictEqual(VALID_BOOLEAN_FALSE);
+    });
+  });
+
+  describe('Serialization/Deserialization', () => {
+    const VALID_ID = 'is12345';
+    const VALID_EXTENSION = new Extension('extUrl', new StringType('Extension string value'));
+    const VALID_MODIFIER_EXTENSION = new Extension('modExtUrl', new StringType('ModifierExtension string value'));
+    const VALID_JSON = {
+      id: 'is12345',
+      extension: [
+        {
+          url: 'extUrl',
+          valueString: 'Extension string value',
+        },
+      ],
+      modifierExtension: [
+        {
+          url: 'modExtUrl',
+          valueString: 'ModifierExtension string value',
+        },
+      ],
+      entity: {
+        reference: 'Practitioner/13579',
+      },
+      period: {
+        start: '2017-01-01T00:00:00.000Z',
+        end: '2017-01-01T01:00:00.000Z',
+      },
+      inactive: true,
+    };
+    const INVALID_JSON = {
+      period: {
+        start: '2017-01-01T00:00:00.000Z',
+        end: '2017-01-01T01:00:00.000Z',
+      },
+      inactive: true,
+    };
+
+    it('should throw FhirError from toJSON() when instantiated with missing required properties', () => {
+      const testGroupMemberComponent = new GroupMemberComponent(null);
+      testGroupMemberComponent.setPeriod(VALID_PERIOD);
+
+      const t = () => {
+        testGroupMemberComponent.toJSON();
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(`The following required properties do not exist: Group.member.entity`);
+    });
+
+    it('should properly create serialized content', () => {
+      const testGroupMemberComponent = new GroupMemberComponent(VALID_REFERENCE_VALUE_1);
+      testGroupMemberComponent.setId(VALID_ID);
+      testGroupMemberComponent.setExtension([VALID_EXTENSION]);
+      testGroupMemberComponent.setModifierExtension([VALID_MODIFIER_EXTENSION]);
+      testGroupMemberComponent.setPeriod(VALID_PERIOD);
+      testGroupMemberComponent.setInactiveElement(new BooleanType(VALID_BOOLEAN_TRUE));
+
+      expect(testGroupMemberComponent).toBeDefined();
+      expect(testGroupMemberComponent).toBeInstanceOf(GroupMemberComponent);
+      expect(testGroupMemberComponent).toBeInstanceOf(BackboneElement);
+      expect(testGroupMemberComponent).toBeInstanceOf(Element);
+      expect(testGroupMemberComponent).toBeInstanceOf(Base);
+      expect(testGroupMemberComponent.constructor.name).toStrictEqual('GroupMemberComponent');
+      expect(testGroupMemberComponent.fhirType()).toStrictEqual('Group.member');
+      expect(testGroupMemberComponent.isEmpty()).toBe(false);
+
+      // inherited properties from BackboneElement
+      expect(testGroupMemberComponent.hasId()).toBe(true);
+      expect(testGroupMemberComponent.getId()).toStrictEqual(VALID_ID);
+      expect(testGroupMemberComponent.hasExtension()).toBe(true);
+      expect(testGroupMemberComponent.getExtension()).toEqual([VALID_EXTENSION]);
+      expect(testGroupMemberComponent.hasModifierExtension()).toBe(true);
+      expect(testGroupMemberComponent.getModifierExtension()).toEqual([VALID_MODIFIER_EXTENSION]);
+
+      // GroupMemberComponent properties
+      expect(testGroupMemberComponent.hasEntity()).toBe(true);
+      expect(testGroupMemberComponent.getEntity()).toEqual(VALID_REFERENCE_VALUE_1);
+      expect(testGroupMemberComponent.hasPeriod()).toBe(true);
+      expect(testGroupMemberComponent.getPeriod()).toEqual(VALID_PERIOD);
+      expect(testGroupMemberComponent.hasInactiveElement()).toBe(true);
+      expect(testGroupMemberComponent.getInactiveElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
+      expect(testGroupMemberComponent.hasInactive()).toBe(true);
+      expect(testGroupMemberComponent.getInactive()).toStrictEqual(VALID_BOOLEAN_TRUE);
+
+      expect(testGroupMemberComponent.toJSON()).toEqual(VALID_JSON);
+    });
+
+    it('should return undefined when deserialize with no json', () => {
+      let testGroupMemberComponent: GroupMemberComponent | undefined = undefined;
+      testGroupMemberComponent = GroupMemberComponent.parse({});
+      expect(testGroupMemberComponent).toBeUndefined();
+
+      testGroupMemberComponent = GroupMemberComponent.parse(null);
+      expect(testGroupMemberComponent).toBeUndefined();
+
+      // @ts-expect-error: allow for testing
+      testGroupMemberComponent = GroupMemberComponent.parse(undefined);
+      expect(testGroupMemberComponent).toBeUndefined();
+    });
+
+    it('should throw FhirError from parse with missing required properties', () => {
+      const t = () => {
+        GroupMemberComponent.parse(INVALID_JSON);
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(`The following required properties must be included in the provided JSON: Group.member.entity`);
+    });
+
+    it('should return GroupMemberComponent for valid json', () => {
+      const testGroupMemberComponent: GroupMemberComponent | undefined = GroupMemberComponent.parse(VALID_JSON);
+
+      expect(testGroupMemberComponent).toBeDefined();
+      expect(testGroupMemberComponent).toBeInstanceOf(GroupMemberComponent);
+      expect(testGroupMemberComponent).toBeInstanceOf(BackboneElement);
+      expect(testGroupMemberComponent).toBeInstanceOf(Element);
+      expect(testGroupMemberComponent).toBeInstanceOf(Base);
+      expect(testGroupMemberComponent?.constructor.name).toStrictEqual('GroupMemberComponent');
+      expect(testGroupMemberComponent?.fhirType()).toStrictEqual('Group.member');
+      expect(testGroupMemberComponent?.isEmpty()).toBe(false);
+      expect(testGroupMemberComponent?.toJSON()).toEqual(VALID_JSON);
     });
   });
 

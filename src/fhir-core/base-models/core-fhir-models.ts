@@ -44,6 +44,7 @@ import { strict as assert } from 'node:assert';
 import { isEmpty as _isEmpty, isNil, upperFirst } from 'lodash';
 import { Base } from './Base';
 import { IBase } from './IBase';
+import { REQUIRED_PROPERTIES_DO_NOT_EXIST } from '@src/fhir-core/constants';
 import {
   fhirString,
   fhirStringSchema,
@@ -56,6 +57,7 @@ import { isElementEmpty, validateUrl } from '@src/fhir-core/utility/fhir-util';
 import { assertFhirType, assertFhirTypeList } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { FhirError } from '@src/fhir-core/errors/FhirError';
 
 //region Core Models
 
@@ -1153,6 +1155,8 @@ export class Extension extends Element implements IBase {
     // The url is a mandatory attribute / property so it should always exist.
     if (this.hasUrl()) {
       jsonObj['url'] = this.getUrl();
+    } else {
+      throw new FhirError(`${REQUIRED_PROPERTIES_DO_NOT_EXIST} Extension.url`);
     }
 
     // An extension SHALL have either a value (i.e. a value[x] element) or sub-extensions, but not both.

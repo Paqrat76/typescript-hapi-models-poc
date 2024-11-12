@@ -54,8 +54,12 @@ import {
   parseReference,
   parseSimpleQuantity,
   parseNarrative,
-} from '../../../src/fhir-core/utility/fhir-parsers';
-import { Extension } from '@src/fhir-core/base-models/core-fhir-models';
+  processBackboneElementJson,
+  processElementJson,
+  processResourceJson,
+  processDomainResourceJson,
+} from '@src/fhir-core/utility/fhir-parsers';
+import { BackboneElement, Element, Extension } from '@src/fhir-core/base-models/core-fhir-models';
 import { Base64BinaryType } from '@src/fhir-core/data-types/primitive/Base64BinaryType';
 import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
 import { CanonicalType } from '@src/fhir-core/data-types/primitive/CanonicalType';
@@ -86,12 +90,17 @@ import { Period } from '@src/fhir-core/data-types/complex/Period';
 import { Quantity } from '@src/fhir-core/data-types/complex/Quantity';
 import { Range } from '@src/fhir-core/data-types/complex/Range';
 import { SimpleQuantity } from '@src/fhir-core/data-types/complex/SimpleQuantity';
+import { FhirError } from '@src/fhir-core/errors/FhirError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import {
   FHIR_MAX_INTEGER,
   FHIR_MAX_INTEGER64,
   FHIR_MIN_INTEGER,
   FHIR_MIN_INTEGER64,
+  MockBackboneElement,
+  MockElement,
+  MockResource,
+  MockTask,
   TOO_BIG_STRING,
 } from '../../test-utils';
 
@@ -147,7 +156,7 @@ describe('fhir-parsers', () => {
       expect(testType).toBeUndefined();
     });
 
-    it('should throw TypeError for invalid json type', () => {
+    it('should throw FhirError for invalid json type', () => {
       const INVALID_EXTENSION_JSON = {
         extension: [
           {
@@ -160,8 +169,295 @@ describe('fhir-parsers', () => {
       const t = () => {
         parseExtension(INVALID_EXTENSION_JSON);
       };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(`The following required properties must be included in the provided JSON: Extension.url`);
+    });
+  });
+
+  describe('parseElement', () => {
+    let instance: Element;
+    beforeEach(() => {
+      instance = new MockElement();
+    });
+
+    it('should return undefined for empty json', () => {
+      processElementJson(instance, {});
+      expect(instance.isEmpty()).toBe(true);
+
+      processElementJson(instance, undefined);
+      expect(instance.isEmpty()).toBe(true);
+
+      processElementJson(instance, null);
+      expect(instance.isEmpty()).toBe(true);
+    });
+
+    it('should return correct instance for valid json', () => {
+      const VALID_JSON = {
+        id: 'idBE123',
+        extension: [
+          {
+            url: 'validUrl1',
+            valueString: 'This is a valid string 1',
+          },
+        ],
+      };
+
+      processElementJson(instance, VALID_JSON);
+      expect(instance).toBeDefined();
+      expect(instance).toBeInstanceOf(MockElement);
+      expect(instance.constructor.name).toStrictEqual('MockElement');
+      expect(instance.fhirType()).toStrictEqual('Element');
+      expect(instance.isEmpty()).toBe(false);
+      expect(instance.toJSON()).toEqual(VALID_JSON);
+    });
+
+    it('should throw TypeError for invalid json type', () => {
+      const INVALID_JSON = {
+        id: 123,
+      };
+
+      const t = () => {
+        processElementJson(instance, INVALID_JSON);
+      };
       expect(t).toThrow(TypeError);
-      expect(t).toThrow(`Extension.url is a required data element`);
+      expect(t).toThrow(`MockElement.id is not a string.`);
+    });
+  });
+
+  describe('parseBackboneElement', () => {
+    let instance: BackboneElement;
+    beforeEach(() => {
+      instance = new MockBackboneElement();
+    });
+
+    it('should return undefined for empty json', () => {
+      processBackboneElementJson(instance, {});
+      expect(instance.isEmpty()).toBe(true);
+
+      processBackboneElementJson(instance, undefined);
+      expect(instance.isEmpty()).toBe(true);
+
+      processBackboneElementJson(instance, null);
+      expect(instance.isEmpty()).toBe(true);
+    });
+
+    it('should return correct instance for valid json', () => {
+      const VALID_JSON = {
+        id: 'idBE123',
+        extension: [
+          {
+            url: 'validUrl1',
+            valueString: 'This is a valid string 1',
+          },
+        ],
+        modifierExtension: [
+          {
+            url: 'validUrl2',
+            valueString: 'This is a valid string 2',
+          },
+        ],
+      };
+
+      processBackboneElementJson(instance, VALID_JSON);
+      expect(instance).toBeDefined();
+      expect(instance).toBeInstanceOf(MockBackboneElement);
+      expect(instance.constructor.name).toStrictEqual('MockBackboneElement');
+      expect(instance.fhirType()).toStrictEqual('BackboneElement');
+      expect(instance.isEmpty()).toBe(false);
+      expect(instance.toJSON()).toEqual(VALID_JSON);
+    });
+
+    it('should throw TypeError for invalid json type', () => {
+      const INVALID_JSON = {
+        id: 123,
+      };
+
+      const t = () => {
+        processBackboneElementJson(instance, INVALID_JSON);
+      };
+      expect(t).toThrow(TypeError);
+      expect(t).toThrow(`MockBackboneElement.id is not a string.`);
+    });
+  });
+
+  describe('parseResource', () => {
+    let instance: MockResource;
+    beforeEach(() => {
+      instance = new MockResource();
+    });
+
+    it('should return undefined for empty json', () => {
+      processResourceJson(instance, {});
+      expect(instance.isEmpty()).toBe(true);
+
+      processResourceJson(instance, undefined);
+      expect(instance.isEmpty()).toBe(true);
+
+      processResourceJson(instance, null);
+      expect(instance.isEmpty()).toBe(true);
+    });
+
+    it('should return correct instance for valid json', () => {
+      const VALID_JSON = {
+        resourceType: 'Resource',
+        id: 'idR123',
+        meta: {
+          versionId: 'v1',
+          lastUpdated: '2017-01-01T00:00:00.000Z',
+          source: 'sourceUri',
+          profile: ['profileCanonical'],
+          security: [
+            {
+              system: 'securitySystem',
+              code: 'securityCode',
+            },
+          ],
+          tag: [
+            {
+              system: 'tagSystem',
+              code: 'tagCode',
+            },
+          ],
+        },
+        implicitRules: 'validImplicitUrl',
+        language: 'en-US',
+      };
+
+      processResourceJson(instance, VALID_JSON);
+      expect(instance).toBeDefined();
+      expect(instance).toBeInstanceOf(MockResource);
+      expect(instance.constructor.name).toStrictEqual('MockResource');
+      expect(instance.resourceType()).toStrictEqual('Resource');
+      expect(instance.fhirType()).toStrictEqual('MockResource');
+      expect(instance.isEmpty()).toBe(false);
+      expect(instance.toJSON()).toEqual(VALID_JSON);
+    });
+
+    it('should throw TypeError for invalid json type', () => {
+      const INVALID_JSON = {
+        resourceType: 'Resource',
+        id: 12345,
+      };
+
+      const t = () => {
+        processResourceJson(instance, INVALID_JSON);
+      };
+      expect(t).toThrow(TypeError);
+      expect(t).toThrow(`MockResource.id is not a string.`);
+    });
+  });
+
+  describe('parseDomainResource', () => {
+    let instance: MockTask;
+    beforeEach(() => {
+      instance = new MockTask();
+    });
+
+    it('should return undefined for empty json', () => {
+      processDomainResourceJson(instance, {});
+      expect(instance.isEmpty()).toBe(true);
+
+      processDomainResourceJson(instance, undefined);
+      expect(instance.isEmpty()).toBe(true);
+
+      processDomainResourceJson(instance, null);
+      expect(instance.isEmpty()).toBe(true);
+    });
+
+    it('should return correct instance for valid json', () => {
+      const VALID_JSON = {
+        resourceType: 'Task',
+        id: 'idR123',
+        meta: {
+          versionId: 'v1',
+          lastUpdated: '2017-01-01T00:00:00.000Z',
+          source: 'sourceUri',
+          profile: ['profileCanonical'],
+          security: [
+            {
+              system: 'securitySystem',
+              code: 'securityCode',
+            },
+          ],
+          tag: [
+            {
+              system: 'tagSystem',
+              code: 'tagCode',
+            },
+          ],
+        },
+        implicitRules: 'validImplicitUrl',
+        language: 'en-US',
+        text: {
+          status: 'generated',
+          div: '<div xmlns="http://www.w3.org/1999/xhtml">text</div>',
+        },
+        extension: [
+          {
+            url: 'extUrl',
+            valueString: 'Extension string value',
+          },
+        ],
+        modifierExtension: [
+          {
+            url: 'modExtUrl',
+            valueString: 'ModifierExtension string value',
+          },
+        ],
+      };
+
+      processDomainResourceJson(instance, VALID_JSON);
+      expect(instance).toBeDefined();
+      expect(instance).toBeInstanceOf(MockTask);
+      expect(instance.constructor.name).toStrictEqual('MockTask');
+      expect(instance.resourceType()).toStrictEqual('Task');
+      expect(instance.fhirType()).toStrictEqual('MockTask');
+      expect(instance.isEmpty()).toBe(false);
+      expect(instance.toJSON()).toEqual(VALID_JSON);
+    });
+
+    it('should throw TypeError for invalid json type', () => {
+      const INVALID_JSON = {
+        resourceType: 'Task',
+        id: 12345,
+      };
+
+      const t = () => {
+        processDomainResourceJson(instance, INVALID_JSON);
+      };
+      expect(t).toThrow(TypeError);
+      expect(t).toThrow(`MockTask.id is not a string.`);
+    });
+  });
+
+  describe('parseExtension', () => {
+    it('should return undefined for empty json', () => {
+      let testType = parseExtension({});
+      expect(testType).toBeUndefined();
+
+      testType = parseExtension(undefined);
+      expect(testType).toBeUndefined();
+
+      // @ts-expect-error: allow for testing
+      testType = parseExtension(null);
+      expect(testType).toBeUndefined();
+    });
+
+    it('should throw FhirError for invalid json type', () => {
+      const INVALID_EXTENSION_JSON = {
+        extension: [
+          {
+            id: 'extId',
+            valueString: 'extension string value',
+          },
+        ],
+      };
+
+      const t = () => {
+        parseExtension(INVALID_EXTENSION_JSON);
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(`The following required properties must be included in the provided JSON: Extension.url`);
     });
   });
 
@@ -1658,7 +1954,7 @@ describe('fhir-parsers', () => {
       const t = () => {
         parseXhtmlType(VALID_XHTML, SIBLING_JSON_SIMPLE);
       };
-      expect(t).toThrow(TypeError);
+      expect(t).toThrow(FhirError);
       expect(t).toThrow(`According to the FHIR specification, Extensions are not permitted on the xhtml type`);
     });
 
@@ -2051,6 +2347,18 @@ describe('fhir-parsers', () => {
       expect(testType).toBeUndefined();
     });
 
+    it('should throw FhirError for missing required fields', () => {
+      const INVALID_JSON = { bogus: true };
+
+      const t = () => {
+        parseNarrative(INVALID_JSON);
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(
+        `The following required properties must be included in the provided JSON: Narrative.status, Narrative.div`,
+      );
+    });
+
     it('should throw TypeError for invalid json type', () => {
       const t = () => {
         parseNarrative('NOT AN OBJECT');
@@ -2059,8 +2367,9 @@ describe('fhir-parsers', () => {
       expect(t).toThrow(`Narrative JSON is not a JSON object.`);
     });
 
-    it('should throw TypeError for including Extension on div (xhtml) field', () => {
+    it('should throw FhirError for including Extension on div (xhtml) field', () => {
       const INVALID_JSON = {
+        status: 'generated',
         div: '<div xmlns="http://www.w3.org/1999/xhtml">text</div>',
         _div: {
           extension: [
@@ -2075,7 +2384,7 @@ describe('fhir-parsers', () => {
       const t = () => {
         parseNarrative(INVALID_JSON);
       };
-      expect(t).toThrow(TypeError);
+      expect(t).toThrow(FhirError);
       expect(t).toThrow(`According to the FHIR specification, Extensions are not permitted on the xhtml type`);
     });
 

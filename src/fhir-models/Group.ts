@@ -21,6 +21,13 @@
  *
  */
 
+import { isEmpty, isNil } from 'lodash';
+import {
+  INVALID_VALUEX_MULTIPLE_PROPERTIES,
+  INVALID_VALUEX_PROPERTY,
+  REQUIRED_PROPERTIES_DO_NOT_EXIST,
+  REQUIRED_PROPERTIES_REQD_IN_JSON,
+} from '@src/fhir-core/constants';
 import { IBase } from '@src/fhir-core/base-models/IBase';
 import {
   BackboneElement,
@@ -64,6 +71,22 @@ import { assertFhirType, assertFhirTypeList } from '@src/fhir-core/utility/type-
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { ChoiceDataTypes } from '@src/fhir-core/utility/decorators';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
+import {
+  assertFhirResourceTypeJson,
+  getPrimitiveTypeJson,
+  getValueXData,
+  parseBooleanType,
+  parseCodeType,
+  parseCodeableConcept,
+  parseIdentifier,
+  parsePeriod,
+  parseReference,
+  parseStringType,
+  parseUnsignedIntType,
+  processBackboneElementJson,
+  processDomainResourceJson,
+} from '@src/fhir-core/utility/fhir-parsers';
+import { FhirError } from '@src/fhir-core/errors/FhirError';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -86,6 +109,8 @@ import * as JSON from '@src/fhir-core/utility/json-helpers';
  * @see [FHIR Group](http://hl7.org/fhir/StructureDefinition/Group)
  */
 export class Group extends DomainResource implements IBase {
+  private readonly groupTypeEnum: GroupTypeEnum;
+
   /**
    * @param type - person | animal | practitioner | device | medication | substance
    * @param actual - Descriptive or actual
@@ -112,7 +137,102 @@ export class Group extends DomainResource implements IBase {
     }
   }
 
-  private readonly groupTypeEnum: GroupTypeEnum;
+  public static parse(json: JSON.Object): Group | undefined {
+    if (isNil(json) || (JSON.isObject(json) && isEmpty(json))) {
+      return undefined;
+    }
+
+    const dataJsonObj: JSON.Object = JSON.asObject(json, `Group JSON`);
+    assertFhirResourceTypeJson(dataJsonObj, 'Group');
+    const instance = new Group(null, null);
+
+    processDomainResourceJson(instance, dataJsonObj);
+
+    const missingReqdProperties: string[] = [];
+
+    if ('identifier' in dataJsonObj) {
+      const dataElementJsonArray: JSON.Array = JSON.asArray(dataJsonObj['identifier'], `Group.identifier`);
+      dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
+        const datatype: Identifier | undefined = parseIdentifier(dataElementJson, `Group.identifier[${String(idx)}]`);
+        instance.addIdentifier(datatype);
+      });
+    }
+
+    if ('active' in dataJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(dataJsonObj, 'Group', 'active', 'boolean');
+      const datatype: BooleanType | undefined = parseBooleanType(dtJson, dtSiblingJson);
+      instance.setActiveElement(datatype);
+    }
+
+    if ('type' in dataJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(dataJsonObj, 'Group', 'type', 'string');
+      const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
+      if (datatype === undefined) {
+        throw new Error(`Failed to parse Group.type from the provided JSON`);
+      } else {
+        instance.setTypeElement(datatype);
+      }
+    } else {
+      missingReqdProperties.push('Group.type');
+    }
+
+    if ('actual' in dataJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(dataJsonObj, 'Group', 'actual', 'boolean');
+      const datatype: BooleanType | undefined = parseBooleanType(dtJson, dtSiblingJson);
+      if (datatype === undefined) {
+        throw new Error(`Failed to parse Group.actual from the provided JSON`);
+      } else {
+        instance.setActualElement(datatype);
+      }
+    } else {
+      missingReqdProperties.push('Group.actual');
+    }
+
+    if ('code' in dataJsonObj) {
+      const datatype: CodeableConcept | undefined = parseCodeableConcept(dataJsonObj['code'], `Group.code`);
+      instance.setCode(datatype);
+    }
+
+    if ('name' in dataJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(dataJsonObj, 'Group', 'name', 'string');
+      const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
+      instance.setNameElement(datatype);
+    }
+
+    if ('quantity' in dataJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(dataJsonObj, 'Group', 'quantity', 'number');
+      const datatype: UnsignedIntType | undefined = parseUnsignedIntType(dtJson, dtSiblingJson);
+      instance.setQuantityElement(datatype);
+    }
+
+    if ('managingEntity' in dataJsonObj) {
+      const datatype: Reference | undefined = parseReference(dataJsonObj['managingEntity'], `Group.managingEntity`);
+      instance.setManagingEntity(datatype);
+    }
+
+    if ('characteristic' in dataJsonObj) {
+      const componentJsonArray: JSON.Array = JSON.asArray(dataJsonObj['characteristic'], `Group.characteristic`);
+      componentJsonArray.forEach((componentJson: JSON.Value) => {
+        const component: GroupCharacteristicComponent | undefined = GroupCharacteristicComponent.parse(componentJson);
+        instance.addCharacteristic(component);
+      });
+    }
+
+    if ('member' in dataJsonObj) {
+      const componentJsonArray: JSON.Array = JSON.asArray(dataJsonObj['member'], `Group.member`);
+      componentJsonArray.forEach((componentJson: JSON.Value) => {
+        const component: GroupMemberComponent | undefined = GroupMemberComponent.parse(componentJson);
+        instance.addMember(component);
+      });
+    }
+
+    if (missingReqdProperties.length > 0) {
+      const errMsg = `${REQUIRED_PROPERTIES_REQD_IN_JSON} ${missingReqdProperties.join(', ')}`;
+      throw new FhirError(errMsg);
+    }
+
+    return instance;
+  }
 
   /**
    * Group.identifier Element
@@ -887,8 +1007,13 @@ export class Group extends DomainResource implements IBase {
    * {@inheritDoc IBase.toJSON}
    */
   public override toJSON(): JSON.Value | undefined {
+    if (this.isEmpty()) {
+      return undefined;
+    }
     // Will always have, at least, the 'resourceType' property from Resource
     const jsonObj = super.toJSON() as JSON.Object;
+
+    const missingReqdProperties: string[] = [];
 
     if (this.hasIdentifier()) {
       setFhirComplexListJson(this.getIdentifier(), 'identifier', jsonObj);
@@ -901,11 +1026,15 @@ export class Group extends DomainResource implements IBase {
     if (this.hasTypeElement()) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       setFhirPrimitiveJson<fhirCode>(this.getTypeElement()!, 'type', jsonObj);
+    } else {
+      missingReqdProperties.push('Group.type');
     }
 
     if (this.hasActualElement()) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       setFhirPrimitiveJson<fhirBoolean>(this.getActualElement()!, 'actual', jsonObj);
+    } else {
+      missingReqdProperties.push('Group.actual');
     }
 
     if (this.hasCode()) {
@@ -930,6 +1059,11 @@ export class Group extends DomainResource implements IBase {
 
     if (this.hasMember()) {
       setFhirBackboneElementListJson(this.getMember(), 'member', jsonObj);
+    }
+
+    if (missingReqdProperties.length > 0) {
+      const errMsg = `${REQUIRED_PROPERTIES_DO_NOT_EXIST} ${missingReqdProperties.join(', ')}`;
+      throw new FhirError(errMsg);
     }
 
     // jsonObj will always have, at least, the 'resourceType' property from Resource.
@@ -979,6 +1113,108 @@ export class GroupCharacteristicComponent extends BackboneElement {
         this.setExclude(exclude);
       }
     }
+  }
+
+  /**
+   * Parse the provided `Group.characteristic` json to instantiate the GroupCharacteristicComponent data model.
+   *
+   * @param groupCharacteristicJson - JSON representing FHIR `Group.characteristic`
+   * @returns GroupCharacteristicComponent data model or undefined for `Group.characteristic`
+   */
+  public static parse(groupCharacteristicJson: JSON.Value): GroupCharacteristicComponent | undefined {
+    if (
+      isNil(groupCharacteristicJson) ||
+      (JSON.isObject(groupCharacteristicJson) && isEmpty(groupCharacteristicJson))
+    ) {
+      return undefined;
+    }
+
+    const backboneJsonObj: JSON.Object = JSON.asObject(groupCharacteristicJson, `GroupCharacteristicComponent JSON`);
+    const instance = new GroupCharacteristicComponent(null, null, null);
+
+    processBackboneElementJson(instance, backboneJsonObj);
+
+    const missingReqdProperties: string[] = [];
+
+    if ('code' in backboneJsonObj) {
+      const datatype: CodeableConcept | undefined = parseCodeableConcept(
+        backboneJsonObj['code'],
+        `GroupCharacteristicComponent.code`,
+      );
+      if (datatype === undefined) {
+        throw new Error(`Failed to parse Group.characteristic.code from the provided JSON`);
+      } else {
+        instance.setCode(datatype);
+      }
+    } else {
+      missingReqdProperties.push('Group.characteristic.code');
+    }
+
+    // TODO: Generalize!!
+    // Handle polymorphic data type
+    // ['boolean', 'CodeableConcept', 'Quantity', 'Range', 'Reference']
+    const valueKeys = Object.keys(backboneJsonObj).filter((key) => key.startsWith('value'));
+    if ('value' in backboneJsonObj) {
+      throw new FhirError(INVALID_VALUEX_PROPERTY);
+    } else if (valueKeys.length > 1) {
+      throw new FhirError(`${INVALID_VALUEX_MULTIPLE_PROPERTIES} ${valueKeys.join(', ')}`);
+    } else if (
+      'valueBoolean' in backboneJsonObj ||
+      'valueCodeableConcept' in backboneJsonObj ||
+      'valueQuantity' in backboneJsonObj ||
+      'valueRange' in backboneJsonObj ||
+      'valueReference' in backboneJsonObj
+    ) {
+      let datatype: DataType | undefined = undefined;
+      try {
+        datatype = getValueXData(backboneJsonObj);
+      } catch (err) {
+        if (err instanceof TypeError) {
+          throw new TypeError(`Failed to parse Group.characteristic.value[x]: ${err.message}`, err);
+        } else {
+          throw new Error(`Unexpected error parsing Group.characteristic.value[x] from the provided JSON`);
+        }
+      }
+      if (datatype === undefined) {
+        throw new Error(`Failed to parse Group.characteristic.value[x] from the provided JSON`);
+      } else {
+        instance.setValue(datatype);
+      }
+    } else {
+      missingReqdProperties.push('Group.characteristic.value[x]');
+    }
+
+    if ('exclude' in backboneJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        backboneJsonObj,
+        'GroupCharacteristicComponent',
+        'exclude',
+        'boolean',
+      );
+      const datatype: BooleanType | undefined = parseBooleanType(dtJson, dtSiblingJson);
+      if (datatype === undefined) {
+        throw new Error(`Failed to parse Group.characteristic.exclude from the provided JSON`);
+      } else {
+        instance.setExcludeElement(datatype);
+      }
+    } else {
+      missingReqdProperties.push('Group.characteristic.exclude');
+    }
+
+    if ('period' in backboneJsonObj) {
+      const datatype: Period | undefined = parsePeriod(
+        backboneJsonObj['period'],
+        `GroupCharacteristicComponent.period`,
+      );
+      instance.setPeriod(datatype);
+    }
+
+    if (missingReqdProperties.length > 0) {
+      const errMsg = `${REQUIRED_PROPERTIES_REQD_IN_JSON} ${missingReqdProperties.join(', ')}`;
+      throw new FhirError(errMsg);
+    }
+
+    return instance;
   }
 
   /**
@@ -1357,23 +1593,36 @@ export class GroupCharacteristicComponent extends BackboneElement {
       jsonObj = {} as JSON.Object;
     }
 
+    const missingReqdProperties: string[] = [];
+
     if (this.hasCode()) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       setFhirComplexJson(this.getCode()!, 'code', jsonObj);
+    } else {
+      missingReqdProperties.push('Group.characteristic.code');
     }
 
     if (this.hasValue()) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       setPolymorphicValueJson(this.getValue()!, jsonObj);
+    } else {
+      missingReqdProperties.push('Group.characteristic.value[x]');
     }
 
     if (this.hasExcludeElement()) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       setFhirPrimitiveJson<fhirBoolean>(this.getExcludeElement()!, 'exclude', jsonObj);
+    } else {
+      missingReqdProperties.push('Group.characteristic.exclude');
     }
 
     if (this.hasPeriod()) {
       setFhirComplexJson(this.getPeriod(), 'period', jsonObj);
+    }
+
+    if (missingReqdProperties.length > 0) {
+      const errMsg = `${REQUIRED_PROPERTIES_DO_NOT_EXIST} ${missingReqdProperties.join(', ')}`;
+      throw new FhirError(errMsg);
     }
 
     return jsonObj;
@@ -1403,6 +1652,59 @@ export class GroupMemberComponent extends BackboneElement {
     if (entity !== null) {
       this.setEntity(entity);
     }
+  }
+
+  /**
+   * Parse the provided `Group.member` json to instantiate the GroupMemberComponent data model.
+   *
+   * @param groupMemberJson - JSON representing FHIR `Group.member`
+   * @returns GroupMemberComponent data model or undefined for `Group.member`
+   */
+  public static parse(groupMemberJson: JSON.Value): GroupMemberComponent | undefined {
+    if (isNil(groupMemberJson) || (JSON.isObject(groupMemberJson) && isEmpty(groupMemberJson))) {
+      return undefined;
+    }
+
+    const backboneJsonObj: JSON.Object = JSON.asObject(groupMemberJson, `GroupMemberComponent JSON`);
+    const instance = new GroupMemberComponent(null);
+
+    processBackboneElementJson(instance, backboneJsonObj);
+
+    const missingReqdProperties: string[] = [];
+
+    if ('entity' in backboneJsonObj) {
+      const datatype: Reference | undefined = parseReference(backboneJsonObj['entity'], `GroupMemberComponent.entity`);
+      if (datatype === undefined) {
+        throw new Error(`Failed to parse Group.characteristic.entity from the provided JSON`);
+      } else {
+        instance.setEntity(datatype);
+      }
+    } else {
+      missingReqdProperties.push('Group.member.entity');
+    }
+
+    if ('period' in backboneJsonObj) {
+      const datatype: Period | undefined = parsePeriod(backboneJsonObj['period'], `GroupMemberComponent.period`);
+      instance.setPeriod(datatype);
+    }
+
+    if ('inactive' in backboneJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        backboneJsonObj,
+        'GroupMemberComponent',
+        'inactive',
+        'boolean',
+      );
+      const datatype: BooleanType | undefined = parseBooleanType(dtJson, dtSiblingJson);
+      instance.setInactiveElement(datatype);
+    }
+
+    if (missingReqdProperties.length > 0) {
+      const errMsg = `${REQUIRED_PROPERTIES_REQD_IN_JSON} ${missingReqdProperties.join(', ')}`;
+      throw new FhirError(errMsg);
+    }
+
+    return instance;
   }
 
   /**
@@ -1610,9 +1912,13 @@ export class GroupMemberComponent extends BackboneElement {
       jsonObj = {} as JSON.Object;
     }
 
+    const missingReqdProperties: string[] = [];
+
     if (this.hasEntity()) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       setFhirComplexJson(this.getEntity()!, 'entity', jsonObj);
+    } else {
+      missingReqdProperties.push('Group.member.entity');
     }
 
     if (this.hasPeriod()) {
@@ -1621,6 +1927,11 @@ export class GroupMemberComponent extends BackboneElement {
 
     if (this.hasInactiveElement()) {
       setFhirPrimitiveJson<fhirBoolean>(this.getInactiveElement(), 'inactive', jsonObj);
+    }
+
+    if (missingReqdProperties.length > 0) {
+      const errMsg = `${REQUIRED_PROPERTIES_DO_NOT_EXIST} ${missingReqdProperties.join(', ')}`;
+      throw new FhirError(errMsg);
     }
 
     return jsonObj;

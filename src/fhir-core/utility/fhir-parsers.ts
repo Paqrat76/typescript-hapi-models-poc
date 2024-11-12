@@ -33,8 +33,11 @@
 
 import { strict as assert } from 'node:assert';
 import { isEmpty, isNil } from 'lodash';
+import { INSTANCE_EMPTY_ERROR_MSG, REQUIRED_PROPERTIES_REQD_IN_JSON } from '@src/fhir-core/constants';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
-import { DataType, Extension } from '@src/fhir-core/base-models/core-fhir-models';
+import { BackboneElement, DataType, Extension } from '@src/fhir-core/base-models/core-fhir-models';
+import { Resource } from '@src/fhir-core/base-models/Resource';
+import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
 import { OPEN_DATE_TYPE_KEY_NAMES } from '@src/fhir-core/data-types/FhirDataType';
 import { Base64BinaryType } from '@src/fhir-core/data-types/primitive/Base64BinaryType';
 import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
@@ -66,8 +69,9 @@ import { Period } from '@src/fhir-core/data-types/complex/Period';
 import { Quantity } from '@src/fhir-core/data-types/complex/Quantity';
 import { Range } from '@src/fhir-core/data-types/complex/Range';
 import { SimpleQuantity } from '@src/fhir-core/data-types/complex/SimpleQuantity';
-
-const INSTANCE_EMPTY_ERROR_MSG = `Parsed instance is unexpectedly "empty"`;
+import { FhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
+import { FhirError } from '@src/fhir-core/errors/FhirError';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
 //region CoreTypes
 
@@ -99,7 +103,7 @@ export function parseExtension(json: JSON.Object | undefined): Extension | undef
   if ('url' in extensionJsonObj) {
     instance.setUrl(JSON.asString(extensionJsonObj['url'], 'Extension.url JSON'));
   } else {
-    throw new TypeError(`Extension.url is a required data element`);
+    throw new FhirError(`${REQUIRED_PROPERTIES_REQD_IN_JSON} Extension.url`);
   }
 
   if ('id' in extensionJsonObj) {
@@ -134,7 +138,7 @@ export function parseExtension(json: JSON.Object | undefined): Extension | undef
 
 //endregion
 
-//region Private Helpers
+//region Helpers
 
 /**
  * PrimitiveTypeJson
@@ -142,9 +146,13 @@ export function parseExtension(json: JSON.Object | undefined): Extension | undef
  * @privateRemarks
  * Single object containing the JSON for for both the primitive data value and its sibling data Element, if any.
  *
+ * @param dtJson - primitive data JSON
+ * @param dtSiblingJson - primitive data's sibling Element JSON
+ *
  * @interface
+ * @category Utilities: FHIR Parsers
  */
-interface PrimitiveTypeJson {
+export interface PrimitiveTypeJson {
   dtJson: JSON.Value | undefined;
   dtSiblingJson: JSON.Object | undefined;
 }
@@ -154,10 +162,12 @@ interface PrimitiveTypeJson {
  *
  * @param instance - instance of DataType on which to add Element properties from dataTypeJson
  * @param dataTypeJson - DataType JSON containing Element properties, if any
- * @private
+ *
+ * @category Utilities: FHIR Parsers
  */
-function processElementJson(instance: DataType, dataTypeJson: JSON.Value | undefined): void {
-  if (dataTypeJson === undefined) {
+export function processElementJson(instance: DataType, dataTypeJson: JSON.Value | undefined): void {
+  assert.ok(instance, 'The instance argument is required.');
+  if (isNil(dataTypeJson) || (JSON.isObject(dataTypeJson) && isEmpty(dataTypeJson))) {
     return;
   }
 
@@ -182,20 +192,166 @@ function processElementJson(instance: DataType, dataTypeJson: JSON.Value | undef
   }
 }
 
+/**
+ * Add `Element.id` and/or `Element.extension` and/or `BackboneElement.modifierExtension` to the BackboneElement instance.
+ *
+ * @param instance - instance of BackboneElement on which to add Element/BackboneElement properties from dataJson
+ * @param dataJson - Data JSON containing Element/BackboneElement properties, if any
+ *
+ * @category Utilities: FHIR Parsers
+ */
+export function processBackboneElementJson(instance: BackboneElement, dataJson: JSON.Value | undefined): void {
+  assert.ok(instance, 'The instance argument is required.');
+  if (isNil(dataJson) || (JSON.isObject(dataJson) && isEmpty(dataJson))) {
+    return;
+  }
+
+  const backboneElement: JSON.Object = JSON.asObject(dataJson, `${instance.constructor.name} BackboneElement`);
+
+  if ('id' in backboneElement) {
+    instance.setId(JSON.asString(backboneElement['id'], `${instance.constructor.name}.id`));
+  }
+
+  if ('extension' in backboneElement) {
+    const extensions = [] as Extension[];
+    const extensionArray = backboneElement['extension'] as JSON.Array;
+    for (const extensionJson of extensionArray) {
+      const extension: Extension | undefined = parseExtension(extensionJson as JSON.Object);
+      if (extension !== undefined) {
+        extensions.push(extension);
+      }
+    }
+    if (extensions.length > 0) {
+      instance.setExtension(extensions);
+    }
+  }
+
+  if ('modifierExtension' in backboneElement) {
+    const modifierExtensions = [] as Extension[];
+    const modifierExtensionArray = backboneElement['modifierExtension'] as JSON.Array;
+    for (const extensionJson of modifierExtensionArray) {
+      const extension: Extension | undefined = parseExtension(extensionJson as JSON.Object);
+      if (extension !== undefined) {
+        modifierExtensions.push(extension);
+      }
+    }
+    if (modifierExtensions.length > 0) {
+      instance.setModifierExtension(modifierExtensions);
+    }
+  }
+}
+
+/**
+ * Add `Resource.id`, `Resource.meta`, `Resource.implicitRules`, and/or `Resource.language` to the Resource instance.
+ *
+ * @param instance - instance of Resource on which to add Resource properties from dataJson
+ * @param dataJson - Data JSON containing Resource properties, if any
+ *
+ * @category Utilities: FHIR Parsers
+ */
+export function processResourceJson(instance: Resource, dataJson: JSON.Value | undefined): void {
+  assert.ok(instance, 'The instance argument is required.');
+  if (isNil(dataJson) || (JSON.isObject(dataJson) && isEmpty(dataJson))) {
+    return;
+  }
+
+  const sourceResource: string = instance.constructor.name;
+  const resourceObj: JSON.Object = JSON.asObject(dataJson, `${sourceResource} JSON`);
+
+  if ('id' in resourceObj) {
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(resourceObj, sourceResource, 'id', 'string');
+    const datatype: IdType | undefined = parseIdType(dtJson, dtSiblingJson);
+    instance.setIdElement(datatype);
+  }
+
+  if ('meta' in resourceObj) {
+    const datatype: Meta | undefined = parseMeta(resourceObj['meta'], `${sourceResource}.meta`);
+    instance.setMeta(datatype);
+  }
+
+  if ('implicitRules' in resourceObj) {
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(resourceObj, sourceResource, 'implicitRules', 'string');
+    const datatype: UriType | undefined = parseUriType(dtJson, dtSiblingJson);
+    instance.setImplicitRulesElement(datatype);
+  }
+
+  if ('language' in resourceObj) {
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(resourceObj, sourceResource, 'language', 'string');
+    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
+    instance.setLanguageElement(datatype);
+  }
+}
+
+/**
+ * Add Resource properties, if any, plus `DomainResource.contained`, `DomainResource.extension`,
+ * and/or * `DomainResource.modifierExtension` to the DomainResource instance.
+ *
+ * @param instance - instance of DomainResource on which to add DomainResource properties from dataJson
+ * @param dataJson - Data JSON containing DomainResource properties, if any
+ *
+ * @category Utilities: FHIR Parsers
+ * @see processResourceJson
+ */
+export function processDomainResourceJson(instance: DomainResource, dataJson: JSON.Value | undefined): void {
+  assert.ok(instance, 'The instance argument is required.');
+  if (isNil(dataJson) || (JSON.isObject(dataJson) && isEmpty(dataJson))) {
+    return;
+  }
+
+  const sourceResource: string = instance.constructor.name;
+  const resourceObj: JSON.Object = JSON.asObject(dataJson, `${sourceResource} JSON`);
+
+  processResourceJson(instance, resourceObj);
+
+  if ('text' in resourceObj) {
+    const datatype: Narrative | undefined = parseNarrative(resourceObj['text'], `${sourceResource}.text`);
+    instance.setText(datatype);
+  }
+
+  // TODO: Add PractitionerRole FHIR model to support/test "contained"
+  // if ('contained' in resourceObj) {
+  //   const dataElementJsonArray: JSON.Array = JSON.asArray(resourceObj['contained'], `${sourceResource}.contained`);
+  //   dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
+  //     const datatype: Resource | undefined = parseResource(instance, dataElementJson, `${sourceResource}.contained[${String(idx)}]`);
+  //     instance.addContained(datatype);
+  //   });
+  // }
+
+  if ('extension' in resourceObj) {
+    const extensionArray = JSON.asArray(resourceObj['extension'], `${sourceResource}.extension`);
+    extensionArray.forEach((extensionJson: JSON.Value) => {
+      const datatype: Extension | undefined = parseExtension(extensionJson as JSON.Object);
+      instance.addExtension(datatype);
+    });
+  }
+
+  if ('modifierExtension' in resourceObj) {
+    const modifierExtensionArray = JSON.asArray(
+      resourceObj['modifierExtension'],
+      `${sourceResource}.modifierExtension`,
+    );
+    modifierExtensionArray.forEach((extensionJson: JSON.Value) => {
+      const datatype: Extension | undefined = parseExtension(extensionJson as JSON.Object);
+      instance.addModifierExtension(datatype);
+    });
+  }
+}
+
 /* istanbul ignore next */
 /**
  * Return an instance of DataType for the `value[x]` if it exists.
  *
- * @param extensionJsonObj - source JSON object
+ * @param jsonObj - source JSON object
  * @returns the appropriate DataType instance or undefined
  * @private
  */
-function getValueXData(extensionJsonObj: JSON.Object): DataType | undefined {
-  const valueXKey = Object.keys(extensionJsonObj).find((key) => OPEN_DATE_TYPE_KEY_NAMES.includes(key));
+export function getValueXData(jsonObj: JSON.Object): DataType | undefined {
+  assert.ok(jsonObj, 'The jsonObj argument is required.');
+  const valueXKey = Object.keys(jsonObj).find((key) => OPEN_DATE_TYPE_KEY_NAMES.includes(key));
 
-  if (valueXKey !== undefined && valueXKey in extensionJsonObj) {
-    const dataValue: JSON.Value | undefined = extensionJsonObj[valueXKey];
-    const siblingDataValue: JSON.Value | undefined = extensionJsonObj[`_${valueXKey}`];
+  if (valueXKey !== undefined && valueXKey in jsonObj) {
+    const dataValue: JSON.Value | undefined = jsonObj[valueXKey];
+    const siblingDataValue: JSON.Value | undefined = jsonObj[`_${valueXKey}`];
 
     if (dataValue !== undefined) {
       switch (valueXKey) {
@@ -281,8 +437,10 @@ function getValueXData(extensionJsonObj: JSON.Object): DataType | undefined {
  * @param primitiveFieldName - primitive's field name in datatypeJsonObj
  * @param jsonType - type of expected field's data
  * @returns object containing the primitive data plus its Element data, if any
+ *
+ * @category Utilities: FHIR Parsers
  */
-function getPrimitiveTypeJson(
+export function getPrimitiveTypeJson(
   datatypeJsonObj: JSON.Object,
   datatypeName: string,
   primitiveFieldName: string,
@@ -323,8 +481,10 @@ function getPrimitiveTypeJson(
  * @param primitiveFieldName - primitive's field name in datatypeJsonObj
  * @param jsonType - type of expected field's data
  * @returns array containing objects of the primitive data plus its Element data, if any
+ *
+ * @category Utilities: FHIR Parsers
  */
-function getPrimitiveTypeListJson(
+export function getPrimitiveTypeListJson(
   datatypeJsonObj: JSON.Object,
   datatypeName: string,
   primitiveFieldName: string,
@@ -376,6 +536,37 @@ function getPrimitiveTypeListJson(
   });
 
   return primitiveTypeJsonArray;
+}
+
+/**
+ * Asserts the provided JSON object represents a valid FHIR Resource.
+ *
+ * @param dataJsonObj - source JSON object
+ * @param fhirResourceType - expected FhirResourceType
+ * @throws AssertionError for invalid arguments
+ * @throws InvalidTypeError for invalid fhirResourceType
+ *
+ * @category Type Guards/Assertions
+ */
+export function assertFhirResourceTypeJson(dataJsonObj: JSON.Object, fhirResourceType: FhirResourceType): void {
+  assert(
+    !isNil(dataJsonObj) && !(JSON.isObject(dataJsonObj) && isEmpty(dataJsonObj)),
+    `The dataJsonObj argument is required.`,
+  );
+  assert(!isNil(fhirResourceType) && !isEmpty(fhirResourceType), `The fhirResourceType argument is required.`);
+
+  if ('resourceType' in dataJsonObj) {
+    const resourceTypeValue = JSON.asString(dataJsonObj['resourceType'], `${fhirResourceType}.resourceType`);
+    if (resourceTypeValue !== fhirResourceType) {
+      throw new InvalidTypeError(
+        `Invalid JSON 'resourceType' ('${resourceTypeValue}') value; Should be '${fhirResourceType}'.`,
+      );
+    }
+  } else {
+    throw new InvalidTypeError(
+      `The provided JSON does not represent a FHIR Resource (missing 'resourceType' element).`,
+    );
+  }
 }
 
 //endregion
@@ -1109,22 +1300,35 @@ export function parseNarrative(json: JSON.Value | undefined, sourceField?: strin
 
   processElementJson(instance, datatypeJsonObj);
 
+  const missingReqdProperties: string[] = [];
+
   if ('status' in datatypeJsonObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'status', 'string');
     const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
-    if (datatype !== undefined) {
-      // Narrative.status is required and cannot be set to undefined or null
+    if (datatype === undefined) {
+      throw new Error(`Failed to parse ${source}.status from the provided JSON`);
+    } else {
       instance.setStatusElement(datatype);
     }
+  } else {
+    missingReqdProperties.push(`${source}.status`);
   }
 
   if ('div' in datatypeJsonObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'div', 'string');
     const datatype: XhtmlType | undefined = parseXhtmlType(dtJson, dtSiblingJson);
-    if (datatype !== undefined) {
-      // Narrative.div is required and cannot be set to undefined or null
+    if (datatype === undefined) {
+      throw new Error(`Failed to parse ${source}.div from the provided JSON`);
+    } else {
       instance.setDivElement(datatype);
     }
+  } else {
+    missingReqdProperties.push(`${source}.div`);
+  }
+
+  if (missingReqdProperties.length > 0) {
+    const errMsg = `${REQUIRED_PROPERTIES_REQD_IN_JSON} ${missingReqdProperties.join(', ')}`;
+    throw new FhirError(errMsg);
   }
 
   assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);

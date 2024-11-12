@@ -111,6 +111,10 @@ export class MockElement extends Element {
     }
   }
 
+  public override isEmpty(): boolean {
+    return super.isEmpty();
+  }
+
   public copy(): MockElement {
     const dest = new MockElement();
     this.copyValues(dest);
@@ -205,6 +209,10 @@ export class MockResource extends Resource {
     return 'MockResource';
   }
 
+  public override isEmpty(): boolean {
+    return super.isEmpty();
+  }
+
   // NOT USED
   public copy(): MockResource {
     const dest = new MockResource();
@@ -218,38 +226,13 @@ export class MockResource extends Resource {
   protected copyValues(dest: MockResource): void {
     return;
   }
-}
 
-// export class MockTask extends DomainResource {
-//   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-//   constructor() {
-//     super();
-//   }
-//
-//   public resourceType(): FhirResourceType {
-//     return 'Task';
-//   }
-//
-//   public fhirType(): string {
-//     return 'MockTask';
-//   }
-//
-//   public copy(): MockTask {
-//     const dest = new MockTask();
-//     this.copyValues(dest);
-//     return dest;
-//   }
-//
-//   protected override copyValues(dest: MockTask): void {
-//     super.copyValues(dest);
-//     return;
-//   }
-//
-//   // NOT USED
-//   public override toJSON(): JSON.Value | undefined {
-//     return undefined;
-//   }
-// }
+  public override toJSON(): JSON.Value | undefined {
+    // Will always have, at least, the 'resourceType' property from Resource
+    const jsonObj = super.toJSON() as JSON.Object;
+    return Object.keys(jsonObj).length > 1 ? jsonObj : undefined;
+  }
+}
 
 export class MockTask extends DomainResource {
   public mockPrimitive: StringType | undefined = undefined;
@@ -271,6 +254,10 @@ export class MockTask extends DomainResource {
 
   public fhirType(): string {
     return 'MockTask';
+  }
+
+  public override isEmpty(): boolean {
+    return super.isEmpty();
   }
 
   public copy(): MockTask {

@@ -30,6 +30,7 @@ import {
   assertFhirBackboneType,
 } from '@src/fhir-core/base-models/core-fhir-models';
 import { assertFhirResourceType } from '@src/fhir-core/base-models/Resource';
+import { assertFhirResourceTypeJson } from '@src/fhir-core/utility/fhir-parsers';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { Period } from '@src/fhir-core/data-types/complex/Period';
 import { EnumCodeType, assertEnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
@@ -276,6 +277,45 @@ describe('type-guards', () => {
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(errMessage);
+    });
+  });
+
+  describe('assertFhirResourceTypeJson', () => {
+    it('should not throw InvalidTypeError for valid FhirResourceType', () => {
+      const VALID_JSON = {
+        resourceType: 'Task',
+        id: '12345',
+      };
+
+      const t = () => {
+        assertFhirResourceTypeJson(VALID_JSON, 'Task');
+      };
+      expect(t).not.toThrow(TypeError);
+    });
+
+    it('should throw InvalidTypeError for non-FhirResourceType', () => {
+      const INVALID_JSON = {
+        id: '12345',
+      };
+
+      const t = () => {
+        assertFhirResourceTypeJson(INVALID_JSON, 'Task');
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`The provided JSON does not represent a FHIR Resource (missing 'resourceType' element).`);
+    });
+
+    it('should throw InvalidTypeError for invalid FhirResourceType', () => {
+      const INVALID_JSON = {
+        resourceType: 'Basic',
+        id: '12345',
+      };
+
+      const t = () => {
+        assertFhirResourceTypeJson(INVALID_JSON, 'Task');
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid JSON 'resourceType' ('Basic') value; Should be 'Task'.`);
     });
   });
 

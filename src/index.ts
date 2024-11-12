@@ -21,6 +21,7 @@
  *
  */
 
+export * from '@src/fhir-core/constants';
 export * from '@src/fhir-core/base-models/Base';
 export * from '@src/fhir-core/base-models/IBase';
 export * from '@src/fhir-core/base-models/core-fhir-codes';
@@ -62,6 +63,7 @@ export * from '@src/fhir-core/data-types/primitive/UrlType';
 export * from '@src/fhir-core/data-types/primitive/UuidType';
 export * from '@src/fhir-core/data-types/primitive/XhtmlType';
 export * from '@src/fhir-core/data-types/primitive/primitive-types';
+export * from '@src/fhir-core/errors/FhirError';
 export * from '@src/fhir-core/errors/InvalidCodeError';
 export * from '@src/fhir-core/errors/InvalidDateTimeError';
 export * from '@src/fhir-core/errors/InvalidTypeError';
@@ -69,9 +71,9 @@ export * from '@src/fhir-core/errors/PrimitiveTypeError';
 export * from '@src/fhir-core/utility/common-util';
 export * from '@src/fhir-core/utility/date-time-util';
 export * from '@src/fhir-core/utility/decorators';
+export * from '@src/fhir-core/utility/fhir-parsers';
 export * from '@src/fhir-core/utility/fhir-util';
 export * from '@src/fhir-core/utility/json-helpers';
 export * from '@src/fhir-core/utility/type-guards';
-export * from '@src/fhir-core/utility/fhir-parsers';
 export * from '@src/fhir-models/Group';
 export * from '@src/fhir-models/code-systems/GroupTypeEnum';

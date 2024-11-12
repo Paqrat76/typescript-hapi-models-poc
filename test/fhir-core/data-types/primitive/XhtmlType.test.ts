@@ -23,8 +23,9 @@
 
 import { XhtmlType } from '@src/fhir-core/data-types/primitive/XhtmlType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
+import { FhirError } from '@src/fhir-core/errors/FhirError';
+import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 
 describe('XhtmlType', () => {
   const VALID_XHTML = `<div xmlns="http://www.w3.org/1999/xhtml">text</div>`;
@@ -107,7 +108,7 @@ describe('XhtmlType', () => {
     const t = () => {
       testXhtmlType.setExtension([testExtension]);
     };
-    expect(t).toThrow(TypeError);
+    expect(t).toThrow(FhirError);
     expect(t).toThrow(`According to the FHIR specification, Extensions are not permitted on the xhtml type`);
   });
 
@@ -116,7 +117,7 @@ describe('XhtmlType', () => {
     const t = () => {
       testXhtmlType.addExtension(testExtension);
     };
-    expect(t).toThrow(TypeError);
+    expect(t).toThrow(FhirError);
     expect(t).toThrow(`According to the FHIR specification, Extensions are not permitted on the xhtml type`);
   });
 

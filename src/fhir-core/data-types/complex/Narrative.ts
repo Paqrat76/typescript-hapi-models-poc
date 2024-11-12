@@ -21,6 +21,7 @@
  *
  */
 
+import { REQUIRED_PROPERTIES_DO_NOT_EXIST } from '@src/fhir-core/constants';
 import { DataType, PrimitiveType, setFhirPrimitiveJson } from '@src/fhir-core/base-models/core-fhir-models';
 import { IBase } from '@src/fhir-core/base-models/IBase';
 import {
@@ -41,6 +42,7 @@ import {
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import { assertFhirType } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
+import { FhirError } from '@src/fhir-core/errors/FhirError';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -338,14 +340,25 @@ export class Narrative extends DataType implements IBase {
       jsonObj = {} as JSON.Object;
     }
 
+    const missingReqdProperties: string[] = [];
+
     if (this.hasStatusElement()) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       setFhirPrimitiveJson<fhirCode>(this.getStatusElement()!, 'status', jsonObj);
+    } else {
+      missingReqdProperties.push('Narrative.status');
     }
 
     if (this.hasDivElement()) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       setFhirPrimitiveJson<fhirXhtml>(this.getDivElement()!, 'div', jsonObj);
+    } else {
+      missingReqdProperties.push('Narrative.div');
+    }
+
+    if (missingReqdProperties.length > 0) {
+      const errMsg = `${REQUIRED_PROPERTIES_DO_NOT_EXIST} ${missingReqdProperties.join(', ')}`;
+      throw new FhirError(errMsg);
     }
 
     return jsonObj;

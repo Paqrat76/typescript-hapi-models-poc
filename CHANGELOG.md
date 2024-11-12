@@ -26,6 +26,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Added deserialization helper functions for PrimitiveTypes
 - Added deserialization helper functions for ComplexTypes
+- Added new FhirError for appropriate error situations
+- Added deserialization helper functions for Resource and DomainResource
+- Added deserialization to Group FHIR model
 
 ### Changed
 

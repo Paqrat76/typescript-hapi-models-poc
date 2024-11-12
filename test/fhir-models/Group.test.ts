@@ -27,6 +27,7 @@ import { Base } from '@src/fhir-core/base-models/Base';
 import { Resource } from '@src/fhir-core/base-models/Resource';
 import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
 import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
+import { Coding } from '@src/fhir-core/data-types/complex/Coding';
 import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
 import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
@@ -41,6 +42,7 @@ import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UnsignedIntType } from '@src/fhir-core/data-types/primitive/UnsignedIntType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { GroupTypeEnum } from '@src/fhir-models/code-systems/GroupTypeEnum';
+import { FhirError } from '@src/fhir-core/errors/FhirError';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
@@ -207,6 +209,17 @@ describe('Group', () => {
       expect(testGroup.getCharacteristic()).toEqual([] as GroupCharacteristicComponent[]);
       expect(testGroup.hasMember()).toBe(false);
       expect(testGroup.getMember()).toEqual([] as GroupMemberComponent[]);
+    });
+
+    it('should throw FhirError when instantiated with missing required properties', () => {
+      const testGroup = new Group(null, null);
+      testGroup.setIdentifier([VALID_IDENTIFIER_1]);
+
+      const t = () => {
+        testGroup.toJSON();
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(`The following required properties do not exist: Group.type, Group.actual`);
     });
 
     it('should properly copy() undefined values', () => {
@@ -1591,6 +1604,251 @@ describe('Group', () => {
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(`setManagingEntity: 'value' argument (${INVALID_REFERENCE}) is not for a valid resource type`);
+    });
+  });
+
+  describe('Serialization/Deserialization', () => {
+    const VALID_ID = 'is12345';
+    const VALID_SECURITY = new Coding();
+    VALID_SECURITY.setSystem('securitySystem');
+    VALID_SECURITY.setCode('securityCode');
+    const VALID_TAG = new Coding();
+    VALID_TAG.setSystem('tagSystem');
+    VALID_TAG.setCode('tagCode');
+    const VALID_META = new Meta();
+    VALID_META.setVersionId('v1');
+    VALID_META.setLastUpdated(VALID_START_DATETIME_1);
+    VALID_META.setSource('sourceUri');
+    VALID_META.addProfile('profileCanonical');
+    VALID_META.addSecurity(VALID_SECURITY);
+    VALID_META.addTag(VALID_TAG);
+    const VALID_IMPLICIT_RULES = 'validImplicitUrl';
+    const VALID_LANGUAGE = 'en-US';
+    const VALID_CODE_GENERATED = `generated`;
+    const VALID_XHTML = '<div xmlns="http://www.w3.org/1999/xhtml">text</div>';
+    const VALID_NARRATIVE = new Narrative(VALID_CODE_GENERATED, VALID_XHTML);
+
+    const VALID_EXTENSION = new Extension('extUrl', new StringType('Extension string value'));
+    const VALID_MODIFIER_EXTENSION = new Extension('modExtUrl', new StringType('ModifierExtension string value'));
+    const VALID_JSON = {
+      resourceType: 'Group',
+      id: 'is12345',
+      meta: {
+        versionId: 'v1',
+        lastUpdated: '2017-01-01T00:00:00.000Z',
+        source: 'sourceUri',
+        profile: ['profileCanonical'],
+        security: [
+          {
+            system: 'securitySystem',
+            code: 'securityCode',
+          },
+        ],
+        tag: [
+          {
+            system: 'tagSystem',
+            code: 'tagCode',
+          },
+        ],
+      },
+      implicitRules: 'validImplicitUrl',
+      language: 'en-US',
+      text: {
+        status: 'generated',
+        div: '<div xmlns="http://www.w3.org/1999/xhtml">text</div>',
+      },
+      extension: [
+        {
+          url: 'extUrl',
+          valueString: 'Extension string value',
+        },
+      ],
+      modifierExtension: [
+        {
+          url: 'modExtUrl',
+          valueString: 'ModifierExtension string value',
+        },
+      ],
+      identifier: [
+        {
+          value: 'This is a valid string.',
+        },
+      ],
+      active: true,
+      type: 'person',
+      actual: true,
+      code: {
+        text: 'This is a valid string.',
+      },
+      name: 'This is a valid string.',
+      quantity: 13,
+      managingEntity: {
+        reference: 'Practitioner/13579',
+      },
+      characteristic: [
+        {
+          code: {
+            text: 'This is a valid string.',
+          },
+          valueBoolean: false,
+          exclude: true,
+        },
+      ],
+      member: [
+        {
+          entity: {
+            reference: 'Practitioner/13579',
+          },
+        },
+      ],
+    };
+    const INVALID_JSON = {
+      resourceType: 'Group',
+      id: 'is12345',
+    };
+
+    it('should throw FhirError from toJSON() when instantiated with missing required properties', () => {
+      const testGroup = new Group(null, null);
+      testGroup.setName(VALID_STRING_1);
+
+      const t = () => {
+        testGroup.toJSON();
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(`The following required properties do not exist: Group.type, Group.actual`);
+    });
+
+    it('should properly create serialized content', () => {
+      const testGroup = new Group(null, null);
+      testGroup.setId(VALID_ID);
+      testGroup.setMeta(VALID_META);
+      testGroup.setImplicitRules(VALID_IMPLICIT_RULES);
+      testGroup.setLanguage(VALID_LANGUAGE);
+      testGroup.setText(VALID_NARRATIVE);
+      // TODO: Add "contained"
+      testGroup.setExtension([VALID_EXTENSION]);
+      testGroup.setModifierExtension([VALID_MODIFIER_EXTENSION]);
+
+      testGroup.setIdentifier([VALID_IDENTIFIER_1]);
+      testGroup.setActiveElement(new BooleanType(VALID_BOOLEAN_TRUE));
+      testGroup.setTypeElement(VALID_CODE_PERSON_TYPE);
+      testGroup.setActualElement(new BooleanType(VALID_BOOLEAN_TRUE));
+      testGroup.setCode(VALID_CODEABLECONCEPT_1);
+      testGroup.setNameElement(new StringType(VALID_STRING_1));
+      testGroup.setQuantityElement(new UnsignedIntType(VALID_UNSIGNED_INT_1));
+      testGroup.setManagingEntity(VALID_REFERENCE_VALUE_1);
+      const groupCharacteristicComponent1 = new GroupCharacteristicComponent(
+        VALID_CODEABLECONCEPT_1,
+        new BooleanType(VALID_BOOLEAN_FALSE),
+        new BooleanType(VALID_BOOLEAN_TRUE),
+      );
+      testGroup.addCharacteristic(groupCharacteristicComponent1);
+      const testGroupMemberComponent1 = new GroupMemberComponent(VALID_REFERENCE_VALUE_1);
+      testGroup.addMember(testGroupMemberComponent1);
+
+      expect(testGroup).toBeDefined();
+      expect(testGroup).toBeInstanceOf(Group);
+      expect(testGroup).toBeInstanceOf(DomainResource);
+      expect(testGroup).toBeInstanceOf(Resource);
+      expect(testGroup).toBeInstanceOf(Base);
+      expect(testGroup.constructor.name).toStrictEqual('Group');
+      expect(testGroup.resourceType()).toStrictEqual('Group');
+      expect(testGroup.fhirType()).toStrictEqual('Group');
+      expect(testGroup.isResource()).toBe(true);
+      expect(testGroup.isEmpty()).toBe(false);
+
+      // inherited properties from DomainResource
+      expect(testGroup.hasId()).toBe(true);
+      expect(testGroup.getId()).toStrictEqual(VALID_ID);
+      expect(testGroup.hasMeta()).toBe(true);
+      expect(testGroup.getMeta()).toEqual(VALID_META);
+      expect(testGroup.hasImplicitRules()).toBe(true);
+      expect(testGroup.getImplicitRules()).toStrictEqual(VALID_IMPLICIT_RULES);
+      expect(testGroup.hasLanguage()).toBe(true);
+      expect(testGroup.getLanguage()).toStrictEqual(VALID_LANGUAGE);
+      expect(testGroup.hasText()).toBe(true);
+      expect(testGroup.getText()).toStrictEqual(VALID_NARRATIVE);
+      // TODO: Add "contained"
+      expect(testGroup.hasExtension()).toBe(true);
+      expect(testGroup.getExtension()).toEqual([VALID_EXTENSION]);
+      expect(testGroup.hasModifierExtension()).toBe(true);
+      expect(testGroup.getModifierExtension()).toEqual([VALID_MODIFIER_EXTENSION]);
+
+      // Group properties
+      expect(testGroup.hasIdentifier()).toBe(true);
+      expect(testGroup.getIdentifier()).toEqual([VALID_IDENTIFIER_1]);
+      expect(testGroup.hasActiveElement()).toBe(true);
+      expect(testGroup.getActiveElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
+      expect(testGroup.hasActive()).toBe(true);
+      expect(testGroup.getActive()).toStrictEqual(VALID_BOOLEAN_TRUE);
+      expect(testGroup.hasTypeEnumType()).toBe(true);
+      expect(testGroup.getTypeEnumType()).toEqual(new EnumCodeType(VALID_CODE_PERSON, groupTypeEnum));
+      expect(testGroup.hasTypeElement()).toBe(true);
+      expect(testGroup.getTypeElement()).toMatchObject(VALID_CODE_PERSON_TYPE);
+      expect(testGroup.hasType()).toBe(true);
+      expect(testGroup.getType()).toStrictEqual(VALID_CODE_PERSON);
+      expect(testGroup.hasActualElement()).toBe(true);
+      expect(testGroup.getActualElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
+      expect(testGroup.hasActual()).toBe(true);
+      expect(testGroup.getActual()).toStrictEqual(VALID_BOOLEAN_TRUE);
+      expect(testGroup.hasCode()).toBe(true);
+      expect(testGroup.getCode()).toEqual(VALID_CODEABLECONCEPT_1);
+      expect(testGroup.hasNameElement()).toBe(true);
+      expect(testGroup.getNameElement()).toEqual(new StringType(VALID_STRING_1));
+      expect(testGroup.hasName()).toBe(true);
+      expect(testGroup.getName()).toStrictEqual(VALID_STRING_1);
+      expect(testGroup.hasQuantityElement()).toBe(true);
+      expect(testGroup.getQuantityElement()).toEqual(new UnsignedIntType(VALID_UNSIGNED_INT_1));
+      expect(testGroup.hasQuantity()).toBe(true);
+      expect(testGroup.getQuantity()).toStrictEqual(VALID_UNSIGNED_INT_1);
+      expect(testGroup.hasManagingEntity()).toBe(true);
+      expect(testGroup.getManagingEntity()).toEqual(VALID_REFERENCE_VALUE_1);
+      expect(testGroup.hasCharacteristic()).toBe(true);
+      expect(testGroup.getCharacteristic()).toEqual([groupCharacteristicComponent1]);
+      expect(testGroup.hasMember()).toBe(true);
+      expect(testGroup.getMember()).toEqual([testGroupMemberComponent1]);
+
+      expect(testGroup.toJSON()).toEqual(VALID_JSON);
+    });
+
+    it('should return undefined when deserialize with no json', () => {
+      let testGroup: Group | undefined = undefined;
+      testGroup = Group.parse({});
+      expect(testGroup).toBeUndefined();
+
+      // @ts-expect-error: allow for testing
+      testGroup = Group.parse(null);
+      expect(testGroup).toBeUndefined();
+
+      // @ts-expect-error: allow for testing
+      testGroup = Group.parse(undefined);
+      expect(testGroup).toBeUndefined();
+    });
+
+    it('should throw FhirError from parse with missing required properties', () => {
+      const t = () => {
+        Group.parse(INVALID_JSON);
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(
+        `The following required properties must be included in the provided JSON: Group.type, Group.actual`,
+      );
+    });
+
+    it('should return Group for valid json', () => {
+      const testGroup: Group | undefined = Group.parse(VALID_JSON);
+
+      expect(testGroup).toBeDefined();
+      expect(testGroup).toBeInstanceOf(Group);
+      expect(testGroup).toBeInstanceOf(DomainResource);
+      expect(testGroup).toBeInstanceOf(Resource);
+      expect(testGroup).toBeInstanceOf(Base);
+      expect(testGroup?.constructor.name).toStrictEqual('Group');
+      expect(testGroup?.resourceType()).toStrictEqual('Group');
+      expect(testGroup?.fhirType()).toStrictEqual('Group');
+      expect(testGroup?.isResource()).toBe(true);
+      expect(testGroup?.isEmpty()).toBe(false);
+      expect(testGroup?.toJSON()).toEqual(VALID_JSON);
     });
   });
 

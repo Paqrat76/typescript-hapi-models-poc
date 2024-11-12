@@ -33,6 +33,7 @@ import { Quantity } from '@src/fhir-core/data-types/complex/Quantity';
 import { Range } from '@src/fhir-core/data-types/complex/Range';
 import { SimpleQuantity } from '@src/fhir-core/data-types/complex/SimpleQuantity';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { FhirError } from '@src/fhir-core/errors/FhirError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { MockFhirModel } from '../test-utils';
@@ -146,6 +147,19 @@ describe('GroupCharacteristicComponent', () => {
       expect(testGroupCharacteristicComponent.getExcludeElement()).toBeNull();
       expect(testGroupCharacteristicComponent.hasExclude()).toBe(false);
       expect(testGroupCharacteristicComponent.getExclude()).toBeNull();
+    });
+
+    it('should throw FhirError when instantiated with missing required properties', () => {
+      const testGroupCharacteristicComponent = new GroupCharacteristicComponent(null, null, null);
+      testGroupCharacteristicComponent.setPeriod(VALID_PERIOD_1);
+
+      const t = () => {
+        testGroupCharacteristicComponent.toJSON();
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(
+        `The following required properties do not exist: Group.characteristic.code, Group.characteristic.value[x], Group.characteristic.exclude`,
+      );
     });
 
     it('should properly copy()', () => {
@@ -808,6 +822,226 @@ describe('GroupCharacteristicComponent', () => {
       expect(testGroupCharacteristicComponent.getExcludeElement()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
       expect(testGroupCharacteristicComponent.hasExclude()).toBe(true);
       expect(testGroupCharacteristicComponent.getExclude()).toStrictEqual(VALID_BOOLEAN_FALSE);
+    });
+  });
+
+  describe('Serialization/Deserialization', () => {
+    const VALID_ID = 'is12345';
+    const VALID_EXTENSION = new Extension('extUrl', new StringType('Extension string value'));
+    const VALID_MODIFIER_EXTENSION = new Extension('modExtUrl', new StringType('ModifierExtension string value'));
+    const VALID_JSON = {
+      id: 'is12345',
+      extension: [
+        {
+          url: 'extUrl',
+          valueString: 'Extension string value',
+        },
+      ],
+      modifierExtension: [
+        {
+          url: 'modExtUrl',
+          valueString: 'ModifierExtension string value',
+        },
+      ],
+      code: {
+        text: 'This is a valid string.',
+      },
+      valueBoolean: false,
+      exclude: true,
+      period: {
+        start: '2017-01-01T00:00:00.000Z',
+        end: '2017-01-01T01:00:00.000Z',
+      },
+    };
+    const INVALID_JSON = {
+      period: {
+        start: '2017-01-01T00:00:00.000Z',
+        end: '2017-01-01T01:00:00.000Z',
+      },
+    };
+    const INVALID_JSON_1 = {
+      code: {
+        text: 'This is a valid string.',
+      },
+      value: 'invalid value[x]',
+      exclude: true,
+      period: {
+        start: '2017-01-01T00:00:00.000Z',
+        end: '2017-01-01T01:00:00.000Z',
+      },
+    };
+    const INVALID_JSON_2 = {
+      code: {
+        text: 'This is a valid string.',
+      },
+      valueBoolean: false,
+      valueCodeableConcept: { text: 'invalid value[x] - multiple values' },
+      exclude: true,
+      period: {
+        start: '2017-01-01T00:00:00.000Z',
+        end: '2017-01-01T01:00:00.000Z',
+      },
+    };
+    const INVALID_JSON_3 = {
+      code: {
+        text: 'This is a valid string.',
+      },
+      valueXxxx: 'invalid value[x]',
+      exclude: true,
+      period: {
+        start: '2017-01-01T00:00:00.000Z',
+        end: '2017-01-01T01:00:00.000Z',
+      },
+    };
+    const INVALID_JSON_4 = {
+      code: {
+        text: 'This is a valid string.',
+      },
+      valueBoolean: 123,
+      exclude: true,
+      period: {
+        start: '2017-01-01T00:00:00.000Z',
+        end: '2017-01-01T01:00:00.000Z',
+      },
+    };
+
+    it('should throw FhirError from toJSON() when instantiated with missing required properties', () => {
+      const testGroupCharacteristicComponent = new GroupCharacteristicComponent(null, null, null);
+      testGroupCharacteristicComponent.setPeriod(VALID_PERIOD);
+
+      const t = () => {
+        testGroupCharacteristicComponent.toJSON();
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(
+        `The following required properties do not exist: Group.characteristic.code, Group.characteristic.value[x], Group.characteristic.exclude`,
+      );
+    });
+
+    it('should properly create serialized content', () => {
+      const testGroupCharacteristicComponent = new GroupCharacteristicComponent(
+        VALID_CODEABLECONCEPT_1,
+        new BooleanType(VALID_BOOLEAN_FALSE),
+        new BooleanType(VALID_BOOLEAN_TRUE),
+      );
+      testGroupCharacteristicComponent.setPeriod(VALID_PERIOD);
+      testGroupCharacteristicComponent.setId(VALID_ID);
+      testGroupCharacteristicComponent.setExtension([VALID_EXTENSION]);
+      testGroupCharacteristicComponent.setModifierExtension([VALID_MODIFIER_EXTENSION]);
+
+      expect(testGroupCharacteristicComponent).toBeDefined();
+      expect(testGroupCharacteristicComponent).toBeInstanceOf(GroupCharacteristicComponent);
+      expect(testGroupCharacteristicComponent).toBeInstanceOf(BackboneElement);
+      expect(testGroupCharacteristicComponent).toBeInstanceOf(Element);
+      expect(testGroupCharacteristicComponent).toBeInstanceOf(Base);
+      expect(testGroupCharacteristicComponent.constructor.name).toStrictEqual('GroupCharacteristicComponent');
+      expect(testGroupCharacteristicComponent.fhirType()).toStrictEqual('Group.characteristic');
+      expect(testGroupCharacteristicComponent.isEmpty()).toBe(false);
+
+      // inherited properties from BackboneElement
+      expect(testGroupCharacteristicComponent.hasId()).toBe(true);
+      expect(testGroupCharacteristicComponent.getId()).toStrictEqual(VALID_ID);
+      expect(testGroupCharacteristicComponent.hasExtension()).toBe(true);
+      expect(testGroupCharacteristicComponent.getExtension()).toEqual([VALID_EXTENSION]);
+      expect(testGroupCharacteristicComponent.hasModifierExtension()).toBe(true);
+      expect(testGroupCharacteristicComponent.getModifierExtension()).toEqual([VALID_MODIFIER_EXTENSION]);
+
+      // GroupMemberComponent properties
+      expect(testGroupCharacteristicComponent.hasCode()).toBe(true);
+      expect(testGroupCharacteristicComponent.getCode()).toEqual(VALID_CODEABLECONCEPT_1);
+      expect(testGroupCharacteristicComponent.hasPeriod()).toBe(true);
+      expect(testGroupCharacteristicComponent.getPeriod()).toEqual(VALID_PERIOD);
+
+      expect(testGroupCharacteristicComponent.hasValue()).toBe(true);
+      expect(testGroupCharacteristicComponent.getValue()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
+      expect(testGroupCharacteristicComponent.hasValueBooleanType()).toBe(true);
+      expect(testGroupCharacteristicComponent.getValueBooleanType()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
+      expect(testGroupCharacteristicComponent.hasValueCodeableConcept()).toBe(false);
+      expect(testGroupCharacteristicComponent.hasValueQuantity()).toBe(false);
+      expect(testGroupCharacteristicComponent.hasValueRange()).toBe(false);
+      expect(testGroupCharacteristicComponent.hasValueReference()).toBe(false);
+
+      expect(testGroupCharacteristicComponent.hasExcludeElement()).toBe(true);
+      expect(testGroupCharacteristicComponent.getExcludeElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
+      expect(testGroupCharacteristicComponent.hasExclude()).toBe(true);
+
+      expect(testGroupCharacteristicComponent.toJSON()).toEqual(VALID_JSON);
+    });
+
+    it('should return undefined when deserialize with no json', () => {
+      let testGroupCharacteristicComponent: GroupCharacteristicComponent | undefined = undefined;
+      testGroupCharacteristicComponent = GroupCharacteristicComponent.parse({});
+      expect(testGroupCharacteristicComponent).toBeUndefined();
+
+      testGroupCharacteristicComponent = GroupCharacteristicComponent.parse(null);
+      expect(testGroupCharacteristicComponent).toBeUndefined();
+
+      // @ts-expect-error: allow for testing
+      testGroupCharacteristicComponent = GroupCharacteristicComponent.parse(undefined);
+      expect(testGroupCharacteristicComponent).toBeUndefined();
+    });
+
+    it('should properly deserialize with valid json', () => {
+      const testGroupCharacteristicComponent: GroupCharacteristicComponent | undefined =
+        GroupCharacteristicComponent.parse(VALID_JSON);
+
+      expect(testGroupCharacteristicComponent).toBeDefined();
+      expect(testGroupCharacteristicComponent).toBeInstanceOf(GroupCharacteristicComponent);
+      expect(testGroupCharacteristicComponent).toBeInstanceOf(BackboneElement);
+      expect(testGroupCharacteristicComponent).toBeInstanceOf(Element);
+      expect(testGroupCharacteristicComponent).toBeInstanceOf(Base);
+      expect(testGroupCharacteristicComponent?.constructor.name).toStrictEqual('GroupCharacteristicComponent');
+      expect(testGroupCharacteristicComponent?.fhirType()).toStrictEqual('Group.characteristic');
+      expect(testGroupCharacteristicComponent?.isEmpty()).toBe(false);
+      expect(testGroupCharacteristicComponent?.toJSON()).toEqual(VALID_JSON);
+    });
+
+    it('should throw FhirError from parse with missing required properties', () => {
+      const t = () => {
+        GroupCharacteristicComponent.parse(INVALID_JSON);
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(
+        `The following required properties must be included in the provided JSON: Group.characteristic.code, Group.characteristic.value[x], Group.characteristic.exclude`,
+      );
+    });
+
+    it('should throw FhirError when deserialize with invalid json - only "value" property', () => {
+      const t = () => {
+        GroupCharacteristicComponent.parse(INVALID_JSON_1);
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(`The value[x] property cannot be represented by "value".`);
+    });
+
+    it('should throw FhirError when deserialize with invalid json - multiple "value" properties', () => {
+      const t = () => {
+        GroupCharacteristicComponent.parse(INVALID_JSON_2);
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(
+        `The value[x] property must have only one representation. Has value[x] properties: valueBoolean, valueCodeableConcept`,
+      );
+    });
+
+    it('should throw FhirError when deserialize with invalid json - invalid "value" property', () => {
+      const t = () => {
+        GroupCharacteristicComponent.parse(INVALID_JSON_3);
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(
+        `The following required properties must be included in the provided JSON: Group.characteristic.value[x]`,
+      );
+    });
+
+    it('should throw TypeError when deserialize with invalid json - invalid "value[x]" property value', () => {
+      const t = () => {
+        GroupCharacteristicComponent.parse(INVALID_JSON_4);
+      };
+      expect(t).toThrow(TypeError);
+      expect(t).toThrow(
+        `Failed to parse Group.characteristic.value[x]: json argument for BooleanType is not a boolean.`,
+      );
     });
   });
 

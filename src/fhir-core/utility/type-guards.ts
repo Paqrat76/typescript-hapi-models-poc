@@ -28,10 +28,11 @@
  * All TypeScript type guards and type assertion functions should be included in this module.
  * However, due to TypeScript circular references, the following have been moved to the
  * indicated module:
- * - assertFhirResourceType() placed in Resource.ts
+ * - assertFhirResourceTypeJson() placed in Resource.ts
  * - assertFhirDataType() placed in core-fhir-models.ts
  * - assertFhirPrimitiveType() placed in core-fhir-models.ts
  * - assertEnumCodeType() placed in CodeType.ts
+ * - assertFhirResourceTypeJson() placed in fhir-parsers.ts
  *
  * @module
  */
