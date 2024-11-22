@@ -27,7 +27,7 @@ import { DateTimeType } from '@src/fhir-core/data-types/primitive/DateTimeType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { fhirUrl } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { isElementEmpty, validateUrl } from '@src/fhir-core/utility/fhir-util';
+import { extractFieldName, isElementEmpty, validateUrl } from '@src/fhir-core/utility/fhir-util';
 import {
   CodeType,
   constructorCodeValueAsEnumCodeType,
@@ -266,6 +266,16 @@ describe('fhir-util', () => {
       };
       expect(t).toThrow(InvalidCodeError);
       expect(t).toThrow(`Invalid ${property}; Provided code value is not an instance of CodeType`);
+    });
+  });
+
+  describe('extractFieldName', () => {
+    it('should return valid fieldName for standard source field name', () => {
+      expect(extractFieldName('Group.member.entity')).toStrictEqual('entity');
+    });
+
+    it('should return valid fieldName for polymorphic source field name', () => {
+      expect(extractFieldName('Group.characteristic.value[x]')).toStrictEqual('value');
     });
   });
 });

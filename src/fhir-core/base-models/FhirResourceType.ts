@@ -27,7 +27,7 @@
  * @remarks
  * Type definition based on RESOURCE_TYPES array.
  *
- * @category Base Models
+ * @category Type Guards/Assertions
  * @see CodeSystem [resource-types](https://www.hl7.org/fhir/R4/codesystem-resource-types.html)
  */
 export type FhirResourceType = (typeof RESOURCE_TYPES)[number];
@@ -38,7 +38,7 @@ export type FhirResourceType = (typeof RESOURCE_TYPES)[number];
  * @remarks
  * All defined FHIR resources that ultimately extend from Resource.
  *
- * @category Base Models
+ * @category Type Guards/Assertions
  */
 export const RESOURCE_TYPES = [
   'Account',
@@ -188,3 +188,15 @@ export const RESOURCE_TYPES = [
   'VerificationResult',
   'VisionPrescription',
 ] as const;
+
+/**
+ * Checks if provide value represents the name of a FHIR Resource.
+ *
+ * @param value - string representing a possible FHIR Resource name
+ * @returns true if value is a FHIR Resource name; false otherwise
+ *
+ * @category Type Guards/Assertions
+ */
+export function isFhirResourceType(value: string): value is FhirResourceType {
+  return RESOURCE_TYPES.includes(value as FhirResourceType);
+}

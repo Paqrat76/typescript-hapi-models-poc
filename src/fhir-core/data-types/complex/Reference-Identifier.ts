@@ -879,6 +879,14 @@ export function ReferenceTargets(referenceTargets: FhirResourceType[]) {
     context: ClassMethodDecoratorContext<This, (this: This, ...args: Args) => Return>,
   ) {
     return function (this: This, ...args: Args): Return {
+      const methodName = String(context.name);
+      assert(args.length === 1, `Decorator expects ${methodName} to have one argument`);
+
+      // If nothing is provided to the originalMethod, there is nothing to check
+      if (args[0] === undefined || args[0] === null) {
+        return originalMethod.call(this, ...args);
+      }
+
       const isAnyResource = referenceTargets.length === 0;
       if (!isAnyResource) {
         // Verify referenceTargets contain valid, non-duplicate values
@@ -893,46 +901,75 @@ export function ReferenceTargets(referenceTargets: FhirResourceType[]) {
         );
       }
 
-      const methodName = String(context.name);
-      assert(
-        args.length === 1 && (args[0] === undefined || args[0] === null || FhirTypeGuard(args[0], Reference)),
-        `Decorator expects ${methodName} to have one argument with type of 'Reference | undefined | null'`,
-      );
-      // undefined supports optional argument while null supports required argument
-      const value = args[0] as Reference | undefined | null;
-
-      // Return the original function if there is nothing for this decorator to do:
-      // - referenceTargets array is empty - implies "Any" resource
-      // - Decorator should only be used on a method defined as:
-      //   `public set[PropertyName](value: Reference | undefined): this`
-      // - The value of type Reference should have the Reference.reference property set
-      // - The referenceTargets array should have at least one valid FhirResourceType value
-      // - Reference is to a "contained" resource - reference value begins with "#"
-      if (
-        isAnyResource ||
-        !methodName.startsWith('set') ||
-        value === undefined ||
-        value === null ||
-        !value.hasReference() ||
-        value.getReference()?.startsWith('#')
-      ) {
-        return originalMethod.call(this, ...args);
-      }
-
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const referenceValue = value.getReference()!;
-      // referenceValue (Reference.reference) examples:
-      // - Organization/1234
-      // - https://somedomain.com/path/Organization/1234
-      const isValidReference = referenceTargets.some((refTarget) => referenceValue.includes(`${refTarget}/`));
-
-      if (!isValidReference) {
-        throw new InvalidTypeError(
-          `${methodName}: 'value' argument (${referenceValue}) is not for a valid resource type`,
+      if (Array.isArray(args[0])) {
+        args[0].forEach((argItem, idx) => {
+          assert(
+            FhirTypeGuard(argItem, Reference),
+            `Decorator expects ${methodName}'s argument[${String(idx)}] to be type of 'Reference'`,
+          );
+          validateReferenceArg(referenceTargets, argItem, isAnyResource, methodName, idx);
+        });
+      } else {
+        assert(
+          FhirTypeGuard(args[0], Reference),
+          `Decorator expects ${methodName}'s argument to be type of 'Reference | undefined | null'`,
         );
+        validateReferenceArg(referenceTargets, args[0], isAnyResource, methodName);
       }
 
+      // Since the calls to validateArg(...) above did not throw an error, allow the originalMethod to be executed.
       return originalMethod.call(this, ...args);
     };
   };
+}
+
+/**
+ * Validate the Reference value throwing an InvalidTypeError if it is not valid.
+ *
+ * @param referenceTargets - FhirResourceType array of target references.
+ * @param argValue - Argument value from original decorated function
+ * @param isAnyResource - true if referenceTargets array is empty
+ * @param methodName - Decorated method's name
+ * @param arrayIndex - Argument for Reference[] index value; undefined for non-array
+ * @throws InvalidTypeError if Reference.reference exists with an invalid value
+ */
+function validateReferenceArg(
+  referenceTargets: FhirResourceType[],
+  argValue: Reference,
+  isAnyResource: boolean,
+  methodName: string,
+  arrayIndex?: number,
+) {
+  // Return the original function if there is nothing for this decorator to do:
+  // - referenceTargets array is empty (isAnyResource) - implies "Any" resource
+  // - Decorator should only be used on a methods defined as:
+  //   `public set[PropertyName](value: Reference | undefined): this`
+  //   `public set[PropertyName](value: Reference[] | undefined): this`
+  //   `public add[PropertyName](value: Reference | undefined): this`
+  // - The value of type Reference should have the Reference.reference property set
+  // - The referenceTargets array should have at least one valid FhirResourceType value
+  // - Reference is to a "contained" resource - reference value begins with "#"
+
+  const argValueReference = argValue.getReference();
+  const isReferenceNotApplicable = argValueReference === undefined ? true : argValueReference.startsWith('#');
+  if (isAnyResource || !(methodName.startsWith('set') || methodName.startsWith('add')) || isReferenceNotApplicable) {
+    return;
+  }
+
+  // NOTE: If isAnyResource is true, this function already returned above; therefore, referenceTargets used below
+  //       has values to validate against.
+
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const referenceValue = argValue.getReference()!;
+  // referenceValue (Reference.reference) valid examples:
+  // - Organization/1234
+  // - https://somedomain.com/path/Organization/1234
+  const isValidReference = referenceTargets.some((refTarget) => referenceValue.includes(`${refTarget}/`));
+
+  if (!isValidReference) {
+    const arrayIndexStr = arrayIndex === undefined ? '' : `[${String(arrayIndex)}]`;
+    throw new InvalidTypeError(
+      `${methodName}: 'value' argument${arrayIndexStr} (${referenceValue}) is not for a valid Reference type`,
+    );
+  }
 }

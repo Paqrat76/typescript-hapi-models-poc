@@ -26,8 +26,12 @@ import { FHIR_MAX_STRING_LENGTH, fhirCode, fhirString } from '@src/fhir-core/dat
 import { Base } from '@src/fhir-core/base-models/Base';
 import { Resource } from '@src/fhir-core/base-models/Resource';
 import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
-import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
+import { IntegerType } from '@src/fhir-core/data-types/primitive/IntegerType';
+import { Meta } from '@src/fhir-core/data-types/complex/Meta';
+import { Narrative } from '@src/fhir-core/data-types/complex/Narrative';
 import { Period } from '@src/fhir-core/data-types/complex/Period';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { FhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
 import { FhirCodeDefinition, IFhirCodeDefinition, IFhirCodeEnum } from '@src/fhir-core/base-models/core-fhir-codes';
 import {
@@ -49,6 +53,56 @@ export {
   FHIR_MAX_INTEGER64,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 
+/**
+ * Property values used in FHIR resource data model testing for Resource and DomainResource
+ */
+
+export const VALID_ID = 'id12345';
+export const VALID_ID_TYPE = new IdType(VALID_ID);
+export const VERSION_ID = 'VID-1972';
+export const VALID_META = new Meta();
+VALID_META.setVersionId(VERSION_ID);
+export const IMPLICIT_RULES_VALUE = 'implicitRules';
+export const LANGUAGE_VALUE = 'en-US';
+export const VALID_CODE_GENERATED = `generated`;
+export const VALID_XHTML = '<div xmlns="http://www.w3.org/1999/xhtml">text</div>';
+export const VALID_NARRATIVE = new Narrative(VALID_CODE_GENERATED, VALID_XHTML);
+export const VALID_EXTENSION = new Extension('extUrl', new StringType('Extension string value'));
+export const VALID_MODIFIER_EXTENSION = new Extension('modExtUrl', new StringType('ModifierExtension string value'));
+
+export const VALID_ID_2 = 'id67890';
+export const VALID_ID_TYPE_2 = new IdType(VALID_ID_2);
+export const VERSION_ID_2 = 'VID-1976';
+export const VALID_META_2 = new Meta();
+VALID_META_2.setVersionId(VERSION_ID_2);
+export const IMPLICIT_RULES_VALUE_2 = 'implicitRules2';
+export const LANGUAGE_VALUE_2 = 'en-UK';
+export const VALID_CODE_GENERATED_2 = `generated`;
+export const VALID_XHTML_2 = '<div xmlns="http://www.w3.org/1999/xhtml">text two</div>';
+export const VALID_NARRATIVE_2 = new Narrative(VALID_CODE_GENERATED_2, VALID_XHTML_2);
+export const VALID_EXTENSION_2 = new Extension('extUrl2', new StringType('Extension string value 2'));
+export const VALID_MODIFIER_EXTENSION_2 = new Extension(
+  'modExtUrl2',
+  new StringType('ModifierExtension string value 2'),
+);
+
+/**
+ * Property values used for datatype testing for Element.id and Element.extension
+ */
+export const DATATYPE_ID = 'DT-1357';
+export const DATATYPE_EXTENSION = new Extension('datatypeUrl', new StringType('datatype extension string value'));
+
+export const UNDEFINED_VALUE = undefined;
+
+/**
+ * Common constants used in validation testing
+ */
+
+export const INVALID_NON_STRING_TYPE_VALUE = 'Invalid datatype';
+export const INVALID_NON_STRING_TYPE = new StringType(INVALID_NON_STRING_TYPE_VALUE);
+export const INVALID_STRING_TYPE_VALUE = 12345;
+export const INVALID_STRING_TYPE = new IntegerType(INVALID_STRING_TYPE_VALUE);
+
 export const TOO_BIG_STRING = getString(FHIR_MAX_STRING_LENGTH + 2);
 
 export function getString(maxLength: number): string {
@@ -65,6 +119,10 @@ export function getString(maxLength: number): string {
 
   return str;
 }
+
+/**
+ * Mock objects used in testing
+ */
 
 export class MockBase extends Base {
   public mockValue: string | undefined = undefined;
@@ -109,6 +167,10 @@ export class MockElement extends Element {
     if (extension !== undefined) {
       this.extension = extension;
     }
+  }
+
+  public override isEmpty(): boolean {
+    return super.isEmpty();
   }
 
   public copy(): MockElement {
@@ -205,6 +267,10 @@ export class MockResource extends Resource {
     return 'MockResource';
   }
 
+  public override isEmpty(): boolean {
+    return super.isEmpty();
+  }
+
   // NOT USED
   public copy(): MockResource {
     const dest = new MockResource();
@@ -218,38 +284,13 @@ export class MockResource extends Resource {
   protected copyValues(dest: MockResource): void {
     return;
   }
-}
 
-// export class MockTask extends DomainResource {
-//   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-//   constructor() {
-//     super();
-//   }
-//
-//   public resourceType(): FhirResourceType {
-//     return 'Task';
-//   }
-//
-//   public fhirType(): string {
-//     return 'MockTask';
-//   }
-//
-//   public copy(): MockTask {
-//     const dest = new MockTask();
-//     this.copyValues(dest);
-//     return dest;
-//   }
-//
-//   protected override copyValues(dest: MockTask): void {
-//     super.copyValues(dest);
-//     return;
-//   }
-//
-//   // NOT USED
-//   public override toJSON(): JSON.Value | undefined {
-//     return undefined;
-//   }
-// }
+  public override toJSON(): JSON.Value | undefined {
+    // Will always have, at least, the 'resourceType' property from Resource
+    const jsonObj = super.toJSON() as JSON.Object;
+    return Object.keys(jsonObj).length > 1 ? jsonObj : undefined;
+  }
+}
 
 export class MockTask extends DomainResource {
   public mockPrimitive: StringType | undefined = undefined;
@@ -271,6 +312,10 @@ export class MockTask extends DomainResource {
 
   public fhirType(): string {
     return 'MockTask';
+  }
+
+  public override isEmpty(): boolean {
+    return super.isEmpty() && this.mockPrimitive === undefined && this.mockComplex === undefined;
   }
 
   public copy(): MockTask {

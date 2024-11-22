@@ -28,7 +28,7 @@
  */
 
 import { strict as assert } from 'node:assert';
-import { isEmpty as _isEmpty } from 'lodash';
+import { isEmpty as _isEmpty, isNil } from 'lodash';
 import { IBase } from '@src/fhir-core/base-models/IBase';
 import { isNonBlank } from '@src/fhir-core/utility/common-util';
 import { fhirUriSchema } from '@src/fhir-core/data-types/primitive/primitive-types';
@@ -58,7 +58,7 @@ export function isElementEmpty(...elements: (IBase | IBase[] | undefined | null)
         }
       } else {
         // IBase or undefined
-        if (element !== undefined && element !== null && !element.isEmpty()) {
+        if (!isNil(element) && !element.isEmpty()) {
           return false;
         }
       }
@@ -79,4 +79,23 @@ export function validateUrl(url: string): void {
   assert(isNonBlank(url), 'The url must be defined and cannot be blank');
   const parseResult = fhirUriSchema.safeParse(url);
   assert(parseResult.success, 'The url must be a valid fhirUri');
+}
+
+/**
+ * Extract the field name from sourceField
+ *
+ * @param sourceField - fully specified source field name (e.g., 'Group.member.entity')
+ * @returns the field name (e.g., 'entity')
+ *
+ * @category Utilities
+ */
+export function extractFieldName(sourceField: string): string {
+  const lastDotIndex = sourceField.lastIndexOf('.');
+  const fieldName = sourceField.substring(lastDotIndex + 1);
+  // Handle polymorphic fields
+  const posX = fieldName.toLowerCase().lastIndexOf('[x]');
+  if (posX > 0) {
+    return fieldName.substring(0, posX);
+  }
+  return fieldName;
 }

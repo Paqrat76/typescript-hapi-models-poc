@@ -66,7 +66,7 @@ describe('ReferenceTargets', () => {
     };
     expect(t).toThrow(AssertionError);
     expect(t).toThrow(
-      `Decorator expects setMyReferenceProperty5 to have one argument with type of 'Reference | undefined | null'`,
+      `Decorator expects setMyReferenceProperty5's argument to be type of 'Reference | undefined | null'`,
     );
   });
 
@@ -141,7 +141,7 @@ describe('ReferenceTargets', () => {
     };
     expect(t).toThrow(InvalidTypeError);
     expect(t).toThrow(
-      `setMyReferenceProperty1: 'value' argument (${testRelativeRef}) is not for a valid resource type`,
+      `setMyReferenceProperty1: 'value' argument (${testRelativeRef}) is not for a valid Reference type`,
     );
 
     const testAbsoluteRef = 'https://somedomain.com/path/Location/1234';
@@ -151,7 +151,7 @@ describe('ReferenceTargets', () => {
     };
     expect(t).toThrow(InvalidTypeError);
     expect(t).toThrow(
-      `setMyReferenceProperty1: 'value' argument (${testAbsoluteRef}) is not for a valid resource type`,
+      `setMyReferenceProperty1: 'value' argument (${testAbsoluteRef}) is not for a valid Reference type`,
     );
   });
 
@@ -170,6 +170,54 @@ describe('ReferenceTargets', () => {
     expect(testMockTaskR1.getMyReferenceProperty1().hasReference()).toBe(true);
     expect(testMockTaskR1.getMyReferenceProperty1().getReference()).toBeDefined();
     expect(testMockTaskR1.getMyReferenceProperty1().getReference()).toStrictEqual(testAbsoluteRef);
+  });
+
+  it('should succeed with valid Organization references in Reference array', () => {
+    const testMockTaskR1 = new MockTaskR1();
+    const testArr: Reference[] = [];
+
+    const testRelativeRef = 'Organization/1234';
+    const testReference1 = new Reference().setReference(testRelativeRef);
+    testArr.push(testReference1);
+
+    const testAbsoluteRef = 'https://somedomain.com/path/Organization/5678';
+    const testReference2 = new Reference().setReference(testAbsoluteRef);
+    testArr.push(testReference2);
+
+    expect(Array.isArray(testArr)).toBe(true);
+    const t = () => {
+      testMockTaskR1.setMyReferenceProperty8(testArr);
+    };
+    expect(t).not.toThrow();
+    expect(testMockTaskR1.getMyReferenceProperty8()).toBeDefined();
+    expect(testMockTaskR1.getMyReferenceProperty8()).toStrictEqual(testArr);
+  });
+
+  it('should throw InvalidTypeError with an invalid reference in Reference array', () => {
+    const testMockTaskR1 = new MockTaskR1();
+    const testArr: Reference[] = [];
+    expect(Array.isArray(testArr)).toBe(true);
+
+    const testRelativeRef = 'Organization/1234';
+    const testReference1 = new Reference().setReference(testRelativeRef);
+    testArr.push(testReference1);
+
+    let t = () => {
+      testMockTaskR1.addMyReferenceProperty8(testReference1);
+    };
+    expect(t).not.toThrow(AssertionError);
+
+    const testAbsoluteRef = 'https://somedomain.com/path/Location/5678';
+    const testReference2 = new Reference().setReference(testAbsoluteRef);
+    testArr.push(testReference2);
+
+    t = () => {
+      testMockTaskR1.setMyReferenceProperty8(testArr);
+    };
+    expect(t).toThrow(InvalidTypeError);
+    expect(t).toThrow(
+      `setMyReferenceProperty8: 'value' argument[1] (https://somedomain.com/path/Location/5678) is not for a valid Reference type`,
+    );
   });
 });
 
@@ -252,6 +300,29 @@ export class MockTaskR1 extends MockTask {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (value !== null) {
       this.myReferenceProperty7 = value;
+    }
+    return this;
+  }
+
+  protected myReferenceProperty8?: Reference[] | undefined = [];
+
+  public getMyReferenceProperty8(): Reference[] {
+    return this.myReferenceProperty8 ?? ([] as Reference[]);
+  }
+
+  @ReferenceTargets(['Organization'])
+  public setMyReferenceProperty8(value: Reference[] | undefined): this {
+    this.myReferenceProperty8 = value;
+    return this;
+  }
+
+  @ReferenceTargets(['Organization'])
+  public addMyReferenceProperty8(value: Reference | undefined): this {
+    if (value !== undefined) {
+      if (this.myReferenceProperty8 === undefined) {
+        this.myReferenceProperty8 = [] as Reference[];
+      }
+      this.myReferenceProperty8.push(value);
     }
     return this;
   }

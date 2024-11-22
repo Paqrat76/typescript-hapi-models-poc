@@ -25,46 +25,69 @@ import { fhirCode } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { FhirCodeDefinition, IFhirCodeDefinition, IFhirCodeEnum } from '@src/fhir-core/base-models/core-fhir-codes';
 
+/* istanbul ignore file */
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
 /**
- * FHIR CodeSystem: NarrativeStatusEnum
+ * FHIR CodeSystem: DaysOfWeek
  *
  * @remarks
  * This class is a "pseudo-enumeration" of code values having FHIR code properties.
  *
  * @category CodeSystems
- * @see [FHIR CodeSystem NarrativeStatus](https://www.hl7.org/fhir/R4/codesystem-narrative-status.html)
+ * @see [FHIR CodeSystem DaysOfWeek](http://hl7.org/fhir/days-of-week)
  */
-export class NarrativeStatusEnum implements IFhirCodeEnum {
-  public static readonly GENERATED = new FhirCodeDefinition(
-    'GENERATED',
-    `generated`,
-    `http://hl7.org/fhir/narrative-status`,
-    `Generated`,
-    `The contents of the narrative are entirely generated from the core elements in the content.`,
+export class DaysOfWeekEnum implements IFhirCodeEnum {
+  public static readonly MON = new FhirCodeDefinition(
+    'MON',
+    `mon`,
+    `http://hl7.org/fhir/days-of-week`,
+    `Monday`,
+    `Monday.`,
   );
-  public static readonly EXTENSIONS = new FhirCodeDefinition(
-    'EXTENSIONS',
-    `extensions`,
-    `http://hl7.org/fhir/narrative-status`,
-    `Extensions`,
-    `The contents of the narrative are entirely generated from the core elements in the content and some of the content is generated from extensions. The narrative SHALL reflect the impact of all modifier extensions.`,
+  public static readonly TUE = new FhirCodeDefinition(
+    'TUE',
+    `tue`,
+    `http://hl7.org/fhir/days-of-week`,
+    `Tuesday`,
+    `Tuesday.`,
   );
-  public static readonly ADDITIONAL = new FhirCodeDefinition(
-    'ADDITIONAL',
-    `additional`,
-    `http://hl7.org/fhir/narrative-status`,
-    `Additional`,
-    `The contents of the narrative may contain additional information not found in the structured data. Note that there is no computable way to determine what the extra information is, other than by human inspection.`,
+  public static readonly WED = new FhirCodeDefinition(
+    'WED',
+    `wed`,
+    `http://hl7.org/fhir/days-of-week`,
+    `Wednesday`,
+    `Wednesday.`,
   );
-  public static readonly EMPTY = new FhirCodeDefinition(
-    'EMPTY',
-    `empty`,
-    `http://hl7.org/fhir/narrative-status`,
-    `Empty`,
-    `The contents of the narrative are some equivalent of "No human-readable text provided in this case".`,
+  public static readonly THU = new FhirCodeDefinition(
+    'THU',
+    `thu`,
+    `http://hl7.org/fhir/days-of-week`,
+    `Thursday`,
+    `Thursday.`,
   );
+  public static readonly FRI = new FhirCodeDefinition(
+    'FRI',
+    `fri`,
+    `http://hl7.org/fhir/days-of-week`,
+    `Friday`,
+    `Friday.`,
+  );
+  public static readonly SAT = new FhirCodeDefinition(
+    'SAT',
+    `sat`,
+    `http://hl7.org/fhir/days-of-week`,
+    `Saturday`,
+    `Saturday.`,
+  );
+  public static readonly SUN = new FhirCodeDefinition(
+    'SUN',
+    `sun`,
+    `http://hl7.org/fhir/days-of-week`,
+    `Sunday`,
+    `Sunday.`,
+  );
+
   // NULL added to help check for non-existent value
   public static readonly NULL = new FhirCodeDefinition('NULL', `null`);
 
@@ -73,11 +96,14 @@ export class NarrativeStatusEnum implements IFhirCodeEnum {
    */
   values(): IFhirCodeDefinition[] {
     return [
-      NarrativeStatusEnum.GENERATED,
-      NarrativeStatusEnum.EXTENSIONS,
-      NarrativeStatusEnum.ADDITIONAL,
-      NarrativeStatusEnum.EMPTY,
-      NarrativeStatusEnum.NULL,
+      DaysOfWeekEnum.MON,
+      DaysOfWeekEnum.TUE,
+      DaysOfWeekEnum.WED,
+      DaysOfWeekEnum.THU,
+      DaysOfWeekEnum.FRI,
+      DaysOfWeekEnum.SAT,
+      DaysOfWeekEnum.SUN,
+      DaysOfWeekEnum.NULL,
     ];
   }
 
@@ -87,18 +113,24 @@ export class NarrativeStatusEnum implements IFhirCodeEnum {
   fromCode(code: fhirCode | undefined): IFhirCodeDefinition {
     if (code === undefined) {
       throw new InvalidCodeError(`The provided 'code' value is undefined`);
-    } else if (NarrativeStatusEnum.GENERATED.code === code) {
-      return NarrativeStatusEnum.GENERATED;
-    } else if (NarrativeStatusEnum.EXTENSIONS.code === code) {
-      return NarrativeStatusEnum.EXTENSIONS;
-    } else if (NarrativeStatusEnum.ADDITIONAL.code === code) {
-      return NarrativeStatusEnum.ADDITIONAL;
-    } else if (NarrativeStatusEnum.EMPTY.code === code) {
-      return NarrativeStatusEnum.EMPTY;
-    } else if (NarrativeStatusEnum.NULL.code === code) {
-      return NarrativeStatusEnum.NULL;
+    } else if (DaysOfWeekEnum.MON.code === code) {
+      return DaysOfWeekEnum.MON;
+    } else if (DaysOfWeekEnum.TUE.code === code) {
+      return DaysOfWeekEnum.TUE;
+    } else if (DaysOfWeekEnum.WED.code === code) {
+      return DaysOfWeekEnum.WED;
+    } else if (DaysOfWeekEnum.THU.code === code) {
+      return DaysOfWeekEnum.THU;
+    } else if (DaysOfWeekEnum.FRI.code === code) {
+      return DaysOfWeekEnum.FRI;
+    } else if (DaysOfWeekEnum.SAT.code === code) {
+      return DaysOfWeekEnum.SAT;
+    } else if (DaysOfWeekEnum.SUN.code === code) {
+      return DaysOfWeekEnum.SUN;
+    } else if (DaysOfWeekEnum.NULL.code === code) {
+      return DaysOfWeekEnum.NULL;
     } else {
-      throw new InvalidCodeError(`Unknown NarrativeStatusEnum 'code' value '${code}'`);
+      throw new InvalidCodeError(`Unknown DaysOfWeekEnum 'code' value '${code}'`);
     }
   }
 }

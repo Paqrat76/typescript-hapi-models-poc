@@ -26,85 +26,173 @@ import { DataType } from '@src/fhir-core/base-models/core-fhir-models';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { MarkdownType } from '@src/fhir-core/data-types/primitive/MarkdownType';
 import { fhirMarkdown } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { ChoiceDataTypes } from '@src/fhir-core/utility/decorators';
+import {
+  ChoiceDatatypeDef,
+  ChoiceDataTypes,
+  ChoiceDataTypesMeta,
+  getChoiceDatatypeDefs,
+} from '@src/fhir-core/utility/decorators';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { MockResource, MockTask } from '../../test-utils';
 
-describe('ChoiceDataTypes', () => {
-  it('should throw AssertionError with duplicate ChoiceDataTypes', () => {
-    const testValue = new StringType('string value');
-    const testMockTaskR1 = new MockTaskR1();
-    const t = () => {
+describe('decorators', () => {
+  describe('ChoiceDataTypesMeta', () => {
+    it('should throw AssertionError for multiple Datatypes in @ChoiceDataTypesMeta', () => {
+      const t = () => {
+        const TestClass = class {
+          @ChoiceDataTypesMeta(['id', 'string', 'id'])
+          protected value?: DataType | undefined;
+        };
+        new TestClass();
+      };
+      expect(t).toThrow(AssertionError);
+      expect(t).toThrow(`choiceDataTypes contains duplicate FhirDataType(s)`);
+    });
+
+    it('should throw AssertionError for invalid Datatypes in @ChoiceDataTypesMeta', () => {
+      const t = () => {
+        const TestClass = class {
+          // @ts-expect-error: allow 'invalid' for testing
+          @ChoiceDataTypesMeta(['id', 'string', 'invalid'])
+          protected value?: DataType | undefined;
+        };
+        new TestClass();
+      };
+      expect(t).toThrow(AssertionError);
+      expect(t).toThrow(`choiceDataTypes contains invalid FhirDataType(s)`);
+    });
+
+    it('should empty decorator metadata for empty array in @ChoiceDataTypesMeta', () => {
+      const TestClass = class {
+        @ChoiceDataTypesMeta([])
+        protected value?: DataType | undefined;
+      };
+      const choiceDatatypeDefs: ChoiceDatatypeDef[] = getChoiceDatatypeDefs(TestClass[Symbol.metadata]);
+      expect(choiceDatatypeDefs).toBeDefined();
+      expect(choiceDatatypeDefs).toHaveLength(1);
+      expect(choiceDatatypeDefs[0]?.fieldTypes).toHaveLength(0);
+    });
+
+    it('should return with valid decorator metadata', () => {
+      const choiceDatatypeDefs: ChoiceDatatypeDef[] = getChoiceDatatypeDefs(MockTaskR1[Symbol.metadata]);
+      expect(choiceDatatypeDefs).toBeDefined();
+
+      // *** Actual content ***
+      // console.log(MockTaskR1[Symbol.metadata]);
+      // [Object: null prototype] {
+      //   ChoiceDataTypes: [
+      //     { fieldName: 'value1', fieldTypes: [Array] },
+      //     { fieldName: 'value2', fieldTypes: [Array] }
+      //   ]
+      // }
+      // console.log(metaObj);
+      // {
+      //   ChoiceDataTypes: [
+      //     { fieldName: 'value1', fieldTypes: [Array] },
+      //     { fieldName: 'value2', fieldTypes: [Array] }
+      //   ]
+      // }
+      // console.log(metaObj.ChoiceDataTypes);
+      // [
+      //   { fieldName: 'value1', fieldTypes: [ 'id', 'string' ] },
+      //   { fieldName: 'value2', fieldTypes: [ 'uri', 'uuid' ] }
+      // ]
+
+      const expected: ChoiceDatatypeDef[] = [
+        {
+          fieldName: 'value1',
+          fieldTypes: ['id', 'string'],
+        },
+        {
+          fieldName: 'value2',
+          fieldTypes: ['uri', 'uuid'],
+        },
+      ];
+      expect(choiceDatatypeDefs).toEqual(expected);
+    });
+  });
+
+  describe('ChoiceDataTypes', () => {
+    it('should throw AssertionError with invalid Resource value', () => {
+      const testValue = new MockResource();
+      const testMockTaskR1 = new MockTaskR1();
+      const t = () => {
+        // @ts-expect-error: allow for testing
+        testMockTaskR1.setValue1(testValue);
+      };
+      expect(t).toThrow(AssertionError);
+      expect(t).toThrow(`Decorator expects setValue1 to have one argument with type of 'DataType | undefined | null'`);
+    });
+
+    it('should throw AssertionError with invalid value DataType', () => {
+      const markdown = 'markdown' as fhirMarkdown;
+      const testValue = new MarkdownType(markdown);
+      const testMockTaskR1 = new MockTaskR1();
+      const t = () => {
+        testMockTaskR1.setValue1(testValue);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`setValue1: 'value' argument type (markdown) is not for a supported DataType`);
+    });
+
+    it('should return with provided value DataType for empty array in @ChoiceDataTypesMeta', () => {
+      const TestClass = class {
+        @ChoiceDataTypesMeta([])
+        protected value?: DataType | undefined;
+        @ChoiceDataTypes()
+        public setValue(value?: DataType): this {
+          this.value = value;
+          return this;
+        }
+        public getValue(): DataType | undefined {
+          return this.value;
+        }
+      };
+      const testValue = new StringType('string value');
+      const testInstance = new TestClass();
+      testInstance.setValue(testValue);
+      expect(testInstance.getValue()).toStrictEqual(testValue);
+    });
+
+    it('should return with valid value DataType', () => {
+      const testValue = new StringType('string value');
+      const testMockTaskR1 = new MockTaskR1();
       testMockTaskR1.setValue1(testValue);
-    };
-    expect(t).toThrow(AssertionError);
-    expect(t).toThrow(`choiceDataTypes contains duplicate DataTypes`);
-  });
+      expect(testMockTaskR1.getValue1()).toStrictEqual(testValue);
+    });
 
-  it('should throw AssertionError with invalid ChoiceDataTypes', () => {
-    const testValue = new StringType('string value');
-    const testMockTaskR1 = new MockTaskR1();
-    const t = () => {
-      testMockTaskR1.setValue2(testValue);
-    };
-    expect(t).toThrow(AssertionError);
-    expect(t).toThrow(`choiceDataTypes contains invalid FhirDataType(s)`);
-  });
+    it('should return with undefined method arg', () => {
+      const testMockTaskR1 = new MockTaskR1();
+      testMockTaskR1.setValue1(undefined);
+      expect(testMockTaskR1.getValue1()).toBeUndefined();
+    });
 
-  it('should throw AssertionError with invalid value DataType', () => {
-    const testValue = new MockResource();
-    const testMockTaskR1 = new MockTaskR1();
-    const t = () => {
+    it('should return with null method arg', () => {
+      const testMockTaskR1 = new MockTaskR1();
       // @ts-expect-error: allow for testing
-      testMockTaskR1.setValue3(testValue);
-    };
-    expect(t).toThrow(AssertionError);
-    expect(t).toThrow(`Decorator expects setValue3 to have one argument with type of 'DataType | undefined | null'`);
-  });
+      testMockTaskR1.setValue1(null);
+      expect(testMockTaskR1.getValue1()).toBeNull();
+    });
 
-  it('should throw AssertionError with invalid value DataType', () => {
-    const markdown = 'markdown' as fhirMarkdown;
-    const testValue = new MarkdownType(markdown);
-    const testMockTaskR1 = new MockTaskR1();
-    const t = () => {
-      testMockTaskR1.setValue3(testValue);
-    };
-    expect(t).toThrow(InvalidTypeError);
-    expect(t).toThrow(`setValue3: 'value' argument type (markdown) is not for a supported DataType`);
-  });
+    it('should return with invalid method name', () => {
+      const TestClass = class {
+        @ChoiceDataTypesMeta(['string'])
+        protected value?: DataType | undefined;
+        @ChoiceDataTypes()
+        public xxxValue(value?: DataType): this {
+          this.value = value;
+          return this;
+        }
+        public getValue(): DataType | undefined {
+          return this.value;
+        }
+      };
 
-  it('should return with valid value DataType', () => {
-    const testValue = new StringType('string value');
-    const testMockTaskR1 = new MockTaskR1();
-    testMockTaskR1.setValue3(testValue);
-    expect(testMockTaskR1.getValue3()).toStrictEqual(testValue);
-  });
-
-  it('should return with empty ChoiceDataTypes', () => {
-    const testValue = new StringType('string value');
-    const testMockTaskR1 = new MockTaskR1();
-    testMockTaskR1.setValue4(testValue);
-    expect(testMockTaskR1.getValue4()).toStrictEqual(testValue);
-  });
-
-  it('should return with invalid method name', () => {
-    const testValue = new StringType('string value');
-    const testMockTaskR1 = new MockTaskR1();
-    testMockTaskR1.xxxValue5(testValue);
-    expect(testMockTaskR1.getValue5()).toStrictEqual(testValue);
-  });
-
-  it('should return with undefined method arg', () => {
-    const testMockTaskR1 = new MockTaskR1();
-    testMockTaskR1.setValue3(undefined);
-    expect(testMockTaskR1.getValue3()).toBeUndefined();
-  });
-
-  it('should return with null method arg', () => {
-    const testMockTaskR1 = new MockTaskR1();
-    // @ts-expect-error: allow for testing
-    testMockTaskR1.setValue3(null);
-    expect(testMockTaskR1.getValue3()).toBeNull();
+      const testInstance = new TestClass();
+      const testValue = new StringType('string value');
+      testInstance.xxxValue(testValue);
+      expect(testInstance.getValue()).toStrictEqual(testValue);
+    });
   });
 });
 
@@ -114,54 +202,28 @@ export class MockTaskR1 extends MockTask {
     super();
   }
 
+  @ChoiceDataTypesMeta(['id', 'string'])
   protected value1?: DataType | undefined;
 
-  @ChoiceDataTypes(['id', 'string', 'id'])
+  @ChoiceDataTypes()
   public setValue1(value?: DataType): this {
     this.value1 = value;
     return this;
   }
+  public getValue1(): DataType | undefined {
+    return this.value1;
+  }
 
+  @ChoiceDataTypesMeta(['uri', 'uuid'])
   protected value2?: DataType | undefined;
 
-  // @ts-expect-error: allow for testing
-  @ChoiceDataTypes(['id', 'string', 'invalid'])
+  @ChoiceDataTypes()
   public setValue2(value?: DataType): this {
     this.value2 = value;
     return this;
   }
-
-  protected value3?: DataType | undefined;
-
-  @ChoiceDataTypes(['id', 'string'])
-  public setValue3(value?: DataType): this {
-    this.value3 = value;
-    return this;
-  }
-  public getValue3(): DataType | undefined {
-    return this.value3;
-  }
-
-  protected value4?: DataType | undefined;
-
-  @ChoiceDataTypes([])
-  public setValue4(value?: DataType): this {
-    this.value4 = value;
-    return this;
-  }
-  public getValue4(): DataType | undefined {
-    return this.value4;
-  }
-
-  protected value5?: DataType | undefined;
-
-  @ChoiceDataTypes(['string'])
-  public xxxValue5(value?: DataType): this {
-    this.value4 = value;
-    return this;
-  }
-  public getValue5(): DataType | undefined {
-    return this.value4;
+  public getValue2(): DataType | undefined {
+    return this.value2;
   }
 
   public override fhirType(): string {

@@ -25,6 +25,7 @@ import { Element, Extension } from '@src/fhir-core/base-models/core-fhir-models'
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { XhtmlType } from '@src/fhir-core/data-types/primitive/XhtmlType';
 import { Period } from '@src/fhir-core/data-types/complex/Period';
+import { FhirError } from '@src/fhir-core/errors/FhirError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
@@ -51,6 +52,19 @@ describe('Extension', () => {
     expect(testExtension.hasValue()).toBe(false);
     expect(testExtension.getValue()).toBeUndefined();
     expect(testExtension.toJSON()).toBeUndefined();
+  });
+
+  it('should throw FhirError when instantiated with missing required properties', () => {
+    const testId = 'id1234';
+    const testUrl = null;
+    const testExtension = new Extension(testUrl);
+    testExtension.setId(testId);
+
+    const t = () => {
+      testExtension.toJSON();
+    };
+    expect(t).toThrow(FhirError);
+    expect(t).toThrow(`The following required properties do not exist: Extension.url`);
   });
 
   it('should be properly instantiated', () => {

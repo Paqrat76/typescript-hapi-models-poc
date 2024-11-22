@@ -21,6 +21,8 @@
  *
  */
 
+import { isNil } from 'lodash';
+import { REQUIRED_PROPERTIES_DO_NOT_EXIST } from '@src/fhir-core/constants';
 import { DataType, PrimitiveType, setFhirPrimitiveJson } from '@src/fhir-core/base-models/core-fhir-models';
 import { IBase } from '@src/fhir-core/base-models/IBase';
 import {
@@ -29,7 +31,7 @@ import {
   EnumCodeType,
   constructorCodeValueAsEnumCodeType,
 } from '@src/fhir-core/data-types/primitive/CodeType';
-import { NarrativeStatusEnum } from '@src/fhir-core/data-types/complex/code-systems/NarrativeStatusEnum';
+import { NarrativeStatusEnum } from '@src/fhir-core/data-types/code-systems/NarrativeStatusEnum';
 import { XhtmlType } from '@src/fhir-core/data-types/primitive/XhtmlType';
 import {
   fhirCode,
@@ -41,6 +43,7 @@ import {
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import { assertFhirType } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
+import { FhirError } from '@src/fhir-core/errors/FhirError';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -66,6 +69,8 @@ import * as JSON from '@src/fhir-core/utility/json-helpers';
  * @see [FHIR Narrative](http://hl7.org/fhir/StructureDefinition/Narrative)
  */
 export class Narrative extends DataType implements IBase {
+  private readonly narrativeStatusEnum: NarrativeStatusEnum;
+
   /**
    * @param status - The status of the narrative
    * @param div - The actual narrative content, a stripped down version of XHTML
@@ -83,7 +88,7 @@ export class Narrative extends DataType implements IBase {
     );
 
     this.div = null;
-    if (div !== null) {
+    if (!isNil(div)) {
       if (div instanceof PrimitiveType) {
         this.setDivElement(div);
       } else {
@@ -91,8 +96,6 @@ export class Narrative extends DataType implements IBase {
       }
     }
   }
-
-  private readonly narrativeStatusEnum: NarrativeStatusEnum;
 
   /**
    * Narrative.status Element
@@ -137,8 +140,7 @@ export class Narrative extends DataType implements IBase {
    * @returns this
    */
   public setStatueEnumType(enumType: EnumCodeType): this {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (enumType !== null) {
+    if (!isNil(enumType)) {
       const errMsgPrefix = 'Invalid Narrative.status';
       assertEnumCodeType<NarrativeStatusEnum>(enumType, NarrativeStatusEnum, errMsgPrefix);
       this.status = enumType;
@@ -150,7 +152,7 @@ export class Narrative extends DataType implements IBase {
    * @returns `true` if the `status` property exists and has a value; `false` otherwise
    */
   public hasStatusEnumType(): boolean {
-    return this.status !== null && !this.status.isEmpty() && this.status.fhirCodeEnumeration.length > 0;
+    return !isNil(this.status) && !this.status.isEmpty() && this.status.fhirCodeEnumeration.length > 0;
   }
 
   /**
@@ -170,8 +172,7 @@ export class Narrative extends DataType implements IBase {
    * @returns this
    */
   public setStatusElement(element: CodeType): this {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (element !== null) {
+    if (!isNil(element)) {
       const optErrMsg = `Invalid Narrative.status; Provided element is not an instance of CodeType.`;
       assertFhirType<CodeType>(element, CodeType, optErrMsg);
       this.status = new EnumCodeType(element, this.narrativeStatusEnum);
@@ -203,8 +204,7 @@ export class Narrative extends DataType implements IBase {
    * @returns this
    */
   public setStatus(value: fhirCode): this {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (value !== null) {
+    if (!isNil(value)) {
       const optErrMsg = `Invalid Narrative.status (${String(value)})`;
       this.status = new EnumCodeType(
         parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg),
@@ -235,8 +235,7 @@ export class Narrative extends DataType implements IBase {
    * @returns this
    */
   public setDivElement(element: XhtmlType): this {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (element !== null) {
+    if (!isNil(element)) {
       const optErrMsg = `Invalid Narrative.div; Provided element is not an instance of XhtmlType.`;
       assertFhirType<XhtmlType>(element, XhtmlType, optErrMsg);
       this.div = element;
@@ -248,7 +247,7 @@ export class Narrative extends DataType implements IBase {
    * @returns `true` if the `div` property exists and has a value; `false` otherwise
    */
   public hasDivElement(): boolean {
-    return this.div !== null && !this.div.isEmpty();
+    return !isNil(this.div) && !this.div.isEmpty();
   }
 
   /**
@@ -270,8 +269,7 @@ export class Narrative extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setDiv(value: fhirXhtml): this {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (value !== null) {
+    if (!isNil(value)) {
       const optErrMsg = `Invalid Narrative.div (invalid value provided)`;
       this.div = new XhtmlType(parseFhirPrimitiveData(value, fhirXhtmlSchema, optErrMsg));
     }
@@ -338,14 +336,25 @@ export class Narrative extends DataType implements IBase {
       jsonObj = {} as JSON.Object;
     }
 
+    const missingReqdProperties: string[] = [];
+
     if (this.hasStatusElement()) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       setFhirPrimitiveJson<fhirCode>(this.getStatusElement()!, 'status', jsonObj);
+    } else {
+      missingReqdProperties.push('Narrative.status');
     }
 
     if (this.hasDivElement()) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       setFhirPrimitiveJson<fhirXhtml>(this.getDivElement()!, 'div', jsonObj);
+    } else {
+      missingReqdProperties.push('Narrative.div');
+    }
+
+    if (missingReqdProperties.length > 0) {
+      const errMsg = `${REQUIRED_PROPERTIES_DO_NOT_EXIST} ${missingReqdProperties.join(', ')}`;
+      throw new FhirError(errMsg);
     }
 
     return jsonObj;

@@ -20,6 +20,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [0.10.0] - 2024-11-??
+
+### Added
+
+- Added deserialization helper functions for PrimitiveTypes
+- Added deserialization helper functions for ComplexTypes
+- Added FhirError for appropriate error situations
+- Added deserialization helper functions for Resource and DomainResource
+- Added support to parse 'contained' resources in DomainResource
+- Added deserialization to Group FHIR model
+- Added ContactPoint complex datatype and associated deserialization helper
+- Added PractitionerRole resource
+- Added ChoiceDataTypesMeta decorator and associated helper functions
+- Added parsePolymorphicDataType function and refactored parsing in GroupCharacteristicComponent
+
+### Changed
+
+- Updated dependencies
+- Redesigned ChoiceDataTypes decorator to use metadata from new ChoiceDataTypesMeta
+- Refactored parts of Group data models to make the code more friendly for code generation templates
+- Refactored Group tests to streamline
+
+### Fixed
+
+- Fixed primitive 'id' Regex to allow '#' prefix for contained resource references
+
+
 ## [0.9.1] - 2024-10-31
 
 ### Changed

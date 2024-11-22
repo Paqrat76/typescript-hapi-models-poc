@@ -23,6 +23,7 @@
 
 import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { fhirXhtml, fhirXhtmlSchema, parseFhirPrimitiveData } from './primitive-types';
+import { FhirError } from '@src/fhir-core/errors/FhirError';
 
 /**
  * Xhtml Class
@@ -62,7 +63,7 @@ export class XhtmlType extends PrimitiveType<fhirXhtml> {
 
   public override addExtension(extension?: Extension): this {
     if (extension !== undefined) {
-      throw new TypeError(this.EXTENSION_ERROR);
+      throw new FhirError(this.EXTENSION_ERROR);
     }
     this.extension = undefined;
     return this;
@@ -111,7 +112,7 @@ export class XhtmlType extends PrimitiveType<fhirXhtml> {
 
   private assignExtension(extension: Extension[] | undefined): void {
     if (extension !== undefined) {
-      throw new TypeError(this.EXTENSION_ERROR);
+      throw new FhirError(this.EXTENSION_ERROR);
     }
     this.extension = undefined;
   }

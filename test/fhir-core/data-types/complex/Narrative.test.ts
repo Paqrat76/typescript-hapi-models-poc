@@ -26,7 +26,8 @@ import { DataType, Extension } from '@src/fhir-core/base-models/core-fhir-models
 import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { XhtmlType } from '@src/fhir-core/data-types/primitive/XhtmlType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
-import { NarrativeStatusEnum } from '@src/fhir-core/data-types/complex/code-systems/NarrativeStatusEnum';
+import { NarrativeStatusEnum } from '@src/fhir-core/data-types/code-systems/NarrativeStatusEnum';
+import { FhirError } from '@src/fhir-core/errors/FhirError';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
@@ -523,6 +524,18 @@ describe('Narrative', () => {
   });
 
   describe('Serialization/Deserialization', () => {
+    it('should throw FhirError from toJSON() when instantiated with missing required properties', () => {
+      const testId = 'id1234';
+      const testNarrative = new Narrative(null, null);
+      testNarrative.setId(testId);
+
+      const t = () => {
+        testNarrative.toJSON();
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(`The following required properties do not exist: Narrative.status, Narrative.div`);
+    });
+
     it('should properly create serialized content', () => {
       const statusType = new CodeType(VALID_CODE_ADDITIONAL);
       const statusId = 'S1357';

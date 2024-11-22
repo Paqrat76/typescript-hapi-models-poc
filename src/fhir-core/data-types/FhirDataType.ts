@@ -21,6 +21,8 @@
  *
  */
 
+import { upperFirst } from 'lodash';
+
 /**
  * FHIR open data types
  *
@@ -104,6 +106,14 @@ export const OPEN_DATA_TYPES = [
  * @category Base Models
  */
 export type FhirOpenDataType = (typeof OPEN_DATA_TYPES)[number];
+
+/**
+ * FHIR open data types key names (i.e., valueString, valuePeriod, etc.)
+ *
+ * @category Base Models
+ * @see [Open Type Element](https://hl7.org/fhir/R5/datatypes.html#open)
+ */
+export const OPEN_DATE_TYPE_KEY_NAMES = OPEN_DATA_TYPES.map((odt) => `value${upperFirst(odt)}`);
 
 /**
  * Non-open data types that are valid data types

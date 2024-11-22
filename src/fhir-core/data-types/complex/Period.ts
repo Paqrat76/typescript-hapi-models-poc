@@ -33,6 +33,7 @@ import {
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { assertFhirType } from '@src/fhir-core/utility/type-guards';
+import { FhirError } from '@src/fhir-core/errors/FhirError';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -102,14 +103,14 @@ export class Period extends DataType implements IBase {
    *
    * @param element - the `start` value
    * @returns this
-   * @throws TypeError when Period.start > Period.end
+   * @throws FhirError when Period.start > Period.end
    */
   public setStartElement(element: DateTimeType | undefined): this {
     const optErrMsg = `Invalid Period.start; Provided element is not an instance of DateTimeType.`;
     assertFhirType<DateTimeType>(element, DateTimeType, optErrMsg);
     this.start = element;
     if (!this.validateStartBeforeEnd()) {
-      throw new TypeError('Invalid Period; Period.start is not before or the same as Period.end');
+      throw new FhirError('Invalid Period; Period.start is not before or the same as Period.end');
     }
     return this;
   }
@@ -134,14 +135,14 @@ export class Period extends DataType implements IBase {
    * @param value - the `start` value
    * @returns this
    * @throws PrimitiveTypeError for invalid primitive types
-   * @throws TypeError when Period.start > Period.end
+   * @throws FhirError when Period.start > Period.end
    */
   public setStart(value: fhirDateTime | undefined): this {
     const optErrMsg = `Invalid Period.start (${String(value)})`;
     this.start =
       value === undefined ? undefined : new DateTimeType(parseFhirPrimitiveData(value, fhirDateTimeSchema, optErrMsg));
     if (!this.validateStartBeforeEnd()) {
-      throw new TypeError('Invalid Period; Period.start is not before or the same as Period.end');
+      throw new FhirError('Invalid Period; Period.start is not before or the same as Period.end');
     }
     return this;
   }
@@ -165,14 +166,14 @@ export class Period extends DataType implements IBase {
    *
    * @param element - the `end` value
    * @returns this
-   * @throws TypeError when Period.start > Period.end
+   * @throws FhirError when Period.start > Period.end
    */
   public setEndElement(element: DateTimeType | undefined): this {
     const optErrMsg = `Invalid Period.end; Provided element is not an instance of DateTimeType.`;
     assertFhirType<DateTimeType>(element, DateTimeType, optErrMsg);
     this.end = element;
     if (!this.validateStartBeforeEnd()) {
-      throw new TypeError('Invalid Period; Period.start is not before or the same as Period.end');
+      throw new FhirError('Invalid Period; Period.start is not before or the same as Period.end');
     }
     return this;
   }
@@ -197,14 +198,14 @@ export class Period extends DataType implements IBase {
    * @param value - the `end` value
    * @returns this
    * @throws PrimitiveTypeError for invalid primitive types
-   * @throws TypeError when Period.start > Period.end
+   * @throws FhirError when Period.start > Period.end
    */
   public setEnd(value: fhirDateTime | undefined): this {
     const optErrMsg = `Invalid Period.end (${String(value)})`;
     this.end =
       value === undefined ? undefined : new DateTimeType(parseFhirPrimitiveData(value, fhirDateTimeSchema, optErrMsg));
     if (!this.validateStartBeforeEnd()) {
-      throw new TypeError('Invalid Period; Period.start is not before or the same as Period.end');
+      throw new FhirError('Invalid Period; Period.start is not before or the same as Period.end');
     }
     return this;
   }

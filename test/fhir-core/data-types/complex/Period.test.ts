@@ -25,6 +25,7 @@ import { Period } from '@src/fhir-core/data-types/complex/Period';
 import { DataType, Extension } from '@src/fhir-core/base-models/core-fhir-models';
 import { DateTimeType } from '@src/fhir-core/data-types/primitive/DateTimeType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { FhirError } from '@src/fhir-core/errors/FhirError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
@@ -328,7 +329,7 @@ describe('Period', () => {
       const t = () => {
         testPeriod.setStart(VALID_END_DATETIME_2);
       };
-      expect(t).toThrow(TypeError);
+      expect(t).toThrow(FhirError);
       expect(t).toThrow('Invalid Period; Period.start is not before or the same as Period.end');
     });
 
@@ -339,7 +340,7 @@ describe('Period', () => {
       const t = () => {
         testPeriod.setEnd(VALID_START_DATETIME);
       };
-      expect(t).toThrow(TypeError);
+      expect(t).toThrow(FhirError);
       expect(t).toThrow('Invalid Period; Period.start is not before or the same as Period.end');
     });
 
@@ -507,7 +508,7 @@ describe('Period', () => {
       const t = () => {
         testPeriod.setEndElement(endDt);
       };
-      expect(t).toThrow(TypeError);
+      expect(t).toThrow(FhirError);
       expect(t).toThrow('Invalid Period; Period.start is not before or the same as Period.end');
     });
 
@@ -565,7 +566,7 @@ describe('Period', () => {
       const t = () => {
         testPeriod.setStartElement(new DateTimeType(VALID_END_DATETIME_2));
       };
-      expect(t).toThrow(TypeError);
+      expect(t).toThrow(FhirError);
       expect(t).toThrow('Invalid Period; Period.start is not before or the same as Period.end');
     });
 
@@ -576,7 +577,7 @@ describe('Period', () => {
       const t = () => {
         testPeriod.setEndElement(new DateTimeType(VALID_START_DATETIME));
       };
-      expect(t).toThrow(TypeError);
+      expect(t).toThrow(FhirError);
       expect(t).toThrow('Invalid Period; Period.start is not before or the same as Period.end');
     });
   });

@@ -2,6 +2,7 @@
 
 ## POC Feature Set
 
+- Consider throwing an Error from "get" methods rather than returning null for required data elements
 - Investigate TypeScript-based decorators for serialization/deserialization
 - Investigate and implement parsing (deserialization) for all FHIR data models
   - For inspiration, see HAPI FHIR [Parsing and Serialization](https://hapifhir.io/hapi-fhir/docs/model/parsers.html)

@@ -14,7 +14,7 @@
 
     "module": "node16",
     "target": "es2022",
-    "lib": ["es2022"],
+    "lib": ["es2022", "esnext.decorators"],
     "paths": {
       "@src/*": ["./src/*"]
     },
