@@ -32,17 +32,23 @@
  */
 
 import { strict as assert } from 'node:assert';
-import { isEmpty, isNil } from 'lodash';
-import { INSTANCE_EMPTY_ERROR_MSG, REQUIRED_PROPERTIES_REQD_IN_JSON } from '@src/fhir-core/constants';
+import { isEmpty, isNil, upperFirst } from 'lodash';
+import {
+  INSTANCE_EMPTY_ERROR_MSG,
+  INVALID_VALUEX_MULTIPLE_PROPERTIES,
+  INVALID_VALUEX_PROPERTY,
+  REQUIRED_PROPERTIES_REQD_IN_JSON,
+} from '@src/fhir-core/constants';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { BackboneElement, DataType, Extension } from '@src/fhir-core/base-models/core-fhir-models';
 import { Resource } from '@src/fhir-core/base-models/Resource';
 import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
-import { OPEN_DATE_TYPE_KEY_NAMES } from '@src/fhir-core/data-types/FhirDataType';
+import { FhirDataType, OPEN_DATE_TYPE_KEY_NAMES } from '@src/fhir-core/data-types/FhirDataType';
 import { Base64BinaryType } from '@src/fhir-core/data-types/primitive/Base64BinaryType';
 import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
 import { CanonicalType } from '@src/fhir-core/data-types/primitive/CanonicalType';
 import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { ContactPoint } from '@src/fhir-core/data-types/complex/ContactPoint';
 import { DateTimeType } from '@src/fhir-core/data-types/primitive/DateTimeType';
 import { DateType } from '@src/fhir-core/data-types/primitive/DateType';
 import { DecimalType } from '@src/fhir-core/data-types/primitive/DecimalType';
@@ -72,6 +78,7 @@ import { SimpleQuantity } from '@src/fhir-core/data-types/complex/SimpleQuantity
 import { FhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { getChoiceDatatypeDefsForField } from '@src/fhir-core/utility/decorators';
 
 //region CoreTypes
 
@@ -259,7 +266,7 @@ export function processResourceJson(instance: Resource, dataJson: JSON.Value | u
   const resourceObj: JSON.Object = JSON.asObject(dataJson, `${sourceResource} JSON`);
 
   if ('id' in resourceObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(resourceObj, sourceResource, 'id', 'string');
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(resourceObj, `${sourceResource}.id`, 'id', 'string');
     const datatype: IdType | undefined = parseIdType(dtJson, dtSiblingJson);
     instance.setIdElement(datatype);
   }
@@ -270,13 +277,23 @@ export function processResourceJson(instance: Resource, dataJson: JSON.Value | u
   }
 
   if ('implicitRules' in resourceObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(resourceObj, sourceResource, 'implicitRules', 'string');
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+      resourceObj,
+      `${sourceResource}.implicitRules`,
+      'implicitRules',
+      'string',
+    );
     const datatype: UriType | undefined = parseUriType(dtJson, dtSiblingJson);
     instance.setImplicitRulesElement(datatype);
   }
 
   if ('language' in resourceObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(resourceObj, sourceResource, 'language', 'string');
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+      resourceObj,
+      `${sourceResource}.language`,
+      'language',
+      'string',
+    );
     const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
     instance.setLanguageElement(datatype);
   }
@@ -290,7 +307,7 @@ export function processResourceJson(instance: Resource, dataJson: JSON.Value | u
  * @param dataJson - Data JSON containing DomainResource properties, if any
  *
  * @category Utilities: FHIR Parsers
- * @see processResourceJson
+ * @see {@link processResourceJson}
  */
 export function processDomainResourceJson(instance: DomainResource, dataJson: JSON.Value | undefined): void {
   assert.ok(instance, 'The instance argument is required.');
@@ -308,14 +325,9 @@ export function processDomainResourceJson(instance: DomainResource, dataJson: JS
     instance.setText(datatype);
   }
 
-  // TODO: Add PractitionerRole FHIR model to support/test "contained"
-  // if ('contained' in resourceObj) {
-  //   const dataElementJsonArray: JSON.Array = JSON.asArray(resourceObj['contained'], `${sourceResource}.contained`);
-  //   dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
-  //     const datatype: Resource | undefined = parseResource(instance, dataElementJson, `${sourceResource}.contained[${String(idx)}]`);
-  //     instance.addContained(datatype);
-  //   });
-  // }
+  // NOTE: "contained" is handled in Resource-based FHIR model rather than here in processDomainResourceJson
+  //       to minimize circular references!
+  // if ('contained' in resourceObj) {}
 
   if ('extension' in resourceObj) {
     const extensionArray = JSON.asArray(resourceObj['extension'], `${sourceResource}.extension`);
@@ -337,6 +349,7 @@ export function processDomainResourceJson(instance: DomainResource, dataJson: JS
   }
 }
 
+// Ignore for coverage because all parse functions have their own tests
 /* istanbul ignore next */
 /**
  * Return an instance of DataType for the `value[x]` if it exists.
@@ -346,7 +359,7 @@ export function processDomainResourceJson(instance: DomainResource, dataJson: JS
  * @private
  */
 export function getValueXData(jsonObj: JSON.Object): DataType | undefined {
-  assert.ok(jsonObj, 'The jsonObj argument is required.');
+  assert(jsonObj, 'The jsonObj argument is required.');
   const valueXKey = Object.keys(jsonObj).find((key) => OPEN_DATE_TYPE_KEY_NAMES.includes(key));
 
   if (valueXKey !== undefined && valueXKey in jsonObj) {
@@ -403,6 +416,8 @@ export function getValueXData(jsonObj: JSON.Object): DataType | undefined {
           return parseCodeableConcept(dataValue);
         case 'valueCoding':
           return parseCoding(dataValue);
+        case 'valueContactPoint':
+          return parseContactPoint(dataValue);
         case 'valueIdentifier':
           return parseIdentifier(dataValue);
         case 'valueMeta':
@@ -433,7 +448,7 @@ export function getValueXData(jsonObj: JSON.Object): DataType | undefined {
  * Returns the primitive data type's value and its sibling Element, if any.
  *
  * @param datatypeJsonObj - source JSON object
- * @param datatypeName - source data type name
+ * @param sourceField - source data type name
  * @param primitiveFieldName - primitive's field name in datatypeJsonObj
  * @param jsonType - type of expected field's data
  * @returns object containing the primitive data plus its Element data, if any
@@ -442,7 +457,7 @@ export function getValueXData(jsonObj: JSON.Object): DataType | undefined {
  */
 export function getPrimitiveTypeJson(
   datatypeJsonObj: JSON.Object,
-  datatypeName: string,
+  sourceField: string,
   primitiveFieldName: string,
   jsonType: 'boolean' | 'number' | 'string',
 ): PrimitiveTypeJson {
@@ -452,13 +467,12 @@ export function getPrimitiveTypeJson(
 
   let dtJson: JSON.Value | undefined = undefined;
   if (datatypeJsonObj[primitiveFieldName] !== undefined) {
-    const msgPrefix = `${datatypeName}.${primitiveFieldName}`;
     if (jsonType === 'boolean') {
-      dtJson = JSON.asBoolean(datatypeJsonObj[primitiveFieldName], msgPrefix);
+      dtJson = JSON.asBoolean(datatypeJsonObj[primitiveFieldName], sourceField);
     } else if (jsonType === 'number') {
-      dtJson = JSON.asNumber(datatypeJsonObj[primitiveFieldName], msgPrefix);
+      dtJson = JSON.asNumber(datatypeJsonObj[primitiveFieldName], sourceField);
     } else {
-      dtJson = JSON.asString(datatypeJsonObj[primitiveFieldName], msgPrefix);
+      dtJson = JSON.asString(datatypeJsonObj[primitiveFieldName], sourceField);
     }
   }
 
@@ -466,7 +480,10 @@ export function getPrimitiveTypeJson(
   let dtSiblingJson: JSON.Object | undefined = undefined;
   if (siblingFieldName in datatypeJsonObj) {
     if (datatypeJsonObj[siblingFieldName] !== undefined) {
-      dtSiblingJson = JSON.asObject(datatypeJsonObj[siblingFieldName], `${datatypeName}._${primitiveFieldName}`);
+      dtSiblingJson = JSON.asObject(
+        datatypeJsonObj[siblingFieldName],
+        sourceField.replace(primitiveFieldName, siblingFieldName),
+      );
     }
   }
 
@@ -477,7 +494,7 @@ export function getPrimitiveTypeJson(
  * Returns an array containing the primitive data type's value and its sibling Element, if any.
  *
  * @param datatypeJsonObj - source JSON object
- * @param datatypeName - source data type name
+ * @param sourceField - source data type name
  * @param primitiveFieldName - primitive's field name in datatypeJsonObj
  * @param jsonType - type of expected field's data
  * @returns array containing objects of the primitive data plus its Element data, if any
@@ -486,7 +503,7 @@ export function getPrimitiveTypeJson(
  */
 export function getPrimitiveTypeListJson(
   datatypeJsonObj: JSON.Object,
-  datatypeName: string,
+  sourceField: string,
   primitiveFieldName: string,
   jsonType: 'boolean' | 'number' | 'string',
 ): PrimitiveTypeJson[] {
@@ -499,7 +516,7 @@ export function getPrimitiveTypeListJson(
   const dataJsonArray: JSON.Array = JSON.asArray(
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     datatypeJsonObj[primitiveFieldName]!,
-    `${datatypeName}.${primitiveFieldName}`,
+    sourceField,
   );
 
   const siblingFieldName = `_${primitiveFieldName}`;
@@ -508,13 +525,13 @@ export function getPrimitiveTypeListJson(
     dataElementJsonArray = JSON.asArray(
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       datatypeJsonObj[siblingFieldName]!,
-      `${datatypeName}.${siblingFieldName}`,
+      sourceField.replace(primitiveFieldName, siblingFieldName),
     );
     // FHIR specification requires both arrays to be same size with null sibling values when there is no matching sibling element
     // [JSON representation of primitive elements](https://hl7.org/fhir/R4/json.html#primitive)
     assert(
       dataJsonArray.length === dataElementJsonArray.length,
-      `Invalid JSON: Contrary to FHIR Specification, ${datatypeName}.${primitiveFieldName} and ${datatypeName}.${siblingFieldName} have different sizes!`,
+      `Invalid JSON: Contrary to FHIR Specification, ${sourceField} and ${sourceField.replace(primitiveFieldName, siblingFieldName)} have different sizes!`,
     );
   }
 
@@ -526,12 +543,7 @@ export function getPrimitiveTypeListJson(
     if (dataElementJsonArray !== undefined && !isNil(dataElementJsonArray[idx])) {
       primitiveJsonObj[siblingFieldName] = dataElementJsonArray[idx];
     }
-    const result: PrimitiveTypeJson = getPrimitiveTypeJson(
-      primitiveJsonObj,
-      datatypeName,
-      primitiveFieldName,
-      jsonType,
-    );
+    const result: PrimitiveTypeJson = getPrimitiveTypeJson(primitiveJsonObj, sourceField, primitiveFieldName, jsonType);
     primitiveTypeJsonArray.push(result);
   });
 
@@ -1061,6 +1073,57 @@ export function parseXhtmlType(json: JSON.Value | undefined, siblingJson?: JSON.
 //region ComplexTypes
 
 /**
+ * Parse the provided json into the appropriate data model for the choice data types.
+ *
+ * @param jsonObj - JSON representing the choice data type
+ * @param sourceField - data source field (e.g. `<TypeName>.<TypeFieldName>`)
+ * @param fieldName - JSON field name
+ * @param metadata - ChoiceDataTypesMeta decorator metadata
+ * @returns choice data type data model or undefined
+ *
+ * @category Utilities: FHIR Parsers
+ */
+export function parsePolymorphicDataType(
+  jsonObj: JSON.Object,
+  sourceField: string,
+  fieldName: string,
+  metadata: DecoratorMetadataObject | null,
+): DataType | undefined {
+  if (isNil(jsonObj) || (JSON.isObject(jsonObj) && isEmpty(jsonObj))) {
+    return undefined;
+  }
+  assert(sourceField, 'sourceField must be provided');
+  assert(fieldName, 'fieldName must be provided');
+
+  const choiceDataTypes: FhirDataType[] = getChoiceDatatypeDefsForField(metadata, fieldName);
+  const supportedFieldNames = choiceDataTypes.map((item) => `${fieldName}${upperFirst(item)}`);
+
+  // ['boolean', 'CodeableConcept', 'Quantity', 'Range', 'Reference']
+  const valueKeys = Object.keys(jsonObj).filter((key) => key.startsWith(fieldName));
+  if (fieldName in jsonObj) {
+    throw new FhirError(INVALID_VALUEX_PROPERTY);
+  } else if (valueKeys.length > 1) {
+    throw new FhirError(`${INVALID_VALUEX_MULTIPLE_PROPERTIES} ${valueKeys.join(', ')}`);
+  } else if (valueKeys[0] !== undefined && supportedFieldNames.includes(valueKeys[0])) {
+    let instance: DataType | undefined = undefined;
+    try {
+      instance = getValueXData(jsonObj);
+    } catch (err) {
+      if (err instanceof TypeError) {
+        throw new TypeError(`Failed to parse ${sourceField}: ${err.message}`, err);
+      } else {
+        throw new Error(`Unexpected error parsing ${sourceField} from the provided JSON`);
+      }
+    }
+    if (instance === undefined) {
+      throw new Error(`Failed to parse ${sourceField} from the provided JSON`);
+    }
+    return instance;
+  }
+  return undefined;
+}
+
+/**
  * Parse the provided json into CodeableConcept data model.
  *
  * @param json - JSON representing CodeableConcept
@@ -1148,6 +1211,60 @@ export function parseCoding(json: JSON.Value | undefined, sourceField?: string):
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'userSelected', 'boolean');
     const datatype: BooleanType | undefined = parseBooleanType(dtJson, dtSiblingJson);
     instance.setUserSelectedElement(datatype);
+  }
+
+  assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
+  return instance;
+}
+
+/**
+ * Parse the provided json into ContactPoint data model.
+ *
+ * @param json - JSON representing ContactPoint
+ * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to ContactPoint
+ * @returns ContactPoint data model or undefined
+ *
+ * @category Utilities: FHIR Parsers
+ */
+export function parseContactPoint(json: JSON.Value | undefined, sourceField?: string): ContactPoint | undefined {
+  if (isNil(json) || (JSON.isObject(json) && isEmpty(json))) {
+    return undefined;
+  }
+
+  const source = sourceField ? sourceField : 'ContactPoint';
+
+  const datatypeJsonObj: JSON.Object = JSON.asObject(json, `${source} JSON`);
+  const instance = new ContactPoint();
+
+  processElementJson(instance, datatypeJsonObj);
+
+  if ('system' in datatypeJsonObj) {
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'system', 'string');
+    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
+    instance.setSystemElement(datatype);
+  }
+
+  if ('value' in datatypeJsonObj) {
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'value', 'string');
+    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
+    instance.setValueElement(datatype);
+  }
+
+  if ('use' in datatypeJsonObj) {
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'use', 'string');
+    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
+    instance.setUseElement(datatype);
+  }
+
+  if ('rank' in datatypeJsonObj) {
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'rank', 'number');
+    const datatype: PositiveIntType | undefined = parsePositiveIntType(dtJson, dtSiblingJson);
+    instance.setRankElement(datatype);
+  }
+
+  if ('period' in datatypeJsonObj) {
+    const datatype: Period | undefined = parsePeriod(datatypeJsonObj['period'], `${source}.period`);
+    instance.setPeriod(datatype);
   }
 
   assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);

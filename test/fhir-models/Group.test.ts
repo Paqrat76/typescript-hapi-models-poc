@@ -22,12 +22,12 @@
  */
 
 import { Group, GroupCharacteristicComponent, GroupMemberComponent } from '@src/fhir-models/Group';
+import { PractitionerRole } from '@src/fhir-models/PractitionerRole';
 import { Extension } from '@src/fhir-core/base-models/core-fhir-models';
 import { Base } from '@src/fhir-core/base-models/Base';
 import { Resource } from '@src/fhir-core/base-models/Resource';
 import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
 import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
-import { Coding } from '@src/fhir-core/data-types/complex/Coding';
 import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
 import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
@@ -46,7 +46,32 @@ import { FhirError } from '@src/fhir-core/errors/FhirError';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { MockCodeEnum } from '../test-utils';
+import {
+  DATATYPE_EXTENSION,
+  DATATYPE_ID,
+  IMPLICIT_RULES_VALUE,
+  IMPLICIT_RULES_VALUE_2,
+  INVALID_NON_STRING_TYPE,
+  INVALID_NON_STRING_TYPE_VALUE,
+  INVALID_STRING_TYPE,
+  INVALID_STRING_TYPE_VALUE,
+  LANGUAGE_VALUE,
+  LANGUAGE_VALUE_2,
+  MockCodeEnum,
+  UNDEFINED_VALUE,
+  VALID_EXTENSION,
+  VALID_EXTENSION_2,
+  VALID_ID,
+  VALID_ID_2,
+  VALID_ID_TYPE,
+  VALID_ID_TYPE_2,
+  VALID_META,
+  VALID_META_2,
+  VALID_MODIFIER_EXTENSION,
+  VALID_MODIFIER_EXTENSION_2,
+  VALID_NARRATIVE,
+  VALID_NARRATIVE_2,
+} from '../test-utils';
 
 describe('Group', () => {
   const VALID_STRING_1 = 'This is a valid string.';
@@ -91,7 +116,7 @@ describe('Group', () => {
   const VALID_REFERENCE_VALUE_1 = new Reference();
   VALID_REFERENCE_VALUE_1.setReference(VALID_REFERENCE_1);
 
-  const VALID_REFERENCE_2 = 'PractitionerRole/24680';
+  const VALID_REFERENCE_2 = 'Practitioner/24680';
   const VALID_REFERENCE_VALUE_2 = new Reference();
   VALID_REFERENCE_VALUE_2.setReference(VALID_REFERENCE_2);
 
@@ -122,12 +147,20 @@ describe('Group', () => {
   const VALID_IDENTIFIER_2 = new Identifier();
   VALID_IDENTIFIER_2.setValue(VALID_STRING_2);
 
+  const VALID_CONTAINED = new PractitionerRole();
+  VALID_CONTAINED.setId('#P1');
+  VALID_CONTAINED.setActive(false);
+  VALID_CONTAINED.addIdentifier(VALID_IDENTIFIER_1);
+  VALID_CONTAINED.setPractitioner(VALID_REFERENCE_VALUE_1);
+
+  const VALID_CONTAINED_2 = new PractitionerRole();
+  VALID_CONTAINED_2.setId('#P2');
+  VALID_CONTAINED_2.setActive(true);
+  VALID_CONTAINED_2.addIdentifier(VALID_IDENTIFIER_2);
+  VALID_CONTAINED_2.setPractitioner(VALID_REFERENCE_VALUE_2);
+
   const VALID_UNSIGNED_INT_1 = 13;
   const VALID_UNSIGNED_INT_2 = 15;
-  const INVALID_UNSIGNED_INT = -1;
-
-  const INVALID_STRING = '';
-  const UNDEFINED_VALUE = undefined;
 
   let groupTypeEnum: GroupTypeEnum;
   let inValidTypeEnum: MockCodeEnum;
@@ -152,7 +185,7 @@ describe('Group', () => {
       expect(testGroup.isEmpty()).toBe(true);
       expect(testGroup.toJSON()).toBeUndefined();
 
-      // inherited properties from Resource
+      // inherited properties from Resource/DomainResource
       expect(testGroup.hasIdElement()).toBe(false);
       expect(testGroup.getIdElement()).toEqual(new IdType());
       expect(testGroup.hasId()).toBe(false);
@@ -167,8 +200,6 @@ describe('Group', () => {
       expect(testGroup.getLanguageElement()).toEqual(new CodeType());
       expect(testGroup.hasLanguage()).toBe(false);
       expect(testGroup.getLanguage()).toBeUndefined();
-
-      // inherited properties from DomainResource
       expect(testGroup.hasText()).toBe(false);
       expect(testGroup.getText()).toEqual(new Narrative(null, null));
       expect(testGroup.hasContained()).toBe(false);
@@ -211,261 +242,6 @@ describe('Group', () => {
       expect(testGroup.getMember()).toEqual([] as GroupMemberComponent[]);
     });
 
-    it('should throw FhirError when instantiated with missing required properties', () => {
-      const testGroup = new Group(null, null);
-      testGroup.setIdentifier([VALID_IDENTIFIER_1]);
-
-      const t = () => {
-        testGroup.toJSON();
-      };
-      expect(t).toThrow(FhirError);
-      expect(t).toThrow(`The following required properties do not exist: Group.type, Group.actual`);
-    });
-
-    it('should properly copy() undefined values', () => {
-      const group = new Group(null, null);
-      group.setIdentifier([VALID_IDENTIFIER_1]);
-      group.setActive(VALID_BOOLEAN_TRUE);
-      group.setType(VALID_CODE_PERSON);
-      group.setActual(VALID_BOOLEAN_TRUE);
-      group.setCode(VALID_CODEABLECONCEPT_1);
-      group.setName(VALID_STRING_1);
-      group.setQuantity(VALID_UNSIGNED_INT_1);
-      group.setManagingEntity(VALID_REFERENCE_VALUE_1);
-      const groupCharacteristicComponent1 = new GroupCharacteristicComponent(
-        VALID_CODEABLECONCEPT_1,
-        new BooleanType(VALID_BOOLEAN_FALSE),
-        VALID_BOOLEAN_TRUE,
-      );
-      group.setCharacteristic([groupCharacteristicComponent1]);
-      const testGroupMemberComponent1 = new GroupMemberComponent(VALID_REFERENCE_VALUE_1);
-      group.setMember([testGroupMemberComponent1]);
-
-      let testGroup = group.copy();
-
-      expect(testGroup).toBeDefined();
-      expect(testGroup).toBeInstanceOf(Group);
-      expect(testGroup).toBeInstanceOf(DomainResource);
-      expect(testGroup).toBeInstanceOf(Resource);
-      expect(testGroup).toBeInstanceOf(Base);
-      expect(testGroup.constructor.name).toStrictEqual('Group');
-      expect(testGroup.resourceType()).toStrictEqual('Group');
-      expect(testGroup.fhirType()).toStrictEqual('Group');
-      expect(testGroup.isResource()).toBe(true);
-      expect(testGroup.isEmpty()).toBe(false);
-      const expectedJson = {
-        resourceType: 'Group',
-        identifier: [
-          {
-            value: 'This is a valid string.',
-          },
-        ],
-        active: true,
-        type: 'person',
-        actual: true,
-        code: {
-          text: 'This is a valid string.',
-        },
-        name: 'This is a valid string.',
-        quantity: 13,
-        managingEntity: {
-          reference: 'Practitioner/13579',
-        },
-        characteristic: [
-          {
-            code: {
-              text: 'This is a valid string.',
-            },
-            valueBoolean: false,
-            exclude: true,
-          },
-        ],
-        member: [
-          {
-            entity: {
-              reference: 'Practitioner/13579',
-            },
-          },
-        ],
-      };
-      expect(testGroup.toJSON()).toEqual(expectedJson);
-
-      // inherited properties from Resource
-      expect(testGroup.hasIdElement()).toBe(false);
-      expect(testGroup.getIdElement()).toEqual(new IdType());
-      expect(testGroup.hasId()).toBe(false);
-      expect(testGroup.getId()).toBeUndefined();
-      expect(testGroup.hasMeta()).toBe(false);
-      expect(testGroup.getMeta()).toEqual(new Meta());
-      expect(testGroup.hasImplicitRulesElement()).toBe(false);
-      expect(testGroup.getImplicitRulesElement()).toEqual(new UriType());
-      expect(testGroup.hasImplicitRules()).toBe(false);
-      expect(testGroup.getImplicitRules()).toBeUndefined();
-      expect(testGroup.hasLanguageElement()).toBe(false);
-      expect(testGroup.getLanguageElement()).toEqual(new CodeType());
-      expect(testGroup.hasLanguage()).toBe(false);
-      expect(testGroup.getLanguage()).toBeUndefined();
-
-      // inherited properties from DomainResource
-      expect(testGroup.hasText()).toBe(false);
-      expect(testGroup.getText()).toEqual(new Narrative(null, null));
-      expect(testGroup.hasContained()).toBe(false);
-      expect(testGroup.getContained()).toEqual([] as Resource[]);
-      expect(testGroup.hasExtension()).toBe(false);
-      expect(testGroup.getExtension()).toEqual([] as Extension[]);
-      expect(testGroup.hasModifierExtension()).toBe(false);
-      expect(testGroup.getModifierExtension()).toEqual([] as Extension[]);
-
-      // Group properties
-      expect(testGroup.hasIdentifier()).toBe(true);
-      expect(testGroup.getIdentifier()).toEqual([VALID_IDENTIFIER_1]);
-      expect(testGroup.hasActiveElement()).toBe(true);
-      expect(testGroup.getActiveElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
-      expect(testGroup.hasActive()).toBe(true);
-      expect(testGroup.getActive()).toStrictEqual(VALID_BOOLEAN_TRUE);
-      expect(testGroup.hasTypeEnumType()).toBe(true);
-      expect(testGroup.getTypeEnumType()).toEqual(new EnumCodeType(VALID_CODE_PERSON, groupTypeEnum));
-      expect(testGroup.hasTypeElement()).toBe(true);
-      expect(testGroup.getTypeElement()).toMatchObject(VALID_CODE_PERSON_TYPE);
-      expect(testGroup.hasType()).toBe(true);
-      expect(testGroup.getType()).toStrictEqual(VALID_CODE_PERSON);
-      expect(testGroup.hasActualElement()).toBe(true);
-      expect(testGroup.getActualElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
-      expect(testGroup.hasActual()).toBe(true);
-      expect(testGroup.getActual()).toStrictEqual(VALID_BOOLEAN_TRUE);
-      expect(testGroup.hasCode()).toBe(true);
-      expect(testGroup.getCode()).toEqual(VALID_CODEABLECONCEPT_1);
-      expect(testGroup.hasNameElement()).toBe(true);
-      expect(testGroup.getNameElement()).toEqual(new StringType(VALID_STRING_1));
-      expect(testGroup.hasName()).toBe(true);
-      expect(testGroup.getName()).toStrictEqual(VALID_STRING_1);
-      expect(testGroup.hasQuantityElement()).toBe(true);
-      expect(testGroup.getQuantityElement()).toEqual(new UnsignedIntType(VALID_UNSIGNED_INT_1));
-      expect(testGroup.hasQuantity()).toBe(true);
-      expect(testGroup.getQuantity()).toStrictEqual(VALID_UNSIGNED_INT_1);
-      expect(testGroup.hasManagingEntity()).toBe(true);
-      expect(testGroup.getManagingEntity()).toEqual(VALID_REFERENCE_VALUE_1);
-      expect(testGroup.hasCharacteristic()).toBe(true);
-      expect(testGroup.getCharacteristic()).toEqual([groupCharacteristicComponent1]);
-      expect(testGroup.hasMember()).toBe(true);
-      expect(testGroup.getMember()).toEqual([testGroupMemberComponent1]);
-
-      group.setIdentifier(UNDEFINED_VALUE);
-      group.setActive(UNDEFINED_VALUE);
-      // @ts-expect-error: Setting to null from setter results in no change
-      group.setType(null);
-      // @ts-expect-error: Setting to null from setter results in no change
-      group.setActual(null);
-      group.setCode(UNDEFINED_VALUE);
-      group.setName(UNDEFINED_VALUE);
-      group.setQuantity(UNDEFINED_VALUE);
-      group.setManagingEntity(UNDEFINED_VALUE);
-      group.setCharacteristic(UNDEFINED_VALUE);
-      group.setMember(UNDEFINED_VALUE);
-
-      testGroup = group.copy();
-
-      expect(testGroup).toBeDefined();
-      expect(testGroup).toBeInstanceOf(Group);
-      expect(testGroup).toBeInstanceOf(DomainResource);
-      expect(testGroup).toBeInstanceOf(Resource);
-      expect(testGroup).toBeInstanceOf(Base);
-      expect(testGroup.constructor.name).toStrictEqual('Group');
-      expect(testGroup.resourceType()).toStrictEqual('Group');
-      expect(testGroup.fhirType()).toStrictEqual('Group');
-      expect(testGroup.isResource()).toBe(true);
-      expect(testGroup.isEmpty()).toBe(false);
-      // Setting to null from setter results in no change
-      const expectedJson1 = { resourceType: 'Group', actual: true, type: 'person' };
-      expect(testGroup.toJSON()).toEqual(expectedJson1);
-
-      // inherited properties from Resource
-      expect(testGroup.hasIdElement()).toBe(false);
-      expect(testGroup.getIdElement()).toEqual(new IdType());
-      expect(testGroup.hasId()).toBe(false);
-      expect(testGroup.getId()).toBeUndefined();
-      expect(testGroup.hasMeta()).toBe(false);
-      expect(testGroup.getMeta()).toEqual(new Meta());
-      expect(testGroup.hasImplicitRulesElement()).toBe(false);
-      expect(testGroup.getImplicitRulesElement()).toEqual(new UriType());
-      expect(testGroup.hasImplicitRules()).toBe(false);
-      expect(testGroup.getImplicitRules()).toBeUndefined();
-      expect(testGroup.hasLanguageElement()).toBe(false);
-      expect(testGroup.getLanguageElement()).toEqual(new CodeType());
-      expect(testGroup.hasLanguage()).toBe(false);
-      expect(testGroup.getLanguage()).toBeUndefined();
-
-      // inherited properties from DomainResource
-      expect(testGroup.hasText()).toBe(false);
-      expect(testGroup.getText()).toEqual(new Narrative(null, null));
-      expect(testGroup.hasContained()).toBe(false);
-      expect(testGroup.getContained()).toEqual([] as Resource[]);
-      expect(testGroup.hasExtension()).toBe(false);
-      expect(testGroup.getExtension()).toEqual([] as Extension[]);
-      expect(testGroup.hasModifierExtension()).toBe(false);
-      expect(testGroup.getModifierExtension()).toEqual([] as Extension[]);
-
-      // Group properties
-      expect(testGroup.hasIdentifier()).toBe(false);
-      expect(testGroup.getIdentifier()).toEqual([] as Identifier[]);
-      expect(testGroup.hasActiveElement()).toBe(false);
-      expect(testGroup.getActiveElement()).toEqual(new BooleanType());
-      expect(testGroup.hasActive()).toBe(false);
-      expect(testGroup.getActive()).toBeUndefined();
-
-      // Setting type to null from setter results in no change
-      expect(testGroup.hasTypeEnumType()).toBe(true);
-      expect(testGroup.getTypeEnumType()).toEqual(new EnumCodeType(VALID_CODE_PERSON, groupTypeEnum));
-      expect(testGroup.hasTypeElement()).toBe(true);
-      expect(testGroup.getTypeElement()).toMatchObject(VALID_CODE_PERSON_TYPE);
-      expect(testGroup.hasType()).toBe(true);
-      expect(testGroup.getType()).toStrictEqual(VALID_CODE_PERSON);
-      // Setting actual to null from setter results in no change
-      expect(testGroup.hasActualElement()).toBe(true);
-      expect(testGroup.getActualElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
-      expect(testGroup.hasActual()).toBe(true);
-      expect(testGroup.getActual()).toStrictEqual(VALID_BOOLEAN_TRUE);
-
-      expect(testGroup.hasNameElement()).toBe(false);
-      expect(testGroup.getNameElement()).toEqual(new StringType());
-      expect(testGroup.hasName()).toBe(false);
-      expect(testGroup.getName()).toBeUndefined();
-      expect(testGroup.hasQuantityElement()).toBe(false);
-      expect(testGroup.getQuantityElement()).toEqual(new UnsignedIntType());
-      expect(testGroup.hasQuantity()).toBe(false);
-      expect(testGroup.getQuantity()).toBeUndefined();
-      expect(testGroup.hasManagingEntity()).toBe(false);
-      expect(testGroup.getManagingEntity()).toEqual(new Reference());
-      expect(testGroup.hasCharacteristic()).toBe(false);
-      expect(testGroup.getCharacteristic()).toEqual([] as GroupCharacteristicComponent[]);
-      expect(testGroup.hasMember()).toBe(false);
-      expect(testGroup.getMember()).toEqual([] as GroupMemberComponent[]);
-    });
-
-    it('should properly initialize property arrays when adding elements', () => {
-      const testGroup = new Group(null, null);
-
-      testGroup.addIdentifier(VALID_IDENTIFIER_1);
-      expect(testGroup.hasIdentifier()).toBe(true);
-      expect(testGroup.getIdentifier()).toEqual([VALID_IDENTIFIER_1]);
-
-      const groupCharacteristicComponent1 = new GroupCharacteristicComponent(
-        VALID_CODEABLECONCEPT_1,
-        new BooleanType(VALID_BOOLEAN_FALSE),
-        VALID_BOOLEAN_TRUE,
-      );
-      testGroup.addCharacteristic(groupCharacteristicComponent1);
-      expect(testGroup.hasCharacteristic()).toBe(true);
-      expect(testGroup.getCharacteristic()).toEqual([groupCharacteristicComponent1]);
-
-      const testGroupMemberComponent1 = new GroupMemberComponent(VALID_REFERENCE_VALUE_1);
-      testGroup.addMember(testGroupMemberComponent1);
-      expect(testGroup.hasMember()).toBe(true);
-      expect(testGroup.getMember()).toEqual([testGroupMemberComponent1]);
-    });
-
-    // Tests using primitives
-
     it('should be properly instantiated with primitive values', () => {
       const testGroup = new Group(VALID_CODE_PERSON, VALID_BOOLEAN_TRUE);
 
@@ -479,10 +255,9 @@ describe('Group', () => {
       expect(testGroup.fhirType()).toStrictEqual('Group');
       expect(testGroup.isResource()).toBe(true);
       expect(testGroup.isEmpty()).toBe(false);
-      const expectedJson1 = { resourceType: 'Group', actual: true, type: 'person' };
-      expect(testGroup.toJSON()).toEqual(expectedJson1);
+      expect(testGroup.toJSON()).toBeDefined();
 
-      // inherited properties from Resource
+      // inherited properties from Resource/DomainResource
       expect(testGroup.hasIdElement()).toBe(false);
       expect(testGroup.getIdElement()).toEqual(new IdType());
       expect(testGroup.hasId()).toBe(false);
@@ -497,8 +272,6 @@ describe('Group', () => {
       expect(testGroup.getLanguageElement()).toEqual(new CodeType());
       expect(testGroup.hasLanguage()).toBe(false);
       expect(testGroup.getLanguage()).toBeUndefined();
-
-      // inherited properties from DomainResource
       expect(testGroup.hasText()).toBe(false);
       expect(testGroup.getText()).toEqual(new Narrative(null, null));
       expect(testGroup.hasContained()).toBe(false);
@@ -543,26 +316,8 @@ describe('Group', () => {
       expect(testGroup.getMember()).toEqual([] as GroupMemberComponent[]);
     });
 
-    it('should properly copy() using primitive values', () => {
-      const group = new Group(null, null);
-      group.setIdentifier([VALID_IDENTIFIER_1]);
-      group.setActive(VALID_BOOLEAN_TRUE);
-      group.setType(VALID_CODE_PERSON);
-      group.setActual(VALID_BOOLEAN_TRUE);
-      group.setCode(VALID_CODEABLECONCEPT_1);
-      group.setName(VALID_STRING_1);
-      group.setQuantity(VALID_UNSIGNED_INT_1);
-      group.setManagingEntity(VALID_REFERENCE_VALUE_1);
-      const groupCharacteristicComponent1 = new GroupCharacteristicComponent(
-        VALID_CODEABLECONCEPT_1,
-        new BooleanType(VALID_BOOLEAN_FALSE),
-        VALID_BOOLEAN_TRUE,
-      );
-      group.setCharacteristic([groupCharacteristicComponent1]);
-      const testGroupMemberComponent1 = new GroupMemberComponent(VALID_REFERENCE_VALUE_1);
-      group.setMember([testGroupMemberComponent1]);
-
-      let testGroup = group.copy();
+    it('should be properly initialized by PrimitiveType values', () => {
+      const testGroup = new Group(VALID_CODE_PERSON_TYPE, VALID_BOOLEAN_TYPE);
 
       expect(testGroup).toBeDefined();
       expect(testGroup).toBeInstanceOf(Group);
@@ -574,44 +329,9 @@ describe('Group', () => {
       expect(testGroup.fhirType()).toStrictEqual('Group');
       expect(testGroup.isResource()).toBe(true);
       expect(testGroup.isEmpty()).toBe(false);
-      const expectedJson = {
-        resourceType: 'Group',
-        identifier: [
-          {
-            value: 'This is a valid string.',
-          },
-        ],
-        active: true,
-        type: 'person',
-        actual: true,
-        code: {
-          text: 'This is a valid string.',
-        },
-        name: 'This is a valid string.',
-        quantity: 13,
-        managingEntity: {
-          reference: 'Practitioner/13579',
-        },
-        characteristic: [
-          {
-            code: {
-              text: 'This is a valid string.',
-            },
-            valueBoolean: false,
-            exclude: true,
-          },
-        ],
-        member: [
-          {
-            entity: {
-              reference: 'Practitioner/13579',
-            },
-          },
-        ],
-      };
-      expect(testGroup.toJSON()).toEqual(expectedJson);
+      expect(testGroup.toJSON()).toBeDefined();
 
-      // inherited properties from Resource
+      // inherited properties from Resource/DomainResource
       expect(testGroup.hasIdElement()).toBe(false);
       expect(testGroup.getIdElement()).toEqual(new IdType());
       expect(testGroup.hasId()).toBe(false);
@@ -626,8 +346,6 @@ describe('Group', () => {
       expect(testGroup.getLanguageElement()).toEqual(new CodeType());
       expect(testGroup.hasLanguage()).toBe(false);
       expect(testGroup.getLanguage()).toBeUndefined();
-
-      // inherited properties from DomainResource
       expect(testGroup.hasText()).toBe(false);
       expect(testGroup.getText()).toEqual(new Narrative(null, null));
       expect(testGroup.hasContained()).toBe(false);
@@ -638,12 +356,12 @@ describe('Group', () => {
       expect(testGroup.getModifierExtension()).toEqual([] as Extension[]);
 
       // Group properties
-      expect(testGroup.hasIdentifier()).toBe(true);
-      expect(testGroup.getIdentifier()).toEqual([VALID_IDENTIFIER_1]);
-      expect(testGroup.hasActiveElement()).toBe(true);
-      expect(testGroup.getActiveElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
-      expect(testGroup.hasActive()).toBe(true);
-      expect(testGroup.getActive()).toStrictEqual(VALID_BOOLEAN_TRUE);
+      expect(testGroup.hasIdentifier()).toBe(false);
+      expect(testGroup.getIdentifier()).toEqual([] as Identifier[]);
+      expect(testGroup.hasActiveElement()).toBe(false);
+      expect(testGroup.getActiveElement()).toEqual(new BooleanType());
+      expect(testGroup.hasActive()).toBe(false);
+      expect(testGroup.getActive()).toBeUndefined();
       expect(testGroup.hasTypeEnumType()).toBe(true);
       expect(testGroup.getTypeEnumType()).toEqual(new EnumCodeType(VALID_CODE_PERSON, groupTypeEnum));
       expect(testGroup.hasTypeElement()).toBe(true);
@@ -654,163 +372,22 @@ describe('Group', () => {
       expect(testGroup.getActualElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
       expect(testGroup.hasActual()).toBe(true);
       expect(testGroup.getActual()).toStrictEqual(VALID_BOOLEAN_TRUE);
-      expect(testGroup.hasCode()).toBe(true);
-      expect(testGroup.getCode()).toEqual(VALID_CODEABLECONCEPT_1);
-      expect(testGroup.hasNameElement()).toBe(true);
-      expect(testGroup.getNameElement()).toEqual(new StringType(VALID_STRING_1));
-      expect(testGroup.hasName()).toBe(true);
-      expect(testGroup.getName()).toStrictEqual(VALID_STRING_1);
-      expect(testGroup.hasQuantityElement()).toBe(true);
-      expect(testGroup.getQuantityElement()).toEqual(new UnsignedIntType(VALID_UNSIGNED_INT_1));
-      expect(testGroup.hasQuantity()).toBe(true);
-      expect(testGroup.getQuantity()).toStrictEqual(VALID_UNSIGNED_INT_1);
-      expect(testGroup.hasManagingEntity()).toBe(true);
-      expect(testGroup.getManagingEntity()).toEqual(VALID_REFERENCE_VALUE_1);
-      expect(testGroup.hasCharacteristic()).toBe(true);
-      expect(testGroup.getCharacteristic()).toEqual([groupCharacteristicComponent1]);
-      expect(testGroup.hasMember()).toBe(true);
-      expect(testGroup.getMember()).toEqual([testGroupMemberComponent1]);
-
-      group.addIdentifier(VALID_IDENTIFIER_2);
-      group.setActive(VALID_BOOLEAN_FALSE);
-      group.setType(VALID_CODE_DEVICE);
-      group.setActual(VALID_BOOLEAN_FALSE);
-      group.setCode(VALID_CODEABLECONCEPT_2);
-      group.setName(VALID_STRING_2);
-      group.setQuantity(VALID_UNSIGNED_INT_2);
-      group.setManagingEntity(VALID_REFERENCE_VALUE_2);
-      const groupCharacteristicComponent2 = new GroupCharacteristicComponent(
-        VALID_CODEABLECONCEPT_2,
-        new BooleanType(VALID_BOOLEAN_TRUE),
-        VALID_BOOLEAN_FALSE,
-      );
-      group.addCharacteristic(groupCharacteristicComponent2);
-      const testGroupMemberComponent2 = new GroupMemberComponent(VALID_REFERENCE_VALUE_2);
-      group.addMember(testGroupMemberComponent2);
-
-      testGroup = group.copy();
-
-      expect(testGroup).toBeDefined();
-      expect(testGroup).toBeInstanceOf(Group);
-      expect(testGroup).toBeInstanceOf(DomainResource);
-      expect(testGroup).toBeInstanceOf(Resource);
-      expect(testGroup).toBeInstanceOf(Base);
-      expect(testGroup.constructor.name).toStrictEqual('Group');
-      expect(testGroup.resourceType()).toStrictEqual('Group');
-      expect(testGroup.fhirType()).toStrictEqual('Group');
-      expect(testGroup.isResource()).toBe(true);
-      expect(testGroup.isEmpty()).toBe(false);
-      const expectedJson1 = {
-        resourceType: 'Group',
-        identifier: [
-          {
-            value: 'This is a valid string.',
-          },
-          {
-            value: 'This is another valid string.',
-          },
-        ],
-        active: false,
-        type: 'device',
-        actual: false,
-        code: {
-          text: 'This is another valid string.',
-        },
-        name: 'This is another valid string.',
-        quantity: 15,
-        managingEntity: {
-          reference: 'PractitionerRole/24680',
-        },
-        characteristic: [
-          {
-            code: {
-              text: 'This is a valid string.',
-            },
-            valueBoolean: false,
-            exclude: true,
-          },
-          {
-            code: {
-              text: 'This is another valid string.',
-            },
-            valueBoolean: true,
-            exclude: false,
-          },
-        ],
-        member: [
-          {
-            entity: {
-              reference: 'Practitioner/13579',
-            },
-          },
-          {
-            entity: {
-              reference: 'PractitionerRole/24680',
-            },
-          },
-        ],
-      };
-      expect(testGroup.toJSON()).toEqual(expectedJson1);
-
-      // inherited properties from Resource
-      expect(testGroup.hasIdElement()).toBe(false);
-      expect(testGroup.getIdElement()).toEqual(new IdType());
-      expect(testGroup.hasId()).toBe(false);
-      expect(testGroup.getId()).toBeUndefined();
-      expect(testGroup.hasMeta()).toBe(false);
-      expect(testGroup.getMeta()).toEqual(new Meta());
-      expect(testGroup.hasImplicitRulesElement()).toBe(false);
-      expect(testGroup.getImplicitRulesElement()).toEqual(new UriType());
-      expect(testGroup.hasImplicitRules()).toBe(false);
-      expect(testGroup.getImplicitRules()).toBeUndefined();
-      expect(testGroup.hasLanguageElement()).toBe(false);
-      expect(testGroup.getLanguageElement()).toEqual(new CodeType());
-      expect(testGroup.hasLanguage()).toBe(false);
-      expect(testGroup.getLanguage()).toBeUndefined();
-
-      // inherited properties from DomainResource
-      expect(testGroup.hasText()).toBe(false);
-      expect(testGroup.getText()).toEqual(new Narrative(null, null));
-      expect(testGroup.hasContained()).toBe(false);
-      expect(testGroup.getContained()).toEqual([] as Resource[]);
-      expect(testGroup.hasExtension()).toBe(false);
-      expect(testGroup.getExtension()).toEqual([] as Extension[]);
-      expect(testGroup.hasModifierExtension()).toBe(false);
-      expect(testGroup.getModifierExtension()).toEqual([] as Extension[]);
-
-      // Group properties
-      expect(testGroup.hasIdentifier()).toBe(true);
-      expect(testGroup.getIdentifier()).toEqual([VALID_IDENTIFIER_1, VALID_IDENTIFIER_2]);
-      expect(testGroup.hasActiveElement()).toBe(true);
-      expect(testGroup.getActiveElement()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
-      expect(testGroup.hasActive()).toBe(true);
-      expect(testGroup.getActive()).toStrictEqual(VALID_BOOLEAN_FALSE);
-      expect(testGroup.hasTypeEnumType()).toBe(true);
-      expect(testGroup.getTypeEnumType()).toEqual(new EnumCodeType(VALID_CODE_DEVICE, groupTypeEnum));
-      expect(testGroup.hasTypeElement()).toBe(true);
-      expect(testGroup.getTypeElement()).toMatchObject(VALID_CODE_DEVICE_TYPE);
-      expect(testGroup.hasType()).toBe(true);
-      expect(testGroup.getType()).toStrictEqual(VALID_CODE_DEVICE);
-      expect(testGroup.hasActualElement()).toBe(true);
-      expect(testGroup.getActualElement()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
-      expect(testGroup.hasActual()).toBe(true);
-      expect(testGroup.getActual()).toStrictEqual(VALID_BOOLEAN_FALSE);
-      expect(testGroup.hasCode()).toBe(true);
-      expect(testGroup.getCode()).toEqual(VALID_CODEABLECONCEPT_2);
-      expect(testGroup.hasNameElement()).toBe(true);
-      expect(testGroup.getNameElement()).toEqual(new StringType(VALID_STRING_2));
-      expect(testGroup.hasName()).toBe(true);
-      expect(testGroup.getName()).toStrictEqual(VALID_STRING_2);
-      expect(testGroup.hasQuantityElement()).toBe(true);
-      expect(testGroup.getQuantityElement()).toEqual(new UnsignedIntType(VALID_UNSIGNED_INT_2));
-      expect(testGroup.hasQuantity()).toBe(true);
-      expect(testGroup.getQuantity()).toStrictEqual(VALID_UNSIGNED_INT_2);
-      expect(testGroup.hasManagingEntity()).toBe(true);
-      expect(testGroup.getManagingEntity()).toEqual(VALID_REFERENCE_VALUE_2);
-      expect(testGroup.hasCharacteristic()).toBe(true);
-      expect(testGroup.getCharacteristic()).toEqual([groupCharacteristicComponent1, groupCharacteristicComponent2]);
-      expect(testGroup.hasMember()).toBe(true);
-      expect(testGroup.getMember()).toEqual([testGroupMemberComponent1, testGroupMemberComponent2]);
+      expect(testGroup.hasNameElement()).toBe(false);
+      expect(testGroup.getNameElement()).toEqual(new StringType());
+      expect(testGroup.hasName()).toBe(false);
+      expect(testGroup.getName()).toBeUndefined();
+      expect(testGroup.hasCode()).toBe(false);
+      expect(testGroup.getCode()).toEqual(new CodeableConcept());
+      expect(testGroup.hasQuantityElement()).toBe(false);
+      expect(testGroup.getQuantityElement()).toEqual(new UnsignedIntType());
+      expect(testGroup.hasQuantity()).toBe(false);
+      expect(testGroup.getQuantity()).toBeUndefined();
+      expect(testGroup.hasManagingEntity()).toBe(false);
+      expect(testGroup.getManagingEntity()).toEqual(new Reference());
+      expect(testGroup.hasCharacteristic()).toBe(false);
+      expect(testGroup.getCharacteristic()).toEqual([] as GroupCharacteristicComponent[]);
+      expect(testGroup.hasMember()).toBe(false);
+      expect(testGroup.getMember()).toEqual([] as GroupMemberComponent[]);
     });
 
     it('should throw InvalidCodeError when instantiated with invalid primitive values', () => {
@@ -838,735 +415,6 @@ describe('Group', () => {
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid Group.actual (${INVALID_BOOLEAN})`);
-    });
-
-    it('should throw PrimitiveTypeError when setters invoked with invalid primitive values', () => {
-      const group = new Group(null, null);
-      let t = () => {
-        // @ts-expect-error: allow for testing
-        group.setActive(INVALID_BOOLEAN);
-      };
-      expect(t).toThrow(PrimitiveTypeError);
-      expect(t).toThrow(`Invalid Group.active (${String(INVALID_BOOLEAN)})`);
-
-      t = () => {
-        // @ts-expect-error: allow for testing
-        group.setActual(INVALID_BOOLEAN);
-      };
-      expect(t).toThrow(PrimitiveTypeError);
-      expect(t).toThrow(`Invalid Group.actual (${String(INVALID_BOOLEAN)})`);
-
-      t = () => {
-        group.setName(INVALID_STRING);
-      };
-      expect(t).toThrow(PrimitiveTypeError);
-      expect(t).toThrow(`Invalid Group.name (${INVALID_STRING})`);
-
-      t = () => {
-        group.setQuantity(INVALID_UNSIGNED_INT);
-      };
-      expect(t).toThrow(PrimitiveTypeError);
-      expect(t).toThrow(`Invalid Group.quantity (${String(INVALID_UNSIGNED_INT)})`);
-    });
-
-    // Tests using DataType elements
-
-    it('should be properly initialized by PrimitiveType values', () => {
-      const testGroup = new Group(VALID_CODE_PERSON_TYPE, VALID_BOOLEAN_TYPE);
-
-      expect(testGroup).toBeDefined();
-      expect(testGroup).toBeInstanceOf(Group);
-      expect(testGroup).toBeInstanceOf(DomainResource);
-      expect(testGroup).toBeInstanceOf(Resource);
-      expect(testGroup).toBeInstanceOf(Base);
-      expect(testGroup.constructor.name).toStrictEqual('Group');
-      expect(testGroup.resourceType()).toStrictEqual('Group');
-      expect(testGroup.fhirType()).toStrictEqual('Group');
-      expect(testGroup.isResource()).toBe(true);
-      expect(testGroup.isEmpty()).toBe(false);
-      const expectedJson = { resourceType: 'Group', actual: true, type: 'person' };
-      expect(testGroup.toJSON()).toEqual(expectedJson);
-
-      // inherited properties from Resource
-      expect(testGroup.hasIdElement()).toBe(false);
-      expect(testGroup.getIdElement()).toEqual(new IdType());
-      expect(testGroup.hasId()).toBe(false);
-      expect(testGroup.getId()).toBeUndefined();
-      expect(testGroup.hasMeta()).toBe(false);
-      expect(testGroup.getMeta()).toEqual(new Meta());
-      expect(testGroup.hasImplicitRulesElement()).toBe(false);
-      expect(testGroup.getImplicitRulesElement()).toEqual(new UriType());
-      expect(testGroup.hasImplicitRules()).toBe(false);
-      expect(testGroup.getImplicitRules()).toBeUndefined();
-      expect(testGroup.hasLanguageElement()).toBe(false);
-      expect(testGroup.getLanguageElement()).toEqual(new CodeType());
-      expect(testGroup.hasLanguage()).toBe(false);
-      expect(testGroup.getLanguage()).toBeUndefined();
-
-      // inherited properties from DomainResource
-      expect(testGroup.hasText()).toBe(false);
-      expect(testGroup.getText()).toEqual(new Narrative(null, null));
-      expect(testGroup.hasContained()).toBe(false);
-      expect(testGroup.getContained()).toEqual([] as Resource[]);
-      expect(testGroup.hasExtension()).toBe(false);
-      expect(testGroup.getExtension()).toEqual([] as Extension[]);
-      expect(testGroup.hasModifierExtension()).toBe(false);
-      expect(testGroup.getModifierExtension()).toEqual([] as Extension[]);
-
-      // Group properties
-      expect(testGroup.hasIdentifier()).toBe(false);
-      expect(testGroup.getIdentifier()).toEqual([] as Identifier[]);
-      expect(testGroup.hasActiveElement()).toBe(false);
-      expect(testGroup.getActiveElement()).toEqual(new BooleanType());
-      expect(testGroup.hasActive()).toBe(false);
-      expect(testGroup.getActive()).toBeUndefined();
-      expect(testGroup.hasTypeEnumType()).toBe(true);
-      expect(testGroup.getTypeEnumType()).toEqual(new EnumCodeType(VALID_CODE_PERSON, groupTypeEnum));
-      expect(testGroup.hasTypeElement()).toBe(true);
-      expect(testGroup.getTypeElement()).toMatchObject(VALID_CODE_PERSON_TYPE);
-      expect(testGroup.hasType()).toBe(true);
-      expect(testGroup.getType()).toStrictEqual(VALID_CODE_PERSON);
-      expect(testGroup.hasActualElement()).toBe(true);
-      expect(testGroup.getActualElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
-      expect(testGroup.hasActual()).toBe(true);
-      expect(testGroup.getActual()).toStrictEqual(VALID_BOOLEAN_TRUE);
-      expect(testGroup.hasNameElement()).toBe(false);
-      expect(testGroup.getNameElement()).toEqual(new StringType());
-      expect(testGroup.hasName()).toBe(false);
-      expect(testGroup.getName()).toBeUndefined();
-      expect(testGroup.hasCode()).toBe(false);
-      expect(testGroup.getCode()).toEqual(new CodeableConcept());
-      expect(testGroup.hasQuantityElement()).toBe(false);
-      expect(testGroup.getQuantityElement()).toEqual(new UnsignedIntType());
-      expect(testGroup.hasQuantity()).toBe(false);
-      expect(testGroup.getQuantity()).toBeUndefined();
-      expect(testGroup.hasManagingEntity()).toBe(false);
-      expect(testGroup.getManagingEntity()).toEqual(new Reference());
-      expect(testGroup.hasCharacteristic()).toBe(false);
-      expect(testGroup.getCharacteristic()).toEqual([] as GroupCharacteristicComponent[]);
-      expect(testGroup.hasMember()).toBe(false);
-      expect(testGroup.getMember()).toEqual([] as GroupMemberComponent[]);
-    });
-
-    it('should be properly initialized by EnumCodeType and PrimitiveType values', () => {
-      const VALID_GROUP_ENUM_TYPE = new EnumCodeType(VALID_CODE_PERSON, groupTypeEnum);
-      const testGroup = new Group(VALID_GROUP_ENUM_TYPE, VALID_BOOLEAN_TYPE);
-
-      expect(testGroup).toBeDefined();
-      expect(testGroup).toBeInstanceOf(Group);
-      expect(testGroup).toBeInstanceOf(DomainResource);
-      expect(testGroup).toBeInstanceOf(Resource);
-      expect(testGroup).toBeInstanceOf(Base);
-      expect(testGroup.constructor.name).toStrictEqual('Group');
-      expect(testGroup.resourceType()).toStrictEqual('Group');
-      expect(testGroup.fhirType()).toStrictEqual('Group');
-      expect(testGroup.isResource()).toBe(true);
-      expect(testGroup.isEmpty()).toBe(false);
-      const expectedJson = { resourceType: 'Group', actual: true, type: 'person' };
-      expect(testGroup.toJSON()).toEqual(expectedJson);
-
-      // inherited properties from Resource
-      expect(testGroup.hasIdElement()).toBe(false);
-      expect(testGroup.getIdElement()).toEqual(new IdType());
-      expect(testGroup.hasId()).toBe(false);
-      expect(testGroup.getId()).toBeUndefined();
-      expect(testGroup.hasMeta()).toBe(false);
-      expect(testGroup.getMeta()).toEqual(new Meta());
-      expect(testGroup.hasImplicitRulesElement()).toBe(false);
-      expect(testGroup.getImplicitRulesElement()).toEqual(new UriType());
-      expect(testGroup.hasImplicitRules()).toBe(false);
-      expect(testGroup.getImplicitRules()).toBeUndefined();
-      expect(testGroup.hasLanguageElement()).toBe(false);
-      expect(testGroup.getLanguageElement()).toEqual(new CodeType());
-      expect(testGroup.hasLanguage()).toBe(false);
-      expect(testGroup.getLanguage()).toBeUndefined();
-
-      // inherited properties from DomainResource
-      expect(testGroup.hasText()).toBe(false);
-      expect(testGroup.getText()).toEqual(new Narrative(null, null));
-      expect(testGroup.hasContained()).toBe(false);
-      expect(testGroup.getContained()).toEqual([] as Resource[]);
-      expect(testGroup.hasExtension()).toBe(false);
-      expect(testGroup.getExtension()).toEqual([] as Extension[]);
-      expect(testGroup.hasModifierExtension()).toBe(false);
-      expect(testGroup.getModifierExtension()).toEqual([] as Extension[]);
-
-      // Group properties
-      expect(testGroup.hasIdentifier()).toBe(false);
-      expect(testGroup.getIdentifier()).toEqual([] as Identifier[]);
-      expect(testGroup.hasActiveElement()).toBe(false);
-      expect(testGroup.getActiveElement()).toEqual(new BooleanType());
-      expect(testGroup.hasActive()).toBe(false);
-      expect(testGroup.getActive()).toBeUndefined();
-      expect(testGroup.hasTypeEnumType()).toBe(true);
-      expect(testGroup.getTypeEnumType()).toEqual(new EnumCodeType(VALID_CODE_PERSON, groupTypeEnum));
-      expect(testGroup.hasTypeElement()).toBe(true);
-      expect(testGroup.getTypeElement()).toMatchObject(VALID_CODE_PERSON_TYPE);
-      expect(testGroup.hasType()).toBe(true);
-      expect(testGroup.getType()).toStrictEqual(VALID_CODE_PERSON);
-      expect(testGroup.hasActualElement()).toBe(true);
-      expect(testGroup.getActualElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
-      expect(testGroup.hasActual()).toBe(true);
-      expect(testGroup.getActual()).toStrictEqual(VALID_BOOLEAN_TRUE);
-      expect(testGroup.hasNameElement()).toBe(false);
-      expect(testGroup.getNameElement()).toEqual(new StringType());
-      expect(testGroup.hasName()).toBe(false);
-      expect(testGroup.getName()).toBeUndefined();
-      expect(testGroup.hasCode()).toBe(false);
-      expect(testGroup.getCode()).toEqual(new CodeableConcept());
-      expect(testGroup.hasQuantityElement()).toBe(false);
-      expect(testGroup.getQuantityElement()).toEqual(new UnsignedIntType());
-      expect(testGroup.hasQuantity()).toBe(false);
-      expect(testGroup.getQuantity()).toBeUndefined();
-      expect(testGroup.hasManagingEntity()).toBe(false);
-      expect(testGroup.getManagingEntity()).toEqual(new Reference());
-      expect(testGroup.hasCharacteristic()).toBe(false);
-      expect(testGroup.getCharacteristic()).toEqual([] as GroupCharacteristicComponent[]);
-      expect(testGroup.hasMember()).toBe(false);
-      expect(testGroup.getMember()).toEqual([] as GroupMemberComponent[]);
-    });
-
-    it('should properly copy() using PrimitiveType values', () => {
-      const group = new Group(null, null);
-      group.setIdentifier([VALID_IDENTIFIER_1]);
-      group.setActiveElement(new BooleanType(VALID_BOOLEAN_TRUE));
-      group.setTypeElement(VALID_CODE_PERSON_TYPE);
-      group.setActualElement(new BooleanType(VALID_BOOLEAN_TRUE));
-      group.setCode(VALID_CODEABLECONCEPT_1);
-      group.setNameElement(new StringType(VALID_STRING_1));
-      group.setQuantityElement(new UnsignedIntType(VALID_UNSIGNED_INT_1));
-      group.setManagingEntity(VALID_REFERENCE_VALUE_1);
-      const groupCharacteristicComponent1 = new GroupCharacteristicComponent(
-        VALID_CODEABLECONCEPT_1,
-        new BooleanType(VALID_BOOLEAN_FALSE),
-        new BooleanType(VALID_BOOLEAN_TRUE),
-      );
-      group.setCharacteristic([groupCharacteristicComponent1]);
-      const testGroupMemberComponent1 = new GroupMemberComponent(VALID_REFERENCE_VALUE_1);
-      group.setMember([testGroupMemberComponent1]);
-
-      let testGroup = group.copy();
-
-      expect(testGroup).toBeDefined();
-      expect(testGroup).toBeInstanceOf(Group);
-      expect(testGroup).toBeInstanceOf(DomainResource);
-      expect(testGroup).toBeInstanceOf(Resource);
-      expect(testGroup).toBeInstanceOf(Base);
-      expect(testGroup.constructor.name).toStrictEqual('Group');
-      expect(testGroup.resourceType()).toStrictEqual('Group');
-      expect(testGroup.fhirType()).toStrictEqual('Group');
-      expect(testGroup.isResource()).toBe(true);
-      expect(testGroup.isEmpty()).toBe(false);
-      const expectedJson = {
-        resourceType: 'Group',
-        identifier: [
-          {
-            value: 'This is a valid string.',
-          },
-        ],
-        active: true,
-        type: 'person',
-        actual: true,
-        code: {
-          text: 'This is a valid string.',
-        },
-        name: 'This is a valid string.',
-        quantity: 13,
-        managingEntity: {
-          reference: 'Practitioner/13579',
-        },
-        characteristic: [
-          {
-            code: {
-              text: 'This is a valid string.',
-            },
-            valueBoolean: false,
-            exclude: true,
-          },
-        ],
-        member: [
-          {
-            entity: {
-              reference: 'Practitioner/13579',
-            },
-          },
-        ],
-      };
-      expect(testGroup.toJSON()).toEqual(expectedJson);
-
-      // inherited properties from Resource
-      expect(testGroup.hasIdElement()).toBe(false);
-      expect(testGroup.getIdElement()).toEqual(new IdType());
-      expect(testGroup.hasId()).toBe(false);
-      expect(testGroup.getId()).toBeUndefined();
-      expect(testGroup.hasMeta()).toBe(false);
-      expect(testGroup.getMeta()).toEqual(new Meta());
-      expect(testGroup.hasImplicitRulesElement()).toBe(false);
-      expect(testGroup.getImplicitRulesElement()).toEqual(new UriType());
-      expect(testGroup.hasImplicitRules()).toBe(false);
-      expect(testGroup.getImplicitRules()).toBeUndefined();
-      expect(testGroup.hasLanguageElement()).toBe(false);
-      expect(testGroup.getLanguageElement()).toEqual(new CodeType());
-      expect(testGroup.hasLanguage()).toBe(false);
-      expect(testGroup.getLanguage()).toBeUndefined();
-
-      // inherited properties from DomainResource
-      expect(testGroup.hasText()).toBe(false);
-      expect(testGroup.getText()).toEqual(new Narrative(null, null));
-      expect(testGroup.hasContained()).toBe(false);
-      expect(testGroup.getContained()).toEqual([] as Resource[]);
-      expect(testGroup.hasExtension()).toBe(false);
-      expect(testGroup.getExtension()).toEqual([] as Extension[]);
-      expect(testGroup.hasModifierExtension()).toBe(false);
-      expect(testGroup.getModifierExtension()).toEqual([] as Extension[]);
-
-      // Group properties
-      expect(testGroup.hasIdentifier()).toBe(true);
-      expect(testGroup.getIdentifier()).toEqual([VALID_IDENTIFIER_1]);
-      expect(testGroup.hasActiveElement()).toBe(true);
-      expect(testGroup.getActiveElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
-      expect(testGroup.hasActive()).toBe(true);
-      expect(testGroup.getActive()).toStrictEqual(VALID_BOOLEAN_TRUE);
-      expect(testGroup.hasTypeEnumType()).toBe(true);
-      expect(testGroup.getTypeEnumType()).toEqual(new EnumCodeType(VALID_CODE_PERSON, groupTypeEnum));
-      expect(testGroup.hasTypeElement()).toBe(true);
-      expect(testGroup.getTypeElement()).toMatchObject(VALID_CODE_PERSON_TYPE);
-      expect(testGroup.hasType()).toBe(true);
-      expect(testGroup.getType()).toStrictEqual(VALID_CODE_PERSON);
-      expect(testGroup.hasActualElement()).toBe(true);
-      expect(testGroup.getActualElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
-      expect(testGroup.hasActual()).toBe(true);
-      expect(testGroup.getActual()).toStrictEqual(VALID_BOOLEAN_TRUE);
-      expect(testGroup.hasCode()).toBe(true);
-      expect(testGroup.getCode()).toEqual(VALID_CODEABLECONCEPT_1);
-      expect(testGroup.hasNameElement()).toBe(true);
-      expect(testGroup.getNameElement()).toEqual(new StringType(VALID_STRING_1));
-      expect(testGroup.hasName()).toBe(true);
-      expect(testGroup.getName()).toStrictEqual(VALID_STRING_1);
-      expect(testGroup.hasQuantityElement()).toBe(true);
-      expect(testGroup.getQuantityElement()).toEqual(new UnsignedIntType(VALID_UNSIGNED_INT_1));
-      expect(testGroup.hasQuantity()).toBe(true);
-      expect(testGroup.getQuantity()).toStrictEqual(VALID_UNSIGNED_INT_1);
-      expect(testGroup.hasManagingEntity()).toBe(true);
-      expect(testGroup.getManagingEntity()).toEqual(VALID_REFERENCE_VALUE_1);
-      expect(testGroup.hasCharacteristic()).toBe(true);
-      expect(testGroup.getCharacteristic()).toEqual([groupCharacteristicComponent1]);
-      expect(testGroup.hasMember()).toBe(true);
-      expect(testGroup.getMember()).toEqual([testGroupMemberComponent1]);
-
-      group.addIdentifier(VALID_IDENTIFIER_2);
-      group.setActiveElement(new BooleanType(VALID_BOOLEAN_FALSE));
-      group.setTypeElement(VALID_CODE_DEVICE_TYPE);
-      group.setActualElement(new BooleanType(VALID_BOOLEAN_FALSE));
-      group.setCode(VALID_CODEABLECONCEPT_2);
-      group.setNameElement(new StringType(VALID_STRING_2));
-      group.setQuantityElement(new UnsignedIntType(VALID_UNSIGNED_INT_2));
-      group.setManagingEntity(VALID_REFERENCE_VALUE_2);
-      const groupCharacteristicComponent2 = new GroupCharacteristicComponent(
-        VALID_CODEABLECONCEPT_2,
-        new BooleanType(VALID_BOOLEAN_TRUE),
-        new BooleanType(VALID_BOOLEAN_FALSE),
-      );
-      group.addCharacteristic(groupCharacteristicComponent2);
-      const testGroupMemberComponent2 = new GroupMemberComponent(VALID_REFERENCE_VALUE_2);
-      group.addMember(testGroupMemberComponent2);
-
-      testGroup = group.copy();
-
-      expect(testGroup).toBeDefined();
-      expect(testGroup).toBeInstanceOf(Group);
-      expect(testGroup).toBeInstanceOf(DomainResource);
-      expect(testGroup).toBeInstanceOf(Resource);
-      expect(testGroup).toBeInstanceOf(Base);
-      expect(testGroup.constructor.name).toStrictEqual('Group');
-      expect(testGroup.resourceType()).toStrictEqual('Group');
-      expect(testGroup.fhirType()).toStrictEqual('Group');
-      expect(testGroup.isResource()).toBe(true);
-      expect(testGroup.isEmpty()).toBe(false);
-      const expectedJson1 = {
-        resourceType: 'Group',
-        identifier: [
-          {
-            value: 'This is a valid string.',
-          },
-          {
-            value: 'This is another valid string.',
-          },
-        ],
-        active: false,
-        type: 'device',
-        actual: false,
-        code: {
-          text: 'This is another valid string.',
-        },
-        name: 'This is another valid string.',
-        quantity: 15,
-        managingEntity: {
-          reference: 'PractitionerRole/24680',
-        },
-        characteristic: [
-          {
-            code: {
-              text: 'This is a valid string.',
-            },
-            valueBoolean: false,
-            exclude: true,
-          },
-          {
-            code: {
-              text: 'This is another valid string.',
-            },
-            valueBoolean: true,
-            exclude: false,
-          },
-        ],
-        member: [
-          {
-            entity: {
-              reference: 'Practitioner/13579',
-            },
-          },
-          {
-            entity: {
-              reference: 'PractitionerRole/24680',
-            },
-          },
-        ],
-      };
-      expect(testGroup.toJSON()).toEqual(expectedJson1);
-
-      // inherited properties from Resource
-      expect(testGroup.hasIdElement()).toBe(false);
-      expect(testGroup.getIdElement()).toEqual(new IdType());
-      expect(testGroup.hasId()).toBe(false);
-      expect(testGroup.getId()).toBeUndefined();
-      expect(testGroup.hasMeta()).toBe(false);
-      expect(testGroup.getMeta()).toEqual(new Meta());
-      expect(testGroup.hasImplicitRulesElement()).toBe(false);
-      expect(testGroup.getImplicitRulesElement()).toEqual(new UriType());
-      expect(testGroup.hasImplicitRules()).toBe(false);
-      expect(testGroup.getImplicitRules()).toBeUndefined();
-      expect(testGroup.hasLanguageElement()).toBe(false);
-      expect(testGroup.getLanguageElement()).toEqual(new CodeType());
-      expect(testGroup.hasLanguage()).toBe(false);
-      expect(testGroup.getLanguage()).toBeUndefined();
-
-      // inherited properties from DomainResource
-      expect(testGroup.hasText()).toBe(false);
-      expect(testGroup.getText()).toEqual(new Narrative(null, null));
-      expect(testGroup.hasContained()).toBe(false);
-      expect(testGroup.getContained()).toEqual([] as Resource[]);
-      expect(testGroup.hasExtension()).toBe(false);
-      expect(testGroup.getExtension()).toEqual([] as Extension[]);
-      expect(testGroup.hasModifierExtension()).toBe(false);
-      expect(testGroup.getModifierExtension()).toEqual([] as Extension[]);
-
-      // Group properties
-      expect(testGroup.hasIdentifier()).toBe(true);
-      expect(testGroup.getIdentifier()).toEqual([VALID_IDENTIFIER_1, VALID_IDENTIFIER_2]);
-      expect(testGroup.hasActiveElement()).toBe(true);
-      expect(testGroup.getActiveElement()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
-      expect(testGroup.hasActive()).toBe(true);
-      expect(testGroup.getActive()).toStrictEqual(VALID_BOOLEAN_FALSE);
-      expect(testGroup.hasTypeEnumType()).toBe(true);
-      expect(testGroup.getTypeEnumType()).toEqual(new EnumCodeType(VALID_CODE_DEVICE, groupTypeEnum));
-      expect(testGroup.hasTypeElement()).toBe(true);
-      expect(testGroup.getTypeElement()).toMatchObject(VALID_CODE_DEVICE_TYPE);
-      expect(testGroup.hasType()).toBe(true);
-      expect(testGroup.getType()).toStrictEqual(VALID_CODE_DEVICE);
-      expect(testGroup.hasActualElement()).toBe(true);
-      expect(testGroup.getActualElement()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
-      expect(testGroup.hasActual()).toBe(true);
-      expect(testGroup.getActual()).toStrictEqual(VALID_BOOLEAN_FALSE);
-      expect(testGroup.hasCode()).toBe(true);
-      expect(testGroup.getCode()).toEqual(VALID_CODEABLECONCEPT_2);
-      expect(testGroup.hasNameElement()).toBe(true);
-      expect(testGroup.getNameElement()).toEqual(new StringType(VALID_STRING_2));
-      expect(testGroup.hasName()).toBe(true);
-      expect(testGroup.getName()).toStrictEqual(VALID_STRING_2);
-      expect(testGroup.hasQuantityElement()).toBe(true);
-      expect(testGroup.getQuantityElement()).toEqual(new UnsignedIntType(VALID_UNSIGNED_INT_2));
-      expect(testGroup.hasQuantity()).toBe(true);
-      expect(testGroup.getQuantity()).toStrictEqual(VALID_UNSIGNED_INT_2);
-      expect(testGroup.hasManagingEntity()).toBe(true);
-      expect(testGroup.getManagingEntity()).toEqual(VALID_REFERENCE_VALUE_2);
-      expect(testGroup.hasCharacteristic()).toBe(true);
-      expect(testGroup.getCharacteristic()).toEqual([groupCharacteristicComponent1, groupCharacteristicComponent2]);
-      expect(testGroup.hasMember()).toBe(true);
-      expect(testGroup.getMember()).toEqual([testGroupMemberComponent1, testGroupMemberComponent2]);
-    });
-
-    it('should properly copy() using EnumCodeType and PrimitiveType values', () => {
-      const VALID_GROUP_ENUM_TYPE_1 = new EnumCodeType(VALID_CODE_PERSON, groupTypeEnum);
-      const VALID_GROUP_ENUM_TYPE_2 = new EnumCodeType(VALID_CODE_DEVICE, groupTypeEnum);
-
-      const group = new Group(null, null);
-      group.setIdentifier([VALID_IDENTIFIER_1]);
-      group.setActiveElement(new BooleanType(VALID_BOOLEAN_TRUE));
-      group.setTypeEnumType(VALID_GROUP_ENUM_TYPE_1);
-      group.setActualElement(new BooleanType(VALID_BOOLEAN_TRUE));
-      group.setCode(VALID_CODEABLECONCEPT_1);
-      group.setNameElement(new StringType(VALID_STRING_1));
-      group.setQuantityElement(new UnsignedIntType(VALID_UNSIGNED_INT_1));
-      group.setManagingEntity(VALID_REFERENCE_VALUE_1);
-      const groupCharacteristicComponent1 = new GroupCharacteristicComponent(
-        VALID_CODEABLECONCEPT_1,
-        new BooleanType(VALID_BOOLEAN_FALSE),
-        new BooleanType(VALID_BOOLEAN_TRUE),
-      );
-      group.setCharacteristic([groupCharacteristicComponent1]);
-      const testGroupMemberComponent1 = new GroupMemberComponent(VALID_REFERENCE_VALUE_1);
-      group.setMember([testGroupMemberComponent1]);
-
-      let testGroup = group.copy();
-
-      expect(testGroup).toBeDefined();
-      expect(testGroup).toBeInstanceOf(Group);
-      expect(testGroup).toBeInstanceOf(DomainResource);
-      expect(testGroup).toBeInstanceOf(Resource);
-      expect(testGroup).toBeInstanceOf(Base);
-      expect(testGroup.constructor.name).toStrictEqual('Group');
-      expect(testGroup.resourceType()).toStrictEqual('Group');
-      expect(testGroup.fhirType()).toStrictEqual('Group');
-      expect(testGroup.isResource()).toBe(true);
-      expect(testGroup.isEmpty()).toBe(false);
-      const expectedJson = {
-        resourceType: 'Group',
-        identifier: [
-          {
-            value: 'This is a valid string.',
-          },
-        ],
-        active: true,
-        type: 'person',
-        actual: true,
-        code: {
-          text: 'This is a valid string.',
-        },
-        name: 'This is a valid string.',
-        quantity: 13,
-        managingEntity: {
-          reference: 'Practitioner/13579',
-        },
-        characteristic: [
-          {
-            code: {
-              text: 'This is a valid string.',
-            },
-            valueBoolean: false,
-            exclude: true,
-          },
-        ],
-        member: [
-          {
-            entity: {
-              reference: 'Practitioner/13579',
-            },
-          },
-        ],
-      };
-      expect(testGroup.toJSON()).toEqual(expectedJson);
-
-      // inherited properties from Resource
-      expect(testGroup.hasIdElement()).toBe(false);
-      expect(testGroup.getIdElement()).toEqual(new IdType());
-      expect(testGroup.hasId()).toBe(false);
-      expect(testGroup.getId()).toBeUndefined();
-      expect(testGroup.hasMeta()).toBe(false);
-      expect(testGroup.getMeta()).toEqual(new Meta());
-      expect(testGroup.hasImplicitRulesElement()).toBe(false);
-      expect(testGroup.getImplicitRulesElement()).toEqual(new UriType());
-      expect(testGroup.hasImplicitRules()).toBe(false);
-      expect(testGroup.getImplicitRules()).toBeUndefined();
-      expect(testGroup.hasLanguageElement()).toBe(false);
-      expect(testGroup.getLanguageElement()).toEqual(new CodeType());
-      expect(testGroup.hasLanguage()).toBe(false);
-      expect(testGroup.getLanguage()).toBeUndefined();
-
-      // inherited properties from DomainResource
-      expect(testGroup.hasText()).toBe(false);
-      expect(testGroup.getText()).toEqual(new Narrative(null, null));
-      expect(testGroup.hasContained()).toBe(false);
-      expect(testGroup.getContained()).toEqual([] as Resource[]);
-      expect(testGroup.hasExtension()).toBe(false);
-      expect(testGroup.getExtension()).toEqual([] as Extension[]);
-      expect(testGroup.hasModifierExtension()).toBe(false);
-      expect(testGroup.getModifierExtension()).toEqual([] as Extension[]);
-
-      // Group properties
-      expect(testGroup.hasIdentifier()).toBe(true);
-      expect(testGroup.getIdentifier()).toEqual([VALID_IDENTIFIER_1]);
-      expect(testGroup.hasActiveElement()).toBe(true);
-      expect(testGroup.getActiveElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
-      expect(testGroup.hasActive()).toBe(true);
-      expect(testGroup.getActive()).toStrictEqual(VALID_BOOLEAN_TRUE);
-      expect(testGroup.hasTypeEnumType()).toBe(true);
-      expect(testGroup.getTypeEnumType()).toEqual(VALID_GROUP_ENUM_TYPE_1);
-      expect(testGroup.hasTypeElement()).toBe(true);
-      expect(testGroup.getTypeElement()).toMatchObject(VALID_CODE_PERSON_TYPE);
-      expect(testGroup.hasType()).toBe(true);
-      expect(testGroup.getType()).toStrictEqual(VALID_CODE_PERSON);
-      expect(testGroup.hasActualElement()).toBe(true);
-      expect(testGroup.getActualElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
-      expect(testGroup.hasActual()).toBe(true);
-      expect(testGroup.getActual()).toStrictEqual(VALID_BOOLEAN_TRUE);
-      expect(testGroup.hasCode()).toBe(true);
-      expect(testGroup.getCode()).toEqual(VALID_CODEABLECONCEPT_1);
-      expect(testGroup.hasNameElement()).toBe(true);
-      expect(testGroup.getNameElement()).toEqual(new StringType(VALID_STRING_1));
-      expect(testGroup.hasName()).toBe(true);
-      expect(testGroup.getName()).toStrictEqual(VALID_STRING_1);
-      expect(testGroup.hasQuantityElement()).toBe(true);
-      expect(testGroup.getQuantityElement()).toEqual(new UnsignedIntType(VALID_UNSIGNED_INT_1));
-      expect(testGroup.hasQuantity()).toBe(true);
-      expect(testGroup.getQuantity()).toStrictEqual(VALID_UNSIGNED_INT_1);
-      expect(testGroup.hasManagingEntity()).toBe(true);
-      expect(testGroup.getManagingEntity()).toEqual(VALID_REFERENCE_VALUE_1);
-      expect(testGroup.hasCharacteristic()).toBe(true);
-      expect(testGroup.getCharacteristic()).toEqual([groupCharacteristicComponent1]);
-      expect(testGroup.hasMember()).toBe(true);
-      expect(testGroup.getMember()).toEqual([testGroupMemberComponent1]);
-
-      group.addIdentifier(VALID_IDENTIFIER_2);
-      group.setActiveElement(new BooleanType(VALID_BOOLEAN_FALSE));
-      group.setTypeEnumType(VALID_GROUP_ENUM_TYPE_2);
-      group.setActualElement(new BooleanType(VALID_BOOLEAN_FALSE));
-      group.setCode(VALID_CODEABLECONCEPT_2);
-      group.setNameElement(new StringType(VALID_STRING_2));
-      group.setQuantityElement(new UnsignedIntType(VALID_UNSIGNED_INT_2));
-      group.setManagingEntity(VALID_REFERENCE_VALUE_2);
-      const groupCharacteristicComponent2 = new GroupCharacteristicComponent(
-        VALID_CODEABLECONCEPT_2,
-        new BooleanType(VALID_BOOLEAN_TRUE),
-        new BooleanType(VALID_BOOLEAN_FALSE),
-      );
-      group.addCharacteristic(groupCharacteristicComponent2);
-      const testGroupMemberComponent2 = new GroupMemberComponent(VALID_REFERENCE_VALUE_2);
-      group.addMember(testGroupMemberComponent2);
-
-      testGroup = group.copy();
-
-      expect(testGroup).toBeDefined();
-      expect(testGroup).toBeInstanceOf(Group);
-      expect(testGroup).toBeInstanceOf(DomainResource);
-      expect(testGroup).toBeInstanceOf(Resource);
-      expect(testGroup).toBeInstanceOf(Base);
-      expect(testGroup.constructor.name).toStrictEqual('Group');
-      expect(testGroup.resourceType()).toStrictEqual('Group');
-      expect(testGroup.fhirType()).toStrictEqual('Group');
-      expect(testGroup.isResource()).toBe(true);
-      expect(testGroup.isEmpty()).toBe(false);
-      const expectedJson1 = {
-        resourceType: 'Group',
-        identifier: [
-          {
-            value: 'This is a valid string.',
-          },
-          {
-            value: 'This is another valid string.',
-          },
-        ],
-        active: false,
-        type: 'device',
-        actual: false,
-        code: {
-          text: 'This is another valid string.',
-        },
-        name: 'This is another valid string.',
-        quantity: 15,
-        managingEntity: {
-          reference: 'PractitionerRole/24680',
-        },
-        characteristic: [
-          {
-            code: {
-              text: 'This is a valid string.',
-            },
-            valueBoolean: false,
-            exclude: true,
-          },
-          {
-            code: {
-              text: 'This is another valid string.',
-            },
-            valueBoolean: true,
-            exclude: false,
-          },
-        ],
-        member: [
-          {
-            entity: {
-              reference: 'Practitioner/13579',
-            },
-          },
-          {
-            entity: {
-              reference: 'PractitionerRole/24680',
-            },
-          },
-        ],
-      };
-      expect(testGroup.toJSON()).toEqual(expectedJson1);
-
-      // inherited properties from Resource
-      expect(testGroup.hasIdElement()).toBe(false);
-      expect(testGroup.getIdElement()).toEqual(new IdType());
-      expect(testGroup.hasId()).toBe(false);
-      expect(testGroup.getId()).toBeUndefined();
-      expect(testGroup.hasMeta()).toBe(false);
-      expect(testGroup.getMeta()).toEqual(new Meta());
-      expect(testGroup.hasImplicitRulesElement()).toBe(false);
-      expect(testGroup.getImplicitRulesElement()).toEqual(new UriType());
-      expect(testGroup.hasImplicitRules()).toBe(false);
-      expect(testGroup.getImplicitRules()).toBeUndefined();
-      expect(testGroup.hasLanguageElement()).toBe(false);
-      expect(testGroup.getLanguageElement()).toEqual(new CodeType());
-      expect(testGroup.hasLanguage()).toBe(false);
-      expect(testGroup.getLanguage()).toBeUndefined();
-
-      // inherited properties from DomainResource
-      expect(testGroup.hasText()).toBe(false);
-      expect(testGroup.getText()).toEqual(new Narrative(null, null));
-      expect(testGroup.hasContained()).toBe(false);
-      expect(testGroup.getContained()).toEqual([] as Resource[]);
-      expect(testGroup.hasExtension()).toBe(false);
-      expect(testGroup.getExtension()).toEqual([] as Extension[]);
-      expect(testGroup.hasModifierExtension()).toBe(false);
-      expect(testGroup.getModifierExtension()).toEqual([] as Extension[]);
-
-      // Group properties
-      expect(testGroup.hasIdentifier()).toBe(true);
-      expect(testGroup.getIdentifier()).toEqual([VALID_IDENTIFIER_1, VALID_IDENTIFIER_2]);
-      expect(testGroup.hasActiveElement()).toBe(true);
-      expect(testGroup.getActiveElement()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
-      expect(testGroup.hasActive()).toBe(true);
-      expect(testGroup.getActive()).toStrictEqual(VALID_BOOLEAN_FALSE);
-      expect(testGroup.hasTypeEnumType()).toBe(true);
-      expect(testGroup.getTypeEnumType()).toEqual(VALID_GROUP_ENUM_TYPE_2);
-      expect(testGroup.hasTypeElement()).toBe(true);
-      expect(testGroup.getTypeElement()).toMatchObject(VALID_CODE_DEVICE_TYPE);
-      expect(testGroup.hasType()).toBe(true);
-      expect(testGroup.getType()).toStrictEqual(VALID_CODE_DEVICE);
-      expect(testGroup.hasActualElement()).toBe(true);
-      expect(testGroup.getActualElement()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
-      expect(testGroup.hasActual()).toBe(true);
-      expect(testGroup.getActual()).toStrictEqual(VALID_BOOLEAN_FALSE);
-      expect(testGroup.hasCode()).toBe(true);
-      expect(testGroup.getCode()).toEqual(VALID_CODEABLECONCEPT_2);
-      expect(testGroup.hasNameElement()).toBe(true);
-      expect(testGroup.getNameElement()).toEqual(new StringType(VALID_STRING_2));
-      expect(testGroup.hasName()).toBe(true);
-      expect(testGroup.getName()).toStrictEqual(VALID_STRING_2);
-      expect(testGroup.hasQuantityElement()).toBe(true);
-      expect(testGroup.getQuantityElement()).toEqual(new UnsignedIntType(VALID_UNSIGNED_INT_2));
-      expect(testGroup.hasQuantity()).toBe(true);
-      expect(testGroup.getQuantity()).toStrictEqual(VALID_UNSIGNED_INT_2);
-      expect(testGroup.hasManagingEntity()).toBe(true);
-      expect(testGroup.getManagingEntity()).toEqual(VALID_REFERENCE_VALUE_2);
-      expect(testGroup.hasCharacteristic()).toBe(true);
-      expect(testGroup.getCharacteristic()).toEqual([groupCharacteristicComponent1, groupCharacteristicComponent2]);
-      expect(testGroup.hasMember()).toBe(true);
-      expect(testGroup.getMember()).toEqual([testGroupMemberComponent1, testGroupMemberComponent2]);
     });
 
     it('should throw InvalidCodeError when instantiated with invalid PrimitiveType values', () => {
@@ -1597,155 +445,58 @@ describe('Group', () => {
       expect(t).toThrow(`Invalid Group.actual (${INVALID_BOOLEAN})`);
     });
 
-    it('should throw InvalidTypeError when setManagingEntity() with invalid reference type', () => {
+    it('should properly initialize property arrays when adding elements', () => {
       const testGroup = new Group(null, null);
-      const t = () => {
-        testGroup.setManagingEntity(INVALID_REFERENCE_VALUE);
-      };
-      expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`setManagingEntity: 'value' argument (${INVALID_REFERENCE}) is not for a valid resource type`);
-    });
-  });
 
-  describe('Serialization/Deserialization', () => {
-    const VALID_ID = 'is12345';
-    const VALID_SECURITY = new Coding();
-    VALID_SECURITY.setSystem('securitySystem');
-    VALID_SECURITY.setCode('securityCode');
-    const VALID_TAG = new Coding();
-    VALID_TAG.setSystem('tagSystem');
-    VALID_TAG.setCode('tagCode');
-    const VALID_META = new Meta();
-    VALID_META.setVersionId('v1');
-    VALID_META.setLastUpdated(VALID_START_DATETIME_1);
-    VALID_META.setSource('sourceUri');
-    VALID_META.addProfile('profileCanonical');
-    VALID_META.addSecurity(VALID_SECURITY);
-    VALID_META.addTag(VALID_TAG);
-    const VALID_IMPLICIT_RULES = 'validImplicitUrl';
-    const VALID_LANGUAGE = 'en-US';
-    const VALID_CODE_GENERATED = `generated`;
-    const VALID_XHTML = '<div xmlns="http://www.w3.org/1999/xhtml">text</div>';
-    const VALID_NARRATIVE = new Narrative(VALID_CODE_GENERATED, VALID_XHTML);
+      testGroup.addIdentifier(VALID_IDENTIFIER_1);
+      expect(testGroup.hasIdentifier()).toBe(true);
+      expect(testGroup.getIdentifier()).toEqual([VALID_IDENTIFIER_1]);
 
-    const VALID_EXTENSION = new Extension('extUrl', new StringType('Extension string value'));
-    const VALID_MODIFIER_EXTENSION = new Extension('modExtUrl', new StringType('ModifierExtension string value'));
-    const VALID_JSON = {
-      resourceType: 'Group',
-      id: 'is12345',
-      meta: {
-        versionId: 'v1',
-        lastUpdated: '2017-01-01T00:00:00.000Z',
-        source: 'sourceUri',
-        profile: ['profileCanonical'],
-        security: [
-          {
-            system: 'securitySystem',
-            code: 'securityCode',
-          },
-        ],
-        tag: [
-          {
-            system: 'tagSystem',
-            code: 'tagCode',
-          },
-        ],
-      },
-      implicitRules: 'validImplicitUrl',
-      language: 'en-US',
-      text: {
-        status: 'generated',
-        div: '<div xmlns="http://www.w3.org/1999/xhtml">text</div>',
-      },
-      extension: [
-        {
-          url: 'extUrl',
-          valueString: 'Extension string value',
-        },
-      ],
-      modifierExtension: [
-        {
-          url: 'modExtUrl',
-          valueString: 'ModifierExtension string value',
-        },
-      ],
-      identifier: [
-        {
-          value: 'This is a valid string.',
-        },
-      ],
-      active: true,
-      type: 'person',
-      actual: true,
-      code: {
-        text: 'This is a valid string.',
-      },
-      name: 'This is a valid string.',
-      quantity: 13,
-      managingEntity: {
-        reference: 'Practitioner/13579',
-      },
-      characteristic: [
-        {
-          code: {
-            text: 'This is a valid string.',
-          },
-          valueBoolean: false,
-          exclude: true,
-        },
-      ],
-      member: [
-        {
-          entity: {
-            reference: 'Practitioner/13579',
-          },
-        },
-      ],
-    };
-    const INVALID_JSON = {
-      resourceType: 'Group',
-      id: 'is12345',
-    };
-
-    it('should throw FhirError from toJSON() when instantiated with missing required properties', () => {
-      const testGroup = new Group(null, null);
-      testGroup.setName(VALID_STRING_1);
-
-      const t = () => {
-        testGroup.toJSON();
-      };
-      expect(t).toThrow(FhirError);
-      expect(t).toThrow(`The following required properties do not exist: Group.type, Group.actual`);
-    });
-
-    it('should properly create serialized content', () => {
-      const testGroup = new Group(null, null);
-      testGroup.setId(VALID_ID);
-      testGroup.setMeta(VALID_META);
-      testGroup.setImplicitRules(VALID_IMPLICIT_RULES);
-      testGroup.setLanguage(VALID_LANGUAGE);
-      testGroup.setText(VALID_NARRATIVE);
-      // TODO: Add "contained"
-      testGroup.setExtension([VALID_EXTENSION]);
-      testGroup.setModifierExtension([VALID_MODIFIER_EXTENSION]);
-
-      testGroup.setIdentifier([VALID_IDENTIFIER_1]);
-      testGroup.setActiveElement(new BooleanType(VALID_BOOLEAN_TRUE));
-      testGroup.setTypeElement(VALID_CODE_PERSON_TYPE);
-      testGroup.setActualElement(new BooleanType(VALID_BOOLEAN_TRUE));
-      testGroup.setCode(VALID_CODEABLECONCEPT_1);
-      testGroup.setNameElement(new StringType(VALID_STRING_1));
-      testGroup.setQuantityElement(new UnsignedIntType(VALID_UNSIGNED_INT_1));
-      testGroup.setManagingEntity(VALID_REFERENCE_VALUE_1);
       const groupCharacteristicComponent1 = new GroupCharacteristicComponent(
         VALID_CODEABLECONCEPT_1,
         new BooleanType(VALID_BOOLEAN_FALSE),
-        new BooleanType(VALID_BOOLEAN_TRUE),
+        VALID_BOOLEAN_TRUE,
       );
       testGroup.addCharacteristic(groupCharacteristicComponent1);
+      expect(testGroup.hasCharacteristic()).toBe(true);
+      expect(testGroup.getCharacteristic()).toEqual([groupCharacteristicComponent1]);
+
       const testGroupMemberComponent1 = new GroupMemberComponent(VALID_REFERENCE_VALUE_1);
       testGroup.addMember(testGroupMemberComponent1);
+      expect(testGroup.hasMember()).toBe(true);
+      expect(testGroup.getMember()).toEqual([testGroupMemberComponent1]);
+    });
 
+    it('should properly copy() undefined values', () => {
+      const group = new Group(null, null);
+
+      group.setId(VALID_ID);
+      group.setMeta(VALID_META);
+      group.setImplicitRules(IMPLICIT_RULES_VALUE);
+      group.setLanguage(LANGUAGE_VALUE);
+      group.setText(VALID_NARRATIVE);
+      group.setContained([VALID_CONTAINED]);
+      group.setExtension([VALID_EXTENSION]);
+      group.setModifierExtension([VALID_MODIFIER_EXTENSION]);
+
+      group.setIdentifier([VALID_IDENTIFIER_1]);
+      group.setActive(VALID_BOOLEAN_TRUE);
+      group.setType(VALID_CODE_PERSON);
+      group.setActual(VALID_BOOLEAN_TRUE);
+      group.setCode(VALID_CODEABLECONCEPT_1);
+      group.setName(VALID_STRING_1);
+      group.setQuantity(VALID_UNSIGNED_INT_1);
+      group.setManagingEntity(VALID_REFERENCE_VALUE_1);
+      const groupCharacteristicComponent1 = new GroupCharacteristicComponent(
+        VALID_CODEABLECONCEPT_1,
+        new BooleanType(VALID_BOOLEAN_FALSE),
+        VALID_BOOLEAN_TRUE,
+      );
+      group.setCharacteristic([groupCharacteristicComponent1]);
+      const testGroupMemberComponent1 = new GroupMemberComponent(VALID_REFERENCE_VALUE_1);
+      group.setMember([testGroupMemberComponent1]);
+
+      let testGroup = group.copy();
       expect(testGroup).toBeDefined();
       expect(testGroup).toBeInstanceOf(Group);
       expect(testGroup).toBeInstanceOf(DomainResource);
@@ -1756,19 +507,27 @@ describe('Group', () => {
       expect(testGroup.fhirType()).toStrictEqual('Group');
       expect(testGroup.isResource()).toBe(true);
       expect(testGroup.isEmpty()).toBe(false);
+      expect(testGroup.toJSON()).toBeDefined();
 
-      // inherited properties from DomainResource
+      // inherited properties from Resource/DomainResource
+      expect(testGroup.hasIdElement()).toBe(true);
+      expect(testGroup.getIdElement()).toEqual(VALID_ID_TYPE);
       expect(testGroup.hasId()).toBe(true);
       expect(testGroup.getId()).toStrictEqual(VALID_ID);
       expect(testGroup.hasMeta()).toBe(true);
       expect(testGroup.getMeta()).toEqual(VALID_META);
+      expect(testGroup.hasImplicitRulesElement()).toBe(true);
+      expect(testGroup.getImplicitRulesElement()).toEqual(new UriType(IMPLICIT_RULES_VALUE));
       expect(testGroup.hasImplicitRules()).toBe(true);
-      expect(testGroup.getImplicitRules()).toStrictEqual(VALID_IMPLICIT_RULES);
+      expect(testGroup.getImplicitRules()).toStrictEqual(IMPLICIT_RULES_VALUE);
+      expect(testGroup.hasLanguageElement()).toBe(true);
+      expect(testGroup.getLanguageElement()).toEqual(new CodeType(LANGUAGE_VALUE));
       expect(testGroup.hasLanguage()).toBe(true);
-      expect(testGroup.getLanguage()).toStrictEqual(VALID_LANGUAGE);
+      expect(testGroup.getLanguage()).toStrictEqual(LANGUAGE_VALUE);
       expect(testGroup.hasText()).toBe(true);
-      expect(testGroup.getText()).toStrictEqual(VALID_NARRATIVE);
-      // TODO: Add "contained"
+      expect(testGroup.getText()).toEqual(VALID_NARRATIVE);
+      expect(testGroup.hasContained()).toBe(true);
+      expect(testGroup.getContained()).toEqual([VALID_CONTAINED]);
       expect(testGroup.hasExtension()).toBe(true);
       expect(testGroup.getExtension()).toEqual([VALID_EXTENSION]);
       expect(testGroup.hasModifierExtension()).toBe(true);
@@ -1803,6 +562,499 @@ describe('Group', () => {
       expect(testGroup.getQuantity()).toStrictEqual(VALID_UNSIGNED_INT_1);
       expect(testGroup.hasManagingEntity()).toBe(true);
       expect(testGroup.getManagingEntity()).toEqual(VALID_REFERENCE_VALUE_1);
+      expect(testGroup.hasCharacteristic()).toBe(true);
+      expect(testGroup.getCharacteristic()).toEqual([groupCharacteristicComponent1]);
+      expect(testGroup.hasMember()).toBe(true);
+      expect(testGroup.getMember()).toEqual([testGroupMemberComponent1]);
+
+      // Reset to undefined
+
+      group.setId(UNDEFINED_VALUE);
+      group.setMeta(UNDEFINED_VALUE);
+      group.setImplicitRules(UNDEFINED_VALUE);
+      group.setLanguage(UNDEFINED_VALUE);
+      group.setText(UNDEFINED_VALUE);
+      group.setContained(UNDEFINED_VALUE);
+      group.setExtension(UNDEFINED_VALUE);
+      group.setModifierExtension(UNDEFINED_VALUE);
+
+      group.setIdentifier(UNDEFINED_VALUE);
+      group.setActive(UNDEFINED_VALUE);
+      // @ts-expect-error: Setting to null from setter results in no change
+      group.setType(null);
+      // @ts-expect-error: Setting to null from setter results in no change
+      group.setActual(null);
+      group.setCode(UNDEFINED_VALUE);
+      group.setName(UNDEFINED_VALUE);
+      group.setQuantity(UNDEFINED_VALUE);
+      group.setManagingEntity(UNDEFINED_VALUE);
+      group.setCharacteristic(UNDEFINED_VALUE);
+      group.setMember(UNDEFINED_VALUE);
+
+      testGroup = group.copy();
+      expect(testGroup).toBeDefined();
+      expect(testGroup).toBeInstanceOf(Group);
+      expect(testGroup).toBeInstanceOf(DomainResource);
+      expect(testGroup).toBeInstanceOf(Resource);
+      expect(testGroup).toBeInstanceOf(Base);
+      expect(testGroup.constructor.name).toStrictEqual('Group');
+      expect(testGroup.resourceType()).toStrictEqual('Group');
+      expect(testGroup.fhirType()).toStrictEqual('Group');
+      expect(testGroup.isResource()).toBe(true);
+      expect(testGroup.isEmpty()).toBe(false);
+      // Setting to null from setter results in no change
+      expect(testGroup.toJSON()).toBeDefined();
+
+      // inherited properties from Resource/DomainResource
+      expect(testGroup.hasIdElement()).toBe(false);
+      expect(testGroup.getIdElement()).toEqual(new IdType());
+      expect(testGroup.hasId()).toBe(false);
+      expect(testGroup.getId()).toBeUndefined();
+      expect(testGroup.hasMeta()).toBe(false);
+      expect(testGroup.getMeta()).toEqual(new Meta());
+      expect(testGroup.hasImplicitRulesElement()).toBe(false);
+      expect(testGroup.getImplicitRulesElement()).toEqual(new UriType());
+      expect(testGroup.hasImplicitRules()).toBe(false);
+      expect(testGroup.getImplicitRules()).toBeUndefined();
+      expect(testGroup.hasLanguageElement()).toBe(false);
+      expect(testGroup.getLanguageElement()).toEqual(new CodeType());
+      expect(testGroup.hasLanguage()).toBe(false);
+      expect(testGroup.getLanguage()).toBeUndefined();
+      expect(testGroup.hasText()).toBe(false);
+      expect(testGroup.getText()).toEqual(new Narrative(null, null));
+      expect(testGroup.hasContained()).toBe(false);
+      expect(testGroup.getContained()).toEqual([] as Resource[]);
+      expect(testGroup.hasExtension()).toBe(false);
+      expect(testGroup.getExtension()).toEqual([] as Extension[]);
+      expect(testGroup.hasModifierExtension()).toBe(false);
+      expect(testGroup.getModifierExtension()).toEqual([] as Extension[]);
+
+      // Group properties
+      expect(testGroup.hasIdentifier()).toBe(false);
+      expect(testGroup.getIdentifier()).toEqual([] as Identifier[]);
+      expect(testGroup.hasActiveElement()).toBe(false);
+      expect(testGroup.getActiveElement()).toEqual(new BooleanType());
+      expect(testGroup.hasActive()).toBe(false);
+      expect(testGroup.getActive()).toBeUndefined();
+
+      // Setting type to null from setter results in no change
+      expect(testGroup.hasTypeEnumType()).toBe(true);
+      expect(testGroup.getTypeEnumType()).toEqual(new EnumCodeType(VALID_CODE_PERSON, groupTypeEnum));
+      expect(testGroup.hasTypeElement()).toBe(true);
+      expect(testGroup.getTypeElement()).toMatchObject(VALID_CODE_PERSON_TYPE);
+      expect(testGroup.hasType()).toBe(true);
+      expect(testGroup.getType()).toStrictEqual(VALID_CODE_PERSON);
+
+      // Setting actual to null from setter results in no change
+      expect(testGroup.hasActualElement()).toBe(true);
+      expect(testGroup.getActualElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
+      expect(testGroup.hasActual()).toBe(true);
+      expect(testGroup.getActual()).toStrictEqual(VALID_BOOLEAN_TRUE);
+
+      expect(testGroup.hasNameElement()).toBe(false);
+      expect(testGroup.getNameElement()).toEqual(new StringType());
+      expect(testGroup.hasName()).toBe(false);
+      expect(testGroup.getName()).toBeUndefined();
+      expect(testGroup.hasQuantityElement()).toBe(false);
+      expect(testGroup.getQuantityElement()).toEqual(new UnsignedIntType());
+      expect(testGroup.hasQuantity()).toBe(false);
+      expect(testGroup.getQuantity()).toBeUndefined();
+      expect(testGroup.hasManagingEntity()).toBe(false);
+      expect(testGroup.getManagingEntity()).toEqual(new Reference());
+      expect(testGroup.hasCharacteristic()).toBe(false);
+      expect(testGroup.getCharacteristic()).toEqual([] as GroupCharacteristicComponent[]);
+      expect(testGroup.hasMember()).toBe(false);
+      expect(testGroup.getMember()).toEqual([] as GroupMemberComponent[]);
+    });
+
+    it('should be properly reset by modifying all properties', () => {
+      const testGroup = new Group(null, null);
+
+      testGroup.setId(VALID_ID);
+      testGroup.setMeta(VALID_META);
+      testGroup.setImplicitRules(IMPLICIT_RULES_VALUE);
+      testGroup.setLanguage(LANGUAGE_VALUE);
+      testGroup.setText(VALID_NARRATIVE);
+      testGroup.setContained([VALID_CONTAINED]);
+      testGroup.setExtension([VALID_EXTENSION]);
+      testGroup.setModifierExtension([VALID_MODIFIER_EXTENSION]);
+
+      testGroup.setIdentifier([VALID_IDENTIFIER_1]);
+      testGroup.setActive(VALID_BOOLEAN_TRUE);
+      testGroup.setType(VALID_CODE_PERSON);
+      testGroup.setActual(VALID_BOOLEAN_TRUE);
+      testGroup.setCode(VALID_CODEABLECONCEPT_1);
+      testGroup.setName(VALID_STRING_1);
+      testGroup.setQuantity(VALID_UNSIGNED_INT_1);
+      testGroup.setManagingEntity(VALID_REFERENCE_VALUE_1);
+      const groupCharacteristicComponent1 = new GroupCharacteristicComponent(
+        VALID_CODEABLECONCEPT_1,
+        new BooleanType(VALID_BOOLEAN_TRUE),
+        VALID_BOOLEAN_TRUE,
+      );
+      testGroup.setCharacteristic([groupCharacteristicComponent1]);
+      const testGroupMemberComponent1 = new GroupMemberComponent(VALID_REFERENCE_VALUE_1);
+      testGroup.setMember([testGroupMemberComponent1]);
+
+      expect(testGroup).toBeDefined();
+      expect(testGroup).toBeInstanceOf(Group);
+      expect(testGroup).toBeInstanceOf(DomainResource);
+      expect(testGroup).toBeInstanceOf(Resource);
+      expect(testGroup).toBeInstanceOf(Base);
+      expect(testGroup.constructor.name).toStrictEqual('Group');
+      expect(testGroup.resourceType()).toStrictEqual('Group');
+      expect(testGroup.fhirType()).toStrictEqual('Group');
+      expect(testGroup.isResource()).toBe(true);
+      expect(testGroup.isEmpty()).toBe(false);
+      expect(testGroup.toJSON()).toBeDefined();
+
+      // inherited properties from Resource/DomainResource
+      expect(testGroup.hasIdElement()).toBe(true);
+      expect(testGroup.getIdElement()).toEqual(VALID_ID_TYPE);
+      expect(testGroup.hasId()).toBe(true);
+      expect(testGroup.getId()).toStrictEqual(VALID_ID);
+      expect(testGroup.hasMeta()).toBe(true);
+      expect(testGroup.getMeta()).toEqual(VALID_META);
+      expect(testGroup.hasImplicitRulesElement()).toBe(true);
+      expect(testGroup.getImplicitRulesElement()).toEqual(new UriType(IMPLICIT_RULES_VALUE));
+      expect(testGroup.hasImplicitRules()).toBe(true);
+      expect(testGroup.getImplicitRules()).toStrictEqual(IMPLICIT_RULES_VALUE);
+      expect(testGroup.hasLanguageElement()).toBe(true);
+      expect(testGroup.getLanguageElement()).toEqual(new CodeType(LANGUAGE_VALUE));
+      expect(testGroup.hasLanguage()).toBe(true);
+      expect(testGroup.getLanguage()).toStrictEqual(LANGUAGE_VALUE);
+      expect(testGroup.hasText()).toBe(true);
+      expect(testGroup.getText()).toEqual(VALID_NARRATIVE);
+      expect(testGroup.hasContained()).toBe(true);
+      expect(testGroup.getContained()).toEqual([VALID_CONTAINED]);
+      expect(testGroup.hasExtension()).toBe(true);
+      expect(testGroup.getExtension()).toEqual([VALID_EXTENSION]);
+      expect(testGroup.hasModifierExtension()).toBe(true);
+      expect(testGroup.getModifierExtension()).toEqual([VALID_MODIFIER_EXTENSION]);
+
+      // Group properties
+      expect(testGroup.hasIdentifier()).toBe(true);
+      expect(testGroup.getIdentifier()).toEqual([VALID_IDENTIFIER_1]);
+      expect(testGroup.hasActiveElement()).toBe(true);
+      expect(testGroup.getActiveElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
+      expect(testGroup.hasActive()).toBe(true);
+      expect(testGroup.getActive()).toStrictEqual(VALID_BOOLEAN_TRUE);
+      expect(testGroup.hasTypeEnumType()).toBe(true);
+      expect(testGroup.getTypeEnumType()).toEqual(new EnumCodeType(VALID_CODE_PERSON, groupTypeEnum));
+      expect(testGroup.hasTypeElement()).toBe(true);
+      expect(testGroup.getTypeElement()).toMatchObject(VALID_CODE_PERSON_TYPE);
+      expect(testGroup.hasType()).toBe(true);
+      expect(testGroup.getType()).toStrictEqual(VALID_CODE_PERSON);
+      expect(testGroup.hasActualElement()).toBe(true);
+      expect(testGroup.getActualElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
+      expect(testGroup.hasActual()).toBe(true);
+      expect(testGroup.getActual()).toStrictEqual(VALID_BOOLEAN_TRUE);
+      expect(testGroup.hasCode()).toBe(true);
+      expect(testGroup.getCode()).toEqual(VALID_CODEABLECONCEPT_1);
+      expect(testGroup.hasNameElement()).toBe(true);
+      expect(testGroup.getNameElement()).toEqual(new StringType(VALID_STRING_1));
+      expect(testGroup.hasName()).toBe(true);
+      expect(testGroup.getName()).toStrictEqual(VALID_STRING_1);
+      expect(testGroup.hasQuantityElement()).toBe(true);
+      expect(testGroup.getQuantityElement()).toEqual(new UnsignedIntType(VALID_UNSIGNED_INT_1));
+      expect(testGroup.hasQuantity()).toBe(true);
+      expect(testGroup.getQuantity()).toStrictEqual(VALID_UNSIGNED_INT_1);
+      expect(testGroup.hasManagingEntity()).toBe(true);
+      expect(testGroup.getManagingEntity()).toEqual(VALID_REFERENCE_VALUE_1);
+      expect(testGroup.hasCharacteristic()).toBe(true);
+      expect(testGroup.getCharacteristic()).toEqual([groupCharacteristicComponent1]);
+      expect(testGroup.hasMember()).toBe(true);
+      expect(testGroup.getMember()).toEqual([testGroupMemberComponent1]);
+
+      // Reset
+
+      testGroup.setId(VALID_ID_2);
+      testGroup.setMeta(VALID_META_2);
+      testGroup.setImplicitRules(IMPLICIT_RULES_VALUE_2);
+      testGroup.setLanguage(LANGUAGE_VALUE_2);
+      testGroup.setText(VALID_NARRATIVE_2);
+      testGroup.setContained([VALID_CONTAINED_2]);
+      testGroup.setExtension([VALID_EXTENSION_2]);
+      testGroup.setModifierExtension([VALID_MODIFIER_EXTENSION_2]);
+
+      testGroup.setIdentifier([VALID_IDENTIFIER_2]);
+      testGroup.setActiveElement(new BooleanType(VALID_BOOLEAN_FALSE));
+      testGroup.setTypeElement(new CodeType(VALID_CODE_DEVICE));
+      testGroup.setActualElement(new BooleanType(VALID_BOOLEAN_FALSE));
+      testGroup.setCode(VALID_CODEABLECONCEPT_2);
+      testGroup.setNameElement(new StringType(VALID_STRING_2));
+      testGroup.setQuantityElement(new UnsignedIntType(VALID_UNSIGNED_INT_2));
+      testGroup.setManagingEntity(VALID_REFERENCE_VALUE_2);
+      const groupCharacteristicComponent2 = new GroupCharacteristicComponent(
+        VALID_CODEABLECONCEPT_2,
+        new BooleanType(VALID_BOOLEAN_FALSE),
+        VALID_BOOLEAN_FALSE,
+      );
+      testGroup.setCharacteristic([groupCharacteristicComponent2]);
+      const testGroupMemberComponent2 = new GroupMemberComponent(VALID_REFERENCE_VALUE_2);
+      testGroup.setMember([testGroupMemberComponent2]);
+
+      // inherited properties from Resource/DomainResource
+      expect(testGroup.hasIdElement()).toBe(true);
+      expect(testGroup.getIdElement()).toEqual(VALID_ID_TYPE_2);
+      expect(testGroup.hasId()).toBe(true);
+      expect(testGroup.getId()).toStrictEqual(VALID_ID_2);
+      expect(testGroup.hasMeta()).toBe(true);
+      expect(testGroup.getMeta()).toEqual(VALID_META_2);
+      expect(testGroup.hasImplicitRulesElement()).toBe(true);
+      expect(testGroup.getImplicitRulesElement()).toEqual(new UriType(IMPLICIT_RULES_VALUE_2));
+      expect(testGroup.hasImplicitRules()).toBe(true);
+      expect(testGroup.getImplicitRules()).toStrictEqual(IMPLICIT_RULES_VALUE_2);
+      expect(testGroup.hasLanguageElement()).toBe(true);
+      expect(testGroup.getLanguageElement()).toEqual(new CodeType(LANGUAGE_VALUE_2));
+      expect(testGroup.hasLanguage()).toBe(true);
+      expect(testGroup.getLanguage()).toStrictEqual(LANGUAGE_VALUE_2);
+      expect(testGroup.hasText()).toBe(true);
+      expect(testGroup.getText()).toEqual(VALID_NARRATIVE_2);
+      expect(testGroup.hasContained()).toBe(true);
+      expect(testGroup.getContained()).toEqual([VALID_CONTAINED_2]);
+      expect(testGroup.hasExtension()).toBe(true);
+      expect(testGroup.getExtension()).toEqual([VALID_EXTENSION_2]);
+      expect(testGroup.hasModifierExtension()).toBe(true);
+      expect(testGroup.getModifierExtension()).toEqual([VALID_MODIFIER_EXTENSION_2]);
+
+      // Group properties
+      expect(testGroup.hasIdentifier()).toBe(true);
+      expect(testGroup.getIdentifier()).toEqual([VALID_IDENTIFIER_2]);
+      expect(testGroup.hasActiveElement()).toBe(true);
+      expect(testGroup.getActiveElement()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
+      expect(testGroup.hasActive()).toBe(true);
+      expect(testGroup.getActive()).toStrictEqual(VALID_BOOLEAN_FALSE);
+      expect(testGroup.hasTypeEnumType()).toBe(true);
+      expect(testGroup.getTypeEnumType()).toEqual(new EnumCodeType(VALID_CODE_DEVICE, groupTypeEnum));
+      expect(testGroup.hasTypeElement()).toBe(true);
+      expect(testGroup.getTypeElement()).toMatchObject(VALID_CODE_DEVICE_TYPE);
+      expect(testGroup.hasType()).toBe(true);
+      expect(testGroup.getType()).toStrictEqual(VALID_CODE_DEVICE);
+      expect(testGroup.hasActualElement()).toBe(true);
+      expect(testGroup.getActualElement()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
+      expect(testGroup.hasActual()).toBe(true);
+      expect(testGroup.getActual()).toStrictEqual(VALID_BOOLEAN_FALSE);
+      expect(testGroup.hasCode()).toBe(true);
+      expect(testGroup.getCode()).toEqual(VALID_CODEABLECONCEPT_2);
+      expect(testGroup.hasNameElement()).toBe(true);
+      expect(testGroup.getNameElement()).toEqual(new StringType(VALID_STRING_2));
+      expect(testGroup.hasName()).toBe(true);
+      expect(testGroup.getName()).toStrictEqual(VALID_STRING_2);
+      expect(testGroup.hasQuantityElement()).toBe(true);
+      expect(testGroup.getQuantityElement()).toEqual(new UnsignedIntType(VALID_UNSIGNED_INT_2));
+      expect(testGroup.hasQuantity()).toBe(true);
+      expect(testGroup.getQuantity()).toStrictEqual(VALID_UNSIGNED_INT_2);
+      expect(testGroup.hasManagingEntity()).toBe(true);
+      expect(testGroup.getManagingEntity()).toEqual(VALID_REFERENCE_VALUE_2);
+      expect(testGroup.hasCharacteristic()).toBe(true);
+      expect(testGroup.getCharacteristic()).toEqual([groupCharacteristicComponent2]);
+      expect(testGroup.hasMember()).toBe(true);
+      expect(testGroup.getMember()).toEqual([testGroupMemberComponent2]);
+
+      // setTypeEnumType() for coverage
+      const enumType = new EnumCodeType(VALID_CODE_DEVICE, groupTypeEnum);
+      testGroup.setTypeEnumType(enumType);
+      expect(testGroup.hasTypeEnumType()).toBe(true);
+      expect(testGroup.getTypeEnumType()).toEqual(new EnumCodeType(VALID_CODE_DEVICE, groupTypeEnum));
+      expect(testGroup.hasTypeElement()).toBe(true);
+      expect(testGroup.getTypeElement()).toMatchObject(VALID_CODE_DEVICE_TYPE);
+      expect(testGroup.hasType()).toBe(true);
+      expect(testGroup.getType()).toStrictEqual(VALID_CODE_DEVICE);
+    });
+  });
+
+  describe('Serialization/Deserialization', () => {
+    const VALID_MANAGING_ENTITY = '#P1';
+    const VALID_MANAGING_ENTITY_VALUE = new Reference();
+    VALID_MANAGING_ENTITY_VALUE.setReference(VALID_MANAGING_ENTITY);
+
+    const VALID_JSON = {
+      resourceType: 'Group',
+      id: 'id12345',
+      meta: {
+        versionId: 'VID-1972',
+      },
+      implicitRules: 'implicitRules',
+      language: 'en-US',
+      text: {
+        status: 'generated',
+        div: '<div xmlns="http://www.w3.org/1999/xhtml">text</div>',
+      },
+      contained: [
+        {
+          resourceType: 'PractitionerRole',
+          id: '#P1',
+          identifier: [
+            {
+              value: 'This is a valid string.',
+            },
+          ],
+          active: false,
+          practitioner: {
+            reference: 'Practitioner/13579',
+          },
+        },
+      ],
+      extension: [
+        {
+          url: 'extUrl',
+          valueString: 'Extension string value',
+        },
+      ],
+      modifierExtension: [
+        {
+          url: 'modExtUrl',
+          valueString: 'ModifierExtension string value',
+        },
+      ],
+      identifier: [
+        {
+          value: 'This is a valid string.',
+        },
+      ],
+      active: true,
+      type: 'person',
+      actual: true,
+      code: {
+        id: 'DT-1357',
+        extension: [
+          {
+            url: 'datatypeUrl',
+            valueString: 'datatype extension string value',
+          },
+        ],
+        text: 'This is a valid string.',
+      },
+      name: 'This is a valid string.',
+      quantity: 13,
+      managingEntity: {
+        reference: '#P1',
+      },
+      characteristic: [
+        {
+          code: {
+            text: 'This is a valid string.',
+          },
+          valueBoolean: false,
+          exclude: true,
+        },
+      ],
+      member: [
+        {
+          entity: {
+            reference: 'Practitioner/13579',
+          },
+        },
+      ],
+    };
+    const INVALID_JSON = {
+      resourceType: 'Group',
+      id: 'id12345',
+    };
+
+    it('should throw FhirError from toJSON() when instantiated with missing required properties', () => {
+      const testGroup = new Group(null, null);
+      testGroup.setName(VALID_STRING_1);
+
+      const t = () => {
+        testGroup.toJSON();
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(`The following required properties do not exist: Group.type, Group.actual`);
+    });
+
+    it('should properly create serialized content', () => {
+      const altCode = VALID_CODEABLECONCEPT_1.copy();
+      altCode.setId(DATATYPE_ID);
+      altCode.addExtension(DATATYPE_EXTENSION);
+
+      const testGroup = new Group(null, null);
+      testGroup.setId(VALID_ID);
+      testGroup.setMeta(VALID_META);
+      testGroup.setImplicitRules(IMPLICIT_RULES_VALUE);
+      testGroup.setLanguage(LANGUAGE_VALUE);
+      testGroup.setText(VALID_NARRATIVE);
+      testGroup.setContained([VALID_CONTAINED]);
+      testGroup.setExtension([VALID_EXTENSION]);
+      testGroup.setModifierExtension([VALID_MODIFIER_EXTENSION]);
+
+      testGroup.setIdentifier([VALID_IDENTIFIER_1]);
+      testGroup.setActiveElement(new BooleanType(VALID_BOOLEAN_TRUE));
+      testGroup.setTypeElement(VALID_CODE_PERSON_TYPE);
+      testGroup.setActualElement(new BooleanType(VALID_BOOLEAN_TRUE));
+      testGroup.setCode(altCode);
+      testGroup.setNameElement(new StringType(VALID_STRING_1));
+      testGroup.setQuantityElement(new UnsignedIntType(VALID_UNSIGNED_INT_1));
+      testGroup.setManagingEntity(VALID_MANAGING_ENTITY_VALUE);
+      const groupCharacteristicComponent1 = new GroupCharacteristicComponent(
+        VALID_CODEABLECONCEPT_1,
+        new BooleanType(VALID_BOOLEAN_FALSE),
+        new BooleanType(VALID_BOOLEAN_TRUE),
+      );
+      testGroup.addCharacteristic(groupCharacteristicComponent1);
+      const testGroupMemberComponent1 = new GroupMemberComponent(VALID_REFERENCE_VALUE_1);
+      testGroup.addMember(testGroupMemberComponent1);
+
+      expect(testGroup).toBeDefined();
+      expect(testGroup).toBeInstanceOf(Group);
+      expect(testGroup).toBeInstanceOf(DomainResource);
+      expect(testGroup).toBeInstanceOf(Resource);
+      expect(testGroup).toBeInstanceOf(Base);
+      expect(testGroup.constructor.name).toStrictEqual('Group');
+      expect(testGroup.resourceType()).toStrictEqual('Group');
+      expect(testGroup.fhirType()).toStrictEqual('Group');
+      expect(testGroup.isResource()).toBe(true);
+      expect(testGroup.isEmpty()).toBe(false);
+      expect(testGroup.toJSON()).toBeDefined();
+
+      // inherited properties from DomainResource
+      expect(testGroup.hasId()).toBe(true);
+      expect(testGroup.getId()).toStrictEqual(VALID_ID);
+      expect(testGroup.hasMeta()).toBe(true);
+      expect(testGroup.getMeta()).toEqual(VALID_META);
+      expect(testGroup.hasImplicitRules()).toBe(true);
+      expect(testGroup.getImplicitRules()).toStrictEqual(IMPLICIT_RULES_VALUE);
+      expect(testGroup.hasLanguage()).toBe(true);
+      expect(testGroup.getLanguage()).toStrictEqual(LANGUAGE_VALUE);
+      expect(testGroup.hasText()).toBe(true);
+      expect(testGroup.getText()).toStrictEqual(VALID_NARRATIVE);
+      expect(testGroup.hasContained()).toBe(true);
+      expect(testGroup.getContained()).toEqual([VALID_CONTAINED]);
+      expect(testGroup.hasExtension()).toBe(true);
+      expect(testGroup.getExtension()).toEqual([VALID_EXTENSION]);
+      expect(testGroup.hasModifierExtension()).toBe(true);
+      expect(testGroup.getModifierExtension()).toEqual([VALID_MODIFIER_EXTENSION]);
+
+      // Group properties
+      expect(testGroup.hasIdentifier()).toBe(true);
+      expect(testGroup.getIdentifier()).toEqual([VALID_IDENTIFIER_1]);
+      expect(testGroup.hasActiveElement()).toBe(true);
+      expect(testGroup.getActiveElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
+      expect(testGroup.hasActive()).toBe(true);
+      expect(testGroup.getActive()).toStrictEqual(VALID_BOOLEAN_TRUE);
+      expect(testGroup.hasTypeEnumType()).toBe(true);
+      expect(testGroup.getTypeEnumType()).toEqual(new EnumCodeType(VALID_CODE_PERSON, groupTypeEnum));
+      expect(testGroup.hasTypeElement()).toBe(true);
+      expect(testGroup.getTypeElement()).toMatchObject(VALID_CODE_PERSON_TYPE);
+      expect(testGroup.hasType()).toBe(true);
+      expect(testGroup.getType()).toStrictEqual(VALID_CODE_PERSON);
+      expect(testGroup.hasActualElement()).toBe(true);
+      expect(testGroup.getActualElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
+      expect(testGroup.hasActual()).toBe(true);
+      expect(testGroup.getActual()).toStrictEqual(VALID_BOOLEAN_TRUE);
+      expect(testGroup.hasCode()).toBe(true);
+      expect(testGroup.getCode()).toEqual(altCode);
+      expect(testGroup.hasNameElement()).toBe(true);
+      expect(testGroup.getNameElement()).toEqual(new StringType(VALID_STRING_1));
+      expect(testGroup.hasName()).toBe(true);
+      expect(testGroup.getName()).toStrictEqual(VALID_STRING_1);
+      expect(testGroup.hasQuantityElement()).toBe(true);
+      expect(testGroup.getQuantityElement()).toEqual(new UnsignedIntType(VALID_UNSIGNED_INT_1));
+      expect(testGroup.hasQuantity()).toBe(true);
+      expect(testGroup.getQuantity()).toStrictEqual(VALID_UNSIGNED_INT_1);
+      expect(testGroup.hasManagingEntity()).toBe(true);
+      expect(testGroup.getManagingEntity()).toEqual(VALID_MANAGING_ENTITY_VALUE);
       expect(testGroup.hasCharacteristic()).toBe(true);
       expect(testGroup.getCharacteristic()).toEqual([groupCharacteristicComponent1]);
       expect(testGroup.hasMember()).toBe(true);
@@ -1856,12 +1108,11 @@ describe('Group', () => {
     // These tests are all negative (error) tests. All other tests are, by definition,
     // positive tests for type assertions.
 
-    it('should throw InvalidTypeError for Group.setIdentifier()', () => {
+    it('should throw InvalidTypeError for setIdentifier()', () => {
       const testGroup = new Group(null, null);
       const t = () => {
-        const invalidIdentifier = new Period();
         // @ts-expect-error: allow for testing
-        testGroup.setIdentifier([VALID_IDENTIFIER_1, invalidIdentifier]);
+        testGroup.setIdentifier([VALID_IDENTIFIER_1, INVALID_NON_STRING_TYPE]);
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(
@@ -1869,101 +1120,149 @@ describe('Group', () => {
       );
     });
 
-    it('should throw InvalidTypeError for Group.addIdentifier()', () => {
+    it('should throw InvalidTypeError for addIdentifier()', () => {
       const testGroup = new Group(null, null);
       const t = () => {
-        const invalidIdentifier = new Period();
         // @ts-expect-error: allow for testing
-        testGroup.addIdentifier(invalidIdentifier);
+        testGroup.addIdentifier(INVALID_NON_STRING_TYPE);
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(`Invalid Group.identifier; Provided value is not an instance of Identifier.`);
     });
 
-    it('should throw InvalidTypeError for Group.setActiveElement()', () => {
+    it('should throw InvalidTypeError for setActiveElement()', () => {
       const testGroup = new Group(null, null);
       const t = () => {
-        const invalidBooleanType = new StringType();
         // @ts-expect-error: allow for testing
-        testGroup.setActiveElement(invalidBooleanType);
+        testGroup.setActiveElement(INVALID_NON_STRING_TYPE);
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(`Invalid Group.active; Provided value is not an instance of BooleanType.`);
     });
 
-    it('should throw InvalidTypeError for Group.setTypeEnumType()', () => {
+    it('should throw PrimitiveTypeError when setActive() for invalid value', () => {
       const testGroup = new Group(null, null);
       const t = () => {
-        const invalidEnumCodeType = new StringType();
         // @ts-expect-error: allow for testing
-        testGroup.setTypeEnumType(invalidEnumCodeType);
+        testGroup.setActive(INVALID_NON_STRING_TYPE_VALUE);
+      };
+      expect(t).toThrow(PrimitiveTypeError);
+      expect(t).toThrow(`Invalid Group.active (Invalid datatype)`);
+    });
+
+    it('should throw InvalidTypeError for setTypeEnumType()', () => {
+      const testGroup = new Group(null, null);
+      const t = () => {
+        // @ts-expect-error: allow for testing
+        testGroup.setTypeEnumType(INVALID_NON_STRING_TYPE);
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(`Invalid Group.type; Provided type is not an instance of GroupTypeEnum.`);
     });
 
-    it('should throw InvalidTypeError for Group.setTypeElement()', () => {
+    it('should throw InvalidTypeError for setTypeElement()', () => {
       const testGroup = new Group(null, null);
       const t = () => {
-        const invalidEnumCodeType = new StringType();
         // @ts-expect-error: allow for testing
-        testGroup.setTypeElement(invalidEnumCodeType);
+        testGroup.setTypeElement(INVALID_NON_STRING_TYPE);
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(`Invalid Group.type; Provided value is not an instance of CodeType.`);
     });
 
-    it('should throw InvalidTypeError for Group.setActualElement()', () => {
+    it('should throw InvalidCodeError when setType() for invalid value', () => {
       const testGroup = new Group(null, null);
       const t = () => {
-        const invalidBooleanType = new StringType();
+        testGroup.setType(INVALID_NON_STRING_TYPE_VALUE);
+      };
+      expect(t).toThrow(InvalidCodeError);
+      expect(t).toThrow(`Unknown GroupTypeEnum 'code' value 'Invalid datatype'`);
+    });
+
+    it('should throw InvalidTypeError for setActualElement()', () => {
+      const testGroup = new Group(null, null);
+      const t = () => {
         // @ts-expect-error: allow for testing
-        testGroup.setActualElement(invalidBooleanType);
+        testGroup.setActualElement(INVALID_NON_STRING_TYPE);
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(`Invalid Group.actual; Provided value is not an instance of BooleanType.`);
     });
 
-    it('should throw InvalidTypeError for Group.setCode()', () => {
+    it('should throw PrimitiveTypeError when setActual() for invalid value', () => {
       const testGroup = new Group(null, null);
       const t = () => {
-        const invalidCodeableConcept = new StringType();
         // @ts-expect-error: allow for testing
-        testGroup.setCode(invalidCodeableConcept);
+        testGroup.setActual(INVALID_NON_STRING_TYPE_VALUE);
+      };
+      expect(t).toThrow(PrimitiveTypeError);
+      expect(t).toThrow(`Invalid Group.actual (Invalid datatype)`);
+    });
+
+    it('should throw InvalidTypeError for setCode()', () => {
+      const testGroup = new Group(null, null);
+      const t = () => {
+        // @ts-expect-error: allow for testing
+        testGroup.setCode(INVALID_NON_STRING_TYPE);
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(`Invalid Group.code; Provided value is not an instance of CodeableConcept.`);
     });
 
-    it('should throw InvalidTypeError for Group.setNameElement()', () => {
+    it('should throw InvalidTypeError for setNameElement()', () => {
       const testGroup = new Group(null, null);
       const t = () => {
-        const invalidStringType = new BooleanType();
         // @ts-expect-error: allow for testing
-        testGroup.setNameElement(invalidStringType);
+        testGroup.setNameElement(INVALID_STRING_TYPE);
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(`Invalid Group.name; Provided value is not an instance of StringType.`);
     });
 
-    it('should throw InvalidTypeError for Group.setQuantityElement()', () => {
+    it('should throw PrimitiveTypeError when setName() for invalid value', () => {
       const testGroup = new Group(null, null);
       const t = () => {
-        const invalidUnsignedIntType = new StringType();
         // @ts-expect-error: allow for testing
-        testGroup.setQuantityElement(invalidUnsignedIntType);
+        testGroup.setName(INVALID_STRING_TYPE_VALUE);
+      };
+      expect(t).toThrow(PrimitiveTypeError);
+      expect(t).toThrow(`Invalid Group.name (12345)`);
+    });
+
+    it('should throw InvalidTypeError for setQuantityElement()', () => {
+      const testGroup = new Group(null, null);
+      const t = () => {
+        // @ts-expect-error: allow for testing
+        testGroup.setQuantityElement(INVALID_NON_STRING_TYPE);
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(`Invalid Group.quantity; Provided value is not an instance of UnsignedIntType.`);
     });
 
-    it('should throw InvalidTypeError for Group.setCharacteristic()', () => {
+    it('should throw PrimitiveTypeError when setQuantity() for invalid value', () => {
       const testGroup = new Group(null, null);
       const t = () => {
-        const validGroupCharacteristicComponent = new GroupCharacteristicComponent(null, null, null);
-        const invalidGroupCharacteristicComponent = new Period();
         // @ts-expect-error: allow for testing
-        testGroup.setCharacteristic([validGroupCharacteristicComponent, invalidGroupCharacteristicComponent]);
+        testGroup.setQuantity(INVALID_NON_STRING_TYPE_VALUE);
+      };
+      expect(t).toThrow(PrimitiveTypeError);
+      expect(t).toThrow(`Invalid Group.quantity (Invalid datatype)`);
+    });
+
+    it('should throw InvalidTypeError when setManagingEntity() with invalid reference type', () => {
+      const testGroup = new Group(null, null);
+      const t = () => {
+        testGroup.setManagingEntity(INVALID_REFERENCE_VALUE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`setManagingEntity: 'value' argument (${INVALID_REFERENCE}) is not for a valid Reference type`);
+    });
+
+    it('should throw InvalidTypeError for setCharacteristic()', () => {
+      const testGroup = new Group(null, null);
+      const t = () => {
+        // @ts-expect-error: allow for testing
+        testGroup.setCharacteristic([INVALID_NON_STRING_TYPE]);
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(
@@ -1971,12 +1270,11 @@ describe('Group', () => {
       );
     });
 
-    it('should throw InvalidTypeError for Group.addCharacteristic()', () => {
+    it('should throw InvalidTypeError for addCharacteristic()', () => {
       const testGroup = new Group(null, null);
       const t = () => {
-        const invalidGroupCharacteristicComponent = new Period();
         // @ts-expect-error: allow for testing
-        testGroup.addCharacteristic(invalidGroupCharacteristicComponent);
+        testGroup.addCharacteristic(INVALID_NON_STRING_TYPE);
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(
@@ -1984,13 +1282,11 @@ describe('Group', () => {
       );
     });
 
-    it('should throw InvalidTypeError for Group.setMember()', () => {
+    it('should throw InvalidTypeError for setMember()', () => {
       const testGroup = new Group(null, null);
       const t = () => {
-        const validGroupMemberComponent = new GroupMemberComponent(null);
-        const invalidGroupMemberComponent = new Period();
         // @ts-expect-error: allow for testing
-        testGroup.setMember([validGroupMemberComponent, invalidGroupMemberComponent]);
+        testGroup.setMember([INVALID_NON_STRING_TYPE]);
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(
@@ -1998,12 +1294,11 @@ describe('Group', () => {
       );
     });
 
-    it('should throw InvalidTypeError for Group.addMember()', () => {
+    it('should throw InvalidTypeError for addMember()', () => {
       const testGroup = new Group(null, null);
       const t = () => {
-        const invalidGroupMemberComponent = new Period();
         // @ts-expect-error: allow for testing
-        testGroup.addMember(invalidGroupMemberComponent);
+        testGroup.addMember(INVALID_NON_STRING_TYPE);
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(`Invalid Group.member; Provided value is not an instance of GroupMemberComponent.`);

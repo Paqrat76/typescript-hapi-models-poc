@@ -237,7 +237,7 @@ export const FHIR_MAX_INTEGER64 = 9223372036854775807n;
 // - When FHIR regexs are specified, use the Zod string() schema with regex rather than native Zod schemas.
 const FHIR_REGEX_BASE64BINARY = new RegExp('^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$');
 const FHIR_REGEX_CODE = new RegExp('^[^\\s]+( [^\\s]+)*$');
-const FHIR_REGEX_ID = new RegExp('^[A-Za-z0-9\\-\\.]{1,64}$');
+const FHIR_REGEX_ID = new RegExp('^#?[A-Za-z0-9\\-\\.]{1,64}$');
 const FHIR_REGEX_DECIMAL = new RegExp('^-?(0|[1-9][0-9]{0,17})(\\.[0-9]{1,17})?([eE][+-]?[0-9]{1,9}})?$');
 const FHIR_REGEX_URI = new RegExp('^\\S*$');
 const FHIR_REGEX_UUID = new RegExp('^urn:uuid:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$');

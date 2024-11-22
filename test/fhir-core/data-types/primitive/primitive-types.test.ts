@@ -167,6 +167,10 @@ describe('Primitive Type Schemas', () => {
       let parseResult = fhirIdSchema.safeParse(validId);
       expect(parseResult.success).toBe(true);
 
+      validId = `#P123`; // 64 characters
+      parseResult = fhirIdSchema.safeParse(validId);
+      expect(parseResult.success).toBe(true);
+
       validId = `ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz.0123456789`; // 64 characters
       parseResult = fhirIdSchema.safeParse(validId);
       expect(parseResult.success).toBe(true);

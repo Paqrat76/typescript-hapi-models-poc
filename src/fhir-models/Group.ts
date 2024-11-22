@@ -23,32 +23,21 @@
 
 import { isEmpty, isNil } from 'lodash';
 import {
-  INVALID_VALUEX_MULTIPLE_PROPERTIES,
-  INVALID_VALUEX_PROPERTY,
   REQUIRED_PROPERTIES_DO_NOT_EXIST,
   REQUIRED_PROPERTIES_REQD_IN_JSON,
+  FAILED_TO_PARSE_REQD_FIELD,
 } from '@src/fhir-core/constants';
 import { IBase } from '@src/fhir-core/base-models/IBase';
-import {
-  BackboneElement,
-  DataType,
-  PrimitiveType,
-  setFhirBackboneElementListJson,
-  setFhirComplexJson,
-  setFhirComplexListJson,
-  setFhirPrimitiveJson,
-  setPolymorphicValueJson,
-} from '@src/fhir-core/base-models/core-fhir-models';
 import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
 import { FhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
 import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
+import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
 import {
   CodeType,
   EnumCodeType,
   assertEnumCodeType,
   constructorCodeValueAsEnumCodeType,
 } from '@src/fhir-core/data-types/primitive/CodeType';
-import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
 import { Identifier, Reference, ReferenceTargets } from '@src/fhir-core/data-types/complex/Reference-Identifier';
 import { Period } from '@src/fhir-core/data-types/complex/Period';
 import { Quantity } from '@src/fhir-core/data-types/complex/Quantity';
@@ -66,27 +55,38 @@ import {
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { GroupTypeEnum } from '@src/fhir-models/code-systems/GroupTypeEnum';
-import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirType, assertFhirTypeList } from '@src/fhir-core/utility/type-guards';
-import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
-import { ChoiceDataTypes } from '@src/fhir-core/utility/decorators';
-import * as JSON from '@src/fhir-core/utility/json-helpers';
+import {
+  BackboneElement,
+  DataType,
+  PrimitiveType,
+  setFhirBackboneElementListJson,
+  setFhirComplexJson,
+  setFhirComplexListJson,
+  setFhirPrimitiveJson,
+  setPolymorphicValueJson,
+} from '@src/fhir-core/base-models/core-fhir-models';
 import {
   assertFhirResourceTypeJson,
   getPrimitiveTypeJson,
-  getValueXData,
   parseBooleanType,
   parseCodeType,
   parseCodeableConcept,
   parseIdentifier,
   parsePeriod,
+  parsePolymorphicDataType,
   parseReference,
   parseStringType,
   parseUnsignedIntType,
   processBackboneElementJson,
   processDomainResourceJson,
 } from '@src/fhir-core/utility/fhir-parsers';
+import { parseContainedResources } from '@src/fhir-models/fhir-contained-resource-parser';
+import { assertFhirType, assertFhirTypeList } from '@src/fhir-core/utility/type-guards';
+import { extractFieldName, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
+import { ChoiceDataTypes, ChoiceDataTypesMeta } from '@src/fhir-core/utility/decorators';
+import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -128,7 +128,7 @@ export class Group extends DomainResource implements IBase {
     );
 
     this.actual = null;
-    if (actual !== null) {
+    if (!isNil(actual)) {
       if (actual instanceof PrimitiveType) {
         this.setActualElement(actual);
       } else {
@@ -137,89 +137,126 @@ export class Group extends DomainResource implements IBase {
     }
   }
 
-  public static parse(json: JSON.Object): Group | undefined {
-    if (isNil(json) || (JSON.isObject(json) && isEmpty(json))) {
+  /**
+   * Parse the provided `Group` json to instantiate the Group data model.
+   *
+   * @param sourceJson - JSON representing FHIR `Group`
+   * @returns Group data model or undefined for `Group`
+   */
+  public static parse(sourceJson: JSON.Object): Group | undefined {
+    if (isNil(sourceJson) || (JSON.isObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
-
-    const dataJsonObj: JSON.Object = JSON.asObject(json, `Group JSON`);
-    assertFhirResourceTypeJson(dataJsonObj, 'Group');
+    const classJsonObj: JSON.Object = JSON.asObject(sourceJson, `Group JSON`);
+    assertFhirResourceTypeJson(classJsonObj, 'Group');
     const instance = new Group(null, null);
+    processDomainResourceJson(instance, classJsonObj);
 
-    processDomainResourceJson(instance, dataJsonObj);
+    // NOTE: "contained" is handled in Resource-based FHIR model rather than in processDomainResourceJson above
+    //       to minimize circular references!
+    let sourceField = 'Group.contained';
+    let fieldName = extractFieldName(sourceField);
+    if (fieldName in classJsonObj) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const containedJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
+      parseContainedResources(instance, containedJsonArray, sourceField);
+    }
 
     const missingReqdProperties: string[] = [];
 
-    if ('identifier' in dataJsonObj) {
-      const dataElementJsonArray: JSON.Array = JSON.asArray(dataJsonObj['identifier'], `Group.identifier`);
+    sourceField = 'Group.identifier';
+    fieldName = extractFieldName(sourceField);
+    if (fieldName in classJsonObj) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
-        const datatype: Identifier | undefined = parseIdentifier(dataElementJson, `Group.identifier[${String(idx)}]`);
+        const datatype: Identifier | undefined = parseIdentifier(dataElementJson, `${sourceField}[${String(idx)}]`);
         instance.addIdentifier(datatype);
       });
     }
 
-    if ('active' in dataJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(dataJsonObj, 'Group', 'active', 'boolean');
+    sourceField = 'Group.active';
+    fieldName = extractFieldName(sourceField);
+    if (fieldName in classJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, 'boolean');
       const datatype: BooleanType | undefined = parseBooleanType(dtJson, dtSiblingJson);
       instance.setActiveElement(datatype);
     }
 
-    if ('type' in dataJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(dataJsonObj, 'Group', 'type', 'string');
+    sourceField = 'Group.type';
+    fieldName = extractFieldName(sourceField);
+    if (fieldName in classJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, 'string');
       const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
       if (datatype === undefined) {
-        throw new Error(`Failed to parse Group.type from the provided JSON`);
+        throw new Error(FAILED_TO_PARSE_REQD_FIELD.replace('#sourceField#', sourceField));
       } else {
         instance.setTypeElement(datatype);
       }
     } else {
-      missingReqdProperties.push('Group.type');
+      missingReqdProperties.push(sourceField);
     }
 
-    if ('actual' in dataJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(dataJsonObj, 'Group', 'actual', 'boolean');
+    sourceField = 'Group.actual';
+    fieldName = extractFieldName(sourceField);
+    if (fieldName in classJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, 'boolean');
       const datatype: BooleanType | undefined = parseBooleanType(dtJson, dtSiblingJson);
       if (datatype === undefined) {
-        throw new Error(`Failed to parse Group.actual from the provided JSON`);
+        throw new Error(FAILED_TO_PARSE_REQD_FIELD.replace('#sourceField#', sourceField));
       } else {
         instance.setActualElement(datatype);
       }
     } else {
-      missingReqdProperties.push('Group.actual');
+      missingReqdProperties.push(sourceField);
     }
 
-    if ('code' in dataJsonObj) {
-      const datatype: CodeableConcept | undefined = parseCodeableConcept(dataJsonObj['code'], `Group.code`);
+    sourceField = 'Group.code';
+    fieldName = extractFieldName(sourceField);
+    if (fieldName in classJsonObj) {
+      const datatype: CodeableConcept | undefined = parseCodeableConcept(classJsonObj[fieldName], sourceField);
       instance.setCode(datatype);
     }
 
-    if ('name' in dataJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(dataJsonObj, 'Group', 'name', 'string');
+    sourceField = 'Group.name';
+    fieldName = extractFieldName(sourceField);
+    if (fieldName in classJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, 'string');
       const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
       instance.setNameElement(datatype);
     }
 
-    if ('quantity' in dataJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(dataJsonObj, 'Group', 'quantity', 'number');
+    sourceField = 'Group.quantity';
+    fieldName = extractFieldName(sourceField);
+    if (fieldName in classJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, 'number');
       const datatype: UnsignedIntType | undefined = parseUnsignedIntType(dtJson, dtSiblingJson);
       instance.setQuantityElement(datatype);
     }
 
-    if ('managingEntity' in dataJsonObj) {
-      const datatype: Reference | undefined = parseReference(dataJsonObj['managingEntity'], `Group.managingEntity`);
+    sourceField = 'Group.managingEntity';
+    fieldName = extractFieldName(sourceField);
+    if (fieldName in classJsonObj) {
+      const datatype: Reference | undefined = parseReference(classJsonObj[fieldName], sourceField);
       instance.setManagingEntity(datatype);
     }
 
-    if ('characteristic' in dataJsonObj) {
-      const componentJsonArray: JSON.Array = JSON.asArray(dataJsonObj['characteristic'], `Group.characteristic`);
+    sourceField = 'Group.characteristic';
+    fieldName = extractFieldName(sourceField);
+    if (fieldName in classJsonObj) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const componentJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       componentJsonArray.forEach((componentJson: JSON.Value) => {
         const component: GroupCharacteristicComponent | undefined = GroupCharacteristicComponent.parse(componentJson);
         instance.addCharacteristic(component);
       });
     }
 
-    if ('member' in dataJsonObj) {
-      const componentJsonArray: JSON.Array = JSON.asArray(dataJsonObj['member'], `Group.member`);
+    sourceField = 'Group.member';
+    fieldName = extractFieldName(sourceField);
+    if (fieldName in classJsonObj) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const componentJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       componentJsonArray.forEach((componentJson: JSON.Value) => {
         const component: GroupMemberComponent | undefined = GroupMemberComponent.parse(componentJson);
         instance.addMember(component);
@@ -494,7 +531,7 @@ export class Group extends DomainResource implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setActive(value: fhirBoolean | undefined): this {
-    const optErrMsg = `Invalid Group.active (${String(value)}))`;
+    const optErrMsg = `Invalid Group.active (${String(value)})`;
     this.active =
       value === undefined ? undefined : new BooleanType(parseFhirPrimitiveData(value, fhirBooleanSchema, optErrMsg));
     return this;
@@ -521,8 +558,7 @@ export class Group extends DomainResource implements IBase {
    * @returns this
    */
   public setTypeEnumType(enumType: EnumCodeType): this {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (enumType !== null) {
+    if (!isNil(enumType)) {
       const errMsgPrefix = 'Invalid Group.type';
       assertEnumCodeType<GroupTypeEnum>(enumType, GroupTypeEnum, errMsgPrefix);
       this.type = enumType;
@@ -534,7 +570,7 @@ export class Group extends DomainResource implements IBase {
    * @returns `true` if the `type` property exists and has a value; `false` otherwise
    */
   public hasTypeEnumType(): boolean {
-    return this.type !== null && !this.type.isEmpty() && this.type.fhirCodeEnumeration.length > 0;
+    return !isNil(this.type) && !this.type.isEmpty() && this.type.fhirCodeEnumeration.length > 0;
   }
 
   /**
@@ -554,8 +590,7 @@ export class Group extends DomainResource implements IBase {
    * @returns this
    */
   public setTypeElement(element: CodeType): this {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (element !== null) {
+    if (!isNil(element)) {
       const optErrMsg = `Invalid Group.type; Provided value is not an instance of CodeType.`;
       assertFhirType<CodeType>(element, CodeType, optErrMsg);
       this.type = new EnumCodeType(element, this.groupTypeEnum);
@@ -587,8 +622,7 @@ export class Group extends DomainResource implements IBase {
    * @returns this
    */
   public setType(value: fhirCode): this {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (value !== null) {
+    if (!isNil(value)) {
       this.type = new EnumCodeType(value, this.groupTypeEnum);
     }
     return this;
@@ -615,8 +649,7 @@ export class Group extends DomainResource implements IBase {
    * @returns this
    */
   public setActualElement(element: BooleanType): this {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (element !== null) {
+    if (!isNil(element)) {
       const optErrMsg = `Invalid Group.actual; Provided value is not an instance of BooleanType.`;
       assertFhirType<BooleanType>(element, BooleanType, optErrMsg);
       this.actual = element;
@@ -628,7 +661,7 @@ export class Group extends DomainResource implements IBase {
    * @returns `true` if the `actual` property exists and has a value; `false` otherwise
    */
   public hasActualElement(): boolean {
-    return this.actual !== null && !this.actual.isEmpty();
+    return !isNil(this.actual) && !this.actual.isEmpty();
   }
 
   /**
@@ -650,8 +683,7 @@ export class Group extends DomainResource implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setActual(value: fhirBoolean): this {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (value !== null) {
+    if (!isNil(value)) {
       const optErrMsg = `Invalid Group.actual (${String(value)})`;
       this.actual = new BooleanType(parseFhirPrimitiveData(value, fhirBooleanSchema, optErrMsg));
     }
@@ -1072,7 +1104,6 @@ export class Group extends DomainResource implements IBase {
   }
 }
 
-// noinspection DuplicatedCode
 /**
  * GroupCharacteristicComponent Subclass
  *
@@ -1096,12 +1127,12 @@ export class GroupCharacteristicComponent extends BackboneElement {
     super();
 
     this.code = null;
-    if (code !== null) {
+    if (!isNil(code)) {
       this.setCode(code);
     }
 
     this.value = null;
-    if (value !== null) {
+    if (!isNil(value)) {
       this.setValue(value);
     }
 
@@ -1109,7 +1140,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
     if (exclude instanceof BooleanType) {
       this.setExcludeElement(exclude);
     } else {
-      if (exclude !== null) {
+      if (!isNil(exclude)) {
         this.setExclude(exclude);
       }
     }
@@ -1118,94 +1149,67 @@ export class GroupCharacteristicComponent extends BackboneElement {
   /**
    * Parse the provided `Group.characteristic` json to instantiate the GroupCharacteristicComponent data model.
    *
-   * @param groupCharacteristicJson - JSON representing FHIR `Group.characteristic`
+   * @param sourceJson - JSON representing FHIR `Group.characteristic`
    * @returns GroupCharacteristicComponent data model or undefined for `Group.characteristic`
    */
-  public static parse(groupCharacteristicJson: JSON.Value): GroupCharacteristicComponent | undefined {
-    if (
-      isNil(groupCharacteristicJson) ||
-      (JSON.isObject(groupCharacteristicJson) && isEmpty(groupCharacteristicJson))
-    ) {
+  public static parse(sourceJson: JSON.Value): GroupCharacteristicComponent | undefined {
+    if (isNil(sourceJson) || (JSON.isObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
-
-    const backboneJsonObj: JSON.Object = JSON.asObject(groupCharacteristicJson, `GroupCharacteristicComponent JSON`);
+    const backboneJsonObj: JSON.Object = JSON.asObject(sourceJson, `GroupCharacteristicComponent JSON`);
     const instance = new GroupCharacteristicComponent(null, null, null);
-
     processBackboneElementJson(instance, backboneJsonObj);
 
     const missingReqdProperties: string[] = [];
 
-    if ('code' in backboneJsonObj) {
-      const datatype: CodeableConcept | undefined = parseCodeableConcept(
-        backboneJsonObj['code'],
-        `GroupCharacteristicComponent.code`,
-      );
+    let sourceField = 'Group.characteristic.code';
+    let fieldName = extractFieldName(sourceField);
+    if (fieldName in backboneJsonObj) {
+      const datatype: CodeableConcept | undefined = parseCodeableConcept(backboneJsonObj[fieldName], sourceField);
       if (datatype === undefined) {
-        throw new Error(`Failed to parse Group.characteristic.code from the provided JSON`);
+        throw new Error(FAILED_TO_PARSE_REQD_FIELD.replace('#sourceField#', sourceField));
       } else {
         instance.setCode(datatype);
       }
     } else {
-      missingReqdProperties.push('Group.characteristic.code');
+      missingReqdProperties.push(sourceField);
     }
 
-    // TODO: Generalize!!
     // Handle polymorphic data type
-    // ['boolean', 'CodeableConcept', 'Quantity', 'Range', 'Reference']
-    const valueKeys = Object.keys(backboneJsonObj).filter((key) => key.startsWith('value'));
-    if ('value' in backboneJsonObj) {
-      throw new FhirError(INVALID_VALUEX_PROPERTY);
-    } else if (valueKeys.length > 1) {
-      throw new FhirError(`${INVALID_VALUEX_MULTIPLE_PROPERTIES} ${valueKeys.join(', ')}`);
-    } else if (
-      'valueBoolean' in backboneJsonObj ||
-      'valueCodeableConcept' in backboneJsonObj ||
-      'valueQuantity' in backboneJsonObj ||
-      'valueRange' in backboneJsonObj ||
-      'valueReference' in backboneJsonObj
-    ) {
-      let datatype: DataType | undefined = undefined;
-      try {
-        datatype = getValueXData(backboneJsonObj);
-      } catch (err) {
-        if (err instanceof TypeError) {
-          throw new TypeError(`Failed to parse Group.characteristic.value[x]: ${err.message}`, err);
-        } else {
-          throw new Error(`Unexpected error parsing Group.characteristic.value[x] from the provided JSON`);
-        }
-      }
-      if (datatype === undefined) {
-        throw new Error(`Failed to parse Group.characteristic.value[x] from the provided JSON`);
-      } else {
-        instance.setValue(datatype);
-      }
+    sourceField = 'Group.characteristic.value[x]';
+    fieldName = extractFieldName(sourceField);
+    const classMetadata: DecoratorMetadataObject | null = GroupCharacteristicComponent[Symbol.metadata];
+    const datatype: DataType | undefined = parsePolymorphicDataType(
+      backboneJsonObj,
+      sourceField,
+      fieldName,
+      classMetadata,
+    );
+    if (datatype !== undefined) {
+      instance.setValue(datatype);
     } else {
-      missingReqdProperties.push('Group.characteristic.value[x]');
+      // Report the missing required field
+      missingReqdProperties.push(sourceField);
     }
 
-    if ('exclude' in backboneJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
-        backboneJsonObj,
-        'GroupCharacteristicComponent',
-        'exclude',
-        'boolean',
-      );
+    sourceField = 'Group.characteristic.exclude';
+    fieldName = extractFieldName(sourceField);
+    if (fieldName in backboneJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(backboneJsonObj, sourceField, fieldName, 'boolean');
       const datatype: BooleanType | undefined = parseBooleanType(dtJson, dtSiblingJson);
       if (datatype === undefined) {
-        throw new Error(`Failed to parse Group.characteristic.exclude from the provided JSON`);
+        throw new Error(FAILED_TO_PARSE_REQD_FIELD.replace('#sourceField#', sourceField));
       } else {
         instance.setExcludeElement(datatype);
       }
     } else {
-      missingReqdProperties.push('Group.characteristic.exclude');
+      missingReqdProperties.push(sourceField);
     }
 
-    if ('period' in backboneJsonObj) {
-      const datatype: Period | undefined = parsePeriod(
-        backboneJsonObj['period'],
-        `GroupCharacteristicComponent.period`,
-      );
+    sourceField = 'Group.characteristic.period';
+    fieldName = extractFieldName(sourceField);
+    if (fieldName in backboneJsonObj) {
+      const datatype: Period | undefined = parsePeriod(backboneJsonObj[fieldName], sourceField);
       instance.setPeriod(datatype);
     }
 
@@ -1251,6 +1255,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
    * - **isModifier:** false
    * - **isSummary:** false
    */
+  @ChoiceDataTypesMeta(['boolean', 'CodeableConcept', 'Quantity', 'Range', 'Reference'])
   protected value!: DataType | null;
 
   /**
@@ -1297,9 +1302,8 @@ export class GroupCharacteristicComponent extends BackboneElement {
    * @returns this
    */
   public setCode(value: CodeableConcept): this {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (value !== null) {
-      const optErrMsg = `Invalid GroupCharacteristicComponent.code; Provided value is not an instance of CodeableConcept.`;
+    if (!isNil(value)) {
+      const optErrMsg = `Invalid Group.characteristic.code; Provided value is not an instance of CodeableConcept.`;
       assertFhirType<CodeableConcept>(value, CodeableConcept, optErrMsg);
       this.code = value;
     }
@@ -1310,7 +1314,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
    * @returns `true` if the `code` property exists and has a value; `false` otherwise
    */
   public hasCode(): boolean {
-    return this.code !== null && !this.code.isEmpty();
+    return !isNil(this.code) && !this.code.isEmpty();
   }
 
   /**
@@ -1328,10 +1332,9 @@ export class GroupCharacteristicComponent extends BackboneElement {
    * @param value - the `value` object value
    * @returns this
    */
-  @ChoiceDataTypes(['boolean', 'CodeableConcept', 'Quantity', 'Range', 'Reference'])
+  @ChoiceDataTypes()
   public setValue(value: DataType): this {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (value !== null) {
+    if (!isNil(value)) {
       // assertFhirType<DataType>(value, DataType) unnecessary because @ChoiceDataTypes decorator ensures proper type/value
       this.value = value;
     }
@@ -1342,7 +1345,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
    * @returns `true` if the `value` property exists and has a value; `false` otherwise
    */
   public hasValue(): boolean {
-    return this.value !== null && !this.value.isEmpty();
+    return !isNil(this.value) && !this.value.isEmpty();
   }
 
   /**
@@ -1364,7 +1367,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
    * @returns `true` if the `value` property exists as a CodeableConcept and has a value; `false` otherwise
    */
   public hasValueCodeableConcept(): boolean {
-    return this.value !== null && !this.value.isEmpty() && this.value instanceof CodeableConcept;
+    return !isNil(this.value) && !this.value.isEmpty() && this.value instanceof CodeableConcept;
   }
 
   /**
@@ -1386,7 +1389,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
    * @returns `true` if the `value` property exists as a boolean and has a value; `false` otherwise
    */
   public hasValueBooleanType(): boolean {
-    return this.value !== null && !this.value.isEmpty() && this.value instanceof BooleanType;
+    return !isNil(this.value) && !this.value.isEmpty() && this.value instanceof BooleanType;
   }
 
   /**
@@ -1408,7 +1411,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
    * @returns `true` if the `value` property exists as a Quantity and has a value; `false` otherwise
    */
   public hasValueQuantity(): boolean {
-    return this.value !== null && !this.value.isEmpty() && this.value instanceof Quantity;
+    return !isNil(this.value) && !this.value.isEmpty() && this.value instanceof Quantity;
   }
 
   /**
@@ -1430,7 +1433,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
    * @returns `true` if the `value` property exists as a Range and has a value; `false` otherwise
    */
   public hasValueRange(): boolean {
-    return this.value !== null && !this.value.isEmpty() && this.value instanceof Range;
+    return !isNil(this.value) && !this.value.isEmpty() && this.value instanceof Range;
   }
 
   /**
@@ -1452,7 +1455,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
    * @returns `true` if the `value` property exists as a Reference and has a value; `false` otherwise
    */
   public hasValueReference(): boolean {
-    return this.value !== null && !this.value.isEmpty() && this.value instanceof Reference;
+    return !isNil(this.value) && !this.value.isEmpty() && this.value instanceof Reference;
   }
 
   /**
@@ -1469,9 +1472,8 @@ export class GroupCharacteristicComponent extends BackboneElement {
    * @returns this
    */
   public setExcludeElement(element: BooleanType): this {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (element !== null) {
-      const optErrMsg = `Invalid GroupCharacteristicComponent.exclude; Provided value is not an instance of BooleanType.`;
+    if (!isNil(element)) {
+      const optErrMsg = `Invalid Group.characteristic.exclude; Provided value is not an instance of BooleanType.`;
       assertFhirType<BooleanType>(element, BooleanType, optErrMsg);
       this.exclude = element;
     }
@@ -1482,7 +1484,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
    * @returns `true` if the `exclude` property exists and has a value; `false` otherwise
    */
   public hasExcludeElement(): boolean {
-    return this.exclude !== null && !this.exclude.isEmpty();
+    return !isNil(this.exclude) && !this.exclude.isEmpty();
   }
 
   /**
@@ -1504,9 +1506,8 @@ export class GroupCharacteristicComponent extends BackboneElement {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setExclude(value: fhirBoolean): this {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (value !== null) {
-      const optErrMsg = `Invalid GroupCharacteristicComponent.exclude (${String(value)})`;
+    if (!isNil(value)) {
+      const optErrMsg = `Invalid Group.characteristic.exclude (${String(value)})`;
       this.exclude = new BooleanType(parseFhirPrimitiveData(value, fhirBooleanSchema, optErrMsg));
     }
     return this;
@@ -1533,7 +1534,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
    * @returns this
    */
   public setPeriod(value: Period | undefined): this {
-    const optErrMsg = `Invalid GroupCharacteristicComponent.period; Provided value is not an instance of Period.`;
+    const optErrMsg = `Invalid Group.characteristic.period; Provided value is not an instance of Period.`;
     assertFhirType<Period>(value, Period, optErrMsg);
     this.period = value;
     return this;
@@ -1649,7 +1650,7 @@ export class GroupMemberComponent extends BackboneElement {
     super();
 
     this.entity = null;
-    if (entity !== null) {
+    if (!isNil(entity)) {
       this.setEntity(entity);
     }
   }
@@ -1657,44 +1658,43 @@ export class GroupMemberComponent extends BackboneElement {
   /**
    * Parse the provided `Group.member` json to instantiate the GroupMemberComponent data model.
    *
-   * @param groupMemberJson - JSON representing FHIR `Group.member`
+   * @param sourceJson - JSON representing FHIR `Group.member`
    * @returns GroupMemberComponent data model or undefined for `Group.member`
    */
-  public static parse(groupMemberJson: JSON.Value): GroupMemberComponent | undefined {
-    if (isNil(groupMemberJson) || (JSON.isObject(groupMemberJson) && isEmpty(groupMemberJson))) {
+  public static parse(sourceJson: JSON.Value): GroupMemberComponent | undefined {
+    if (isNil(sourceJson) || (JSON.isObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
-
-    const backboneJsonObj: JSON.Object = JSON.asObject(groupMemberJson, `GroupMemberComponent JSON`);
+    const backboneJsonObj: JSON.Object = JSON.asObject(sourceJson, `GroupMemberComponent JSON`);
     const instance = new GroupMemberComponent(null);
-
     processBackboneElementJson(instance, backboneJsonObj);
 
     const missingReqdProperties: string[] = [];
 
-    if ('entity' in backboneJsonObj) {
-      const datatype: Reference | undefined = parseReference(backboneJsonObj['entity'], `GroupMemberComponent.entity`);
+    let sourceField = 'Group.member.entity';
+    let fieldName = extractFieldName(sourceField);
+    if (fieldName in backboneJsonObj) {
+      const datatype: Reference | undefined = parseReference(backboneJsonObj[fieldName], sourceField);
       if (datatype === undefined) {
-        throw new Error(`Failed to parse Group.characteristic.entity from the provided JSON`);
+        throw new Error(FAILED_TO_PARSE_REQD_FIELD.replace('#sourceField#', sourceField));
       } else {
         instance.setEntity(datatype);
       }
     } else {
-      missingReqdProperties.push('Group.member.entity');
+      missingReqdProperties.push(sourceField);
     }
 
-    if ('period' in backboneJsonObj) {
-      const datatype: Period | undefined = parsePeriod(backboneJsonObj['period'], `GroupMemberComponent.period`);
+    sourceField = 'Group.member.period';
+    fieldName = extractFieldName(sourceField);
+    if (fieldName in backboneJsonObj) {
+      const datatype: Period | undefined = parsePeriod(backboneJsonObj[fieldName], sourceField);
       instance.setPeriod(datatype);
     }
 
-    if ('inactive' in backboneJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
-        backboneJsonObj,
-        'GroupMemberComponent',
-        'inactive',
-        'boolean',
-      );
+    sourceField = 'Group.member.inactive';
+    fieldName = extractFieldName(sourceField);
+    if (fieldName in backboneJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(backboneJsonObj, sourceField, fieldName, 'boolean');
       const datatype: BooleanType | undefined = parseBooleanType(dtJson, dtSiblingJson);
       instance.setInactiveElement(datatype);
     }
@@ -1769,8 +1769,7 @@ export class GroupMemberComponent extends BackboneElement {
    */
   @ReferenceTargets(['Patient', 'Practitioner', 'PractitionerRole', 'Device', 'Medication', 'Substance', 'Group'])
   public setEntity(value: Reference): this {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (value !== null) {
+    if (!isNil(value)) {
       // assertFhirType<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
       this.entity = value;
     }
@@ -1781,7 +1780,7 @@ export class GroupMemberComponent extends BackboneElement {
    * @returns `true` if the `entity` property exists and has a value; `false` otherwise
    */
   public hasEntity(): boolean {
-    return this.entity !== null && !this.entity.isEmpty();
+    return !isNil(this.entity) && !this.entity.isEmpty();
   }
 
   /**
@@ -1798,7 +1797,7 @@ export class GroupMemberComponent extends BackboneElement {
    * @returns this
    */
   public setPeriod(value: Period | undefined): this {
-    const optErrMsg = `Invalid GroupMemberComponent.period; Provided value is not an instance of Period.`;
+    const optErrMsg = `Invalid Group.member.period; Provided value is not an instance of Period.`;
     assertFhirType<Period>(value, Period, optErrMsg);
     this.period = value;
     return this;
@@ -1825,7 +1824,7 @@ export class GroupMemberComponent extends BackboneElement {
    * @returns this
    */
   public setInactiveElement(element: BooleanType | undefined): this {
-    const optErrMsg = `Invalid GroupMemberComponent.inactive; Provided element is not an instance of BooleanType.`;
+    const optErrMsg = `Invalid Group.member.inactive; Provided element is not an instance of BooleanType.`;
     assertFhirType<BooleanType>(element, BooleanType, optErrMsg);
     this.inactive = element;
     return this;
@@ -1853,7 +1852,7 @@ export class GroupMemberComponent extends BackboneElement {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setInactive(value: fhirBoolean | undefined): this {
-    const optErrMsg = `Invalid GroupMemberComponent.inactive (${String(value)}))`;
+    const optErrMsg = `Invalid Group.member.inactive (${String(value)})`;
     this.inactive =
       value === undefined ? undefined : new BooleanType(parseFhirPrimitiveData(value, fhirBooleanSchema, optErrMsg));
     return this;

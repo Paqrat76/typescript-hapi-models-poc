@@ -29,7 +29,7 @@ import { DecimalType } from '@src/fhir-core/data-types/primitive/DecimalType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
-import { QuantityComparatorEnum } from '@src/fhir-core/data-types/complex/code-systems/QuantityComparatorEnum';
+import { QuantityComparatorEnum } from '@src/fhir-core/data-types/code-systems/QuantityComparatorEnum';
 
 describe('SimpleQuantity', () => {
   const VALID_DECIMAL = 13.579;

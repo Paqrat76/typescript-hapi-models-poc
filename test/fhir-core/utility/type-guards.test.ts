@@ -23,6 +23,7 @@
 
 import { AssertionError } from 'node:assert';
 import { assertFhirType, assertFhirTypeList, assertIsDefined, FhirTypeGuard } from '@src/fhir-core/utility/type-guards';
+import { isFhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
 import {
   assertFhirDataType,
   assertFhirPrimitiveType,
@@ -33,8 +34,8 @@ import { assertFhirResourceType } from '@src/fhir-core/base-models/Resource';
 import { assertFhirResourceTypeJson } from '@src/fhir-core/utility/fhir-parsers';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { Period } from '@src/fhir-core/data-types/complex/Period';
-import { EnumCodeType, assertEnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
-import { QuantityComparatorEnum } from '@src/fhir-core/data-types/complex/code-systems/QuantityComparatorEnum';
+import { EnumCodeType, assertEnumCodeType, assertEnumCodeTypeList } from '@src/fhir-core/data-types/primitive/CodeType';
+import { QuantityComparatorEnum } from '@src/fhir-core/data-types/code-systems/QuantityComparatorEnum';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import {
@@ -48,6 +49,13 @@ import {
 } from '../../test-utils';
 
 describe('type-guards', () => {
+  describe('FhirResourceType', () => {
+    it('should return true/false as appropriate', () => {
+      expect(isFhirResourceType('Account')).toBe(true);
+      expect(isFhirResourceType('Invalid')).toBe(false);
+    });
+  });
+
   describe('assertIsDefined', () => {
     it('should not throw AssertionError for defined instance', () => {
       const value = new StringType();
@@ -443,51 +451,123 @@ describe('type-guards', () => {
     });
   });
 
-  describe('assertEnumCodeType', () => {
-    it('should not throw InvalidCodeError for valid EnumCodeType', () => {
-      const enumCodeType = new MockCodeEnum();
-      const t = () => {
-        assertEnumCodeType<MockCodeEnum>(enumCodeType, MockCodeEnum);
-      };
-      expect(t).not.toThrow(InvalidCodeError);
+  describe('assertEnumCodeType/assertEnumCodeTypeList', () => {
+    describe('assertEnumCodeType', () => {
+      it('should not throw InvalidCodeError for valid EnumCodeType', () => {
+        const enumCodeType = new MockCodeEnum();
+        const t = () => {
+          assertEnumCodeType<MockCodeEnum>(enumCodeType, MockCodeEnum);
+        };
+        expect(t).not.toThrow(InvalidCodeError);
+      });
+
+      it('should throw InvalidCodeError for invalid EnumCodeType', () => {
+        const enumCodeType = new EnumCodeType('<', new QuantityComparatorEnum());
+        const t = () => {
+          assertEnumCodeType<MockCodeEnum>(enumCodeType, MockCodeEnum);
+        };
+        expect(t).toThrow(InvalidCodeError);
+        expect(t).toThrow(`Invalid type parameter (QuantityComparatorEnum); Should be MockCodeEnum.`);
+      });
+
+      it('should throw InvalidCodeError for invalid EnumCodeType with error message prefix', () => {
+        const enumCodeType = new EnumCodeType('<', new QuantityComparatorEnum());
+        const prefix = 'Test Prefix';
+        const t = () => {
+          assertEnumCodeType<MockCodeEnum>(enumCodeType, MockCodeEnum, prefix);
+        };
+        expect(t).toThrow(InvalidCodeError);
+        expect(t).toThrow(`${prefix}; Invalid type parameter (QuantityComparatorEnum); Should be MockCodeEnum.`);
+      });
+
+      it('should throw InvalidTypeError for invalid type', () => {
+        const enumCodeType = String('Invalid type');
+        const t = () => {
+          assertEnumCodeType<MockCodeEnum>(enumCodeType, MockCodeEnum);
+        };
+        expect(t).toThrow(InvalidTypeError);
+        expect(t).toThrow(`Provided type is not an instance of ${MockCodeEnum.name}.`);
+      });
+
+      it('should throw InvalidTypeError for invalid type with error message prefix', () => {
+        const enumCodeType = String('Invalid type');
+        const prefix = 'Test Prefix';
+        const t = () => {
+          assertEnumCodeType<MockCodeEnum>(enumCodeType, MockCodeEnum, prefix);
+        };
+        expect(t).toThrow(InvalidTypeError);
+        expect(t).toThrow(`${prefix}; Provided type is not an instance of ${MockCodeEnum.name}.`);
+      });
     });
 
-    it('should throw InvalidCodeError for invalid EnumCodeType', () => {
-      const enumCodeType = new EnumCodeType('<', new QuantityComparatorEnum());
-      const t = () => {
-        assertEnumCodeType<MockCodeEnum>(enumCodeType, MockCodeEnum);
-      };
-      expect(t).toThrow(InvalidCodeError);
-      expect(t).toThrow(`Invalid type parameter (QuantityComparatorEnum); Should be MockCodeEnum.`);
-    });
+    describe('assertEnumCodeTypeList', () => {
+      it('should not throw InvalidCodeError for valid EnumCodeType', () => {
+        const enumCodeType = new MockCodeEnum();
+        const t = () => {
+          assertEnumCodeTypeList<MockCodeEnum>([enumCodeType], MockCodeEnum);
+        };
+        expect(t).not.toThrow(InvalidCodeError);
+      });
 
-    it('should throw InvalidCodeError for invalid EnumCodeType with error message prefix', () => {
-      const enumCodeType = new EnumCodeType('<', new QuantityComparatorEnum());
-      const prefix = 'Test Prefix';
-      const t = () => {
-        assertEnumCodeType<MockCodeEnum>(enumCodeType, MockCodeEnum, prefix);
-      };
-      expect(t).toThrow(InvalidCodeError);
-      expect(t).toThrow(`${prefix}; Invalid type parameter (QuantityComparatorEnum); Should be MockCodeEnum.`);
-    });
+      it('should not throw InvalidCodeError for empty typeInstance', () => {
+        let t = () => {
+          assertEnumCodeTypeList<MockCodeEnum>(undefined, MockCodeEnum);
+        };
+        expect(t).not.toThrow();
 
-    it('should throw InvalidTypeError for invalid type', () => {
-      const enumCodeType = String('Invalid type');
-      const t = () => {
-        assertEnumCodeType<MockCodeEnum>(enumCodeType, MockCodeEnum);
-      };
-      expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`Provided type is not an instance of ${MockCodeEnum.name}.`);
-    });
+        t = () => {
+          assertEnumCodeTypeList<MockCodeEnum>(null, MockCodeEnum);
+        };
+        expect(t).not.toThrow();
 
-    it('should throw InvalidTypeError for invalid type with error message prefix', () => {
-      const enumCodeType = String('Invalid type');
-      const prefix = 'Test Prefix';
-      const t = () => {
-        assertEnumCodeType<MockCodeEnum>(enumCodeType, MockCodeEnum, prefix);
-      };
-      expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`${prefix}; Provided type is not an instance of ${MockCodeEnum.name}.`);
+        t = () => {
+          assertEnumCodeTypeList<MockCodeEnum>([], MockCodeEnum);
+        };
+        expect(t).not.toThrow();
+      });
+
+      it('should throw InvalidTypeError for invalid EnumCodeType', () => {
+        const enumCodeType = new EnumCodeType('<', new QuantityComparatorEnum());
+        const t = () => {
+          assertEnumCodeTypeList<MockCodeEnum>([enumCodeType], MockCodeEnum);
+        };
+        expect(t).toThrow(InvalidTypeError);
+        expect(t).toThrow(`Provided instance array has an element that is not an instance of ${MockCodeEnum.name}.`);
+      });
+
+      it('should throw InvalidTypeError for invalid EnumCodeType with error message prefix', () => {
+        const enumCodeType = new EnumCodeType('<', new QuantityComparatorEnum());
+        const prefix = 'Test Prefix';
+        const t = () => {
+          assertEnumCodeTypeList<MockCodeEnum>([enumCodeType], MockCodeEnum, prefix);
+        };
+        expect(t).toThrow(InvalidTypeError);
+        expect(t).toThrow(
+          `${prefix}; Provided instance array has an element that is not an instance of ${MockCodeEnum.name}.`,
+        );
+      });
+
+      it('should throw InvalidTypeError for invalid type', () => {
+        const enumCodeType = String('Invalid type');
+        const t = () => {
+          assertEnumCodeTypeList<MockCodeEnum>([enumCodeType], MockCodeEnum);
+        };
+        expect(t).toThrow(InvalidTypeError);
+        expect(t).toThrow(`Provided instance array has an element that is not an instance of ${MockCodeEnum.name}.`);
+      });
+
+      it('should throw InvalidTypeError for invalid type with error message prefix', () => {
+        const enumCodeType = String('Invalid type');
+        const prefix = 'Test Prefix';
+        const t = () => {
+          // @ts-expect-error: allow for testing
+          assertEnumCodeTypeList<MockCodeEnum>(enumCodeType, MockCodeEnum, prefix);
+        };
+        expect(t).toThrow(InvalidTypeError);
+        expect(t).toThrow(
+          `${prefix}; Provided instance array has 12 elements that are not an instance of ${MockCodeEnum.name}.`,
+        );
+      });
     });
   });
 });

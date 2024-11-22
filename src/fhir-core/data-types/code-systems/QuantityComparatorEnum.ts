@@ -28,7 +28,7 @@ import { FhirCodeDefinition, IFhirCodeDefinition, IFhirCodeEnum } from '@src/fhi
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
 /**
- * FHIR CodeSystem: QuantityComparatorEnum
+ * FHIR CodeSystem: QuantityComparator
  *
  * @remarks
  * This class is a "pseudo-enumeration" of code values having FHIR code properties.
@@ -36,7 +36,7 @@ import { FhirCodeDefinition, IFhirCodeDefinition, IFhirCodeEnum } from '@src/fhi
  * **NOTE:** The `ad` code was added in FHIR R5.
  *
  * @category CodeSystems
- * @see [FHIR CodeSystem QuantityComparator](https://hl7.org/fhir/R4/codesystem-quantity-comparator.html)
+ * @see [FHIR CodeSystem QuantityComparator](http://hl7.org/fhir/quantity-comparator)
  */
 export class QuantityComparatorEnum implements IFhirCodeEnum {
   public static readonly LESS_THAN = new FhirCodeDefinition(

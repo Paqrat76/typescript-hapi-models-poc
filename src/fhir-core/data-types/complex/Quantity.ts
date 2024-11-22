@@ -27,7 +27,7 @@ import { assertEnumCodeType, CodeType, EnumCodeType } from '@src/fhir-core/data-
 import { DecimalType } from '@src/fhir-core/data-types/primitive/DecimalType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
-import { QuantityComparatorEnum } from '@src/fhir-core/data-types/complex/code-systems/QuantityComparatorEnum';
+import { QuantityComparatorEnum } from '@src/fhir-core/data-types/code-systems/QuantityComparatorEnum';
 import {
   fhirCode,
   fhirCodeSchema,
@@ -64,12 +64,12 @@ import * as JSON from '@src/fhir-core/utility/json-helpers';
  * @see [FHIR Quantity](http://hl7.org/fhir/StructureDefinition/Quantity)
  */
 export class Quantity extends DataType implements IBase {
+  private readonly quantityComparatorEnum: QuantityComparatorEnum;
+
   constructor() {
     super();
     this.quantityComparatorEnum = new QuantityComparatorEnum();
   }
-
-  private readonly quantityComparatorEnum: QuantityComparatorEnum;
 
   /**
    * Quantity.value Element

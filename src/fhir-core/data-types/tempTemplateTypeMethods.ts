@@ -2,6 +2,7 @@
 
 // TODO: After all complex datatype classes are created, convert this file to template documentation!
 
+import { isNil } from 'lodash';
 import { Base } from '@src/fhir-core/base-models/Base';
 import { Value } from '@src/fhir-core/utility/json-helpers';
 import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
@@ -11,6 +12,7 @@ import { DateTimeType } from '@src/fhir-core/data-types/primitive/DateTimeType';
 import { DecimalType } from '@src/fhir-core/data-types/primitive/DecimalType';
 import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
 import { InstantType } from '@src/fhir-core/data-types/primitive/InstantType';
+import { PositiveIntType } from '@src/fhir-core/data-types/primitive/PositiveIntType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UnsignedIntType } from '@src/fhir-core/data-types/primitive/UnsignedIntType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
@@ -31,6 +33,8 @@ import {
   fhirIdSchema,
   fhirInstant,
   fhirInstantSchema,
+  fhirPositiveInt,
+  fhirPositiveIntSchema,
   fhirString,
   fhirStringSchema,
   fhirUnsignedInt,
@@ -185,8 +189,7 @@ export class TempTemplateTypeMethods {
    * @returns this
    */
   public setXxxxBooleanReqElement(element: BooleanType): this {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (element !== null) {
+    if (!isNil(element)) {
       const optErrMsg = `Invalid XxxClass.xxxxBoolean; Provided element is not an instance of BooleanType.`;
       assertFhirType<BooleanType>(element, BooleanType, optErrMsg);
       this.xxxxBooleanReq = element;
@@ -198,7 +201,7 @@ export class TempTemplateTypeMethods {
    * @returns `true` if the `xxxxBooleanReq` property exists and has a value; `false` otherwise
    */
   public hasXxxxBooleanReqElement(): boolean {
-    return this.xxxxBooleanReq !== null && !this.xxxxBooleanReq.isEmpty();
+    return !isNil(this.xxxxBooleanReq) && !this.xxxxBooleanReq.isEmpty();
   }
 
   /**
@@ -220,8 +223,7 @@ export class TempTemplateTypeMethods {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setXxxxBooleanReq(value: fhirBoolean): this {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (value !== null) {
+    if (!isNil(value)) {
       const optErrMsg = `Invalid XxxClass.xxxxBooleanReq (${String(value)})`;
       this.xxxxBooleanReq = new BooleanType(parseFhirPrimitiveData(value, fhirBooleanSchema, optErrMsg));
     }
@@ -484,8 +486,7 @@ export class TempTemplateTypeMethods {
    * @returns this
    */
   public setXxxxValueReqEnumType(enumType: EnumCodeType): this {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (enumType !== null) {
+    if (!isNil(enumType)) {
       const errMsgPrefix = 'EnumCodeType.xxxxValueReq';
       assertEnumCodeType<GroupTypeEnum>(enumType, GroupTypeEnum, errMsgPrefix);
       this.xxxxValueReq = enumType;
@@ -498,7 +499,7 @@ export class TempTemplateTypeMethods {
    */
   public hasXxxxValueReqEnumType(): boolean {
     return (
-      this.xxxxValueReq !== null && !this.xxxxValueReq.isEmpty() && this.xxxxValueReq.fhirCodeEnumeration.length > 0
+      !isNil(this.xxxxValueReq) && !this.xxxxValueReq.isEmpty() && this.xxxxValueReq.fhirCodeEnumeration.length > 0
     );
   }
 
@@ -519,8 +520,7 @@ export class TempTemplateTypeMethods {
    * @returns this
    */
   public setXxxxValueReqElement(element: CodeType): this {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (element !== null) {
+    if (!isNil(element)) {
       const optErrMsg = `Invalid XxxClass.xxxxValueReq; Provided element is not an instance of CodeType.`;
       assertFhirType<CodeType>(element, CodeType, optErrMsg);
       this.xxxxValueReq = new EnumCodeType(element, this.xxxEnumReq);
@@ -552,8 +552,7 @@ export class TempTemplateTypeMethods {
    * @returns this
    */
   public setXxxxValueReq(value: fhirCode): this {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (value !== null) {
+    if (!isNil(value)) {
       this.xxxxValueReq = new EnumCodeType(value, this.xxxEnumReq);
     }
     return this;
@@ -811,6 +810,68 @@ export class TempTemplateTypeMethods {
    */
   public hasXxxxInstant(): boolean {
     return this.hasXxxxInstantElement();
+  }
+  //endregion
+
+  //region PositiveIntType
+  // =====================================================================
+  // XxxClass / PositiveIntType (xxxxPositiveInt / XxxxPositiveInt)
+  // =====================================================================
+  protected xxxxPositiveInt?: PositiveIntType | undefined;
+
+  /**
+   * @returns the `xxxxPositiveInt` property value as a PrimitiveType
+   */
+  public getXxxxPositiveIntElement(): PositiveIntType {
+    return this.xxxxPositiveInt ?? new PositiveIntType();
+  }
+
+  /**
+   * Assigns the provided PrimitiveType value to the `xxxxPositiveInt` property.
+   *
+   * @param element - the `xxxxPositiveInt` value
+   * @returns this
+   */
+  public setXxxxPositiveIntElement(element: PositiveIntType | undefined): this {
+    this.xxxxPositiveInt = element;
+    return this;
+  }
+
+  /**
+   * @returns `true` if the `xxxxPositiveInt` property exists and has a value; `false` otherwise
+   */
+  public hasXxxxPositiveIntElement(): boolean {
+    return this.xxxxPositiveInt !== undefined && !this.xxxxPositiveInt.isEmpty();
+  }
+
+  /**
+   * @returns the `xxxxPositiveInt` property value as a primitive value
+   */
+  public getXxxxPositiveInt(): fhirPositiveInt | undefined {
+    return this.xxxxPositiveInt?.getValue();
+  }
+
+  /**
+   * Assigns the provided primitive value to the `xxxxPositiveInt` property.
+   *
+   * @param value - the `xxxxPositiveInt` value
+   * @returns this
+   * @throws PrimitiveTypeError for invalid primitive types
+   */
+  public setXxxxPositiveInt(value: fhirPositiveInt | undefined): this {
+    const optErrMsg = `Invalid XxxClass.xxxxPositiveInt (${String(value)})`;
+    this.xxxxPositiveInt =
+      value === undefined
+        ? undefined
+        : new PositiveIntType(parseFhirPrimitiveData(value, fhirPositiveIntSchema, optErrMsg));
+    return this;
+  }
+
+  /**
+   * @returns `true` if the `xxxxPositiveInt` property exists and has a value; `false` otherwise
+   */
+  public hasXxxxPositiveInt(): boolean {
+    return this.hasXxxxPositiveIntElement();
   }
   //endregion
 
@@ -1082,8 +1143,7 @@ export class TempTemplateTypeMethods {
    * @returns this
    */
   public setXxxxXhtmlReqElement(element: XhtmlType): this {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (element !== null) {
+    if (!isNil(element)) {
       const optErrMsg = `Invalid XxxClass.xxxxXhtmlReq; Provided element is not an instance of XhtmlType.`;
       assertFhirType<XhtmlType>(element, XhtmlType, optErrMsg);
       this.xxxxXhtmlReq = element;
@@ -1095,7 +1155,7 @@ export class TempTemplateTypeMethods {
    * @returns `true` if the `xxxxXhtmlReq` property exists and has a value; `false` otherwise
    */
   public hasXxxxXhtmlReqElement(): boolean {
-    return this.xxxxXhtmlReq !== null && !this.xxxxXhtmlReq.isEmpty();
+    return !isNil(this.xxxxXhtmlReq) && !this.xxxxXhtmlReq.isEmpty();
   }
 
   /**
@@ -1117,8 +1177,7 @@ export class TempTemplateTypeMethods {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setXxxxXhtmlReq(value: fhirXhtml): this {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (value !== null) {
+    if (!isNil(value)) {
       const optErrMsg = `Invalid XxxClass.xxxxXhtmlReq`;
       this.xxxxXhtmlReq = new XhtmlType(parseFhirPrimitiveData(value, fhirXhtmlSchema, optErrMsg));
     }
@@ -1187,8 +1246,7 @@ export class TempTemplateTypeMethods {
    * @returns this
    */
   public setXxxxModelReq(value: MockFhirModel): this {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (value !== null) {
+    if (!isNil(value)) {
       const optErrMsg = `Invalid MockFhirModel.xxxxModelReq; Provided element is not an instance of MockFhirModel.`;
       assertFhirType<MockFhirModel>(value, MockFhirModel, optErrMsg);
       this.xxxxModelReq = value;
@@ -1200,7 +1258,7 @@ export class TempTemplateTypeMethods {
    * @returns `true` if the `xxxxModelReq` property exists and has a value; `false` otherwise
    */
   public hasXxxxModelReq(): boolean {
-    return this.xxxxModelReq !== null && !this.xxxxModelReq.isEmpty();
+    return !isNil(this.xxxxModelReq) && !this.xxxxModelReq.isEmpty();
   }
   //endregion
 
@@ -1211,14 +1269,14 @@ export class TempTemplateTypeMethods {
   protected xxxxModelArray?: MockFhirModel[] | undefined;
 
   /**
-   * @returns the `xxxxModelArray` property value as a Coding array
+   * @returns the `xxxxModelArray` property value as a MockFhirModel array
    */
   public getXxxxModelArray(): MockFhirModel[] {
     return this.xxxxModelArray ?? ([] as MockFhirModel[]);
   }
 
   /**
-   * Assigns the provided Coding array value to the `xxxxModelArray` property.
+   * Assigns the provided MockFhirModel array value to the `xxxxModelArray` property.
    *
    * @param value - the `xxxxModelArray` array value
    * @returns this
@@ -1231,7 +1289,7 @@ export class TempTemplateTypeMethods {
   }
 
   /**
-   * Add the provided Coding value to the `xxxxModelArray` array property.
+   * Add the provided MockFhirModel value to the `xxxxModelArray` array property.
    *
    * @param value - the `xxxxModelArray` value
    * @returns this
@@ -1289,8 +1347,7 @@ export class TempTemplateTypeMethods {
    * @returns this
    */
   public setXxxxModelArrayReq(value: MockFhirModel[]): this {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (value !== null) {
+    if (!isNil(value)) {
       const optErrMsg = `Invalid MockFhirModel.xxxxModelArrayReq; Provided value array has an element that is not an instance of MockFhirModel.`;
       assertFhirTypeList<MockFhirModel>(value, MockFhirModel, optErrMsg);
       this.xxxxModelArrayReq = value;
@@ -1305,8 +1362,7 @@ export class TempTemplateTypeMethods {
    * @returns this
    */
   public addXxxxModelArrayReq(value: MockFhirModel): this {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (value !== null) {
+    if (!isNil(value)) {
       const optErrMsg = `Invalid MockFhirModel.xxxxModelArrayReq; Provided element is not an instance of MockFhirModel.`;
       assertFhirType<MockFhirModel>(value, MockFhirModel, optErrMsg);
       this.initXxxxModelArrayReq();
@@ -1320,7 +1376,7 @@ export class TempTemplateTypeMethods {
    */
   public hasXxxxModelArrayReq(): boolean {
     return (
-      this.xxxxModelArrayReq !== null &&
+      !isNil(this.xxxxModelArrayReq) &&
       this.xxxxModelArrayReq.length > 0 &&
       this.xxxxModelArrayReq.some((item: MockFhirModel) => !item.isEmpty())
     );

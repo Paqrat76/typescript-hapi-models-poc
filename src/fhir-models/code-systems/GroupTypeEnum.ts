@@ -28,13 +28,13 @@ import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
 /**
- * FHIR CodeSystem: GroupTypeEnum
+ * FHIR CodeSystem: GroupType
  *
  * @remarks
  * This class is a "pseudo-enumeration" of code values having FHIR code properties.
  *
  * @category CodeSystems
- * @see [FHIR CodeSystem GroupType](https://hl7.org/fhir/R4/codesystem-group-type.html)
+ * @see [FHIR CodeSystem GroupType](http://hl7.org/fhir/group-type)
  */
 export class GroupTypeEnum implements IFhirCodeEnum {
   public static readonly PERSON = new FhirCodeDefinition(

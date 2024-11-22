@@ -21,7 +21,7 @@
  *
  */
 
-import { NarrativeStatusEnum } from '@src/fhir-core/data-types/complex/code-systems/NarrativeStatusEnum';
+import { NarrativeStatusEnum } from '@src/fhir-core/data-types/code-systems/NarrativeStatusEnum';
 import { FhirCodeDefinition } from '@src/fhir-core/base-models/core-fhir-codes';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 

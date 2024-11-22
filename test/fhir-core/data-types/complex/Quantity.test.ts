@@ -27,7 +27,7 @@ import { DecimalType } from '@src/fhir-core/data-types/primitive/DecimalType';
 import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
-import { QuantityComparatorEnum } from '@src/fhir-core/data-types/complex/code-systems/QuantityComparatorEnum';
+import { QuantityComparatorEnum } from '@src/fhir-core/data-types/code-systems/QuantityComparatorEnum';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
@@ -541,7 +541,7 @@ describe('Quantity', () => {
       expect(t).toThrow(`Invalid Quantity.value; Provided element is not an instance of DecimalType.`);
     });
 
-    it('should throw InvalidTypeError when reset with invalid PrimitiveType Quantity.comparator value', () => {
+    it('should throw InvalidTypeError when reset with invalid EnumCodeType Quantity.comparator value', () => {
       const testQuantity = new Quantity();
       const t = () => {
         // @ts-expect-error: allow invalid type for testing

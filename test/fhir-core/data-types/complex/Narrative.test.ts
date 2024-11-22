@@ -26,7 +26,7 @@ import { DataType, Extension } from '@src/fhir-core/base-models/core-fhir-models
 import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { XhtmlType } from '@src/fhir-core/data-types/primitive/XhtmlType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
-import { NarrativeStatusEnum } from '@src/fhir-core/data-types/complex/code-systems/NarrativeStatusEnum';
+import { NarrativeStatusEnum } from '@src/fhir-core/data-types/code-systems/NarrativeStatusEnum';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';

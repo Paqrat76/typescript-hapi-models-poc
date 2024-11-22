@@ -1060,8 +1060,7 @@ export class Extension extends Element implements IBase {
    * @throws AssertionError for invalid value
    */
   public setUrl(value: fhirUri): this {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (value !== null) {
+    if (!isNil(value)) {
       this.url = parseFhirPrimitiveData(value, fhirUriSchema, `Invalid Extension.url (${value})`);
     }
     return this;

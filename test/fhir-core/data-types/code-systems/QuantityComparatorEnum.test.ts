@@ -21,7 +21,7 @@
  *
  */
 
-import { QuantityComparatorEnum } from '@src/fhir-core/data-types/complex/code-systems/QuantityComparatorEnum';
+import { QuantityComparatorEnum } from '@src/fhir-core/data-types/code-systems/QuantityComparatorEnum';
 import { FhirCodeDefinition } from '@src/fhir-core/base-models/core-fhir-codes';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 

@@ -21,6 +21,7 @@
  *
  */
 
+import { isNil } from 'lodash';
 import { IFhirCodeDefinition, IFhirCodeEnum } from '@src/fhir-core/base-models/core-fhir-codes';
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { fhirCode, fhirCodeSchema, parseFhirPrimitiveData } from './primitive-types';
@@ -195,7 +196,7 @@ export class EnumCodeType extends CodeType {
  *
  * @param type - class instance to evaluate
  * @param enumCodeType - class name for evaluation
- * @param errorMessagePrefix - optional error message prefix for the error mesage
+ * @param errorMessagePrefix - optional error message prefix for the error message
  * @throws InvalidTypeError when EnumCodeType assertion is false
  *
  * @category Type Guards/Assertions
@@ -213,6 +214,44 @@ export function assertEnumCodeType<T>(
     }
   } else {
     const errMsg = `${prefix}Provided type is not an instance of ${enumCodeType.name}.`;
+    throw new InvalidTypeError(errMsg);
+  }
+}
+
+/**
+ * EnumCodeType assertion for a list of any EnumCodeType classes
+ *
+ * @param typeInstance - array of class instances to evaluate
+ * @param enumCodeType - class name for evaluation
+ * @param errorMessagePrefix - optional error message prefix for the error message
+ * @throws InvalidTypeError when FhirTypeGuard assertion is false
+ *
+ * @category Type Guards/Assertions
+ */
+export function assertEnumCodeTypeList<T>(
+  typeInstance: unknown[] | undefined | null,
+  enumCodeType: Class<T>,
+  errorMessagePrefix?: string,
+): asserts typeInstance is [T] {
+  if (typeInstance === undefined || typeInstance === null || typeInstance.length === 0) {
+    return;
+  }
+  const prefix = errorMessagePrefix ? `${errorMessagePrefix}; ` : '';
+  let invalidItemCount = 0;
+  for (const type of typeInstance) {
+    if (type instanceof EnumCodeType) {
+      if (type.enumSource() !== enumCodeType.name) {
+        invalidItemCount++;
+      }
+    } else {
+      invalidItemCount++;
+    }
+  }
+  if (invalidItemCount > 0) {
+    const errMsg: string =
+      invalidItemCount === 1
+        ? `${prefix}Provided instance array has an element that is not an instance of ${enumCodeType.name}.`
+        : `${prefix}Provided instance array has ${String(invalidItemCount)} elements that are not an instance of ${enumCodeType.name}.`;
     throw new InvalidTypeError(errMsg);
   }
 }
@@ -242,7 +281,7 @@ export function constructorCodeValueAsEnumCodeType<T>(
     codeValue = code;
   } else {
     try {
-      if (code !== null) {
+      if (!isNil(code)) {
         codeValue = new EnumCodeType(code, typeEnum);
       }
     } catch (err) {
