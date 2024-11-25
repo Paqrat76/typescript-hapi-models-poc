@@ -86,7 +86,7 @@ export class Meta extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected versionId?: IdType | undefined;
+  private versionId?: IdType | undefined;
 
   /**
    * Meta.lastUpdated Element
@@ -101,7 +101,7 @@ export class Meta extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected lastUpdated?: InstantType | undefined;
+  private lastUpdated?: InstantType | undefined;
 
   /**
    * Meta.source Element
@@ -116,7 +116,7 @@ export class Meta extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected source?: UriType | undefined;
+  private source?: UriType | undefined;
 
   /**
    * Meta.profile Element
@@ -131,7 +131,7 @@ export class Meta extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected profile?: CanonicalType[] | undefined;
+  private profile?: CanonicalType[] | undefined;
 
   /**
    * Meta.security Element
@@ -146,7 +146,7 @@ export class Meta extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected security?: Coding[] | undefined;
+  private security?: Coding[] | undefined;
 
   /**
    * Meta.tag Element
@@ -161,7 +161,7 @@ export class Meta extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected tag?: Coding[] | undefined;
+  private tag?: Coding[] | undefined;
 
   /**
    * @returns the `versionId` property value as a PrimitiveType
@@ -437,8 +437,6 @@ export class Meta extends DataType implements IBase {
 
   /**
    * Initialize the profile property
-   *
-   * @private
    */
   private initProfile(): void {
     if (this.profile === undefined) {
@@ -493,8 +491,6 @@ export class Meta extends DataType implements IBase {
 
   /**
    * Initialize the `security` property
-   *
-   * @private
    */
   private initSecurity(): void {
     if (this.security === undefined) {
@@ -547,8 +543,6 @@ export class Meta extends DataType implements IBase {
 
   /**
    * Initialize the `tag` property
-   *
-   * @private
    */
   private initTag(): void {
     if (this.tag === undefined) {

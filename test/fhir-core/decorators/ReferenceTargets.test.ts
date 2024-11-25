@@ -35,7 +35,9 @@ describe('ReferenceTargets', () => {
       testMockTaskR1.setMyReferenceProperty3(testReference);
     };
     expect(t).toThrow(AssertionError);
-    expect(t).toThrow(`referenceTargets contains duplicate ResourceTypes`);
+    expect(t).toThrow(
+      `ReferenceTargets decorator on setMyReferenceProperty3 (MockTaskR1.myReferenceProperty3) contains duplicate referenceTargets`,
+    );
 
     const testAbsoluteRef = 'https://somedomain.com/path/Organization/1234';
     testReference = new Reference().setReference(testAbsoluteRef);
@@ -43,7 +45,9 @@ describe('ReferenceTargets', () => {
       testMockTaskR1.setMyReferenceProperty3(testReference);
     };
     expect(t).toThrow(AssertionError);
-    expect(t).toThrow(`referenceTargets contains duplicate ResourceTypes`);
+    expect(t).toThrow(
+      `ReferenceTargets decorator on setMyReferenceProperty3 (MockTaskR1.myReferenceProperty3) contains duplicate referenceTargets`,
+    );
   });
 
   it('should throw AssertionError with invalid resource in ReferenceTargets', () => {
@@ -54,7 +58,9 @@ describe('ReferenceTargets', () => {
       testMockTaskR1.setMyReferenceProperty4(testReference);
     };
     expect(t).toThrow(AssertionError);
-    expect(t).toThrow(`referenceTargets contains invalid FhirResourceType(s)`);
+    expect(t).toThrow(
+      `ReferenceTargets decorator on setMyReferenceProperty4 (MockTaskR1.myReferenceProperty4) contains invalid referenceTargets`,
+    );
   });
 
   it('should throw AssertionError with invalid method argument type', () => {
@@ -66,7 +72,7 @@ describe('ReferenceTargets', () => {
     };
     expect(t).toThrow(AssertionError);
     expect(t).toThrow(
-      `Decorator expects setMyReferenceProperty5's argument to be type of 'Reference | undefined | null'`,
+      `ReferenceTargets decorator on setMyReferenceProperty5 (MockTaskR1.myReferenceProperty5) expects a single argument to be type of 'Reference | undefined | null'`,
     );
   });
 
@@ -141,7 +147,7 @@ describe('ReferenceTargets', () => {
     };
     expect(t).toThrow(InvalidTypeError);
     expect(t).toThrow(
-      `setMyReferenceProperty1: 'value' argument (${testRelativeRef}) is not for a valid Reference type`,
+      `ReferenceTargets decorator on setMyReferenceProperty1 (MockTaskR1.myReferenceProperty1) expects argument (Location/1234) to be a valid 'Reference' type`,
     );
 
     const testAbsoluteRef = 'https://somedomain.com/path/Location/1234';
@@ -151,7 +157,7 @@ describe('ReferenceTargets', () => {
     };
     expect(t).toThrow(InvalidTypeError);
     expect(t).toThrow(
-      `setMyReferenceProperty1: 'value' argument (${testAbsoluteRef}) is not for a valid Reference type`,
+      `ReferenceTargets decorator on setMyReferenceProperty1 (MockTaskR1.myReferenceProperty1) expects argument (${testAbsoluteRef}) to be a valid 'Reference' type`,
     );
   });
 
@@ -216,7 +222,7 @@ describe('ReferenceTargets', () => {
     };
     expect(t).toThrow(InvalidTypeError);
     expect(t).toThrow(
-      `setMyReferenceProperty8: 'value' argument[1] (https://somedomain.com/path/Location/5678) is not for a valid Reference type`,
+      `ReferenceTargets decorator on setMyReferenceProperty8 (MockTaskR1.myReferenceProperty8) expects argument[1] (https://somedomain.com/path/Location/5678) to be a valid 'Reference' type`,
     );
   });
 });
@@ -233,7 +239,7 @@ export class MockTaskR1 extends MockTask {
     return this.myReferenceProperty1 ?? new Reference();
   }
 
-  @ReferenceTargets(['Organization'])
+  @ReferenceTargets('MockTaskR1.myReferenceProperty1', ['Organization'])
   public setMyReferenceProperty1(value: Reference | undefined): this {
     this.myReferenceProperty1 = value;
     return this;
@@ -245,7 +251,7 @@ export class MockTaskR1 extends MockTask {
     return this.myReferenceProperty2 ?? new Reference();
   }
 
-  @ReferenceTargets([])
+  @ReferenceTargets('MockTaskR1.myReferenceProperty2', [])
   public setMyReferenceProperty2(value: Reference | undefined): this {
     this.myReferenceProperty2 = value;
     return this;
@@ -253,7 +259,7 @@ export class MockTaskR1 extends MockTask {
 
   protected myReferenceProperty3?: Reference | undefined;
 
-  @ReferenceTargets(['Organization', 'Organization', 'Location'])
+  @ReferenceTargets('MockTaskR1.myReferenceProperty3', ['Organization', 'Organization', 'Location'])
   public setMyReferenceProperty3(value: Reference | undefined): this {
     this.myReferenceProperty3 = value;
     return this;
@@ -262,7 +268,7 @@ export class MockTaskR1 extends MockTask {
   protected myReferenceProperty4?: Reference | undefined;
 
   // @ts-expect-error: allow for testing
-  @ReferenceTargets(['InvalidResource'])
+  @ReferenceTargets('MockTaskR1.myReferenceProperty4', ['InvalidResource'])
   public setMyReferenceProperty4(value: Reference | undefined): this {
     this.myReferenceProperty4 = value;
     return this;
@@ -270,7 +276,7 @@ export class MockTaskR1 extends MockTask {
 
   protected myReferenceProperty5?: Identifier | undefined;
 
-  @ReferenceTargets(['Organization'])
+  @ReferenceTargets('MockTaskR1.myReferenceProperty5', ['Organization'])
   public setMyReferenceProperty5(value: Identifier | undefined): this {
     this.myReferenceProperty5 = value;
     return this;
@@ -282,7 +288,7 @@ export class MockTaskR1 extends MockTask {
     return this.myReferenceProperty6 ?? new Reference();
   }
 
-  @ReferenceTargets(['Organization'])
+  @ReferenceTargets('MockTaskR1.myReferenceProperty6', ['Organization'])
   public xxxMyReferenceProperty6(value: Reference | undefined): this {
     this.myReferenceProperty6 = value;
     return this;
@@ -295,7 +301,7 @@ export class MockTaskR1 extends MockTask {
     return this.myReferenceProperty7;
   }
 
-  @ReferenceTargets(['Organization'])
+  @ReferenceTargets('MockTaskR1.myReferenceProperty7', ['Organization'])
   public setMyReferenceProperty7(value: Reference): this {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (value !== null) {
@@ -310,13 +316,13 @@ export class MockTaskR1 extends MockTask {
     return this.myReferenceProperty8 ?? ([] as Reference[]);
   }
 
-  @ReferenceTargets(['Organization'])
+  @ReferenceTargets('MockTaskR1.myReferenceProperty8', ['Organization'])
   public setMyReferenceProperty8(value: Reference[] | undefined): this {
     this.myReferenceProperty8 = value;
     return this;
   }
 
-  @ReferenceTargets(['Organization'])
+  @ReferenceTargets('MockTaskR1.myReferenceProperty8', ['Organization'])
   public addMyReferenceProperty8(value: Reference | undefined): this {
     if (value !== undefined) {
       if (this.myReferenceProperty8 === undefined) {

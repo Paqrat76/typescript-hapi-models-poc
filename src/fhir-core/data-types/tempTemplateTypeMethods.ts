@@ -1317,8 +1317,6 @@ export class TempTemplateTypeMethods {
 
   /**
    * Initialize the `xxxxModelArray` property
-   *
-   * @private
    */
   private initXxxxModelArray(): void {
     if (this.xxxxModelArray === undefined) {
@@ -1384,8 +1382,6 @@ export class TempTemplateTypeMethods {
 
   /**
    * Initialize the `xxxxModelArrayReq` property
-   *
-   * @private
    */
   private initXxxxModelArrayReq(): void {
     if (this.xxxxModelArrayReq === null) {

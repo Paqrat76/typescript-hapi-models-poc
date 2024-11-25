@@ -162,10 +162,10 @@ export class MockElement extends Element {
   constructor(id?: fhirString, extension?: Extension[]) {
     super();
     if (id !== undefined) {
-      this.id = id;
+      super.setId(id);
     }
     if (extension !== undefined) {
-      this.extension = extension;
+      super.setExtension(extension);
     }
   }
 
@@ -184,12 +184,12 @@ export class MockBackboneElement extends BackboneElement {
   constructor(modifierExtension?: Extension[]) {
     super();
     if (modifierExtension !== undefined) {
-      this.modifierExtension = modifierExtension;
+      super.setModifierExtension(modifierExtension);
     }
   }
 
   public override isEmpty(): boolean {
-    return super.isEmpty() && _isEmpty(this.modifierExtension);
+    return super.isEmpty();
   }
 
   public copy(): MockBackboneElement {
@@ -203,12 +203,12 @@ export class MockBackboneType extends BackboneType {
   constructor(modifierExtension?: Extension[]) {
     super();
     if (modifierExtension !== undefined) {
-      this.modifierExtension = modifierExtension;
+      super.setModifierExtension(modifierExtension);
     }
   }
 
   public override isEmpty(): boolean {
-    return super.isEmpty() && _isEmpty(this.modifierExtension);
+    return super.isEmpty();
   }
 
   public copy(): MockBackboneType {

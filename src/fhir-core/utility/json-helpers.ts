@@ -283,8 +283,6 @@ export function safeStringify(value: Value): string {
  * @param prefix - optional error message prefix
  * @param expected - string describing the expected JSON type
  * @returns error message
- *
- * @private
  */
 function msg(prefix: string | undefined, expected: string): string {
   return `${prefix ? prefix + ' is' : 'Is'} not ${expected}.`;

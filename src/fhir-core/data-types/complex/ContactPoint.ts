@@ -82,7 +82,7 @@ export class ContactPoint extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected system?: EnumCodeType | undefined;
+  private system?: EnumCodeType | undefined;
 
   /**
    * ContactPoint.value Element
@@ -98,7 +98,7 @@ export class ContactPoint extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected value?: StringType | undefined;
+  private value?: StringType | undefined;
 
   /**
    * ContactPoint.use Element
@@ -114,7 +114,7 @@ export class ContactPoint extends DataType implements IBase {
    * - **isModifier:** true
    * - **isSummary:** true
    */
-  protected use?: EnumCodeType | undefined;
+  private use?: EnumCodeType | undefined;
 
   /**
    * ContactPoint.rank Element
@@ -129,7 +129,7 @@ export class ContactPoint extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected rank?: PositiveIntType | undefined;
+  private rank?: PositiveIntType | undefined;
 
   /**
    * ContactPoint.period Element
@@ -143,7 +143,7 @@ export class ContactPoint extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected period?: Period | undefined;
+  private period?: Period | undefined;
 
   /**
    * @returns the `system` property value as a EnumCodeType

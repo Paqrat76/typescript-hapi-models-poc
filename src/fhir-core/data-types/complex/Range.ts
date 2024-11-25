@@ -67,7 +67,7 @@ export class Range extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected low?: SimpleQuantity | undefined;
+  private low?: SimpleQuantity | undefined;
 
   /**
    * Range.high Element
@@ -82,7 +82,7 @@ export class Range extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected high?: SimpleQuantity | undefined;
+  private high?: SimpleQuantity | undefined;
 
   /**
    * @returns the `low` property value as a SimpleQuantity object

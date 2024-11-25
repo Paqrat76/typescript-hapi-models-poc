@@ -110,7 +110,7 @@ export abstract class Resource extends Base implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected id?: IdType | undefined;
+  private id?: IdType | undefined;
 
   /**
    * Resource.meta Element
@@ -124,7 +124,7 @@ export abstract class Resource extends Base implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected meta?: Meta | undefined;
+  private meta?: Meta | undefined;
 
   /**
    * Resource.implicitRules Element
@@ -140,7 +140,7 @@ export abstract class Resource extends Base implements IBase {
    * - **isModifierReason:** This element is labeled as a modifier because the implicit rules may provide additional knowledge about the resource that modifies it's meaning or interpretation
    * - **isSummary:** true
    */
-  protected implicitRules?: UriType | undefined;
+  private implicitRules?: UriType | undefined;
 
   /**
    * Resource.language Element
@@ -155,7 +155,7 @@ export abstract class Resource extends Base implements IBase {
    * - **isModifier:** false
    * - **isSummary:** false
    */
-  protected language?: CodeType | undefined;
+  private language?: CodeType | undefined;
 
   /**
    * @returns the `id` property value as a PrimitiveType

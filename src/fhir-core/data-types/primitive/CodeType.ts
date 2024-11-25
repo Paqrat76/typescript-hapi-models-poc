@@ -147,10 +147,10 @@ export class EnumCodeType extends CodeType {
 
   private initElementProps(codeType: CodeType) {
     if (codeType.hasId()) {
-      this.id = codeType.getId();
+      super.setId(codeType.getId());
     }
     if (codeType.hasExtension()) {
-      this.extension = codeType.getExtension();
+      super.setExtension(codeType.getExtension());
     }
   }
 

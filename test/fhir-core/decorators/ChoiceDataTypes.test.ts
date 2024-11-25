@@ -40,31 +40,31 @@ describe('decorators', () => {
     it('should throw AssertionError for multiple Datatypes in @ChoiceDataTypesMeta', () => {
       const t = () => {
         const TestClass = class {
-          @ChoiceDataTypesMeta(['id', 'string', 'id'])
+          @ChoiceDataTypesMeta('TestClass.value', ['id', 'string', 'id'])
           protected value?: DataType | undefined;
         };
         new TestClass();
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`choiceDataTypes contains duplicate FhirDataType(s)`);
+      expect(t).toThrow(`ChoiceDataTypesMeta decorator on value (TestClass.value) contains duplicate choiceDataTypes`);
     });
 
     it('should throw AssertionError for invalid Datatypes in @ChoiceDataTypesMeta', () => {
       const t = () => {
         const TestClass = class {
           // @ts-expect-error: allow 'invalid' for testing
-          @ChoiceDataTypesMeta(['id', 'string', 'invalid'])
+          @ChoiceDataTypesMeta('TestClass.value', ['id', 'string', 'invalid'])
           protected value?: DataType | undefined;
         };
         new TestClass();
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`choiceDataTypes contains invalid FhirDataType(s)`);
+      expect(t).toThrow(`ChoiceDataTypesMeta decorator on value (TestClass.value) contains invalid choiceDataTypes`);
     });
 
     it('should empty decorator metadata for empty array in @ChoiceDataTypesMeta', () => {
       const TestClass = class {
-        @ChoiceDataTypesMeta([])
+        @ChoiceDataTypesMeta('TestClass.value', [])
         protected value?: DataType | undefined;
       };
       const choiceDatatypeDefs: ChoiceDatatypeDef[] = getChoiceDatatypeDefs(TestClass[Symbol.metadata]);
@@ -121,7 +121,9 @@ describe('decorators', () => {
         testMockTaskR1.setValue1(testValue);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Decorator expects setValue1 to have one argument with type of 'DataType | undefined | null'`);
+      expect(t).toThrow(
+        `ChoiceDataTypes decorator on setValue1 (MockTaskR1.value1) expects a single argument to be type of 'DataType | undefined | null'`,
+      );
     });
 
     it('should throw AssertionError with invalid value DataType', () => {
@@ -132,14 +134,16 @@ describe('decorators', () => {
         testMockTaskR1.setValue1(testValue);
       };
       expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`setValue1: 'value' argument type (markdown) is not for a supported DataType`);
+      expect(t).toThrow(
+        `ChoiceDataTypes decorator on setValue1 (MockTaskR1.value1) expects the 'value' argument type (markdown) to be a supported DataType`,
+      );
     });
 
     it('should return with provided value DataType for empty array in @ChoiceDataTypesMeta', () => {
       const TestClass = class {
-        @ChoiceDataTypesMeta([])
+        @ChoiceDataTypesMeta('TestClass.value', [])
         protected value?: DataType | undefined;
-        @ChoiceDataTypes()
+        @ChoiceDataTypes('TestClass.value')
         public setValue(value?: DataType): this {
           this.value = value;
           return this;
@@ -176,9 +180,9 @@ describe('decorators', () => {
 
     it('should return with invalid method name', () => {
       const TestClass = class {
-        @ChoiceDataTypesMeta(['string'])
+        @ChoiceDataTypesMeta('TestClass.value', ['string'])
         protected value?: DataType | undefined;
-        @ChoiceDataTypes()
+        @ChoiceDataTypes('TestClass.value')
         public xxxValue(value?: DataType): this {
           this.value = value;
           return this;
@@ -202,10 +206,10 @@ export class MockTaskR1 extends MockTask {
     super();
   }
 
-  @ChoiceDataTypesMeta(['id', 'string'])
+  @ChoiceDataTypesMeta('MockTaskR1.value1', ['id', 'string'])
   protected value1?: DataType | undefined;
 
-  @ChoiceDataTypes()
+  @ChoiceDataTypes('MockTaskR1.value1')
   public setValue1(value?: DataType): this {
     this.value1 = value;
     return this;
@@ -214,10 +218,10 @@ export class MockTaskR1 extends MockTask {
     return this.value1;
   }
 
-  @ChoiceDataTypesMeta(['uri', 'uuid'])
+  @ChoiceDataTypesMeta('MockTaskR1.value2', ['uri', 'uuid'])
   protected value2?: DataType | undefined;
 
-  @ChoiceDataTypes()
+  @ChoiceDataTypes('MockTaskR1.value2')
   public setValue2(value?: DataType): this {
     this.value2 = value;
     return this;

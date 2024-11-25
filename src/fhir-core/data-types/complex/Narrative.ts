@@ -109,7 +109,7 @@ export class Narrative extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** false
    */
-  protected status: EnumCodeType | null;
+  private status: EnumCodeType | null;
 
   /**
    * Narrative.div Element
@@ -124,7 +124,7 @@ export class Narrative extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** false
    */
-  protected div: XhtmlType | null;
+  private div: XhtmlType | null;
 
   /**
    * @returns the `status` property value as a EnumCodeType

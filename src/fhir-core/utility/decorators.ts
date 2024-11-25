@@ -45,6 +45,7 @@ import { DATA_TYPES, FhirDataType } from '@src/fhir-core/data-types/FhirDataType
 
 /**
  * @category Utilities: Decorators
+ * @hidden
  */
 export const CHOICE_DATA_TYPES = 'ChoiceDatatypes';
 
@@ -115,6 +116,7 @@ export function getChoiceDatatypeDefsForField(
  *
  * NOTE: The @ChoiceDataTypes() decorator depends on this metadata!
  *
+ * @param sourceField - source field name
  * @param choiceDataTypes - array of FhirDataType values for supported polymorphic data types
  * @returns ChoiceDataTypesMeta decorator
  * @throws AssertionError for invalid uses (Decorator)
@@ -123,15 +125,19 @@ export function getChoiceDatatypeDefsForField(
  * @see {@link ChoiceDatatypeDef}
  * @category Decorators
  */
-export function ChoiceDataTypesMeta(choiceDataTypes: FhirDataType[]) {
+export function ChoiceDataTypesMeta(sourceField: string, choiceDataTypes: FhirDataType[]) {
   return function (_target: unknown, context: ClassFieldDecoratorContext) {
+    const methodName = String(context.name);
     if (choiceDataTypes.length > 0) {
       // Verify choiceDataTypes contain valid, non-duplicate values
       const choiceDataTypeSet = new Set(choiceDataTypes);
-      assert(choiceDataTypes.length === choiceDataTypeSet.size, 'choiceDataTypes contains duplicate FhirDataType(s)');
+      assert(
+        choiceDataTypes.length === choiceDataTypeSet.size,
+        `ChoiceDataTypesMeta decorator on ${methodName} (${sourceField}) contains duplicate choiceDataTypes`,
+      );
       assert(
         choiceDataTypes.every((choiceDt) => DATA_TYPES.includes(choiceDt)),
-        'choiceDataTypes contains invalid FhirDataType(s)',
+        `ChoiceDataTypesMeta decorator on ${methodName} (${sourceField}) contains invalid choiceDataTypes`,
       );
     }
 
@@ -156,6 +162,7 @@ export function ChoiceDataTypesMeta(choiceDataTypes: FhirDataType[]) {
  *
  * NOTE: This decorator depends on the ChoiceDataTypesMeta decorator(...) decorator!
  *
+ * @param sourceField - source field name
  * @returns ChoiceDataTypes decorator
  * @throws AssertionError for invalid uses (Decorator)
  * @throws InvalidTypeError for actual choice data type does not agree with the specified choiceDataTypes (Decorator)
@@ -163,7 +170,7 @@ export function ChoiceDataTypesMeta(choiceDataTypes: FhirDataType[]) {
  * @see {@link ChoiceDataTypesMeta}
  * @category Decorators
  */
-export function ChoiceDataTypes() {
+export function ChoiceDataTypes(sourceField: string) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return function <This, Args extends any[], Return>(
     originalMethod: (this: This, ...args: Args) => Return,
@@ -174,7 +181,7 @@ export function ChoiceDataTypes() {
 
       assert(
         args.length === 1 && (args[0] === undefined || args[0] === null || args[0] instanceof DataType),
-        `Decorator expects ${methodName} to have one argument with type of 'DataType | undefined | null'`,
+        `ChoiceDataTypes decorator on ${methodName} (${sourceField}) expects a single argument to be type of 'DataType | undefined | null'`,
       );
       // undefined supports optional argument while null supports required argument
       const value = args[0] as DataType | undefined | null;
@@ -190,7 +197,7 @@ export function ChoiceDataTypes() {
 
       assert(
         context.metadata[CHOICE_DATA_TYPES],
-        `context.metadata[CHOICE_DATA_TYPES] must already exist from decorator 'ChoiceDataTypesMeta decorator' on the method's corresponding field`,
+        `ChoiceDataTypes decorator on ${methodName} (${sourceField}) expects 'context.metadata[CHOICE_DATA_TYPES]' to be defined`,
       );
       const fieldName = lowerFirst(methodName.substring(3));
       const choiceDataTypes: FhirDataType[] = getChoiceDatatypeDefsForField(context.metadata, fieldName);
@@ -204,7 +211,7 @@ export function ChoiceDataTypes() {
       const isValidChoiceDataType = choiceDataTypes.some((choiceDt) => value.fhirType() === choiceDt);
       if (!isValidChoiceDataType) {
         throw new InvalidTypeError(
-          `${methodName}: 'value' argument type (${value.fhirType()}) is not for a supported DataType`,
+          `ChoiceDataTypes decorator on ${methodName} (${sourceField}) expects the 'value' argument type (${value.fhirType()}) to be a supported DataType`,
         );
       }
 

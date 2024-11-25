@@ -95,7 +95,7 @@ export class Reference extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected reference?: StringType | undefined;
+  private reference?: StringType | undefined;
 
   /**
    * Reference.type Element
@@ -110,7 +110,7 @@ export class Reference extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected type?: UriType | undefined;
+  private type?: UriType | undefined;
 
   /**
    * Reference.identifier Element
@@ -125,7 +125,7 @@ export class Reference extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected identifier?: Identifier | undefined;
+  private identifier?: Identifier | undefined;
 
   /**
    * Reference.display Element
@@ -140,7 +140,7 @@ export class Reference extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected display?: StringType | undefined;
+  private display?: StringType | undefined;
 
   /**
    * @returns the `reference` property value as a PrimitiveType
@@ -445,7 +445,7 @@ export class Identifier extends DataType implements IBase {
    * - **isModifierReason:** This is labeled as "Is Modifier" because applications should not mistake a temporary id for a permanent one.
    * - **isSummary:** true
    */
-  protected use?: CodeType | undefined;
+  private use?: CodeType | undefined;
 
   /**
    * Identifier.type Element
@@ -461,7 +461,7 @@ export class Identifier extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected type?: CodeableConcept | undefined;
+  private type?: CodeableConcept | undefined;
 
   /**
    * Identifier.system Element
@@ -477,7 +477,7 @@ export class Identifier extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected system?: UriType | undefined;
+  private system?: UriType | undefined;
 
   /**
    * Identifier.value Element
@@ -492,7 +492,7 @@ export class Identifier extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected value?: StringType | undefined;
+  private value?: StringType | undefined;
 
   /**
    * Identifier.period Element
@@ -506,7 +506,7 @@ export class Identifier extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected period?: Period | undefined;
+  private period?: Period | undefined;
 
   /**
    * Identifier.assigner Element
@@ -522,7 +522,7 @@ export class Identifier extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected assigner?: Reference | undefined;
+  private assigner?: Reference | undefined;
 
   /**
    * @returns the `use` property value as a PrimitiveType
@@ -757,7 +757,7 @@ export class Identifier extends DataType implements IBase {
    * @param value - the `assigner` object value
    * @returns this
    */
-  @ReferenceTargets(['Organization'])
+  @ReferenceTargets('Identifier.assigner', ['Organization'])
   public setAssigner(value: Reference | undefined): this {
     // assertFhirType<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
     this.assigner = value;
@@ -864,6 +864,7 @@ export class Identifier extends DataType implements IBase {
  * This decorator validates the provided Reference.reference value for relative or absolute
  * references are only for the defined ElementDefinition's 'targetProfile' value(s).
  *
+ * @param sourceField - source field name
  * @param referenceTargets - FhirResourceType array of target references.
  *                           An empty array is allowed and represents "Any" resource.
  * @returns ReferenceTargets decorator
@@ -872,7 +873,7 @@ export class Identifier extends DataType implements IBase {
  *
  * @category Decorators
  */
-export function ReferenceTargets(referenceTargets: FhirResourceType[]) {
+export function ReferenceTargets(sourceField: string, referenceTargets: FhirResourceType[]) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return function <This, Args extends any[], Return>(
     originalMethod: (this: This, ...args: Args) => Return,
@@ -880,7 +881,7 @@ export function ReferenceTargets(referenceTargets: FhirResourceType[]) {
   ) {
     return function (this: This, ...args: Args): Return {
       const methodName = String(context.name);
-      assert(args.length === 1, `Decorator expects ${methodName} to have one argument`);
+      assert(args.length === 1, `ReferenceTargets decorator on ${methodName} (${sourceField}) expects one argument`);
 
       // If nothing is provided to the originalMethod, there is nothing to check
       if (args[0] === undefined || args[0] === null) {
@@ -893,11 +894,11 @@ export function ReferenceTargets(referenceTargets: FhirResourceType[]) {
         const referenceTargetSet = new Set(referenceTargets);
         assert(
           referenceTargets.length === referenceTargetSet.size,
-          'referenceTargets contains duplicate ResourceTypes',
+          `ReferenceTargets decorator on ${methodName} (${sourceField}) contains duplicate referenceTargets`,
         );
         assert(
           referenceTargets.every((refTarget) => RESOURCE_TYPES.includes(refTarget)),
-          'referenceTargets contains invalid FhirResourceType(s)',
+          `ReferenceTargets decorator on ${methodName} (${sourceField}) contains invalid referenceTargets`,
         );
       }
 
@@ -905,16 +906,16 @@ export function ReferenceTargets(referenceTargets: FhirResourceType[]) {
         args[0].forEach((argItem, idx) => {
           assert(
             FhirTypeGuard(argItem, Reference),
-            `Decorator expects ${methodName}'s argument[${String(idx)}] to be type of 'Reference'`,
+            `ReferenceTargets decorator on ${methodName} (${sourceField}) expects argument[${String(idx)}] to be type of 'Reference'`,
           );
-          validateReferenceArg(referenceTargets, argItem, isAnyResource, methodName, idx);
+          validateReferenceArg(referenceTargets, argItem, isAnyResource, sourceField, methodName, idx);
         });
       } else {
         assert(
           FhirTypeGuard(args[0], Reference),
-          `Decorator expects ${methodName}'s argument to be type of 'Reference | undefined | null'`,
+          `ReferenceTargets decorator on ${methodName} (${sourceField}) expects a single argument to be type of 'Reference | undefined | null'`,
         );
-        validateReferenceArg(referenceTargets, args[0], isAnyResource, methodName);
+        validateReferenceArg(referenceTargets, args[0], isAnyResource, sourceField, methodName);
       }
 
       // Since the calls to validateArg(...) above did not throw an error, allow the originalMethod to be executed.
@@ -929,6 +930,7 @@ export function ReferenceTargets(referenceTargets: FhirResourceType[]) {
  * @param referenceTargets - FhirResourceType array of target references.
  * @param argValue - Argument value from original decorated function
  * @param isAnyResource - true if referenceTargets array is empty
+ * @param sourceField - source field name
  * @param methodName - Decorated method's name
  * @param arrayIndex - Argument for Reference[] index value; undefined for non-array
  * @throws InvalidTypeError if Reference.reference exists with an invalid value
@@ -937,6 +939,7 @@ function validateReferenceArg(
   referenceTargets: FhirResourceType[],
   argValue: Reference,
   isAnyResource: boolean,
+  sourceField: string,
   methodName: string,
   arrayIndex?: number,
 ) {
@@ -969,7 +972,7 @@ function validateReferenceArg(
   if (!isValidReference) {
     const arrayIndexStr = arrayIndex === undefined ? '' : `[${String(arrayIndex)}]`;
     throw new InvalidTypeError(
-      `${methodName}: 'value' argument${arrayIndexStr} (${referenceValue}) is not for a valid Reference type`,
+      `ReferenceTargets decorator on ${methodName} (${sourceField}) expects argument${arrayIndexStr} (${referenceValue}) to be a valid 'Reference' type`,
     );
   }
 }

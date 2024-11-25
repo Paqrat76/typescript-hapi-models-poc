@@ -1255,7 +1255,9 @@ describe('Group', () => {
         testGroup.setManagingEntity(INVALID_REFERENCE_VALUE);
       };
       expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`setManagingEntity: 'value' argument (${INVALID_REFERENCE}) is not for a valid Reference type`);
+      expect(t).toThrow(
+        `ReferenceTargets decorator on setManagingEntity (Group.managingEntity) expects argument (${INVALID_REFERENCE}) to be a valid 'Reference' type`,
+      );
     });
 
     it('should throw InvalidTypeError for setCharacteristic()', () => {

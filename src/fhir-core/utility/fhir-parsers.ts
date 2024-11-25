@@ -356,7 +356,8 @@ export function processDomainResourceJson(instance: DomainResource, dataJson: JS
  *
  * @param jsonObj - source JSON object
  * @returns the appropriate DataType instance or undefined
- * @private
+ *
+ * @hidden
  */
 export function getValueXData(jsonObj: JSON.Object): DataType | undefined {
   assert(jsonObj, 'The jsonObj argument is required.');

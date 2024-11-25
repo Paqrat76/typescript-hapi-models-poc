@@ -76,7 +76,6 @@ export class FhirCodeDefinition implements IFhirCodeDefinition {
    * @param display - A description of the concept as defined by the code system
    * @param definition - Additional descriptive information about the code
    * @throws PrimitiveTypeError when provided code is not valid
-   * @private
    */
   constructor(name: string, code: fhirCode, system?: string, display?: string, definition?: string) {
     // Ensure the code value is a valid fhirCode

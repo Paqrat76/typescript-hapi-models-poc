@@ -85,7 +85,7 @@ export class Quantity extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected value?: DecimalType | undefined;
+  private value?: DecimalType | undefined;
 
   /**
    * Quantity.comparator Element
@@ -101,7 +101,7 @@ export class Quantity extends DataType implements IBase {
    * - **isModifierReason:** This is labeled as "Is Modifier" because the comparator modifies the interpretation of the value significantly. If there is no comparator, then there is no modification of the value
    * - **isSummary:** true
    */
-  protected comparator?: EnumCodeType | undefined;
+  private comparator?: EnumCodeType | undefined;
 
   /**
    * Quantity.unit Element
@@ -116,7 +116,7 @@ export class Quantity extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected unit?: StringType | undefined;
+  private unit?: StringType | undefined;
 
   /**
    * Quantity.system Element
@@ -131,7 +131,7 @@ export class Quantity extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected system?: UriType | undefined;
+  private system?: UriType | undefined;
 
   /**
    * Quantity.code Element
@@ -147,7 +147,7 @@ export class Quantity extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected code?: CodeType | undefined;
+  private code?: CodeType | undefined;
 
   /**
    * @returns the `value` property value as a PrimitiveType

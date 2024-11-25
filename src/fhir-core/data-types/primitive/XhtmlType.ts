@@ -65,7 +65,7 @@ export class XhtmlType extends PrimitiveType<fhirXhtml> {
     if (extension !== undefined) {
       throw new FhirError(this.EXTENSION_ERROR);
     }
-    this.extension = undefined;
+    super.setExtension(undefined);
     return this;
   }
 
@@ -114,7 +114,7 @@ export class XhtmlType extends PrimitiveType<fhirXhtml> {
     if (extension !== undefined) {
       throw new FhirError(this.EXTENSION_ERROR);
     }
-    this.extension = undefined;
+    super.setExtension(undefined);
   }
 
   private typeErrorMessage(): string {

@@ -244,7 +244,9 @@ describe('Extension', () => {
       testExtension.setValue(invalidValue);
     };
     expect(t).toThrow(InvalidTypeError);
-    expect(t).toThrow(`setValue: 'value' argument type (xhtml) is not for a supported open DataType`);
+    expect(t).toThrow(
+      `OpenDataTypes decorator on setValue (Extension.value[x]) expects the 'value' argument type (xhtml) to be a supported DataType`,
+    );
   });
 
   it('should be properly copied when instantiated without a value', () => {

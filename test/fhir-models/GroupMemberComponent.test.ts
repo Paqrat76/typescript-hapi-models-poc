@@ -454,7 +454,9 @@ describe('GroupMemberComponent', () => {
         testGroupMemberComponent.setEntity(INVALID_REFERENCE_VALUE);
       };
       expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`setEntity: 'value' argument (${INVALID_REFERENCE}) is not for a valid Reference type`);
+      expect(t).toThrow(
+        `ReferenceTargets decorator on setEntity (Group.member.entity) expects argument (${INVALID_REFERENCE}) to be a valid 'Reference' type`,
+      );
     });
 
     it('should throw InvalidTypeError for setPeriod()', () => {

@@ -212,7 +212,7 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
    *  - **isModifier:** false
    *  - **isSummary:** false
    */
-  protected id?: fhirString | undefined;
+  private id?: fhirString | undefined;
 
   /**
    * Element.extension Element
@@ -227,7 +227,7 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
    *  - **isModifier:** false
    *  - **isSummary:** false
    */
-  protected extension?: Extension[] | undefined;
+  private extension?: Extension[] | undefined;
 
   /**
    * @returns the `id` property value
@@ -329,8 +329,6 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
 
   /**
    * Ensures the `extension` property exists and if not initializes it to an empty array.
-   *
-   * @private
    */
   private initExtension(): void {
     if (!this.hasExtension()) {
@@ -342,7 +340,6 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
    * Determines if `extension` property exists, and if so, determines if the `extension` array is empty.
    *
    * @returns `true` if the `extension` property array exists and has at least one element; false otherwise
-   * @private
    */
   private existsExtension(): boolean {
     return (
@@ -446,7 +443,7 @@ export abstract class BackboneElement extends Element implements IBase, IBaseMod
    *  - **isModifierReason:** Modifier extensions are expected to modify the meaning or interpretation of the element that contains them
    *  - **isSummary:** true
    */
-  protected modifierExtension?: Extension[] | undefined;
+  private modifierExtension?: Extension[] | undefined;
 
   /**
    * {@inheritDoc IBaseModifierExtension.getModifierExtension}
@@ -519,8 +516,6 @@ export abstract class BackboneElement extends Element implements IBase, IBaseMod
 
   /**
    * Ensures the `modifierExtension` property exists and if not initializes it to an empty array.
-   *
-   * @private
    */
   private initModifierExtension(): void {
     if (!this.hasModifierExtension()) {
@@ -533,7 +528,6 @@ export abstract class BackboneElement extends Element implements IBase, IBaseMod
    * array is empty.
    *
    * @returns `true` if the `modifierExtension` exists and has at least one element; false otherwise
-   * @private
    */
   private existsModifierExtension(): boolean {
     return (
@@ -661,7 +655,7 @@ export abstract class BackboneType extends DataType implements IBase, IBaseModif
    * - **isModifierReason:** Modifier extensions are expected to modify the meaning or interpretation of the element that contains them
    * - **isSummary:** true
    */
-  protected modifierExtension?: Extension[] | undefined;
+  private modifierExtension?: Extension[] | undefined;
 
   /**
    * {@inheritDoc IBaseModifierExtension.getModifierExtension}
@@ -734,8 +728,6 @@ export abstract class BackboneType extends DataType implements IBase, IBaseModif
 
   /**
    * Ensures the `modifierExtension` exists and if not initializes it to an empty array.
-   *
-   * @private
    */
   private initModifierExtension(): void {
     if (!this.hasModifierExtension()) {
@@ -748,7 +740,6 @@ export abstract class BackboneType extends DataType implements IBase, IBaseModif
    * array is empty.
    *
    * @returns `true` if the `modifierExtension` property exists and has at least one element; false otherwise
-   * @private
    */
   private existsModifierExtension(): boolean {
     return (
@@ -838,15 +829,11 @@ export abstract class PrimitiveType<T> extends DataType implements IBase {
 
   /**
    * T - primitive type defined in primitive-types.ts
-   *
-   * @private
    */
   private coercedValue: T | undefined;
 
   /**
    * `string` representation of T
-   *
-   * @private
    */
   private stringValue: string | undefined;
 
@@ -902,7 +889,6 @@ export abstract class PrimitiveType<T> extends DataType implements IBase {
   /**
    * Updates this.stringValue based on the current this.coercedValue.
    *
-   * @private
    * @throws PrimitiveTypeError for invalid value
    */
   private updateStringValue(): void {
@@ -1028,7 +1014,7 @@ export class Extension extends Element implements IBase {
    * - **isModifier:** false
    * - **isSummary:** false
    */
-  protected url: fhirUri | null;
+  private url: fhirUri | null;
 
   /**
    * Extension.value[x] Element
@@ -1043,7 +1029,7 @@ export class Extension extends Element implements IBase {
    * - **isModifier:** false
    * - **isSummary:** false
    */
-  protected value?: DataType | undefined;
+  private value?: DataType | undefined;
 
   /**
    * @returns the `url` property value
@@ -1088,7 +1074,7 @@ export class Extension extends Element implements IBase {
    * @param value - the `value` value
    * @returns this
    */
-  @OpenDataTypes()
+  @OpenDataTypes('Extension.value[x]')
   public setValue(value: DataType | undefined): this {
     this.value = value;
     return this;
@@ -1530,13 +1516,14 @@ export function setFhirBackboneTypeListJson(bTypes: BackboneType[], propName: st
  * FhirOpenDataTypes are used in the following places: ElementDefinition, Extension, Parameters, Task,
  * and Transport (R5).
  *
+ * @param sourceField - source field name
  * @returns OpenDataTypes decorator
  * @throws AssertionError for invalid uses
  * @throws InvalidTypeError for actual data type does not agree with the specified FhirOpenDataType
  *
  * @category Decorators
  */
-export function OpenDataTypes() {
+export function OpenDataTypes(sourceField: string) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return function <This, Args extends any[], Return>(
     originalMethod: (this: This, ...args: Args) => Return,
@@ -1546,7 +1533,7 @@ export function OpenDataTypes() {
       const methodName = String(context.name);
       assert(
         args.length === 1 && (args[0] === undefined || args[0] === null || args[0] instanceof DataType),
-        `Decorator expects ${methodName} to have one argument with type of 'DataType | undefined | null'`,
+        `OpenDataTypes decorator on ${methodName} (${sourceField}) expects a single argument to be type of 'DataType | undefined | null'`,
       );
       // undefined supports optional argument
       const value = args[0] as DataType | undefined | null;
@@ -1563,7 +1550,7 @@ export function OpenDataTypes() {
 
       if (!isValidOpenDataType) {
         throw new InvalidTypeError(
-          `${methodName}: 'value' argument type (${value.fhirType()}) is not for a supported open DataType`,
+          `OpenDataTypes decorator on ${methodName} (${sourceField}) expects the 'value' argument type (${value.fhirType()}) to be a supported DataType`,
         );
       }
 

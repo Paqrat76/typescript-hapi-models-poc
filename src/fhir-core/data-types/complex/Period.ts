@@ -74,7 +74,7 @@ export class Period extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected start: DateTimeType | undefined;
+  private start: DateTimeType | undefined;
 
   /**
    * Period.end Element
@@ -89,7 +89,7 @@ export class Period extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected end: DateTimeType | undefined;
+  private end: DateTimeType | undefined;
 
   /**
    * @returns the `start` property value as a PrimitiveType
@@ -287,7 +287,6 @@ export class Period extends DataType implements IBase {
    * If either the `start` property or the `end` property is `undefined`, the validate return `true`.
    *
    * @returns `true` if `start` is less than or equal to `end`; `false` otherwise
-   * @private
    */
   private validateStartBeforeEnd(): boolean {
     if (this.start === undefined || this.start.isEmpty() || this.end === undefined || this.end.isEmpty()) {

@@ -305,7 +305,7 @@ export class PractitionerRole extends DomainResource implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected identifier?: Identifier[] | undefined;
+  private identifier?: Identifier[] | undefined;
 
   /**
    * PractitionerRole.active Element
@@ -321,7 +321,7 @@ export class PractitionerRole extends DomainResource implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected active?: BooleanType | undefined;
+  private active?: BooleanType | undefined;
 
   /**
    * PractitionerRole.period Element
@@ -336,7 +336,7 @@ export class PractitionerRole extends DomainResource implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected period?: Period | undefined;
+  private period?: Period | undefined;
 
   /**
    * PractitionerRole.practitioner Element
@@ -351,7 +351,7 @@ export class PractitionerRole extends DomainResource implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected practitioner?: Reference | undefined;
+  private practitioner?: Reference | undefined;
 
   /**
    * PractitionerRole.organization Element
@@ -366,7 +366,7 @@ export class PractitionerRole extends DomainResource implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected organization?: Reference | undefined;
+  private organization?: Reference | undefined;
 
   /**
    * PractitionerRole.code Element
@@ -382,7 +382,7 @@ export class PractitionerRole extends DomainResource implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected code?: CodeableConcept[] | undefined;
+  private code?: CodeableConcept[] | undefined;
 
   /**
    * PractitionerRole.specialty Element
@@ -396,7 +396,7 @@ export class PractitionerRole extends DomainResource implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected specialty?: CodeableConcept[] | undefined;
+  private specialty?: CodeableConcept[] | undefined;
 
   /**
    * PractitionerRole.location Element
@@ -411,7 +411,7 @@ export class PractitionerRole extends DomainResource implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected location?: Reference[] | undefined;
+  private location?: Reference[] | undefined;
 
   /**
    * PractitionerRole.healthcareService Element
@@ -426,7 +426,7 @@ export class PractitionerRole extends DomainResource implements IBase {
    * - **isModifier:** false
    * - **isSummary:** false
    */
-  protected healthcareService?: Reference[] | undefined;
+  private healthcareService?: Reference[] | undefined;
 
   /**
    * PractitionerRole.telecom Element
@@ -441,11 +441,36 @@ export class PractitionerRole extends DomainResource implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected telecom?: ContactPoint[] | undefined;
+  private telecom?: ContactPoint[] | undefined;
 
-  protected availableTime?: PractitionerRoleAvailableTimeComponent[] | undefined;
+  /**
+   * PractitionerRole.availableTime Element
+   *
+   * @remarks
+   * **FHIR Specification**
+   * - **Short:** Times the Service Site is available
+   * - **Definition:** A collection of times the practitioner is available or performing this role at the location and/or healthcareservice.
+   * - **Comment:** More detailed availability information may be provided in associated Schedule/Slot resources.
+   * - **FHIR Type:** `BackboneElement`
+   * - **Cardinality:** 0..*
+   * - **isModifier:** false
+   * - **isSummary:** false
+   */
+  private availableTime?: PractitionerRoleAvailableTimeComponent[] | undefined;
 
-  protected notAvailable?: PractitionerRoleNotAvailableComponent[] | undefined;
+  /**
+   * PractitionerRole.notAvailable Element
+   *
+   * @remarks
+   * **FHIR Specification**
+   * - **Short:** Not available during this time due to provided reason
+   * - **Definition:** The practitioner is not available or performing this role during this period of time due to the provided reason.
+   * - **FHIR Type:** `BackboneElement`
+   * - **Cardinality:** 0..*
+   * - **isModifier:** false
+   * - **isSummary:** false
+   */
+  private notAvailable?: PractitionerRoleNotAvailableComponent[] | undefined;
 
   /**
    * PractitionerRole.availabilityExceptions Element
@@ -459,7 +484,7 @@ export class PractitionerRole extends DomainResource implements IBase {
    * - **isModifier:** false
    * - **isSummary:** false
    */
-  protected availabilityExceptions?: StringType | undefined;
+  private availabilityExceptions?: StringType | undefined;
 
   /**
    * PractitionerRole.endpoint Element
@@ -475,7 +500,7 @@ export class PractitionerRole extends DomainResource implements IBase {
    * - **isModifier:** false
    * - **isSummary:** false
    */
-  protected endpoint?: Reference[] | undefined;
+  private endpoint?: Reference[] | undefined;
 
   /**
    * {@inheritDoc Resource.resourceType}
@@ -533,8 +558,6 @@ export class PractitionerRole extends DomainResource implements IBase {
 
   /**
    * Initialize the `identifier` property
-   *
-   * @private
    */
   private initIdentifier(): void {
     if (!this.hasIdentifier()) {
@@ -639,7 +662,7 @@ export class PractitionerRole extends DomainResource implements IBase {
    * @param value - the `practitioner` object value
    * @returns this
    */
-  @ReferenceTargets(['Practitioner'])
+  @ReferenceTargets('PractitionerRole.practitioner', ['Practitioner'])
   public setPractitioner(value: Reference | undefined): this {
     // assertFhirType<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
     this.practitioner = value;
@@ -668,7 +691,7 @@ export class PractitionerRole extends DomainResource implements IBase {
    * @param value - the `organization` object value
    * @returns this
    */
-  @ReferenceTargets(['Organization'])
+  @ReferenceTargets('PractitionerRole.organization', ['Organization'])
   public setOrganization(value: Reference | undefined): this {
     // assertFhirType<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
     this.organization = value;
@@ -729,8 +752,6 @@ export class PractitionerRole extends DomainResource implements IBase {
 
   /**
    * Initialize the `code` property
-   *
-   * @private
    */
   private initCode(): void {
     if (!this.hasCode()) {
@@ -787,8 +808,6 @@ export class PractitionerRole extends DomainResource implements IBase {
 
   /**
    * Initialize the `specialty` property
-   *
-   * @private
    */
   private initSpecialty(): void {
     if (!this.hasSpecialty()) {
@@ -809,7 +828,7 @@ export class PractitionerRole extends DomainResource implements IBase {
    * @param value - the `location` array value
    * @returns this
    */
-  @ReferenceTargets(['Location'])
+  @ReferenceTargets('PractitionerRole.location', ['Location'])
   public setLocation(value: Reference[] | undefined): this {
     // assertFhirTypeList<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
     this.location = value;
@@ -822,7 +841,7 @@ export class PractitionerRole extends DomainResource implements IBase {
    * @param value - the `location` value
    * @returns this
    */
-  @ReferenceTargets(['Location'])
+  @ReferenceTargets('PractitionerRole.location', ['Location'])
   public addLocation(value?: Reference): this {
     if (value !== undefined) {
       // assertFhirType<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
@@ -845,8 +864,6 @@ export class PractitionerRole extends DomainResource implements IBase {
 
   /**
    * Initialize the `location` property
-   *
-   * @private
    */
   private initLocation(): void {
     if (!this.hasLocation()) {
@@ -867,7 +884,7 @@ export class PractitionerRole extends DomainResource implements IBase {
    * @param value - the `healthcareService` array value
    * @returns this
    */
-  @ReferenceTargets(['HealthcareService'])
+  @ReferenceTargets('PractitionerRole.healthcareService', ['HealthcareService'])
   public setHealthcareService(value: Reference[] | undefined): this {
     // assertFhirTypeList<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
     this.healthcareService = value;
@@ -880,7 +897,7 @@ export class PractitionerRole extends DomainResource implements IBase {
    * @param value - the `healthcareService` value
    * @returns this
    */
-  @ReferenceTargets(['HealthcareService'])
+  @ReferenceTargets('PractitionerRole.healthcareService', ['HealthcareService'])
   public addHealthcareService(value?: Reference): this {
     if (value !== undefined) {
       // assertFhirType<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
@@ -903,8 +920,6 @@ export class PractitionerRole extends DomainResource implements IBase {
 
   /**
    * Initialize the `healthcareService` property
-   *
-   * @private
    */
   private initHealthcareService(): void {
     if (!this.hasHealthcareService()) {
@@ -961,8 +976,6 @@ export class PractitionerRole extends DomainResource implements IBase {
 
   /**
    * Initialize the `identifier` property
-   *
-   * @private
    */
   private initTelecom(): void {
     if (!this.hasTelecom()) {
@@ -1023,8 +1036,6 @@ export class PractitionerRole extends DomainResource implements IBase {
 
   /**
    * Initialize the `availableTime` property
-   *
-   * @private
    */
   private initAvailableTime(): void {
     if (this.availableTime === undefined) {
@@ -1081,8 +1092,6 @@ export class PractitionerRole extends DomainResource implements IBase {
 
   /**
    * Initialize the `notAvailable` property
-   *
-   * @private
    */
   private initNotAvailable(): void {
     if (this.notAvailable === undefined) {
@@ -1158,7 +1167,7 @@ export class PractitionerRole extends DomainResource implements IBase {
    * @param value - the `endpoint` array value
    * @returns this
    */
-  @ReferenceTargets(['Endpoint'])
+  @ReferenceTargets('PractitionerRole.endpoint', ['Endpoint'])
   public setEndpoint(value: Reference[] | undefined): this {
     // assertFhirTypeList<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
     this.endpoint = value;
@@ -1171,7 +1180,7 @@ export class PractitionerRole extends DomainResource implements IBase {
    * @param value - the `endpoint` value
    * @returns this
    */
-  @ReferenceTargets(['Endpoint'])
+  @ReferenceTargets('PractitionerRole.endpoint', ['Endpoint'])
   public addEndpoint(value?: Reference): this {
     if (value !== undefined) {
       // assertFhirType<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
@@ -1194,8 +1203,6 @@ export class PractitionerRole extends DomainResource implements IBase {
 
   /**
    * Initialize the `endpoint` property
-   *
-   * @private
    */
   private initEndpoint(): void {
     if (!this.hasEndpoint()) {
@@ -1414,13 +1421,63 @@ export class PractitionerRoleAvailableTimeComponent extends BackboneElement {
     return instance;
   }
 
-  protected daysOfWeek?: EnumCodeType[] | undefined;
+  /**
+   * PractitionerRole.availableTime.daysOfWeek Element
+   *
+   * @remarks
+   * **FHIR Specification**
+   * - **Short:** mon | tue | wed | thu | fri | sat | sun
+   * - **Definition:** Indicates which days of the week are available between the start and end Times.
+   * - **FHIR Type:** `code`
+   * - **Cardinality:** 0..*
+   * - **isModifier:** false
+   * - **isSummary:** false
+   */
+  private daysOfWeek?: EnumCodeType[] | undefined;
 
-  protected allDay?: BooleanType | undefined;
+  /**
+   * PractitionerRole.availableTime.allDay Element
+   *
+   * @remarks
+   * **FHIR Specification**
+   * - **Short:** Always available? e.g. 24 hour service
+   * - **Definition:** Is this always available? (hence times are irrelevant) e.g. 24 hour service.
+   * - **FHIR Type:** `boolean`
+   * - **Cardinality:** 0..1
+   * - **isModifier:** false
+   * - **isSummary:** false
+   */
+  private allDay?: BooleanType | undefined;
 
-  protected availableStartTime?: TimeType | undefined;
+  /**
+   * PractitionerRole.availableTime.availableStartTime Element
+   *
+   * @remarks
+   * **FHIR Specification**
+   * - **Short:** Opening time of day (ignored if allDay = true)
+   * - **Definition:** The opening time of day. Note: If the AllDay flag is set, then this time is ignored.
+   * - **Comment:** The timezone is expected to be for where this HealthcareService is provided at.
+   * - **FHIR Type:** `time`
+   * - **Cardinality:** 0..1
+   * - **isModifier:** false
+   * - **isSummary:** false
+   */
+  private availableStartTime?: TimeType | undefined;
 
-  protected availableEndTime?: TimeType | undefined;
+  /**
+   * PractitionerRole.availableTime.availableEndTime Element
+   *
+   * @remarks
+   * **FHIR Specification**
+   * - **Short:** "Closing time of day (ignored if allDay = true)
+   * - **Definition:** The closing time of day. Note: If the AllDay flag is set, then this time is ignored.
+   * - **Comment:** The timezone is expected to be for where this HealthcareService is provided at.
+   * - **FHIR Type:** `time`
+   * - **Cardinality:** 0..1
+   * - **isModifier:** false
+   * - **isSummary:** false
+   */
+  private availableEndTime?: TimeType | undefined;
 
   /**
    * @returns the `daysOfWeek` property value as a EnumCodeType array
@@ -1450,7 +1507,7 @@ export class PractitionerRoleAvailableTimeComponent extends BackboneElement {
    */
   public addDaysOfWeekEnumType(enumType?: EnumCodeType): this {
     if (enumType !== undefined) {
-      const errMsgPrefix = 'Invalid PractitionerRole.availableTime.daysOfWeek';
+      const errMsgPrefix = `Invalid PractitionerRole.availableTime.daysOfWeek`;
       assertEnumCodeType<DaysOfWeekEnum>(enumType, DaysOfWeekEnum, errMsgPrefix);
       this.initDaysOfWeek();
       this.daysOfWeek?.push(enumType);
@@ -1577,8 +1634,6 @@ export class PractitionerRoleAvailableTimeComponent extends BackboneElement {
 
   /**
    * Initialize the profile property
-   *
-   * @private
    */
   private initDaysOfWeek(): void {
     if (this.daysOfWeek === undefined) {
@@ -1905,7 +1960,7 @@ export class PractitionerRoleNotAvailableComponent extends BackboneElement {
    * - **isModifier:** false
    * - **isSummary:** false
    */
-  protected description!: StringType | null;
+  private description!: StringType | null;
 
   /**
    * PractitionerRole.notAvailable.during Element
@@ -1919,7 +1974,7 @@ export class PractitionerRoleNotAvailableComponent extends BackboneElement {
    * - **isModifier:** false
    * - **isSummary:** false
    */
-  protected during?: Period | undefined;
+  private during?: Period | undefined;
 
   /**
    * @returns the `description` property value as a PrimitiveType
@@ -2064,7 +2119,7 @@ export class PractitionerRoleNotAvailableComponent extends BackboneElement {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       setFhirPrimitiveJson<fhirString>(this.getDescriptionElement()!, 'description', jsonObj);
     } else {
-      missingReqdProperties.push('PractitionerRole.notAvailable.description');
+      missingReqdProperties.push(`PractitionerRole.notAvailable.description`);
     }
 
     if (this.hasDuring()) {

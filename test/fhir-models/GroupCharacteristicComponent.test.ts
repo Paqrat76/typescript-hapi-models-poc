@@ -960,7 +960,9 @@ describe('GroupCharacteristicComponent', () => {
         new GroupCharacteristicComponent(null, mockModel, null);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Decorator expects setValue to have one argument with type of 'DataType | undefined | null'`);
+      expect(t).toThrow(
+        `ChoiceDataTypes decorator on setValue (Group.characteristic.value[x]) expects a single argument to be type of 'DataType | undefined | null'`,
+      );
     });
 
     it('should throw InvalidTypeError when set with an invalid value[x] type', () => {
@@ -973,7 +975,9 @@ describe('GroupCharacteristicComponent', () => {
         testGroupCharacteristicComponent.setValue(testValue);
       };
       expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`setValue: 'value' argument type (${testValue.fhirType()}) is not for a supported DataType`);
+      expect(t).toThrow(
+        `ChoiceDataTypes decorator on setValue (Group.characteristic.value[x]) expects the 'value' argument type (${testValue.fhirType()}) to be a supported DataType`,
+      );
     });
 
     it('should throw InvalidTypeError for setExcludeElement()', () => {
