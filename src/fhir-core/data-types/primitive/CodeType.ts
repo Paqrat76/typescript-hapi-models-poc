@@ -194,6 +194,7 @@ export class EnumCodeType extends CodeType {
 /**
  * EnumCodeType assertion for any EnumCodeType class
  *
+ * @typeParam T - the enumCodeType class
  * @param type - class instance to evaluate
  * @param enumCodeType - class name for evaluation
  * @param errorMessagePrefix - optional error message prefix for the error message
@@ -221,6 +222,7 @@ export function assertEnumCodeType<T>(
 /**
  * EnumCodeType assertion for a list of any EnumCodeType classes
  *
+ * @typeParam T - the enumCodeType class
  * @param typeInstance - array of class instances to evaluate
  * @param enumCodeType - class name for evaluation
  * @param errorMessagePrefix - optional error message prefix for the error message
@@ -259,6 +261,7 @@ export function assertEnumCodeTypeList<T>(
 /**
  * Returns an instance of EnumCodeType for the provided constructor arguments.
  *
+ * @typeParam T - the enumCodeType class
  * @param code - code value expressed as EnumCodeType | CodeType | fhirCode | null
  * @param enumCodeType - code type enumeration class
  * @param typeEnum - instance of type enumeration class (allowed code values)
@@ -303,4 +306,62 @@ export function constructorCodeValueAsEnumCodeType<T>(
     }
   }
   return codeValue;
+}
+
+/**
+ * Returns an instance of EnumCodeType array for the provided constructor arguments.
+ *
+ * @typeParam T - the enumCodeType class
+ * @param codes - code values expressed as EnumCodeType[] | CodeType[] | fhirCode[] | null
+ * @param enumCodeType - code type enumeration class
+ * @param typeEnum - instance of type enumeration class (allowed code values)
+ * @param property - FHIR data model property (<class name>.<property name>)
+ * @returns instance of EnumCodeType[]
+ * @throws InvalidCodeError or InvalidTypeError
+ *
+ * @category Utilities
+ */
+export function constructorCodeValueAsEnumCodeTypeList<T>(
+  codes: EnumCodeType[] | CodeType[] | fhirCode[] | null,
+  enumCodeType: Class<T>,
+  typeEnum: IFhirCodeEnum,
+  property: string,
+): EnumCodeType[] | null {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (codes === undefined || codes === null || codes.length === 0) {
+    return null;
+  }
+
+  const codeTypes = [] as EnumCodeType[];
+  const errorMessages = [] as string[];
+  for (const code of codes) {
+    try {
+      const enumCode: EnumCodeType | null = constructorCodeValueAsEnumCodeType<T>(
+        code,
+        enumCodeType,
+        typeEnum,
+        property,
+      );
+      if (enumCode !== null) {
+        codeTypes.push(enumCode);
+      }
+    } catch (err) {
+      if (err instanceof InvalidCodeError) {
+        // Remove the `Invalid ${property}; ` prefix from the error message
+        const idx = err.message.indexOf(';') + 2;
+        errorMessages.push(err.message.substring(idx));
+      } else {
+        throw new InvalidCodeError(`Invalid ${property}; Unexpected error`, err as Error);
+      }
+    }
+  }
+
+  if (errorMessages.length > 0) {
+    const errMsg = `Invalid ${property}; Errors: ${errorMessages.join(', ')}`;
+    throw new InvalidCodeError(errMsg);
+  }
+  if (codeTypes.length === 0) {
+    return null;
+  }
+  return codeTypes;
 }

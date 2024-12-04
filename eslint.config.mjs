@@ -3,6 +3,7 @@ import eslintjs from '@eslint/js';
 import jestPlugin from 'eslint-plugin-jest';
 import tseslint from 'typescript-eslint';
 import jsdocLint from 'eslint-plugin-jsdoc';
+import nodeImport from 'eslint-plugin-node-import';
 import prettierConfig from 'eslint-config-prettier';
 
 /**
@@ -33,6 +34,7 @@ export default tseslint.config(
     name: 'base',
     plugins: {
       '@typescript-eslint': tseslint.plugin,
+      'node-import': nodeImport,
       jsdoc: jsdocLint,
     },
     languageOptions: {
@@ -52,6 +54,8 @@ export default tseslint.config(
     },
     rules: {
       // Additional rules
+      // https://www.npmjs.com/package/eslint-plugin-node-import?activeTab=readme#rules
+      'node-import/prefer-node-protocol': 'error',
       // https://typescript-eslint.io/rules/method-signature-style/
       '@typescript-eslint/method-signature-style': ['error', 'property'],
       // JSDoc overrides

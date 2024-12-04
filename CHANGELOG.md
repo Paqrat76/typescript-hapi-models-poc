@@ -19,11 +19,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
-## [0.11.0] - 2024-??-??
+## [0.11.0] - 2024-12-04
 
 ### Added
 
 - Added missing class field TypeDoc headers
+- Added eslint-plugin-node-import
+- Added function constructorCodeValueAsEnumCodeTypeList<T>()
+- Added function hasFhirData() assertion function
 
 ### Changed
 
@@ -32,14 +35,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added sourceField (ElementDefinition.path for the field) as a parameter to all decorator factories;
   Refactored all decorator error messages to use sourceField and make them all consistent
 - Refactored all class method error messages to use sourceField and make them all consistent
-
-### Deprecated
+- added missing/updated @typeParam TypeDoc tags
+- Updated/added tests as needed
 
 ### Removed
 
+- Replaced src/fhir-core/data-types/tempTemplateTypeMethods.ts with text-based template files in ./zTemplates:
+  - template-BackboneElementType.template
+  - template-ComplexType.template
+  - template-EnumCodeType.template
+  - template-FhirCodeSystemEnum.template
+  - template-PrimitiveType.template
+
 ### Fixed
 
-### Security
+- Fixed FHIR_REGEX_XHTML to prevent an empty string
 
 
 ## [0.10.0] - 2024-11-22

@@ -952,6 +952,18 @@ describe('Group', () => {
       resourceType: 'Group',
       id: 'id12345',
     };
+    const INVALID_JSON_MISSING_TYPE = {
+      resourceType: 'Group',
+      id: 'id12345',
+      type: '',
+      actual: true,
+    };
+    const INVALID_JSON_MISSING_ACTUAL = {
+      resourceType: 'Group',
+      id: 'id12345',
+      type: 'person',
+      actual: null,
+    };
 
     it('should throw FhirError from toJSON() when instantiated with missing required properties', () => {
       const testGroup = new Group(null, null);
@@ -1085,6 +1097,22 @@ describe('Group', () => {
       expect(t).toThrow(
         `The following required properties must be included in the provided JSON: Group.type, Group.actual`,
       );
+    });
+
+    it('should throw FhirError from parse when type has missing value', () => {
+      const t = () => {
+        Group.parse(INVALID_JSON_MISSING_TYPE);
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(`The following required properties must be included in the provided JSON: Group.type`);
+    });
+
+    it('should throw FhirError from parse when actual has missing value', () => {
+      const t = () => {
+        Group.parse(INVALID_JSON_MISSING_ACTUAL);
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(`The following required properties must be included in the provided JSON: Group.actual`);
     });
 
     it('should return Group for valid json', () => {

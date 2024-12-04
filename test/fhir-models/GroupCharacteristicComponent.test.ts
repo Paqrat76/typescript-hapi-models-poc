@@ -747,6 +747,27 @@ describe('GroupCharacteristicComponent', () => {
         end: '2017-01-01T01:00:00.000Z',
       },
     };
+    const INVALID_JSON_MISSING_CODE = {
+      code: {},
+      valueBoolean: false,
+      exclude: true,
+      period: {
+        start: '2017-01-01T00:00:00.000Z',
+        end: '2017-01-01T01:00:00.000Z',
+      },
+    };
+    const INVALID_JSON_MISSING_EXCLUDE = {
+      code: {
+        text: 'This is a valid string.',
+      },
+      valueBoolean: false,
+      exclude: null,
+      period: {
+        start: '2017-01-01T00:00:00.000Z',
+        end: '2017-01-01T01:00:00.000Z',
+      },
+    };
+
     const INVALID_JSON_1 = {
       code: {
         text: 'This is a valid string.',
@@ -897,6 +918,26 @@ describe('GroupCharacteristicComponent', () => {
       expect(t).toThrow(FhirError);
       expect(t).toThrow(
         `The following required properties must be included in the provided JSON: Group.characteristic.code, Group.characteristic.value[x], Group.characteristic.exclude`,
+      );
+    });
+
+    it('should throw FhirError from parse with missing code', () => {
+      const t = () => {
+        GroupCharacteristicComponent.parse(INVALID_JSON_MISSING_CODE);
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(
+        `The following required properties must be included in the provided JSON: Group.characteristic.code`,
+      );
+    });
+
+    it('should throw FhirError from parse with missing exclude', () => {
+      const t = () => {
+        GroupCharacteristicComponent.parse(INVALID_JSON_MISSING_EXCLUDE);
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(
+        `The following required properties must be included in the provided JSON: Group.characteristic.exclude`,
       );
     });
 

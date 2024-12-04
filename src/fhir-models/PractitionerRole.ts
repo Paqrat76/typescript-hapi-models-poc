@@ -22,11 +22,7 @@
  */
 
 import { isEmpty, isNil } from 'lodash';
-import {
-  FAILED_TO_PARSE_REQD_FIELD,
-  REQUIRED_PROPERTIES_DO_NOT_EXIST,
-  REQUIRED_PROPERTIES_REQD_IN_JSON,
-} from '@src/fhir-core/constants';
+import { REQUIRED_PROPERTIES_DO_NOT_EXIST, REQUIRED_PROPERTIES_REQD_IN_JSON } from '@src/fhir-core/constants';
 import { IBase } from '@src/fhir-core/base-models/IBase';
 import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
 import { FhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
@@ -1357,8 +1353,6 @@ export class PractitionerRole extends DomainResource implements IBase {
  * @see [FHIR PractitionerRole](http://hl7.org/fhir/StructureDefinition/PractitionerRole)
  */
 export class PractitionerRoleAvailableTimeComponent extends BackboneElement {
-  private readonly daysOfWeekEnum: DaysOfWeekEnum;
-
   constructor() {
     super();
 
@@ -1420,6 +1414,13 @@ export class PractitionerRoleAvailableTimeComponent extends BackboneElement {
 
     return instance;
   }
+
+  /**
+   * FHIR CodeSystem: DaysOfWeek
+   *
+   * @see {@link DaysOfWeekEnum}
+   */
+  private readonly daysOfWeekEnum: DaysOfWeekEnum;
 
   /**
    * PractitionerRole.availableTime.daysOfWeek Element
@@ -1925,7 +1926,7 @@ export class PractitionerRoleNotAvailableComponent extends BackboneElement {
       const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(backboneJsonObj, sourceField, fieldName, 'string');
       const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
       if (datatype === undefined) {
-        throw new Error(FAILED_TO_PARSE_REQD_FIELD.replace('#sourceField#', sourceField));
+        missingReqdProperties.push(sourceField);
       } else {
         instance.setDescriptionElement(datatype);
       }

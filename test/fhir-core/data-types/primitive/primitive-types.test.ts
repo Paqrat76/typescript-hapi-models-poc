@@ -650,7 +650,7 @@ describe('Primitive Type Schemas', () => {
       let parseResult = fhirXhtmlSchema.safeParse(validXhtml);
       expect(parseResult.success).toBe(true);
 
-      validXhtml = ` any\tstring\r\nlike this that passes the regex `;
+      validXhtml = `any\tstring\r\nlike this that passes the regex `;
       parseResult = fhirXhtmlSchema.safeParse(validXhtml);
       expect(parseResult.success).toBe(true);
 

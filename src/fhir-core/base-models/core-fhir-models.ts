@@ -817,7 +817,7 @@ export abstract class BackboneType extends DataType implements IBase, IBaseModif
  * Loosely based on HAPI FHIR org.hl7.fhir-core.r4.model.PrimitiveType
  *
  * @category Base Models
- * @template T - the primitive type
+ * @typeParam T - the primitive type
  * @see [FHIR PrimitiveType](http://hl7.org/fhir/StructureDefinition/PrimitiveType)
  */
 export abstract class PrimitiveType<T> extends DataType implements IBase {
@@ -1628,6 +1628,7 @@ export function assertFhirDataType(classInstance: unknown, errorMessage?: string
 /**
  * FHIR DataType assertion for any FHIR primitive type class
  *
+ * @typeParam T - the FHIR primitive type
  * @param classInstance - class instance to evaluate
  * @param errorMessage - optional error message to override the default
  * @throws InvalidTypeError when DataType assertion is false

@@ -22,11 +22,7 @@
  */
 
 import { isEmpty, isNil } from 'lodash';
-import {
-  REQUIRED_PROPERTIES_DO_NOT_EXIST,
-  REQUIRED_PROPERTIES_REQD_IN_JSON,
-  FAILED_TO_PARSE_REQD_FIELD,
-} from '@src/fhir-core/constants';
+import { REQUIRED_PROPERTIES_DO_NOT_EXIST, REQUIRED_PROPERTIES_REQD_IN_JSON } from '@src/fhir-core/constants';
 import { IBase } from '@src/fhir-core/base-models/IBase';
 import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
 import { FhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
@@ -109,8 +105,6 @@ import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
  * @see [FHIR Group](http://hl7.org/fhir/StructureDefinition/Group)
  */
 export class Group extends DomainResource implements IBase {
-  private readonly groupTypeEnum: GroupTypeEnum;
-
   /**
    * @param type - person | animal | practitioner | device | medication | substance
    * @param actual - Descriptive or actual
@@ -189,7 +183,7 @@ export class Group extends DomainResource implements IBase {
       const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, 'string');
       const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
       if (datatype === undefined) {
-        throw new Error(FAILED_TO_PARSE_REQD_FIELD.replace('#sourceField#', sourceField));
+        missingReqdProperties.push(sourceField);
       } else {
         instance.setTypeElement(datatype);
       }
@@ -203,7 +197,7 @@ export class Group extends DomainResource implements IBase {
       const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, 'boolean');
       const datatype: BooleanType | undefined = parseBooleanType(dtJson, dtSiblingJson);
       if (datatype === undefined) {
-        throw new Error(FAILED_TO_PARSE_REQD_FIELD.replace('#sourceField#', sourceField));
+        missingReqdProperties.push(sourceField);
       } else {
         instance.setActualElement(datatype);
       }
@@ -270,6 +264,13 @@ export class Group extends DomainResource implements IBase {
 
     return instance;
   }
+
+  /**
+   * FHIR CodeSystem: GroupType
+   *
+   * @see {@link GroupTypeEnum}
+   */
+  private readonly groupTypeEnum: GroupTypeEnum;
 
   /**
    * Group.identifier Element
@@ -1161,7 +1162,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
     if (fieldName in backboneJsonObj) {
       const datatype: CodeableConcept | undefined = parseCodeableConcept(backboneJsonObj[fieldName], sourceField);
       if (datatype === undefined) {
-        throw new Error(FAILED_TO_PARSE_REQD_FIELD.replace('#sourceField#', sourceField));
+        missingReqdProperties.push(sourceField);
       } else {
         instance.setCode(datatype);
       }
@@ -1192,7 +1193,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
       const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(backboneJsonObj, sourceField, fieldName, 'boolean');
       const datatype: BooleanType | undefined = parseBooleanType(dtJson, dtSiblingJson);
       if (datatype === undefined) {
-        throw new Error(FAILED_TO_PARSE_REQD_FIELD.replace('#sourceField#', sourceField));
+        missingReqdProperties.push(sourceField);
       } else {
         instance.setExcludeElement(datatype);
       }
@@ -1676,7 +1677,7 @@ export class GroupMemberComponent extends BackboneElement {
     if (fieldName in backboneJsonObj) {
       const datatype: Reference | undefined = parseReference(backboneJsonObj[fieldName], sourceField);
       if (datatype === undefined) {
-        throw new Error(FAILED_TO_PARSE_REQD_FIELD.replace('#sourceField#', sourceField));
+        missingReqdProperties.push(sourceField);
       } else {
         instance.setEntity(datatype);
       }

@@ -64,12 +64,17 @@ import * as JSON from '@src/fhir-core/utility/json-helpers';
  * @see [FHIR Quantity](http://hl7.org/fhir/StructureDefinition/Quantity)
  */
 export class Quantity extends DataType implements IBase {
-  private readonly quantityComparatorEnum: QuantityComparatorEnum;
-
   constructor() {
     super();
     this.quantityComparatorEnum = new QuantityComparatorEnum();
   }
+
+  /**
+   * FHIR CodeSystem: QuantityComparator
+   *
+   * @see {@link QuantityComparatorEnum}
+   */
+  private readonly quantityComparatorEnum: QuantityComparatorEnum;
 
   /**
    * Quantity.value Element

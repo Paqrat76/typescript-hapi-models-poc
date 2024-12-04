@@ -44,9 +44,9 @@ describe('Narrative', () => {
 
   const VALID_XHTML = '<div xmlns="http://www.w3.org/1999/xhtml">text</div>';
   const VALID_XHTML_TYPE = new XhtmlType(VALID_XHTML);
-  const VALID_XHTML_2 = ` any\tstring\r\nlike this that passes the regex `;
+  const VALID_XHTML_2 = `any\tstring\r\nlike this that passes the regex `;
   const VALID_XHTML_TYPE_2 = new XhtmlType(VALID_XHTML_2);
-  const INVALID_XHTML = '';
+  const INVALID_XHTML = ' cannot start with whitespace';
   const INVALID_XHTML_TYPE = new StringType('invalid XhtmlType');
 
   let narrativeStatusEnum: NarrativeStatusEnum;

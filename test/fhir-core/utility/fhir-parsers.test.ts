@@ -21,7 +21,9 @@
  *
  */
 
+import { AssertionError } from 'node:assert';
 import {
+  assertFhirResourceTypeJson,
   getPrimitiveTypeJson,
   getPrimitiveTypeListJson,
   parseExtension,
@@ -97,6 +99,7 @@ import { Quantity } from '@src/fhir-core/data-types/complex/Quantity';
 import { Range } from '@src/fhir-core/data-types/complex/Range';
 import { SimpleQuantity } from '@src/fhir-core/data-types/complex/SimpleQuantity';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import {
   FHIR_MAX_INTEGER,
@@ -434,6 +437,51 @@ describe('fhir-parsers', () => {
         };
         expect(t).toThrow(TypeError);
         expect(t).toThrow(`MockTask.id is not a string.`);
+      });
+    });
+  });
+
+  describe('Helpers', () => {
+    describe('assertFhirResourceTypeJson', () => {
+      it('should throw AssertionError for missing arguments', () => {
+        let t = () => {
+          // @ts-expect-error: allow for testing
+          assertFhirResourceTypeJson(null, 'Task');
+        };
+        expect(t).toThrow(AssertionError);
+        expect(t).toThrow(`The dataJsonObj argument is required.`);
+
+        t = () => {
+          // @ts-expect-error: allow for testing
+          assertFhirResourceTypeJson({}, null);
+        };
+        expect(t).toThrow(AssertionError);
+        expect(t).toThrow(`The fhirResourceType argument is required.`);
+      });
+
+      it('should throw AssertionError for dataJsonObj argument provided as non-JSON object', () => {
+        const t = () => {
+          // @ts-expect-error: allow for testing
+          assertFhirResourceTypeJson([], 'Task');
+        };
+        expect(t).toThrow(AssertionError);
+        expect(t).toThrow(`The provided JSON does not represent a JSON object.`);
+      });
+
+      it('should throw InvalidTypeError for invalid FHIR resourceType', () => {
+        const t = () => {
+          assertFhirResourceTypeJson({ resourceType: 'Basic', id: '123' }, 'Task');
+        };
+        expect(t).toThrow(InvalidTypeError);
+        expect(t).toThrow(`Invalid JSON 'resourceType' ('Basic') value; Should be 'Task'.`);
+      });
+
+      it('should throw InvalidTypeError for missing FHIR resourceType', () => {
+        const t = () => {
+          assertFhirResourceTypeJson({ id: '123' }, 'Task');
+        };
+        expect(t).toThrow(InvalidTypeError);
+        expect(t).toThrow(`The provided JSON does not represent a FHIR Resource (missing 'resourceType' element).`);
       });
     });
   });
@@ -1933,7 +1981,7 @@ describe('fhir-parsers', () => {
 
     describe('parseXhtmlType', () => {
       const VALID_XHTML = `<div xmlns="http://www.w3.org/1999/xhtml">text</div>`;
-      const INVALID_XHTML = '';
+      const INVALID_XHTML = ' cannot start with whitespace';
 
       it('should return undefined for empty json', () => {
         let testType = parseXhtmlType(undefined);
@@ -2472,6 +2520,26 @@ describe('fhir-parsers', () => {
         expect(t).toThrow(
           `The following required properties must be included in the provided JSON: Narrative.status, Narrative.div`,
         );
+      });
+
+      it('should throw FhirError for missing status', () => {
+        const INVALID_JSON = { status: '', div: '<div xmlns="http://www.w3.org/1999/xhtml">text</div>' };
+
+        const t = () => {
+          parseNarrative(INVALID_JSON);
+        };
+        expect(t).toThrow(FhirError);
+        expect(t).toThrow(`The following required properties must be included in the provided JSON: Narrative.status`);
+      });
+
+      it('should throw FhirError for missing div', () => {
+        const INVALID_JSON = { status: 'generated', div: '' };
+
+        const t = () => {
+          parseNarrative(INVALID_JSON);
+        };
+        expect(t).toThrow(FhirError);
+        expect(t).toThrow(`The following required properties must be included in the provided JSON: Narrative.div`);
       });
 
       it('should throw TypeError for invalid json type', () => {

@@ -3,6 +3,7 @@
 ## POC Feature Set
 
 - Refactor template type methods for resources with consideration for future code generator templates
+- Refactor out use of lodash to use native code
 - Add several more hand-crafted FHIR models to verify template examples for the FHIR data model code generator.
   Consider the following:
   - [Patient](https://hl7.org/fhir/R4/patient.html)

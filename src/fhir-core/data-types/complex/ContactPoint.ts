@@ -61,14 +61,25 @@ import * as JSON from '@src/fhir-core/utility/json-helpers';
  * @see [FHIR ContactPoint](http://hl7.org/fhir/StructureDefinition/ContactPoint)
  */
 export class ContactPoint extends DataType implements IBase {
-  private readonly contactPointSystemEnum: ContactPointSystemEnum;
-  private readonly contactPointUseEnum: ContactPointUseEnum;
-
   constructor() {
     super();
     this.contactPointSystemEnum = new ContactPointSystemEnum();
     this.contactPointUseEnum = new ContactPointUseEnum();
   }
+
+  /**
+   * FHIR CodeSystem: ContactPointSystem
+   *
+   * @see {@link ContactPointSystemEnum}
+   */
+  private readonly contactPointSystemEnum: ContactPointSystemEnum;
+
+  /**
+   * FHIR CodeSystem: ContactPointUse
+   *
+   * @see {@link ContactPointUseEnum}
+   */
+  private readonly contactPointUseEnum: ContactPointUseEnum;
 
   /**
    * ContactPoint.system Element

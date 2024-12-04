@@ -354,6 +354,14 @@ describe('GroupMemberComponent', () => {
       },
       inactive: true,
     };
+    const INVALID_JSON_MISSING_ENTITY = {
+      entity: {},
+      period: {
+        start: '2017-01-01T00:00:00.000Z',
+        end: '2017-01-01T01:00:00.000Z',
+      },
+      inactive: true,
+    };
 
     it('should throw FhirError from toJSON() when instantiated with missing required properties', () => {
       const testGroupMemberComponent = new GroupMemberComponent(null);
@@ -424,6 +432,14 @@ describe('GroupMemberComponent', () => {
     it('should throw FhirError from parse with missing required properties', () => {
       const t = () => {
         GroupMemberComponent.parse(INVALID_JSON);
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(`The following required properties must be included in the provided JSON: Group.member.entity`);
+    });
+
+    it('should throw FhirError from parse with missing entity', () => {
+      const t = () => {
+        GroupMemberComponent.parse(INVALID_JSON_MISSING_ENTITY);
       };
       expect(t).toThrow(FhirError);
       expect(t).toThrow(`The following required properties must be included in the provided JSON: Group.member.entity`);

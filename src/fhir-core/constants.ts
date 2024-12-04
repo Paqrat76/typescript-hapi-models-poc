@@ -49,7 +49,3 @@ export const INVALID_VALUEX_MULTIPLE_PROPERTIES =
  * @category Constants
  */
 export const INVALID_VALUEX_PROPERTY = `The value[x] property cannot be represented by "value".`;
-/**
- * @category Constants
- */
-export const FAILED_TO_PARSE_REQD_FIELD = `Failed to parse #sourceField# from the provided JSON`;

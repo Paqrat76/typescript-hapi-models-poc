@@ -69,8 +69,6 @@ import { FhirError } from '@src/fhir-core/errors/FhirError';
  * @see [FHIR Narrative](http://hl7.org/fhir/StructureDefinition/Narrative)
  */
 export class Narrative extends DataType implements IBase {
-  private readonly narrativeStatusEnum: NarrativeStatusEnum;
-
   /**
    * @param status - The status of the narrative
    * @param div - The actual narrative content, a stripped down version of XHTML
@@ -96,6 +94,13 @@ export class Narrative extends DataType implements IBase {
       }
     }
   }
+
+  /**
+   * FHIR CodeSystem: NarrativeStatus
+   *
+   * @see {@link NarrativeStatusEnum}
+   */
+  private readonly narrativeStatusEnum: NarrativeStatusEnum;
 
   /**
    * Narrative.status Element
