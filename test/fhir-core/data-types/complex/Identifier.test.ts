@@ -397,7 +397,9 @@ describe('Identifier Tests', () => {
         testIdentifier.setAssigner(INVALID_REFERENCE_VALUE);
       };
       expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`setAssigner: 'value' argument (${INVALID_REFERENCE}) is not for a valid Reference type`);
+      expect(t).toThrow(
+        `ReferenceTargets decorator on setAssigner (Identifier.assigner) expects argument (${INVALID_REFERENCE}) to be a valid 'Reference' type`,
+      );
     });
 
     // Tests using DataType elements

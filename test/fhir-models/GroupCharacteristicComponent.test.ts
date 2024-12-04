@@ -747,6 +747,27 @@ describe('GroupCharacteristicComponent', () => {
         end: '2017-01-01T01:00:00.000Z',
       },
     };
+    const INVALID_JSON_MISSING_CODE = {
+      code: {},
+      valueBoolean: false,
+      exclude: true,
+      period: {
+        start: '2017-01-01T00:00:00.000Z',
+        end: '2017-01-01T01:00:00.000Z',
+      },
+    };
+    const INVALID_JSON_MISSING_EXCLUDE = {
+      code: {
+        text: 'This is a valid string.',
+      },
+      valueBoolean: false,
+      exclude: null,
+      period: {
+        start: '2017-01-01T00:00:00.000Z',
+        end: '2017-01-01T01:00:00.000Z',
+      },
+    };
+
     const INVALID_JSON_1 = {
       code: {
         text: 'This is a valid string.',
@@ -900,6 +921,26 @@ describe('GroupCharacteristicComponent', () => {
       );
     });
 
+    it('should throw FhirError from parse with missing code', () => {
+      const t = () => {
+        GroupCharacteristicComponent.parse(INVALID_JSON_MISSING_CODE);
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(
+        `The following required properties must be included in the provided JSON: Group.characteristic.code`,
+      );
+    });
+
+    it('should throw FhirError from parse with missing exclude', () => {
+      const t = () => {
+        GroupCharacteristicComponent.parse(INVALID_JSON_MISSING_EXCLUDE);
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(
+        `The following required properties must be included in the provided JSON: Group.characteristic.exclude`,
+      );
+    });
+
     it('should throw FhirError when deserialize with invalid json - only "value" property', () => {
       const t = () => {
         GroupCharacteristicComponent.parse(INVALID_JSON_1);
@@ -960,7 +1001,9 @@ describe('GroupCharacteristicComponent', () => {
         new GroupCharacteristicComponent(null, mockModel, null);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Decorator expects setValue to have one argument with type of 'DataType | undefined | null'`);
+      expect(t).toThrow(
+        `ChoiceDataTypes decorator on setValue (Group.characteristic.value[x]) expects a single argument to be type of 'DataType | undefined | null'`,
+      );
     });
 
     it('should throw InvalidTypeError when set with an invalid value[x] type', () => {
@@ -973,7 +1016,9 @@ describe('GroupCharacteristicComponent', () => {
         testGroupCharacteristicComponent.setValue(testValue);
       };
       expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`setValue: 'value' argument type (${testValue.fhirType()}) is not for a supported DataType`);
+      expect(t).toThrow(
+        `ChoiceDataTypes decorator on setValue (Group.characteristic.value[x]) expects the 'value' argument type (${testValue.fhirType()}) to be a supported DataType`,
+      );
     });
 
     it('should throw InvalidTypeError for setExcludeElement()', () => {

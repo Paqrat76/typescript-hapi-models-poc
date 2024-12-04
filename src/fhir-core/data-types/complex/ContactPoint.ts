@@ -61,14 +61,25 @@ import * as JSON from '@src/fhir-core/utility/json-helpers';
  * @see [FHIR ContactPoint](http://hl7.org/fhir/StructureDefinition/ContactPoint)
  */
 export class ContactPoint extends DataType implements IBase {
-  private readonly contactPointSystemEnum: ContactPointSystemEnum;
-  private readonly contactPointUseEnum: ContactPointUseEnum;
-
   constructor() {
     super();
     this.contactPointSystemEnum = new ContactPointSystemEnum();
     this.contactPointUseEnum = new ContactPointUseEnum();
   }
+
+  /**
+   * FHIR CodeSystem: ContactPointSystem
+   *
+   * @see {@link ContactPointSystemEnum}
+   */
+  private readonly contactPointSystemEnum: ContactPointSystemEnum;
+
+  /**
+   * FHIR CodeSystem: ContactPointUse
+   *
+   * @see {@link ContactPointUseEnum}
+   */
+  private readonly contactPointUseEnum: ContactPointUseEnum;
 
   /**
    * ContactPoint.system Element
@@ -82,7 +93,7 @@ export class ContactPoint extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected system?: EnumCodeType | undefined;
+  private system?: EnumCodeType | undefined;
 
   /**
    * ContactPoint.value Element
@@ -98,7 +109,7 @@ export class ContactPoint extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected value?: StringType | undefined;
+  private value?: StringType | undefined;
 
   /**
    * ContactPoint.use Element
@@ -114,7 +125,7 @@ export class ContactPoint extends DataType implements IBase {
    * - **isModifier:** true
    * - **isSummary:** true
    */
-  protected use?: EnumCodeType | undefined;
+  private use?: EnumCodeType | undefined;
 
   /**
    * ContactPoint.rank Element
@@ -129,7 +140,7 @@ export class ContactPoint extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected rank?: PositiveIntType | undefined;
+  private rank?: PositiveIntType | undefined;
 
   /**
    * ContactPoint.period Element
@@ -143,7 +154,7 @@ export class ContactPoint extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected period?: Period | undefined;
+  private period?: Period | undefined;
 
   /**
    * @returns the `system` property value as a EnumCodeType

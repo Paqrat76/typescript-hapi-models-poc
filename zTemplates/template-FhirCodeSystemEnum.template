@@ -1,0 +1,59 @@
+import { fhirCode } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
+import { FhirCodeDefinition, IFhirCodeDefinition, IFhirCodeEnum } from '@src/fhir-core/base-models/core-fhir-codes';
+
+/* istanbul ignore file */
+/* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
+
+// =====================================================================
+// XxxxEnum / EnumCodeType (XxxxCS / xxxx-code-system)
+// =====================================================================
+
+/**
+ * FHIR CodeSystem: XxxxEnum
+ *
+ * @remarks
+ * This class is a "pseudo-enumeration" of code values having FHIR code properties.
+ *
+ * @category CodeSystems
+ * @see [FHIR CodeSystem XxxxCS](https://hl7.org/fhir/R4/xxxx-code-system.html)
+ */
+export class XxxxEnum implements IFhirCodeEnum {
+  public static readonly DUMMY = new FhirCodeDefinition(
+    'DUMMY',
+    `dummy`,
+    `http://hl7.org/fhir/dummy-code-system`,
+    `Dummy`,
+    `Definition...`,
+  );
+
+  // NULL added to help check for non-existent value
+  public static readonly NULL = new FhirCodeDefinition('NULL', `null`);
+
+  /**
+   * {@inheritDoc IFhirCodeEnum.values}
+   */
+  values(): IFhirCodeDefinition[] {
+    return [
+      XxxxEnum.DUMMY,
+      XxxxEnum.NULL
+    ];
+  }
+
+  /**
+   * {@inheritDoc IFhirCodeEnum.fromCode}
+   */
+  fromCode(code: fhirCode | undefined): IFhirCodeDefinition {
+    if (code === undefined) {
+      throw new InvalidCodeError(`The provided 'code' value is undefined`);
+    } else if (XxxxEnum.DUMMY.code === code) {
+      return XxxxEnum.DUMMY;
+    } else if (XxxxEnum.NULL.code === code) {
+      return XxxxEnum.NULL;
+    } else {
+      throw new InvalidCodeError(`Unknown XxxxEnum 'code' value '${String(code)}'`);
+    }
+  }
+}
+
+/* eslint-enable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */

@@ -82,7 +82,7 @@ export class Coding extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected system?: UriType | undefined;
+  private system?: UriType | undefined;
 
   /**
    * Coding.version Element
@@ -97,7 +97,7 @@ export class Coding extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected version?: StringType | undefined;
+  private version?: StringType | undefined;
 
   /**
    * Coding.code Element
@@ -112,7 +112,7 @@ export class Coding extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected code?: CodeType | undefined;
+  private code?: CodeType | undefined;
 
   /**
    * Coding.display Element
@@ -127,7 +127,7 @@ export class Coding extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected display?: StringType | undefined;
+  private display?: StringType | undefined;
 
   /**
    * Coding.userSelected Element
@@ -143,7 +143,7 @@ export class Coding extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected userSelected?: BooleanType | undefined;
+  private userSelected?: BooleanType | undefined;
 
   /**
    * @returns the `system` property value as a PrimitiveType

@@ -354,6 +354,14 @@ describe('GroupMemberComponent', () => {
       },
       inactive: true,
     };
+    const INVALID_JSON_MISSING_ENTITY = {
+      entity: {},
+      period: {
+        start: '2017-01-01T00:00:00.000Z',
+        end: '2017-01-01T01:00:00.000Z',
+      },
+      inactive: true,
+    };
 
     it('should throw FhirError from toJSON() when instantiated with missing required properties', () => {
       const testGroupMemberComponent = new GroupMemberComponent(null);
@@ -429,6 +437,14 @@ describe('GroupMemberComponent', () => {
       expect(t).toThrow(`The following required properties must be included in the provided JSON: Group.member.entity`);
     });
 
+    it('should throw FhirError from parse with missing entity', () => {
+      const t = () => {
+        GroupMemberComponent.parse(INVALID_JSON_MISSING_ENTITY);
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(`The following required properties must be included in the provided JSON: Group.member.entity`);
+    });
+
     it('should return GroupMemberComponent for valid json', () => {
       const testGroupMemberComponent: GroupMemberComponent | undefined = GroupMemberComponent.parse(VALID_JSON);
 
@@ -454,7 +470,9 @@ describe('GroupMemberComponent', () => {
         testGroupMemberComponent.setEntity(INVALID_REFERENCE_VALUE);
       };
       expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`setEntity: 'value' argument (${INVALID_REFERENCE}) is not for a valid Reference type`);
+      expect(t).toThrow(
+        `ReferenceTargets decorator on setEntity (Group.member.entity) expects argument (${INVALID_REFERENCE}) to be a valid 'Reference' type`,
+      );
     });
 
     it('should throw InvalidTypeError for setPeriod()', () => {

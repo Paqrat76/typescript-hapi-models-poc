@@ -176,6 +176,7 @@ export interface InstantTypeImpl {
 /**
  * Parses the provided value and returns the desired FHIR primitive value.
  *
+ * @typeParam T - the Zod schema
  * @param data - value to be parsed
  * @param schema - custom Zod schema for FHIR primitive
  * @param errMessage - optional error message to override the default
@@ -252,7 +253,7 @@ const FHIR_REGEX_TIME = new RegExp('^([01][0-9]|2[0-3]):[0-5][0-9]:([0-5][0-9]|6
 const FHIR_REGEX_INSTANT = new RegExp(
   '^([0-9]([0-9]([0-9][1-9]|[1-9]0)|[1-9]00)|[1-9]000)-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])T([01][0-9]|2[0-3]):[0-5][0-9]:([0-5][0-9]|60)(\\.[0-9]{1,9})?(Z|(\\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))$',
 );
-const FHIR_REGEX_XHTML = new RegExp('^[ \\r\\n\\t\\S]+$');
+const FHIR_REGEX_XHTML = new RegExp('^\\S[ \\r\\n\\t\\S]+$');
 
 // FHIR boolean primitive
 

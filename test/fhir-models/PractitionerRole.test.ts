@@ -927,7 +927,9 @@ describe('PractitionerRole', () => {
         practitionerRole.setPractitioner(new MockComplexDataType());
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Decorator expects setPractitioner's argument to be type of 'Reference | undefined | null'`);
+      expect(t).toThrow(
+        `ReferenceTargets decorator on setPractitioner (PractitionerRole.practitioner) expects a single argument to be type of 'Reference | undefined | null'`,
+      );
     });
 
     it('should throw AssertionError when setOrganization for invalid type value', () => {
@@ -937,7 +939,9 @@ describe('PractitionerRole', () => {
         practitionerRole.setOrganization(new MockComplexDataType());
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Decorator expects setOrganization's argument to be type of 'Reference | undefined | null'`);
+      expect(t).toThrow(
+        `ReferenceTargets decorator on setOrganization (PractitionerRole.organization) expects a single argument to be type of 'Reference | undefined | null'`,
+      );
     });
 
     it('should throw InvalidTypeError when setCode for invalid type value', () => {
@@ -991,7 +995,9 @@ describe('PractitionerRole', () => {
         practitionerRole.setLocation([new MockComplexDataType()]);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Decorator expects setLocation's argument[0] to be type of 'Reference'`);
+      expect(t).toThrow(
+        `ReferenceTargets decorator on setLocation (PractitionerRole.location) expects argument[0] to be type of 'Reference'`,
+      );
     });
 
     it('should throw AssertionError when addLocation for invalid type value', () => {
@@ -1001,7 +1007,9 @@ describe('PractitionerRole', () => {
         practitionerRole.addLocation(new MockComplexDataType());
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Decorator expects addLocation's argument to be type of 'Reference | undefined | null'`);
+      expect(t).toThrow(
+        `ReferenceTargets decorator on addLocation (PractitionerRole.location) expects a single argument to be type of 'Reference | undefined | null'`,
+      );
     });
 
     it('should throw AssertionError when setHealthcareService for invalid type value', () => {
@@ -1011,7 +1019,9 @@ describe('PractitionerRole', () => {
         practitionerRole.setHealthcareService([new MockComplexDataType()]);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Decorator expects setHealthcareService's argument[0] to be type of 'Reference'`);
+      expect(t).toThrow(
+        `ReferenceTargets decorator on setHealthcareService (PractitionerRole.healthcareService) expects argument[0] to be type of 'Reference'`,
+      );
     });
 
     it('should throw AssertionError when addHealthcareService for invalid type value', () => {
@@ -1022,7 +1032,7 @@ describe('PractitionerRole', () => {
       };
       expect(t).toThrow(AssertionError);
       expect(t).toThrow(
-        `Decorator expects addHealthcareService's argument to be type of 'Reference | undefined | null'`,
+        `ReferenceTargets decorator on addHealthcareService (PractitionerRole.healthcareService) expects a single argument to be type of 'Reference | undefined | null'`,
       );
     });
 
@@ -1125,7 +1135,9 @@ describe('PractitionerRole', () => {
         practitionerRole.setEndpoint([new MockComplexDataType()]);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Decorator expects setEndpoint's argument[0] to be type of 'Reference'`);
+      expect(t).toThrow(
+        `ReferenceTargets decorator on setEndpoint (PractitionerRole.endpoint) expects argument[0] to be type of 'Reference'`,
+      );
     });
 
     it('should throw AssertionError when addEndpoint for invalid type value', () => {
@@ -1135,7 +1147,9 @@ describe('PractitionerRole', () => {
         practitionerRole.addEndpoint(new MockComplexDataType());
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Decorator expects addEndpoint's argument to be type of 'Reference | undefined | null'`);
+      expect(t).toThrow(
+        `ReferenceTargets decorator on addEndpoint (PractitionerRole.endpoint) expects a single argument to be type of 'Reference | undefined | null'`,
+      );
     });
   });
 });

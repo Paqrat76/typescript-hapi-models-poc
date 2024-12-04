@@ -74,7 +74,7 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
    * - **isModifier:** false
    * - **isSummary:** false
    */
-  protected text?: Narrative | undefined;
+  private text?: Narrative | undefined;
 
   /**
    * DomainResource.contained Element
@@ -89,7 +89,7 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
    * - **isModifier:** false
    * - **isSummary:** false
    */
-  protected contained?: Resource[] | undefined;
+  private contained?: Resource[] | undefined;
 
   /**
    * DomainResource.extension Element
@@ -104,7 +104,7 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
    * - **isModifier:** false
    * - **isSummary:** false
    */
-  protected extension?: Extension[] | undefined;
+  private extension?: Extension[] | undefined;
 
   /**
    * DomainResource.modifierExtension Element
@@ -121,7 +121,7 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
    * - **isModifierReason:** Modifier extensions allow for extensions that *cannot* be safely ignored to be clearly distinguished from the vast majority of extensions which can be safely ignored.  This promotes interoperability by eliminating the need for implementers to prohibit the presence of extensions. For further information, see the [definition of modifier extensions](https://hl7.org/fhir/R4/extensibility.html#modifierExtension).
    * - **isSummary:** false
    */
-  protected modifierExtension?: Extension[] | undefined;
+  private modifierExtension?: Extension[] | undefined;
 
   /**
    * @returns the `text` property value as a Narrative
@@ -202,8 +202,6 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
 
   /**
    * Initialize the `contained` property
-   *
-   * @private
    */
   private initContained(): void {
     if (!this.hasContained()) {
@@ -282,8 +280,6 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
 
   /**
    * Ensures the `extension` property exists and if not initializes it to an empty array.
-   *
-   * @private
    */
   private initExtension(): void {
     if (!this.hasExtension()) {
@@ -295,7 +291,6 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
    * Determines if `extension` property exists, and if so, determines if the `extension` array is empty.
    *
    * @returns `true` if the `extension` property array exists and has at least one element; false otherwise
-   * @private
    */
   private existsExtension(): boolean {
     return (
@@ -377,7 +372,6 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
   /**
    * Ensures the `modifierExtension` property exists and if not initializes it to an empty array.
    *
-   * @private
    */
   private initModifierExtension(): void {
     if (!this.hasModifierExtension()) {
@@ -391,7 +385,6 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
    *
    * @returns `true` if the `modifierExtension` property array exists and has at least one element;
    * false otherwise
-   * @private
    */
   private existsModifierExtension(): boolean {
     return (

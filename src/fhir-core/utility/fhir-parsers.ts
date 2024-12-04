@@ -100,11 +100,12 @@ import { getChoiceDatatypeDefsForField } from '@src/fhir-core/utility/decorators
  * @see [Extension Element](https://hl7.org/fhir/R4/extensibility.html#extension)
  */
 export function parseExtension(json: JSON.Object | undefined): Extension | undefined {
-  if (isNil(json) || (JSON.isObject(json) && isEmpty(json))) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
-  const extensionJsonObj: JSON.Object = JSON.asObject(json, 'Extension JSON');
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const extensionJsonObj: JSON.Object = JSON.asObject(json!, 'Extension JSON');
   const instance = new Extension(null);
 
   if ('url' in extensionJsonObj) {
@@ -174,11 +175,12 @@ export interface PrimitiveTypeJson {
  */
 export function processElementJson(instance: DataType, dataTypeJson: JSON.Value | undefined): void {
   assert.ok(instance, 'The instance argument is required.');
-  if (isNil(dataTypeJson) || (JSON.isObject(dataTypeJson) && isEmpty(dataTypeJson))) {
+  if (!JSON.hasFhirData(dataTypeJson)) {
     return;
   }
 
-  const element: JSON.Object = JSON.asObject(dataTypeJson, `${instance.constructor.name} Element`);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const element: JSON.Object = JSON.asObject(dataTypeJson!, `${instance.constructor.name} Element`);
 
   if ('id' in element) {
     instance.setId(JSON.asString(element['id'], `${instance.constructor.name}.id`));
@@ -209,11 +211,12 @@ export function processElementJson(instance: DataType, dataTypeJson: JSON.Value 
  */
 export function processBackboneElementJson(instance: BackboneElement, dataJson: JSON.Value | undefined): void {
   assert.ok(instance, 'The instance argument is required.');
-  if (isNil(dataJson) || (JSON.isObject(dataJson) && isEmpty(dataJson))) {
+  if (!JSON.hasFhirData(dataJson)) {
     return;
   }
 
-  const backboneElement: JSON.Object = JSON.asObject(dataJson, `${instance.constructor.name} BackboneElement`);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const backboneElement: JSON.Object = JSON.asObject(dataJson!, `${instance.constructor.name} BackboneElement`);
 
   if ('id' in backboneElement) {
     instance.setId(JSON.asString(backboneElement['id'], `${instance.constructor.name}.id`));
@@ -258,12 +261,13 @@ export function processBackboneElementJson(instance: BackboneElement, dataJson: 
  */
 export function processResourceJson(instance: Resource, dataJson: JSON.Value | undefined): void {
   assert.ok(instance, 'The instance argument is required.');
-  if (isNil(dataJson) || (JSON.isObject(dataJson) && isEmpty(dataJson))) {
+  if (!JSON.hasFhirData(dataJson)) {
     return;
   }
 
   const sourceResource: string = instance.constructor.name;
-  const resourceObj: JSON.Object = JSON.asObject(dataJson, `${sourceResource} JSON`);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const resourceObj: JSON.Object = JSON.asObject(dataJson!, `${sourceResource} JSON`);
 
   if ('id' in resourceObj) {
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(resourceObj, `${sourceResource}.id`, 'id', 'string');
@@ -311,12 +315,13 @@ export function processResourceJson(instance: Resource, dataJson: JSON.Value | u
  */
 export function processDomainResourceJson(instance: DomainResource, dataJson: JSON.Value | undefined): void {
   assert.ok(instance, 'The instance argument is required.');
-  if (isNil(dataJson) || (JSON.isObject(dataJson) && isEmpty(dataJson))) {
+  if (!JSON.hasFhirData(dataJson)) {
     return;
   }
 
   const sourceResource: string = instance.constructor.name;
-  const resourceObj: JSON.Object = JSON.asObject(dataJson, `${sourceResource} JSON`);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const resourceObj: JSON.Object = JSON.asObject(dataJson!, `${sourceResource} JSON`);
 
   processResourceJson(instance, resourceObj);
 
@@ -356,7 +361,8 @@ export function processDomainResourceJson(instance: DomainResource, dataJson: JS
  *
  * @param jsonObj - source JSON object
  * @returns the appropriate DataType instance or undefined
- * @private
+ *
+ * @hidden
  */
 export function getValueXData(jsonObj: JSON.Object): DataType | undefined {
   assert(jsonObj, 'The jsonObj argument is required.');
@@ -461,12 +467,12 @@ export function getPrimitiveTypeJson(
   primitiveFieldName: string,
   jsonType: 'boolean' | 'number' | 'string',
 ): PrimitiveTypeJson {
-  if (isNil(datatypeJsonObj) || (JSON.isObject(datatypeJsonObj) && isEmpty(datatypeJsonObj))) {
+  if (!JSON.hasFhirData(datatypeJsonObj)) {
     return { dtJson: undefined, dtSiblingJson: undefined };
   }
 
   let dtJson: JSON.Value | undefined = undefined;
-  if (datatypeJsonObj[primitiveFieldName] !== undefined) {
+  if (!isNil(datatypeJsonObj[primitiveFieldName])) {
     if (jsonType === 'boolean') {
       dtJson = JSON.asBoolean(datatypeJsonObj[primitiveFieldName], sourceField);
     } else if (jsonType === 'number') {
@@ -507,7 +513,7 @@ export function getPrimitiveTypeListJson(
   primitiveFieldName: string,
   jsonType: 'boolean' | 'number' | 'string',
 ): PrimitiveTypeJson[] {
-  if (isNil(datatypeJsonObj) || (JSON.isObject(datatypeJsonObj) && isEmpty(datatypeJsonObj))) {
+  if (!JSON.hasFhirData(datatypeJsonObj)) {
     return [];
   }
   // Calling function should have already ensured this is true!
@@ -561,11 +567,9 @@ export function getPrimitiveTypeListJson(
  * @category Type Guards/Assertions
  */
 export function assertFhirResourceTypeJson(dataJsonObj: JSON.Object, fhirResourceType: FhirResourceType): void {
-  assert(
-    !isNil(dataJsonObj) && !(JSON.isObject(dataJsonObj) && isEmpty(dataJsonObj)),
-    `The dataJsonObj argument is required.`,
-  );
+  assert(!isNil(dataJsonObj), `The dataJsonObj argument is required.`);
   assert(!isNil(fhirResourceType) && !isEmpty(fhirResourceType), `The fhirResourceType argument is required.`);
+  assert(JSON.isObject(dataJsonObj), `The provided JSON does not represent a JSON object.`);
 
   if ('resourceType' in dataJsonObj) {
     const resourceTypeValue = JSON.asString(dataJsonObj['resourceType'], `${fhirResourceType}.resourceType`);
@@ -598,12 +602,13 @@ export function parseBase64BinaryType(
   json: JSON.Value | undefined,
   siblingJson?: JSON.Value,
 ): Base64BinaryType | undefined {
-  if (isNil(json) || (JSON.isString(json) && json.trim().length === 0)) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const instance = new Base64BinaryType();
-  instance.setValue(JSON.asString(json, `json argument for ${instance.constructor.name}`));
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  instance.setValue(JSON.asString(json!, `json argument for ${instance.constructor.name}`));
   processElementJson(instance, siblingJson);
 
   assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
@@ -620,12 +625,13 @@ export function parseBase64BinaryType(
  * @category Utilities: FHIR Parsers
  */
 export function parseBooleanType(json: JSON.Value | undefined, siblingJson?: JSON.Value): BooleanType | undefined {
-  if (isNil(json)) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const instance = new BooleanType();
-  instance.setValue(JSON.asBoolean(json, `json argument for ${instance.constructor.name}`));
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  instance.setValue(JSON.asBoolean(json!, `json argument for ${instance.constructor.name}`));
   processElementJson(instance, siblingJson);
 
   assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
@@ -642,12 +648,13 @@ export function parseBooleanType(json: JSON.Value | undefined, siblingJson?: JSO
  * @category Utilities: FHIR Parsers
  */
 export function parseCanonicalType(json: JSON.Value | undefined, siblingJson?: JSON.Value): CanonicalType | undefined {
-  if (isNil(json) || (JSON.isString(json) && json.trim().length === 0)) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const instance = new CanonicalType();
-  instance.setValue(JSON.asString(json, `json argument for ${instance.constructor.name}`));
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  instance.setValue(JSON.asString(json!, `json argument for ${instance.constructor.name}`));
   processElementJson(instance, siblingJson);
 
   assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
@@ -667,12 +674,13 @@ export function parseCanonicalType(json: JSON.Value | undefined, siblingJson?: J
  * @category Utilities: FHIR Parsers
  */
 export function parseCodeType(json: JSON.Value | undefined, siblingJson?: JSON.Value): CodeType | undefined {
-  if (isNil(json) || (JSON.isString(json) && json.trim().length === 0)) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const instance = new CodeType();
-  instance.setValue(JSON.asString(json, `json argument for ${instance.constructor.name}`));
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  instance.setValue(JSON.asString(json!, `json argument for ${instance.constructor.name}`));
   processElementJson(instance, siblingJson);
 
   assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
@@ -689,12 +697,13 @@ export function parseCodeType(json: JSON.Value | undefined, siblingJson?: JSON.V
  * @category Utilities: FHIR Parsers
  */
 export function parseDateTimeType(json: JSON.Value | undefined, siblingJson?: JSON.Value): DateTimeType | undefined {
-  if (isNil(json) || (JSON.isString(json) && json.trim().length === 0)) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const instance = new DateTimeType();
-  instance.setValue(JSON.asString(json, `json argument for ${instance.constructor.name}`));
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  instance.setValue(JSON.asString(json!, `json argument for ${instance.constructor.name}`));
   processElementJson(instance, siblingJson);
 
   assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
@@ -711,12 +720,13 @@ export function parseDateTimeType(json: JSON.Value | undefined, siblingJson?: JS
  * @category Utilities: FHIR Parsers
  */
 export function parseDateType(json: JSON.Value | undefined, siblingJson?: JSON.Value): DateType | undefined {
-  if (isNil(json) || (JSON.isString(json) && json.trim().length === 0)) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const instance = new DateType();
-  instance.setValue(JSON.asString(json, `json argument for ${instance.constructor.name}`));
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  instance.setValue(JSON.asString(json!, `json argument for ${instance.constructor.name}`));
   processElementJson(instance, siblingJson);
 
   assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
@@ -733,12 +743,13 @@ export function parseDateType(json: JSON.Value | undefined, siblingJson?: JSON.V
  * @category Utilities: FHIR Parsers
  */
 export function parseDecimalType(json: JSON.Value | undefined, siblingJson?: JSON.Value): DecimalType | undefined {
-  if (isNil(json)) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const instance = new DecimalType();
-  instance.setValue(JSON.asNumber(json, `json argument for ${instance.constructor.name}`));
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  instance.setValue(JSON.asNumber(json!, `json argument for ${instance.constructor.name}`));
   processElementJson(instance, siblingJson);
 
   assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
@@ -755,12 +766,13 @@ export function parseDecimalType(json: JSON.Value | undefined, siblingJson?: JSO
  * @category Utilities: FHIR Parsers
  */
 export function parseIdType(json: JSON.Value | undefined, siblingJson?: JSON.Value): IdType | undefined {
-  if (isNil(json) || (JSON.isString(json) && json.trim().length === 0)) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const instance = new IdType();
-  instance.setValue(JSON.asString(json, `json argument for ${instance.constructor.name}`));
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  instance.setValue(JSON.asString(json!, `json argument for ${instance.constructor.name}`));
   processElementJson(instance, siblingJson);
 
   assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
@@ -777,12 +789,13 @@ export function parseIdType(json: JSON.Value | undefined, siblingJson?: JSON.Val
  * @category Utilities: FHIR Parsers
  */
 export function parseInstantType(json: JSON.Value | undefined, siblingJson?: JSON.Value): InstantType | undefined {
-  if (isNil(json) || (JSON.isString(json) && json.trim().length === 0)) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const instance = new InstantType();
-  instance.setValue(JSON.asString(json, `json argument for ${instance.constructor.name}`));
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  instance.setValue(JSON.asString(json!, `json argument for ${instance.constructor.name}`));
   processElementJson(instance, siblingJson);
 
   assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
@@ -802,12 +815,13 @@ export function parseInstantType(json: JSON.Value | undefined, siblingJson?: JSO
  * @category Utilities: FHIR Parsers
  */
 export function parseInteger64Type(json: JSON.Value | undefined, siblingJson?: JSON.Value): Integer64Type | undefined {
-  if (isNil(json)) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const instance = new Integer64Type();
-  const int64Value = JSON.asString(json, `json argument for ${instance.constructor.name}`);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const int64Value = JSON.asString(json!, `json argument for ${instance.constructor.name}`);
   instance.setValue(BigInt(int64Value));
   processElementJson(instance, siblingJson);
 
@@ -825,12 +839,13 @@ export function parseInteger64Type(json: JSON.Value | undefined, siblingJson?: J
  * @category Utilities: FHIR Parsers
  */
 export function parseIntegerType(json: JSON.Value | undefined, siblingJson?: JSON.Value): IntegerType | undefined {
-  if (isNil(json)) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const instance = new IntegerType();
-  instance.setValue(JSON.asNumber(json, `json argument for ${instance.constructor.name}`));
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  instance.setValue(JSON.asNumber(json!, `json argument for ${instance.constructor.name}`));
   processElementJson(instance, siblingJson);
 
   assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
@@ -847,12 +862,13 @@ export function parseIntegerType(json: JSON.Value | undefined, siblingJson?: JSO
  * @category Utilities: FHIR Parsers
  */
 export function parseMarkdownType(json: JSON.Value | undefined, siblingJson?: JSON.Value): MarkdownType | undefined {
-  if (isNil(json) || (JSON.isString(json) && json.trim().length === 0)) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const instance = new MarkdownType();
-  instance.setValue(JSON.asString(json, `json argument for ${instance.constructor.name}`));
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  instance.setValue(JSON.asString(json!, `json argument for ${instance.constructor.name}`));
   processElementJson(instance, siblingJson);
 
   assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
@@ -869,12 +885,13 @@ export function parseMarkdownType(json: JSON.Value | undefined, siblingJson?: JS
  * @category Utilities: FHIR Parsers
  */
 export function parseOidType(json: JSON.Value | undefined, siblingJson?: JSON.Value): OidType | undefined {
-  if (isNil(json) || (JSON.isString(json) && json.trim().length === 0)) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const instance = new OidType();
-  instance.setValue(JSON.asString(json, `json argument for ${instance.constructor.name}`));
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  instance.setValue(JSON.asString(json!, `json argument for ${instance.constructor.name}`));
   processElementJson(instance, siblingJson);
 
   assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
@@ -894,12 +911,13 @@ export function parsePositiveIntType(
   json: JSON.Value | undefined,
   siblingJson?: JSON.Value,
 ): PositiveIntType | undefined {
-  if (isNil(json)) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const instance = new PositiveIntType();
-  instance.setValue(JSON.asNumber(json, `json argument for ${instance.constructor.name}`));
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  instance.setValue(JSON.asNumber(json!, `json argument for ${instance.constructor.name}`));
   processElementJson(instance, siblingJson);
 
   assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
@@ -916,12 +934,13 @@ export function parsePositiveIntType(
  * @category Utilities: FHIR Parsers
  */
 export function parseStringType(json: JSON.Value | undefined, siblingJson?: JSON.Value): StringType | undefined {
-  if (isNil(json) || (JSON.isString(json) && json.trim().length === 0)) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const instance = new StringType();
-  instance.setValue(JSON.asString(json, `json argument for ${instance.constructor.name}`));
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  instance.setValue(JSON.asString(json!, `json argument for ${instance.constructor.name}`));
   processElementJson(instance, siblingJson);
 
   assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
@@ -938,12 +957,13 @@ export function parseStringType(json: JSON.Value | undefined, siblingJson?: JSON
  * @category Utilities: FHIR Parsers
  */
 export function parseTimeType(json: JSON.Value | undefined, siblingJson?: JSON.Value): TimeType | undefined {
-  if (isNil(json) || (JSON.isString(json) && json.trim().length === 0)) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const instance = new TimeType();
-  instance.setValue(JSON.asString(json, `json argument for ${instance.constructor.name}`));
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  instance.setValue(JSON.asString(json!, `json argument for ${instance.constructor.name}`));
   processElementJson(instance, siblingJson);
 
   assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
@@ -963,12 +983,13 @@ export function parseUnsignedIntType(
   json: JSON.Value | undefined,
   siblingJson?: JSON.Value,
 ): UnsignedIntType | undefined {
-  if (isNil(json)) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const instance = new UnsignedIntType();
-  instance.setValue(JSON.asNumber(json, `json argument for ${instance.constructor.name}`));
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  instance.setValue(JSON.asNumber(json!, `json argument for ${instance.constructor.name}`));
   processElementJson(instance, siblingJson);
 
   assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
@@ -985,12 +1006,13 @@ export function parseUnsignedIntType(
  * @category Utilities: FHIR Parsers
  */
 export function parseUriType(json: JSON.Value | undefined, siblingJson?: JSON.Value): UriType | undefined {
-  if (isNil(json) || (JSON.isString(json) && json.trim().length === 0)) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const instance = new UriType();
-  instance.setValue(JSON.asString(json, `json argument for ${instance.constructor.name}`));
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  instance.setValue(JSON.asString(json!, `json argument for ${instance.constructor.name}`));
   processElementJson(instance, siblingJson);
 
   assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
@@ -1007,12 +1029,13 @@ export function parseUriType(json: JSON.Value | undefined, siblingJson?: JSON.Va
  * @category Utilities: FHIR Parsers
  */
 export function parseUrlType(json: JSON.Value | undefined, siblingJson?: JSON.Value): UrlType | undefined {
-  if (isNil(json) || (JSON.isString(json) && json.trim().length === 0)) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const instance = new UrlType();
-  instance.setValue(JSON.asString(json, `json argument for ${instance.constructor.name}`));
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  instance.setValue(JSON.asString(json!, `json argument for ${instance.constructor.name}`));
   processElementJson(instance, siblingJson);
 
   assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
@@ -1029,12 +1052,13 @@ export function parseUrlType(json: JSON.Value | undefined, siblingJson?: JSON.Va
  * @category Utilities: FHIR Parsers
  */
 export function parseUuidType(json: JSON.Value | undefined, siblingJson?: JSON.Value): UuidType | undefined {
-  if (isNil(json) || (JSON.isString(json) && json.trim().length === 0)) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const instance = new UuidType();
-  instance.setValue(JSON.asString(json, `json argument for ${instance.constructor.name}`));
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  instance.setValue(JSON.asString(json!, `json argument for ${instance.constructor.name}`));
   processElementJson(instance, siblingJson);
 
   assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
@@ -1056,12 +1080,13 @@ export function parseUuidType(json: JSON.Value | undefined, siblingJson?: JSON.V
  * @category Utilities: FHIR Parsers
  */
 export function parseXhtmlType(json: JSON.Value | undefined, siblingJson?: JSON.Value): XhtmlType | undefined {
-  if (isNil(json)) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const instance = new XhtmlType();
-  instance.setValue(JSON.asString(json, `json argument for ${instance.constructor.name}`));
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  instance.setValue(JSON.asString(json!, `json argument for ${instance.constructor.name}`));
   processElementJson(instance, siblingJson);
 
   assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
@@ -1089,7 +1114,7 @@ export function parsePolymorphicDataType(
   fieldName: string,
   metadata: DecoratorMetadataObject | null,
 ): DataType | undefined {
-  if (isNil(jsonObj) || (JSON.isObject(jsonObj) && isEmpty(jsonObj))) {
+  if (!JSON.hasFhirData(jsonObj)) {
     return undefined;
   }
   assert(sourceField, 'sourceField must be provided');
@@ -1098,7 +1123,7 @@ export function parsePolymorphicDataType(
   const choiceDataTypes: FhirDataType[] = getChoiceDatatypeDefsForField(metadata, fieldName);
   const supportedFieldNames = choiceDataTypes.map((item) => `${fieldName}${upperFirst(item)}`);
 
-  // ['boolean', 'CodeableConcept', 'Quantity', 'Range', 'Reference']
+  // e.g., ['boolean', 'CodeableConcept', 'Quantity', 'Range', 'Reference']
   const valueKeys = Object.keys(jsonObj).filter((key) => key.startsWith(fieldName));
   if (fieldName in jsonObj) {
     throw new FhirError(INVALID_VALUEX_PROPERTY);
@@ -1133,13 +1158,14 @@ export function parsePolymorphicDataType(
  * @category Utilities: FHIR Parsers
  */
 export function parseCodeableConcept(json: JSON.Value | undefined, sourceField?: string): CodeableConcept | undefined {
-  if (isNil(json) || (JSON.isObject(json) && isEmpty(json))) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const source = sourceField ? sourceField : 'CodeableConcept';
 
-  const datatypeJsonObj: JSON.Object = JSON.asObject(json, `${source} JSON`);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
   const instance = new CodeableConcept();
 
   processElementJson(instance, datatypeJsonObj);
@@ -1172,13 +1198,14 @@ export function parseCodeableConcept(json: JSON.Value | undefined, sourceField?:
  * @category Utilities: FHIR Parsers
  */
 export function parseCoding(json: JSON.Value | undefined, sourceField?: string): Coding | undefined {
-  if (isNil(json) || (JSON.isObject(json) && isEmpty(json))) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const source = sourceField ? sourceField : 'Coding';
 
-  const datatypeJsonObj: JSON.Object = JSON.asObject(json, `${source} JSON`);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
   const instance = new Coding();
 
   processElementJson(instance, datatypeJsonObj);
@@ -1227,13 +1254,14 @@ export function parseCoding(json: JSON.Value | undefined, sourceField?: string):
  * @category Utilities: FHIR Parsers
  */
 export function parseContactPoint(json: JSON.Value | undefined, sourceField?: string): ContactPoint | undefined {
-  if (isNil(json) || (JSON.isObject(json) && isEmpty(json))) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const source = sourceField ? sourceField : 'ContactPoint';
 
-  const datatypeJsonObj: JSON.Object = JSON.asObject(json, `${source} JSON`);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
   const instance = new ContactPoint();
 
   processElementJson(instance, datatypeJsonObj);
@@ -1281,13 +1309,14 @@ export function parseContactPoint(json: JSON.Value | undefined, sourceField?: st
  * @category Utilities: FHIR Parsers
  */
 export function parseIdentifier(json: JSON.Value | undefined, sourceField?: string): Identifier | undefined {
-  if (isNil(json) || (JSON.isObject(json) && isEmpty(json))) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const source = sourceField ? sourceField : 'Identifier';
 
-  const datatypeJsonObj: JSON.Object = JSON.asObject(json, `${source} JSON`);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
   const instance = new Identifier();
 
   processElementJson(instance, datatypeJsonObj);
@@ -1339,13 +1368,14 @@ export function parseIdentifier(json: JSON.Value | undefined, sourceField?: stri
  * @category Utilities: FHIR Parsers
  */
 export function parseMeta(json: JSON.Value | undefined, sourceField?: string): Meta | undefined {
-  if (isNil(json) || (JSON.isObject(json) && isEmpty(json))) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const source = sourceField ? sourceField : 'Meta';
 
-  const datatypeJsonObj: JSON.Object = JSON.asObject(json, `${source} JSON`);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
   const instance = new Meta();
 
   processElementJson(instance, datatypeJsonObj);
@@ -1406,13 +1436,14 @@ export function parseMeta(json: JSON.Value | undefined, sourceField?: string): M
  * @category Utilities: FHIR Parsers
  */
 export function parseNarrative(json: JSON.Value | undefined, sourceField?: string): Narrative | undefined {
-  if (isNil(json) || (JSON.isObject(json) && isEmpty(json))) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const source = sourceField ? sourceField : 'Narrative';
 
-  const datatypeJsonObj: JSON.Object = JSON.asObject(json, `${source} JSON`);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
   const instance = new Narrative(null, null);
 
   processElementJson(instance, datatypeJsonObj);
@@ -1423,7 +1454,7 @@ export function parseNarrative(json: JSON.Value | undefined, sourceField?: strin
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'status', 'string');
     const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
     if (datatype === undefined) {
-      throw new Error(`Failed to parse ${source}.status from the provided JSON`);
+      missingReqdProperties.push(`${source}.status`);
     } else {
       instance.setStatusElement(datatype);
     }
@@ -1435,7 +1466,7 @@ export function parseNarrative(json: JSON.Value | undefined, sourceField?: strin
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'div', 'string');
     const datatype: XhtmlType | undefined = parseXhtmlType(dtJson, dtSiblingJson);
     if (datatype === undefined) {
-      throw new Error(`Failed to parse ${source}.div from the provided JSON`);
+      missingReqdProperties.push(`${source}.div`);
     } else {
       instance.setDivElement(datatype);
     }
@@ -1462,13 +1493,14 @@ export function parseNarrative(json: JSON.Value | undefined, sourceField?: strin
  * @category Utilities: FHIR Parsers
  */
 export function parsePeriod(json: JSON.Value | undefined, sourceField?: string): Period | undefined {
-  if (isNil(json) || (JSON.isObject(json) && isEmpty(json))) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const source = sourceField ? sourceField : 'Period';
 
-  const datatypeJsonObj: JSON.Object = JSON.asObject(json, `${source} JSON`);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
   const instance = new Period();
 
   processElementJson(instance, datatypeJsonObj);
@@ -1499,13 +1531,14 @@ export function parsePeriod(json: JSON.Value | undefined, sourceField?: string):
  * @category Utilities: FHIR Parsers
  */
 export function parseQuantity(json: JSON.Value | undefined, sourceField?: string): Quantity | undefined {
-  if (isNil(json) || (JSON.isObject(json) && isEmpty(json))) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const source = sourceField ? sourceField : 'Quantity';
 
-  const datatypeJsonObj: JSON.Object = JSON.asObject(json, `${source} JSON`);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
   const instance = new Quantity();
 
   processElementJson(instance, datatypeJsonObj);
@@ -1554,13 +1587,14 @@ export function parseQuantity(json: JSON.Value | undefined, sourceField?: string
  * @category Utilities: FHIR Parsers
  */
 export function parseRange(json: JSON.Value | undefined, sourceField?: string): Range | undefined {
-  if (isNil(json) || (JSON.isObject(json) && isEmpty(json))) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const source = sourceField ? sourceField : 'Range';
 
-  const datatypeJsonObj: JSON.Object = JSON.asObject(json, `${source} JSON`);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
   const instance = new Range();
 
   processElementJson(instance, datatypeJsonObj);
@@ -1589,13 +1623,14 @@ export function parseRange(json: JSON.Value | undefined, sourceField?: string): 
  * @category Utilities: FHIR Parsers
  */
 export function parseReference(json: JSON.Value | undefined, sourceField?: string): Reference | undefined {
-  if (isNil(json) || (JSON.isObject(json) && isEmpty(json))) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const source = sourceField ? sourceField : 'Reference';
 
-  const datatypeJsonObj: JSON.Object = JSON.asObject(json, `${source} JSON`);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
   const instance = new Reference();
 
   processElementJson(instance, datatypeJsonObj);
@@ -1637,13 +1672,14 @@ export function parseReference(json: JSON.Value | undefined, sourceField?: strin
  * @category Utilities: FHIR Parsers
  */
 export function parseSimpleQuantity(json: JSON.Value | undefined, sourceField?: string): SimpleQuantity | undefined {
-  if (isNil(json) || (JSON.isObject(json) && isEmpty(json))) {
+  if (!JSON.hasFhirData(json)) {
     return undefined;
   }
 
   const source = sourceField ? sourceField : 'SimpleQuantity';
 
-  const datatypeJsonObj: JSON.Object = JSON.asObject(json, `${source} JSON`);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
   const instance = new SimpleQuantity();
 
   processElementJson(instance, datatypeJsonObj);

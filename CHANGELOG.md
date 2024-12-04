@@ -1,7 +1,6 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
-
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
@@ -20,7 +19,40 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
-## [0.10.0] - 2024-11-??
+## [0.11.0] - 2024-12-04
+
+### Added
+
+- Added missing class field TypeDoc headers
+- Added eslint-plugin-node-import
+- Added function constructorCodeValueAsEnumCodeTypeList<T>()
+- Added function hasFhirData() assertion function
+
+### Changed
+
+- Updated dependencies
+- Made all protected class fields private
+- Added sourceField (ElementDefinition.path for the field) as a parameter to all decorator factories;
+  Refactored all decorator error messages to use sourceField and make them all consistent
+- Refactored all class method error messages to use sourceField and make them all consistent
+- added missing/updated @typeParam TypeDoc tags
+- Updated/added tests as needed
+
+### Removed
+
+- Replaced src/fhir-core/data-types/tempTemplateTypeMethods.ts with text-based template files in ./zTemplates:
+  - template-BackboneElementType.template
+  - template-ComplexType.template
+  - template-EnumCodeType.template
+  - template-FhirCodeSystemEnum.template
+  - template-PrimitiveType.template
+
+### Fixed
+
+- Fixed FHIR_REGEX_XHTML to prevent an empty string
+
+
+## [0.10.0] - 2024-11-22
 
 ### Added
 

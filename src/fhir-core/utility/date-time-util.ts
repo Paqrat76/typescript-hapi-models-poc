@@ -216,8 +216,6 @@ export function getValueAsInstant(dt: unknown): string | undefined {
  *
  * @param dt - expected DateTime object
  * @throws InvalidDateTimeError if not a valid DateTime object
- *
- * @private
  */
 function verifyDateTime(dt: unknown): void {
   if (dt === undefined) {

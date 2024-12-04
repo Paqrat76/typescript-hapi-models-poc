@@ -43,6 +43,7 @@ import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 /**
  * Assertion that the value is defined (i.e., not `undefined` and not `null`)
  *
+ * @typeParam T - the value type
  * @param value - value to be evaluated
  * @param errorMessage - optional error message to override the default
  * @throws AssertionError when instance is either `undefined` or `null`
@@ -59,6 +60,7 @@ export function assertIsDefined<T>(value: T, errorMessage?: string): asserts val
 /**
  * Generic type for TypeScript classes used by type assertion functions
  *
+ * @typeParam T - the class type
  * @category Type Guards/Assertions
  * @see [A generic type for classes: Class<T>](https://exploringjs.com/tackling-ts/ch_classes-as-values.html#a-generic-type-for-classes-classt)
  * @see [TypeScript constructors and generic types](https://www.simonholywell.com/post/typescript-constructor-type/)
@@ -73,6 +75,7 @@ export type Class<T> = { new (...args: any[]): T };
  * Because FHIR types may be undefined (for optional fields) or null (for required fields),
  * both `undefined` and `null` are considered valid FHIR types.
  *
+ * @typeParam T - the FHIR class type
  * @param classInstance - class instance to evaluate
  * @param className - class name for evaluation
  * @returns true if classInstance is undefined or null or instanceof className; false otherwise
@@ -86,6 +89,7 @@ export function FhirTypeGuard<T>(classInstance: unknown, className: Class<T>): c
 /**
  * FHIR type assertion for any FHIR class (PrimitiveTypes, complex Types, resources)
  *
+ * @typeParam T - the FHIR class type
  * @param classInstance - class instance to evaluate
  * @param className - class name for evaluation
  * @param errorMessage - optional error message to override the default
@@ -107,6 +111,7 @@ export function assertFhirType<T>(
 /**
  * FHIR type assertion for a list of any FHIR class (PrimitiveTypes, complex Types, resources)
  *
+ * @typeParam T - the FHIR class type
  * @param listInstance - array of class instances to evaluate
  * @param className - class name for evaluation
  * @param errorMessage - optional error message to override the default

@@ -4,6 +4,7 @@ import { OptionDefaults } from 'typedoc';
 const config = {
   entryPoints: ['src/index.ts'],
   out: 'docs',
+  excludePrivate: false,
   includeVersion: true,
   plugin: ['typedoc-plugin-zod'],
   sort: ['source-order'],

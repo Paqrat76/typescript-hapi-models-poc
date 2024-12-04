@@ -49,12 +49,11 @@ import { PractitionerRole } from '@src/fhir-models/PractitionerRole';
  * Executes the static `parse(...)` method for the implementation of the resourceTypeValue
  *
  * @privateRemarks
- * The FHIR resource generator will fill out the switch statement for all FHIR resources.
+ * The FHIR resource code generator will fill out the switch statement for all FHIR resources.
  *
  * @param resourceTypeValue - String name of FHIR model to do the parsing
  * @param jsonObj - JSON object to parse by the resourceTypeValue implementation of `parse()`
  * @returns the parsed Resource or undefined
- * @private
  */
 function getFhirModelParseResults(resourceTypeValue: string, jsonObj: JSON.Object): Resource | undefined {
   let parseResult: Resource | undefined = undefined;
@@ -77,7 +76,6 @@ function getFhirModelParseResults(resourceTypeValue: string, jsonObj: JSON.Objec
  * @param json - JSON value to be parsed
  * @param sourceField - Source of the provided json
  * @returns the parsed Resource or undefined
- * @private
  */
 function parseContainedResource(json: JSON.Value | undefined, sourceField: string): Resource | undefined {
   if (isNil(json) || (JSON.isObject(json) && isEmpty(json))) {

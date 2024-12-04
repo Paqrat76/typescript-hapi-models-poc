@@ -60,6 +60,8 @@
  * @module
  */
 
+import { isEmpty, isNil } from 'lodash';
+
 export { JsonObject as Object, JsonArray as Array };
 
 /**
@@ -229,7 +231,7 @@ export function asObject(x: Value, prefix?: string): JsonObject {
  * Tests a JSON value to see if it is a JSON array.
  *
  * @param x - JSON Value
- * @returns true if null; false otherwise
+ * @returns true if array; false otherwise
  *
  * @category Utilities: JSON
  */
@@ -278,13 +280,39 @@ export function safeStringify(value: Value): string {
 }
 
 /**
+ * Tests a JSON value to determine if it contains data.
+ *
+ * @remarks
+ * The FHIR specification provides requirements on how to represent FHIR data in JSON.
+ * These requirements are stricter than the JSON specifications. For our purposes, the
+ * following requirements must guide our implementations for how JSON values are handled:
+ * - Objects are never empty (implies arrays are also never empty). If an element is
+ *   present in the resource, it SHALL have properties as defined for its type, or 1 or
+ *   more extensions.
+ * - String property values can never be empty. Either the property is absent, or it is
+ *   present with at least one character of content.
+ * - The FHIR types `integer`, `unsignedInt`, `positiveInt` and `decimal` are represented
+ *   as a JSON number, the FHIR type `boolean` as a JSON boolean, and all other types
+ *   (including `integer64`) are represented as a JSON string which has the same content
+ *   as that specified for the relevant datatype. Whitespace is always significant
+ *   (i.e. no leading and trailing spaces for non-strings).
+ *
+ * @param x - JSON Value
+ * @returns true if argument has actual data; false otherwise
+ *
+ * @see [JSON Representation of Resources](https://hl7.org/fhir/json.html)
+ * @category Utilities: JSON
+ */
+export function hasFhirData(x: Value | undefined): boolean {
+  return !(isNil(x) || (isObject(x) && isEmpty(x)) || (isArray(x) && isEmpty(x)) || (isString(x) && isEmpty(x)));
+}
+
+/**
  * Generates a cast error message
  *
  * @param prefix - optional error message prefix
  * @param expected - string describing the expected JSON type
  * @returns error message
- *
- * @private
  */
 function msg(prefix: string | undefined, expected: string): string {
   return `${prefix ? prefix + ' is' : 'Is'} not ${expected}.`;

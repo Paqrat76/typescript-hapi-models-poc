@@ -29,7 +29,7 @@ import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 
 describe('XhtmlType', () => {
   const VALID_XHTML = `<div xmlns="http://www.w3.org/1999/xhtml">text</div>`;
-  const VALID_XHTML_2 = ` any\tstring\r\nlike this that passes the regex `;
+  const VALID_XHTML_2 = `any\tstring\r\nlike this that passes the regex `;
   const INVALID_XHTML = '';
   const testExtension = new Extension('testUrl', new StringType('extension string value'));
 

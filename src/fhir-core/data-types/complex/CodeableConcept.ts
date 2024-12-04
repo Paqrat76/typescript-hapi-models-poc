@@ -74,7 +74,7 @@ export class CodeableConcept extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected coding?: Coding[] | undefined;
+  private coding?: Coding[] | undefined;
 
   /**
    * CodeableConcept.text Element
@@ -90,7 +90,7 @@ export class CodeableConcept extends DataType implements IBase {
    * - **isModifier:** false
    * - **isSummary:** true
    */
-  protected text?: StringType | undefined;
+  private text?: StringType | undefined;
 
   /**
    * @returns the `coding` property value as a Coding array
@@ -137,8 +137,6 @@ export class CodeableConcept extends DataType implements IBase {
 
   /**
    * Initialize the `coding` property
-   *
-   * @private
    */
   private initCoding(): void {
     if (this.coding === undefined) {

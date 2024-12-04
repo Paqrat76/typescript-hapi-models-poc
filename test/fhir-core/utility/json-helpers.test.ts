@@ -39,6 +39,7 @@ import {
   asArray,
   safeParse,
   safeStringify,
+  hasFhirData,
 } from '@src/fhir-core/utility/json-helpers';
 import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
 import { IntegerType } from '@src/fhir-core/data-types/primitive/IntegerType';
@@ -336,7 +337,27 @@ describe('json-helpers', () => {
   });
 
   describe('FHIR related JSON Utilities', () => {
-    // Due to TypeScript circular references, these functions are in various modules.
+    it('should return expected values for hasFhirData()', () => {
+      expect(hasFhirData(undefined)).toBe(false);
+      expect(hasFhirData(null)).toBe(false);
+      expect(hasFhirData({})).toBe(false);
+      expect(hasFhirData([])).toBe(false);
+      // eslint-disable-next-line @typescript-eslint/no-array-constructor
+      expect(hasFhirData(Array())).toBe(false);
+      expect(hasFhirData('')).toBe(false);
+
+      expect(hasFhirData([1, 2])).toBe(true);
+      expect(hasFhirData(['A', 'B'])).toBe(true);
+      expect(hasFhirData(Array.from('abcdef'))).toBe(true);
+      expect(hasFhirData({ prop: 'value' })).toBe(true);
+      expect(hasFhirData('string value')).toBe(true);
+      expect(hasFhirData(123)).toBe(true);
+      expect(hasFhirData(123.456)).toBe(true);
+      expect(hasFhirData(true)).toBe(true);
+      expect(hasFhirData(false)).toBe(true);
+    });
+
+    // Due to TypeScript circular references, the following functions are in various modules.
 
     it('should set expected JSON values in setPolymorphicValueJson()', () => {
       let jsonObj = {} as Object;

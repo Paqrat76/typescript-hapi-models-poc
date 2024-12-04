@@ -38,7 +38,9 @@ describe('OpenDataTypes', () => {
       testMockTaskR1.setValue(testValue);
     };
     expect(t).toThrow(AssertionError);
-    expect(t).toThrow(`Decorator expects setValue to have one argument with type of 'DataType | undefined | null'`);
+    expect(t).toThrow(
+      `OpenDataTypes decorator on setValue (MockTaskR1.value[x]) expects a single argument to be type of 'DataType | undefined | null'`,
+    );
   });
 
   it('should throw InvalidTypeError with unsupported value DataType', () => {
@@ -48,7 +50,9 @@ describe('OpenDataTypes', () => {
       testMockTaskR1.setValue(testValue);
     };
     expect(t).toThrow(InvalidTypeError);
-    expect(t).toThrow(`setValue: 'value' argument type (xhtml) is not for a supported open DataType`);
+    expect(t).toThrow(
+      `OpenDataTypes decorator on setValue (MockTaskR1.value[x]) expects the 'value' argument type (xhtml) to be a supported DataType`,
+    );
   });
 
   it('should return with valid value DataType', () => {
@@ -87,7 +91,7 @@ export class MockTaskR1 extends MockTask {
 
   protected value?: DataType | undefined;
 
-  @OpenDataTypes()
+  @OpenDataTypes('MockTaskR1.value[x]')
   public setValue(value?: DataType): this {
     this.value = value;
     return this;
@@ -96,7 +100,7 @@ export class MockTaskR1 extends MockTask {
     return this.value;
   }
 
-  @OpenDataTypes()
+  @OpenDataTypes('MockTaskR1.value[x]')
   public xxxValue(value?: DataType): this {
     this.value = value;
     return this;

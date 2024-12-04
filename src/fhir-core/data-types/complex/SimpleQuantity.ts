@@ -51,7 +51,7 @@ export class SimpleQuantity extends Quantity implements IBase {
   constructor() {
     super();
     // SimpleQuantity does not support the 'comparator' element so initialize to undefined.
-    this.comparator = undefined;
+    super.setComparator(undefined);
   }
 
   /**

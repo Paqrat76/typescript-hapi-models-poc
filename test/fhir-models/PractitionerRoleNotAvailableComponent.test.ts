@@ -325,6 +325,13 @@ describe('PractitionerRoleNotAvailableComponent', () => {
         end: '2017-01-01T01:00:00.000Z',
       },
     };
+    const INVALID_JSON_MISSING_DESCRIPTION = {
+      description: '',
+      during: {
+        start: '2017-01-01T00:00:00.000Z',
+        end: '2017-01-01T01:00:00.000Z',
+      },
+    };
 
     it('should properly create serialized content', () => {
       const descriptionType = new StringType(VALID_STRING);
@@ -412,6 +419,16 @@ describe('PractitionerRoleNotAvailableComponent', () => {
     it('should throw FhirError from parse with missing required properties', () => {
       const t = () => {
         PractitionerRoleNotAvailableComponent.parse(INVALID_JSON);
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(
+        `The following required properties must be included in the provided JSON: PractitionerRole.notAvailable.description`,
+      );
+    });
+
+    it('should throw FhirError from parse with missing description', () => {
+      const t = () => {
+        PractitionerRoleNotAvailableComponent.parse(INVALID_JSON_MISSING_DESCRIPTION);
       };
       expect(t).toThrow(FhirError);
       expect(t).toThrow(
