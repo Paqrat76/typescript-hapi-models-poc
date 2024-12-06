@@ -449,14 +449,14 @@ describe('fhir-parsers', () => {
           assertFhirResourceTypeJson(null, 'Task');
         };
         expect(t).toThrow(AssertionError);
-        expect(t).toThrow(`The dataJsonObj argument is required.`);
+        expect(t).toThrow(`The dataJsonObj argument is undefined/null.`);
 
         t = () => {
           // @ts-expect-error: allow for testing
           assertFhirResourceTypeJson({}, null);
         };
         expect(t).toThrow(AssertionError);
-        expect(t).toThrow(`The fhirResourceType argument is required.`);
+        expect(t).toThrow(`The fhirResourceType argument is undefined/null.`);
       });
 
       it('should throw AssertionError for dataJsonObj argument provided as non-JSON object', () => {

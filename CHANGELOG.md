@@ -19,6 +19,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [0.12.0] - 2024-12-06
+
+### Added
+
+- Added type guards and assertion functions
+
+### Changed
+
+- Updated function/method argument assertions
+- Updated templates
+
+### Removed
+
+- Removed dependency on lodash; replaced with hand-crafted utility functions
+
+
 ## [0.11.0] - 2024-12-04
 
 ### Added

@@ -41,7 +41,20 @@ import { AssertionError } from 'node:assert';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
 /**
- * Assertion that the value is defined (i.e., not `undefined` and not `null`)
+ * Value type guard that determines if the provided value is defined (i.e., not `undefined` and not `null`)
+ *
+ * @typeParam T - the value type
+ * @param value - value to be evaluated
+ * @returns true if value is not `undefined` and not `null`; false otherwise
+ *
+ * @category Type Guards/Assertions
+ */
+export function isDefined<T>(value: T): value is NonNullable<T> {
+  return value !== undefined && value !== null;
+}
+
+/**
+ * Assertion that the provided value is defined (i.e., not `undefined` and not `null`)
  *
  * @typeParam T - the value type
  * @param value - value to be evaluated
@@ -51,7 +64,7 @@ import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
  * @category Type Guards/Assertions
  */
 export function assertIsDefined<T>(value: T, errorMessage?: string): asserts value is NonNullable<T> {
-  if (value === undefined || value === null) {
+  if (!isDefined<T>(value)) {
     const errMsg = errorMessage ?? `Value is ${value === undefined ? 'undefined' : 'null'}.`;
     throw new AssertionError({ message: errMsg });
   }
@@ -139,6 +152,90 @@ export function assertFhirTypeList<T>(
         ? `Provided instance array has an element that is not an instance of ${className.name}.`
         : `Provided instance array has ${String(invalidItemCount)} elements that are not an instance of ${className.name}.`;
     const errMsg = errorMessage ?? defaultMsg;
+    throw new InvalidTypeError(errMsg);
+  }
+}
+
+/**
+ * Value type guard that determines if the provided value is a `string` type
+ *
+ * @param value - value to be evaluated
+ * @returns true if value is a `string` type; false otherwise
+ *
+ * @category Type Guards/Assertions
+ */
+export function isString(value: unknown): value is string {
+  return typeof value === 'string';
+}
+
+/**
+ * Assertion that the provided value is a `string` type
+ *
+ * @param value - value to be evaluated
+ * @param errorMessage - optional error message to override the default
+ * @throws AssertionError when instance is not a `string` type
+ *
+ * @category Type Guards/Assertions
+ */
+export function assertIsString(value: unknown, errorMessage?: string): asserts value is string {
+  if (!isString(value)) {
+    const errMsg = errorMessage ?? `Provided value is not an instance of string.`;
+    throw new InvalidTypeError(errMsg);
+  }
+}
+
+/**
+ * Value type guard that determines if the provided value is a `number` type
+ *
+ * @param value - value to be evaluated
+ * @returns true if value is a `number` type; false otherwise
+ *
+ * @category Type Guards/Assertions
+ */
+export function isNumber(value: unknown): value is number {
+  return typeof value === 'number';
+}
+
+/**
+ * Assertion that the provided value is a `number` type
+ *
+ * @param value - value to be evaluated
+ * @param errorMessage - optional error message to override the default
+ * @throws AssertionError when instance is not a `number` type
+ *
+ * @category Type Guards/Assertions
+ */
+export function assertIsNumber(value: unknown, errorMessage?: string): asserts value is number {
+  if (!isNumber(value)) {
+    const errMsg = errorMessage ?? `Provided value is not an instance of number.`;
+    throw new InvalidTypeError(errMsg);
+  }
+}
+
+/**
+ * Value type guard that determines if the provided value is a `boolean` type
+ *
+ * @param value - value to be evaluated
+ * @returns true if value is a `boolean` type; false otherwise
+ *
+ * @category Type Guards/Assertions
+ */
+export function isBoolean(value: unknown): value is boolean {
+  return typeof value === 'boolean';
+}
+
+/**
+ * Assertion that the provided value is a `boolean` type
+ *
+ * @param value - value to be evaluated
+ * @param errorMessage - optional error message to override the default
+ * @throws AssertionError when instance is not a `boolean` type
+ *
+ * @category Type Guards/Assertions
+ */
+export function assertIsBoolean(value: unknown, errorMessage?: string): asserts value is boolean {
+  if (!isBoolean(value)) {
+    const errMsg = errorMessage ?? `Provided value is not an instance of boolean.`;
     throw new InvalidTypeError(errMsg);
   }
 }

@@ -60,7 +60,15 @@
  * @module
  */
 
-import { isEmpty, isNil } from 'lodash';
+import {
+  assertIsDefined,
+  assertIsString,
+  isBoolean,
+  isDefined,
+  isNumber,
+  isString,
+} from '@src/fhir-core/utility/type-guards';
+import { isEmpty } from '@src/fhir-core/utility/common-util';
 
 export { JsonObject as Object, JsonArray as Array };
 
@@ -123,8 +131,8 @@ export function asNull(x: Value, prefix?: string): null {
  *
  * @category Utilities: JSON
  */
-export function isBoolean(x: Value): x is boolean {
-  return typeof x === 'boolean';
+export function isJsonBoolean(x: Value): x is boolean {
+  return isBoolean(x);
 }
 
 /**
@@ -137,7 +145,7 @@ export function isBoolean(x: Value): x is boolean {
  * @category Utilities: JSON
  */
 export function asBoolean(x: Value, prefix?: string): boolean {
-  if (!isBoolean(x)) {
+  if (!isJsonBoolean(x)) {
     throw new TypeError(msg(prefix, 'a boolean'));
   }
   return x;
@@ -151,8 +159,8 @@ export function asBoolean(x: Value, prefix?: string): boolean {
  *
  * @category Utilities: JSON
  */
-export function isNumber(x: Value): x is number {
-  return typeof x === 'number';
+export function isJsonNumber(x: Value): x is number {
+  return isNumber(x);
 }
 
 /**
@@ -165,7 +173,7 @@ export function isNumber(x: Value): x is number {
  * @category Utilities: JSON
  */
 export function asNumber(x: Value, prefix?: string): number {
-  if (!isNumber(x)) {
+  if (!isJsonNumber(x)) {
     throw new TypeError(msg(prefix, 'a number'));
   }
   return x;
@@ -179,8 +187,8 @@ export function asNumber(x: Value, prefix?: string): number {
  *
  * @category Utilities: JSON
  */
-export function isString(x: Value): x is string {
-  return typeof x === 'string';
+export function isJsonString(x: Value): x is string {
+  return isString(x);
 }
 
 /**
@@ -193,7 +201,7 @@ export function isString(x: Value): x is string {
  * @category Utilities: JSON
  */
 export function asString(x: Value, prefix?: string): string {
-  if (!isString(x)) {
+  if (!isJsonString(x)) {
     throw new TypeError(msg(prefix, 'a string'));
   }
   return x;
@@ -207,8 +215,8 @@ export function asString(x: Value, prefix?: string): string {
  *
  * @category Utilities: JSON
  */
-export function isObject(x: Value): x is JsonObject {
-  return !!x && typeof x === 'object' && !Array.isArray(x);
+export function isJsonObject(x: Value): x is JsonObject {
+  return x !== null && typeof x === 'object' && !Array.isArray(x);
 }
 
 /**
@@ -221,7 +229,7 @@ export function isObject(x: Value): x is JsonObject {
  * @category Utilities: JSON
  */
 export function asObject(x: Value, prefix?: string): JsonObject {
-  if (!isObject(x)) {
+  if (!isJsonObject(x)) {
     throw new TypeError(msg(prefix, 'a JSON object'));
   }
   return x;
@@ -235,7 +243,7 @@ export function asObject(x: Value, prefix?: string): JsonObject {
  *
  * @category Utilities: JSON
  */
-export function isArray(x: Value): x is JsonArray {
+export function isJsonArray(x: Value): x is JsonArray {
   return Array.isArray(x);
 }
 
@@ -249,7 +257,7 @@ export function isArray(x: Value): x is JsonArray {
  * @category Utilities: JSON
  */
 export function asArray(x: Value, prefix?: string): JsonArray {
-  if (!isArray(x)) {
+  if (!isJsonArray(x)) {
     throw new TypeError(msg(prefix, 'a JSON array'));
   }
   return x;
@@ -264,6 +272,8 @@ export function asArray(x: Value, prefix?: string): JsonArray {
  * @category Utilities: JSON
  */
 export function safeParse(source: string): Value {
+  assertIsDefined<string>(source, `Provided source is undefined/null`);
+  assertIsString(source, `Provided source is not a string`);
   return JSON.parse(source) as Value;
 }
 
@@ -304,7 +314,10 @@ export function safeStringify(value: Value): string {
  * @category Utilities: JSON
  */
 export function hasFhirData(x: Value | undefined): boolean {
-  return !(isNil(x) || (isObject(x) && isEmpty(x)) || (isArray(x) && isEmpty(x)) || (isString(x) && isEmpty(x)));
+  return (
+    isDefined<Value | undefined>(x) &&
+    !((isJsonObject(x) && isEmpty(x)) || (isJsonArray(x) && isEmpty(x)) || (isJsonString(x) && isEmpty(x)))
+  );
 }
 
 /**

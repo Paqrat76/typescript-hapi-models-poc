@@ -32,7 +32,6 @@
  */
 
 import { strict as assert } from 'node:assert';
-import { isEmpty, isNil, upperFirst } from 'lodash';
 import {
   INSTANCE_EMPTY_ERROR_MSG,
   INVALID_VALUEX_MULTIPLE_PROPERTIES,
@@ -76,9 +75,11 @@ import { Quantity } from '@src/fhir-core/data-types/complex/Quantity';
 import { Range } from '@src/fhir-core/data-types/complex/Range';
 import { SimpleQuantity } from '@src/fhir-core/data-types/complex/SimpleQuantity';
 import { FhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
+import { isEmpty, upperFirst } from '@src/fhir-core/utility/common-util';
+import { getChoiceDatatypeDefsForField } from '@src/fhir-core/utility/decorators';
+import { assertIsDefined, assertIsString, isDefined } from '@src/fhir-core/utility/type-guards';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
-import { getChoiceDatatypeDefsForField } from '@src/fhir-core/utility/decorators';
 
 //region CoreTypes
 
@@ -174,7 +175,7 @@ export interface PrimitiveTypeJson {
  * @category Utilities: FHIR Parsers
  */
 export function processElementJson(instance: DataType, dataTypeJson: JSON.Value | undefined): void {
-  assert.ok(instance, 'The instance argument is required.');
+  assertIsDefined<DataType>(instance, `Provided instance is undefined/null`);
   if (!JSON.hasFhirData(dataTypeJson)) {
     return;
   }
@@ -210,7 +211,7 @@ export function processElementJson(instance: DataType, dataTypeJson: JSON.Value 
  * @category Utilities: FHIR Parsers
  */
 export function processBackboneElementJson(instance: BackboneElement, dataJson: JSON.Value | undefined): void {
-  assert.ok(instance, 'The instance argument is required.');
+  assertIsDefined<BackboneElement>(instance, `Provided instance is undefined/null`);
   if (!JSON.hasFhirData(dataJson)) {
     return;
   }
@@ -260,7 +261,7 @@ export function processBackboneElementJson(instance: BackboneElement, dataJson: 
  * @category Utilities: FHIR Parsers
  */
 export function processResourceJson(instance: Resource, dataJson: JSON.Value | undefined): void {
-  assert.ok(instance, 'The instance argument is required.');
+  assertIsDefined<Resource>(instance, `Provided instance is undefined/null`);
   if (!JSON.hasFhirData(dataJson)) {
     return;
   }
@@ -314,7 +315,7 @@ export function processResourceJson(instance: Resource, dataJson: JSON.Value | u
  * @see {@link processResourceJson}
  */
 export function processDomainResourceJson(instance: DomainResource, dataJson: JSON.Value | undefined): void {
-  assert.ok(instance, 'The instance argument is required.');
+  assertIsDefined<DomainResource>(instance, `Provided instance is undefined/null`);
   if (!JSON.hasFhirData(dataJson)) {
     return;
   }
@@ -365,7 +366,7 @@ export function processDomainResourceJson(instance: DomainResource, dataJson: JS
  * @hidden
  */
 export function getValueXData(jsonObj: JSON.Object): DataType | undefined {
-  assert(jsonObj, 'The jsonObj argument is required.');
+  assertIsDefined<JSON.Object>(jsonObj, `Provided jsonObj is undefined/null`);
   const valueXKey = Object.keys(jsonObj).find((key) => OPEN_DATE_TYPE_KEY_NAMES.includes(key));
 
   if (valueXKey !== undefined && valueXKey in jsonObj) {
@@ -470,9 +471,15 @@ export function getPrimitiveTypeJson(
   if (!JSON.hasFhirData(datatypeJsonObj)) {
     return { dtJson: undefined, dtSiblingJson: undefined };
   }
+  assertIsDefined<string>(sourceField, `Provided sourceField is undefined/null`);
+  assertIsString(sourceField, `Provided sourceField is not a string`);
+  assertIsDefined<string>(primitiveFieldName, `Provided primitiveFieldName is undefined/null`);
+  assertIsString(primitiveFieldName, `Provided primitiveFieldName is not a string`);
+  assertIsDefined<string>(jsonType, `Provided jsonType is undefined/null`);
+  assertIsString(jsonType, `Provided jsonType is not a string`);
 
   let dtJson: JSON.Value | undefined = undefined;
-  if (!isNil(datatypeJsonObj[primitiveFieldName])) {
+  if (isDefined<JSON.Value | undefined>(datatypeJsonObj[primitiveFieldName])) {
     if (jsonType === 'boolean') {
       dtJson = JSON.asBoolean(datatypeJsonObj[primitiveFieldName], sourceField);
     } else if (jsonType === 'number') {
@@ -516,6 +523,12 @@ export function getPrimitiveTypeListJson(
   if (!JSON.hasFhirData(datatypeJsonObj)) {
     return [];
   }
+  assertIsDefined<string>(sourceField, `Provided sourceField is undefined/null`);
+  assertIsString(sourceField, `Provided sourceField is not a string`);
+  assertIsDefined<string>(primitiveFieldName, `Provided primitiveFieldName is undefined/null`);
+  assertIsString(primitiveFieldName, `Provided primitiveFieldName is not a string`);
+  assertIsDefined<string>(jsonType, `Provided jsonType is undefined/null`);
+  assertIsString(jsonType, `Provided jsonType is not a string`);
   // Calling function should have already ensured this is true!
   assert(primitiveFieldName in datatypeJsonObj, `${primitiveFieldName} does not exist in provided JSON.Object!`);
 
@@ -546,7 +559,10 @@ export function getPrimitiveTypeListJson(
   dataJsonArray.forEach((dataJson: JSON.Value, idx) => {
     const primitiveJsonObj = {} as JSON.Object;
     primitiveJsonObj[primitiveFieldName] = dataJson;
-    if (dataElementJsonArray !== undefined && !isNil(dataElementJsonArray[idx])) {
+    if (
+      isDefined<JSON.Array | undefined>(dataElementJsonArray) &&
+      isDefined<JSON.Value | undefined>(dataElementJsonArray[idx])
+    ) {
       primitiveJsonObj[siblingFieldName] = dataElementJsonArray[idx];
     }
     const result: PrimitiveTypeJson = getPrimitiveTypeJson(primitiveJsonObj, sourceField, primitiveFieldName, jsonType);
@@ -567,9 +583,10 @@ export function getPrimitiveTypeListJson(
  * @category Type Guards/Assertions
  */
 export function assertFhirResourceTypeJson(dataJsonObj: JSON.Object, fhirResourceType: FhirResourceType): void {
-  assert(!isNil(dataJsonObj), `The dataJsonObj argument is required.`);
-  assert(!isNil(fhirResourceType) && !isEmpty(fhirResourceType), `The fhirResourceType argument is required.`);
-  assert(JSON.isObject(dataJsonObj), `The provided JSON does not represent a JSON object.`);
+  assertIsDefined<JSON.Object>(dataJsonObj, `The dataJsonObj argument is undefined/null.`);
+  assertIsDefined<FhirResourceType>(fhirResourceType, `The fhirResourceType argument is undefined/null.`);
+  assert(!isEmpty(fhirResourceType), `The fhirResourceType argument is empty.`);
+  assert(JSON.isJsonObject(dataJsonObj), `The provided JSON does not represent a JSON object.`);
 
   if ('resourceType' in dataJsonObj) {
     const resourceTypeValue = JSON.asString(dataJsonObj['resourceType'], `${fhirResourceType}.resourceType`);
@@ -1117,8 +1134,9 @@ export function parsePolymorphicDataType(
   if (!JSON.hasFhirData(jsonObj)) {
     return undefined;
   }
-  assert(sourceField, 'sourceField must be provided');
-  assert(fieldName, 'fieldName must be provided');
+  assertIsDefined<string>(sourceField, `The sourceField argument is undefined/null.`);
+  assertIsDefined<string>(fieldName, `The fieldName argument is undefined/null.`);
+  assertIsDefined<DecoratorMetadataObject | null>(metadata, `The metadata argument is undefined/null.`);
 
   const choiceDataTypes: FhirDataType[] = getChoiceDatatypeDefsForField(metadata, fieldName);
   const supportedFieldNames = choiceDataTypes.map((item) => `${fieldName}${upperFirst(item)}`);
@@ -1162,7 +1180,7 @@ export function parseCodeableConcept(json: JSON.Value | undefined, sourceField?:
     return undefined;
   }
 
-  const source = sourceField ? sourceField : 'CodeableConcept';
+  const source = isDefined<string | undefined>(sourceField) ? sourceField : 'CodeableConcept';
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
@@ -1202,7 +1220,7 @@ export function parseCoding(json: JSON.Value | undefined, sourceField?: string):
     return undefined;
   }
 
-  const source = sourceField ? sourceField : 'Coding';
+  const source = isDefined<string | undefined>(sourceField) ? sourceField : 'Coding';
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
@@ -1258,7 +1276,7 @@ export function parseContactPoint(json: JSON.Value | undefined, sourceField?: st
     return undefined;
   }
 
-  const source = sourceField ? sourceField : 'ContactPoint';
+  const source = isDefined<string | undefined>(sourceField) ? sourceField : 'ContactPoint';
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
@@ -1313,7 +1331,7 @@ export function parseIdentifier(json: JSON.Value | undefined, sourceField?: stri
     return undefined;
   }
 
-  const source = sourceField ? sourceField : 'Identifier';
+  const source = isDefined<string | undefined>(sourceField) ? sourceField : 'Identifier';
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
@@ -1372,7 +1390,7 @@ export function parseMeta(json: JSON.Value | undefined, sourceField?: string): M
     return undefined;
   }
 
-  const source = sourceField ? sourceField : 'Meta';
+  const source = isDefined<string | undefined>(sourceField) ? sourceField : 'Meta';
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
@@ -1440,7 +1458,7 @@ export function parseNarrative(json: JSON.Value | undefined, sourceField?: strin
     return undefined;
   }
 
-  const source = sourceField ? sourceField : 'Narrative';
+  const source = isDefined<string | undefined>(sourceField) ? sourceField : 'Narrative';
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
@@ -1497,7 +1515,7 @@ export function parsePeriod(json: JSON.Value | undefined, sourceField?: string):
     return undefined;
   }
 
-  const source = sourceField ? sourceField : 'Period';
+  const source = isDefined<string | undefined>(sourceField) ? sourceField : 'Period';
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
@@ -1535,7 +1553,7 @@ export function parseQuantity(json: JSON.Value | undefined, sourceField?: string
     return undefined;
   }
 
-  const source = sourceField ? sourceField : 'Quantity';
+  const source = isDefined<string | undefined>(sourceField) ? sourceField : 'Quantity';
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
@@ -1591,7 +1609,7 @@ export function parseRange(json: JSON.Value | undefined, sourceField?: string): 
     return undefined;
   }
 
-  const source = sourceField ? sourceField : 'Range';
+  const source = isDefined<string | undefined>(sourceField) ? sourceField : 'Range';
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
@@ -1627,7 +1645,7 @@ export function parseReference(json: JSON.Value | undefined, sourceField?: strin
     return undefined;
   }
 
-  const source = sourceField ? sourceField : 'Reference';
+  const source = isDefined<string | undefined>(sourceField) ? sourceField : 'Reference';
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
@@ -1676,7 +1694,7 @@ export function parseSimpleQuantity(json: JSON.Value | undefined, sourceField?: 
     return undefined;
   }
 
-  const source = sourceField ? sourceField : 'SimpleQuantity';
+  const source = isDefined<string | undefined>(sourceField) ? sourceField : 'SimpleQuantity';
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);

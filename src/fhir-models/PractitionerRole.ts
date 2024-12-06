@@ -21,7 +21,6 @@
  *
  */
 
-import { isEmpty, isNil } from 'lodash';
 import { REQUIRED_PROPERTIES_DO_NOT_EXIST, REQUIRED_PROPERTIES_REQD_IN_JSON } from '@src/fhir-core/constants';
 import { IBase } from '@src/fhir-core/base-models/IBase';
 import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
@@ -76,7 +75,8 @@ import {
   processDomainResourceJson,
 } from '@src/fhir-core/utility/fhir-parsers';
 import { parseContainedResources } from '@src/fhir-models/fhir-contained-resource-parser';
-import { assertFhirType, assertFhirTypeList } from '@src/fhir-core/utility/type-guards';
+import { assertFhirType, assertFhirTypeList, isDefined } from '@src/fhir-core/utility/type-guards';
+import { isEmpty } from '@src/fhir-core/utility/common-util';
 import { extractFieldName, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
@@ -113,7 +113,7 @@ export class PractitionerRole extends DomainResource implements IBase {
    * @returns PractitionerRole data model or undefined for `PractitionerRole`
    */
   public static parse(sourceJson: JSON.Object): PractitionerRole | undefined {
-    if (isNil(sourceJson) || (JSON.isObject(sourceJson) && isEmpty(sourceJson))) {
+    if (!isDefined<JSON.Object>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
     const classJsonObj: JSON.Object = JSON.asObject(sourceJson, `PractitionerRole JSON`);
@@ -531,8 +531,8 @@ export class PractitionerRole extends DomainResource implements IBase {
    * @param value - the `identifier` value
    * @returns this
    */
-  public addIdentifier(value?: Identifier): this {
-    if (value !== undefined) {
+  public addIdentifier(value: Identifier | undefined): this {
+    if (isDefined<Identifier | undefined>(value)) {
       const optErrMsg = `Invalid PractitionerRole.identifier; Provided value is not an instance of Identifier.`;
       assertFhirType<Identifier>(value, Identifier, optErrMsg);
       this.initIdentifier();
@@ -727,8 +727,8 @@ export class PractitionerRole extends DomainResource implements IBase {
    * @param value - the `code` value
    * @returns this
    */
-  public addCode(value?: CodeableConcept): this {
-    if (value !== undefined) {
+  public addCode(value: CodeableConcept | undefined): this {
+    if (isDefined<CodeableConcept | undefined>(value)) {
       const optErrMsg = `Invalid PractitionerRole.code; Provided value is not an instance of CodeableConcept.`;
       assertFhirType<CodeableConcept>(value, CodeableConcept, optErrMsg);
       this.initCode();
@@ -781,8 +781,8 @@ export class PractitionerRole extends DomainResource implements IBase {
    * @param value - the `specialty` value
    * @returns this
    */
-  public addSpecialty(value?: CodeableConcept): this {
-    if (value !== undefined) {
+  public addSpecialty(value: CodeableConcept | undefined): this {
+    if (isDefined<CodeableConcept | undefined>(value)) {
       const optErrMsg = `Invalid PractitionerRole.specialty; Provided value is not an instance of CodeableConcept.`;
       assertFhirType<CodeableConcept>(value, CodeableConcept, optErrMsg);
       this.initSpecialty();
@@ -838,8 +838,8 @@ export class PractitionerRole extends DomainResource implements IBase {
    * @returns this
    */
   @ReferenceTargets('PractitionerRole.location', ['Location'])
-  public addLocation(value?: Reference): this {
-    if (value !== undefined) {
+  public addLocation(value: Reference | undefined): this {
+    if (isDefined<Reference | undefined>(value)) {
       // assertFhirType<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
       this.initLocation();
       this.location?.push(value);
@@ -894,8 +894,8 @@ export class PractitionerRole extends DomainResource implements IBase {
    * @returns this
    */
   @ReferenceTargets('PractitionerRole.healthcareService', ['HealthcareService'])
-  public addHealthcareService(value?: Reference): this {
-    if (value !== undefined) {
+  public addHealthcareService(value: Reference | undefined): this {
+    if (isDefined<Reference | undefined>(value)) {
       // assertFhirType<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
       this.initHealthcareService();
       this.healthcareService?.push(value);
@@ -949,8 +949,8 @@ export class PractitionerRole extends DomainResource implements IBase {
    * @param value - the `telecom` value
    * @returns this
    */
-  public addTelecom(value?: ContactPoint): this {
-    if (value !== undefined) {
+  public addTelecom(value: ContactPoint | undefined): this {
+    if (isDefined<ContactPoint | undefined>(value)) {
       const optErrMsg = `Invalid PractitionerRole.telecom; Provided value is not an instance of ContactPoint.`;
       assertFhirType<ContactPoint>(value, ContactPoint, optErrMsg);
       this.initTelecom();
@@ -1009,8 +1009,8 @@ export class PractitionerRole extends DomainResource implements IBase {
    * @param value - the `availableTime` value
    * @returns this
    */
-  public addAvailableTime(value?: PractitionerRoleAvailableTimeComponent): this {
-    if (value !== undefined) {
+  public addAvailableTime(value: PractitionerRoleAvailableTimeComponent | undefined): this {
+    if (isDefined<PractitionerRoleAvailableTimeComponent | undefined>(value)) {
       const optErrMsg = `Invalid PractitionerRole.availableTime; Provided element is not an instance of PractitionerRoleAvailableTimeComponent.`;
       assertFhirType<PractitionerRoleAvailableTimeComponent>(value, PractitionerRoleAvailableTimeComponent, optErrMsg);
       this.initAvailableTime();
@@ -1065,8 +1065,8 @@ export class PractitionerRole extends DomainResource implements IBase {
    * @param value - the `notAvailable` value
    * @returns this
    */
-  public addNotAvailable(value?: PractitionerRoleNotAvailableComponent): this {
-    if (value !== undefined) {
+  public addNotAvailable(value: PractitionerRoleNotAvailableComponent | undefined): this {
+    if (isDefined<PractitionerRoleNotAvailableComponent | undefined>(value)) {
       const optErrMsg = `Invalid PractitionerRole.notAvailable; Provided element is not an instance of PractitionerRoleNotAvailableComponent.`;
       assertFhirType<PractitionerRoleNotAvailableComponent>(value, PractitionerRoleNotAvailableComponent, optErrMsg);
       this.initNotAvailable();
@@ -1177,8 +1177,8 @@ export class PractitionerRole extends DomainResource implements IBase {
    * @returns this
    */
   @ReferenceTargets('PractitionerRole.endpoint', ['Endpoint'])
-  public addEndpoint(value?: Reference): this {
-    if (value !== undefined) {
+  public addEndpoint(value: Reference | undefined): this {
+    if (isDefined<Reference | undefined>(value)) {
       // assertFhirType<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
       this.initEndpoint();
       this.endpoint?.push(value);
@@ -1366,7 +1366,7 @@ export class PractitionerRoleAvailableTimeComponent extends BackboneElement {
    * @returns PractitionerRoleAvailableTimeComponent data model or undefined for `PractitionerRole.availableTime`
    */
   public static parse(sourceJson: JSON.Value): PractitionerRoleAvailableTimeComponent | undefined {
-    if (isNil(sourceJson) || (JSON.isObject(sourceJson) && isEmpty(sourceJson))) {
+    if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
     const backboneJsonObj: JSON.Object = JSON.asObject(sourceJson, `PractitionerRoleAvailableTimeComponent JSON`);
@@ -1506,8 +1506,8 @@ export class PractitionerRoleAvailableTimeComponent extends BackboneElement {
    * @param enumType - the `daysOfWeek` value
    * @returns this
    */
-  public addDaysOfWeekEnumType(enumType?: EnumCodeType): this {
-    if (enumType !== undefined) {
+  public addDaysOfWeekEnumType(enumType: EnumCodeType | undefined): this {
+    if (isDefined<EnumCodeType | undefined>(enumType)) {
       const errMsgPrefix = `Invalid PractitionerRole.availableTime.daysOfWeek`;
       assertEnumCodeType<DaysOfWeekEnum>(enumType, DaysOfWeekEnum, errMsgPrefix);
       this.initDaysOfWeek();
@@ -1561,8 +1561,8 @@ export class PractitionerRoleAvailableTimeComponent extends BackboneElement {
    * @param element - the `daysOfWeek` value
    * @returns this
    */
-  public addDaysOfWeekElement(element?: CodeType): this {
-    if (element !== undefined) {
+  public addDaysOfWeekElement(element: CodeType | undefined): this {
+    if (isDefined<CodeType | undefined>(element)) {
       const optErrMsg = `Invalid PractitionerRole.availableTime.daysOfWeek; Provided element is not an instance of CodeType.`;
       assertFhirType<CodeType>(element, CodeType, optErrMsg);
       this.initDaysOfWeek();
@@ -1618,8 +1618,8 @@ export class PractitionerRoleAvailableTimeComponent extends BackboneElement {
    * @param value - the `daysOfWeek` value
    * @returns this
    */
-  public addDaysOfWeek(value?: fhirCode): this {
-    if (value !== undefined) {
+  public addDaysOfWeek(value: fhirCode | undefined): this {
+    if (isDefined<fhirCode | undefined>(value)) {
       this.initDaysOfWeek();
       this.daysOfWeek?.push(new EnumCodeType(value, this.daysOfWeekEnum));
     }
@@ -1898,7 +1898,7 @@ export class PractitionerRoleNotAvailableComponent extends BackboneElement {
     if (description instanceof StringType) {
       this.setDescriptionElement(description);
     } else {
-      if (!isNil(description)) {
+      if (isDefined<StringType | fhirString | null>(description)) {
         this.setDescription(description);
       }
     }
@@ -1911,7 +1911,7 @@ export class PractitionerRoleNotAvailableComponent extends BackboneElement {
    * @returns PractitionerRoleNotAvailableComponent data model or undefined for `PractitionerRole.notAvailable`
    */
   public static parse(sourceJson: JSON.Value): PractitionerRoleNotAvailableComponent | undefined {
-    if (isNil(sourceJson) || (JSON.isObject(sourceJson) && isEmpty(sourceJson))) {
+    if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
     const backboneJsonObj: JSON.Object = JSON.asObject(sourceJson, `PractitionerRoleNotAvailableComponent JSON`);
@@ -1991,7 +1991,7 @@ export class PractitionerRoleNotAvailableComponent extends BackboneElement {
    * @returns this
    */
   public setDescriptionElement(element: StringType): this {
-    if (!isNil(element)) {
+    if (isDefined<StringType>(element)) {
       const optErrMsg = `Invalid PractitionerRole.notAvailable.description; Provided value is not an instance of StringType.`;
       assertFhirType<StringType>(element, StringType, optErrMsg);
       this.description = element;
@@ -2003,7 +2003,7 @@ export class PractitionerRoleNotAvailableComponent extends BackboneElement {
    * @returns `true` if the `description` property exists and has a value; `false` otherwise
    */
   public hasDescriptionElement(): boolean {
-    return !isNil(this.description) && !this.description.isEmpty();
+    return isDefined<StringType | null>(this.description) && !this.description.isEmpty();
   }
 
   /**
@@ -2028,7 +2028,7 @@ export class PractitionerRoleNotAvailableComponent extends BackboneElement {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setDescription(value: fhirString): this {
-    if (!isNil(value)) {
+    if (isDefined<fhirString>(value)) {
       const optErrMsg = `Invalid PractitionerRole.notAvailable.description`;
       this.description = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
     }

@@ -21,7 +21,10 @@
  *
  */
 
-import { isBlank, isNonBlank } from '@src/fhir-core/utility/common-util';
+import { AssertionError } from 'node:assert';
+import { isBlank, isEmpty, isNonBlank, lowerFirst, upperFirst } from '@src/fhir-core/utility/common-util';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
 describe('common-util', () => {
   const TEST_UNDEFINED = undefined;
@@ -60,6 +63,100 @@ describe('common-util', () => {
       expect(isNonBlank('\n')).toBe(false);
       expect(isNonBlank('\t')).toBe(false);
       expect(isNonBlank('\r\t')).toBe(false);
+    });
+  });
+
+  describe('upperFirst', () => {
+    it('should throw errors for invalid arguments', () => {
+      let t = () => {
+        // @ts-expect-error: allow for testing
+        upperFirst(TEST_UNDEFINED);
+      };
+      expect(t).toThrow(AssertionError);
+      expect(t).toThrow(`Provided value is undefined/null`);
+
+      t = () => {
+        // @ts-expect-error: allow for testing
+        upperFirst(TEST_NULL);
+      };
+      expect(t).toThrow(AssertionError);
+      expect(t).toThrow(`Provided value is undefined/null`);
+
+      t = () => {
+        // @ts-expect-error: allow for testing
+        upperFirst(123);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Provided value is not a string`);
+    });
+
+    it('should return expected upperFirst values', () => {
+      expect(upperFirst('ABCDE')).toStrictEqual('ABCDE');
+      expect(upperFirst('abcde')).toStrictEqual('Abcde');
+      expect(upperFirst('1bcde')).toStrictEqual('1bcde');
+    });
+  });
+
+  describe('lowerFirst', () => {
+    it('should throw errors for invalid arguments', () => {
+      let t = () => {
+        // @ts-expect-error: allow for testing
+        lowerFirst(TEST_UNDEFINED);
+      };
+      expect(t).toThrow(AssertionError);
+      expect(t).toThrow(`Provided value is undefined/null`);
+
+      t = () => {
+        // @ts-expect-error: allow for testing
+        lowerFirst(TEST_NULL);
+      };
+      expect(t).toThrow(AssertionError);
+      expect(t).toThrow(`Provided value is undefined/null`);
+
+      t = () => {
+        // @ts-expect-error: allow for testing
+        lowerFirst(123);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Provided value is not a string`);
+    });
+
+    it('should return expected upperFirst values', () => {
+      expect(lowerFirst('ABCDE')).toStrictEqual('aBCDE');
+      expect(lowerFirst('abcde')).toStrictEqual('abcde');
+      expect(lowerFirst('1bcde')).toStrictEqual('1bcde');
+    });
+  });
+
+  describe('isEmpty', () => {
+    it('should return true', () => {
+      expect(isEmpty(TEST_UNDEFINED)).toBe(true);
+      expect(isEmpty(TEST_NULL)).toBe(true);
+      expect(isEmpty([])).toBe(true);
+      // eslint-disable-next-line @typescript-eslint/no-array-constructor
+      expect(isEmpty(new Array())).toBe(true);
+      expect(isEmpty(TEST_EMPTY)).toBe(true);
+      expect(isEmpty(new Set())).toBe(true);
+      expect(isEmpty(new Map())).toBe(true);
+      expect(isEmpty({})).toBe(true);
+      expect(isEmpty(new StringType())).toBe(true);
+    });
+
+    it('should return false', () => {
+      expect(isEmpty([1, 2, 3])).toBe(false);
+      expect(isEmpty(TEST_BLANK)).toBe(false);
+      expect(isEmpty('ABCDE')).toBe(false);
+      expect(isEmpty(new Set(['ABCDE']))).toBe(false);
+      expect(isEmpty(new Map([['key', 'value']]))).toBe(false);
+      expect(isEmpty({ key: 'value' })).toBe(false);
+      expect(isEmpty(new StringType('ABCDE'))).toBe(false);
+
+      expect(isEmpty(true)).toBe(false);
+      expect(isEmpty(false)).toBe(false);
+      expect(isEmpty(123)).toBe(false);
+      expect(isEmpty(123.456)).toBe(false);
+      expect(isEmpty(123n)).toBe(false);
+      expect(isEmpty(BigInt(123))).toBe(false);
     });
   });
 });

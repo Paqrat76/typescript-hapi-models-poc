@@ -22,20 +22,19 @@
  */
 
 import { AssertionError } from 'node:assert';
-import { isEmpty as _isEmpty } from 'lodash';
 import {
   Object,
   isNull,
   asNull,
-  isBoolean,
+  isJsonBoolean,
   asBoolean,
-  isNumber,
+  isJsonNumber,
   asNumber,
-  isString,
+  isJsonString,
   asString,
-  isObject,
+  isJsonObject,
   asObject,
-  isArray,
+  isJsonArray,
   asArray,
   safeParse,
   safeStringify,
@@ -64,6 +63,7 @@ import { fhirString } from '@src/fhir-core/data-types/primitive/primitive-types'
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { MockComplexDataType, MockFhirModel, MockTask, MockBackboneElement, MockBackboneType } from '../../test-utils';
+import { isEmpty as _isEmpty } from '../../../src';
 
 describe('json-helpers', () => {
   const PRIMITIVE_DATA_TYPE_BOOLEAN_TRUE: BooleanType = new BooleanType(true);
@@ -113,10 +113,10 @@ describe('json-helpers', () => {
       expect(t).toThrow(`Test value is not null.`);
     });
 
-    it('should return expected values for isBoolean()', () => {
-      expect(isBoolean(true)).toBe(true);
-      expect(isBoolean(false)).toBe(true);
-      expect(isBoolean('notBoolean')).toBe(false);
+    it('should return expected values for isJsonBoolean()', () => {
+      expect(isJsonBoolean(true)).toBe(true);
+      expect(isJsonBoolean(false)).toBe(true);
+      expect(isJsonBoolean('notBoolean')).toBe(false);
     });
 
     it('should return expected values for asBoolean()', () => {
@@ -145,11 +145,11 @@ describe('json-helpers', () => {
       expect(t).toThrow(`Test value is not a boolean.`);
     });
 
-    it('should return expected values for isNumber()', () => {
-      expect(isNumber(123)).toBe(true);
-      expect(isNumber(-123)).toBe(true);
-      expect(isNumber(123.456)).toBe(true);
-      expect(isNumber('notNumber')).toBe(false);
+    it('should return expected values for isJsonNumber()', () => {
+      expect(isJsonNumber(123)).toBe(true);
+      expect(isJsonNumber(-123)).toBe(true);
+      expect(isJsonNumber(123.456)).toBe(true);
+      expect(isJsonNumber('notNumber')).toBe(false);
     });
 
     it('should return expected values for asNumber()', () => {
@@ -177,10 +177,10 @@ describe('json-helpers', () => {
       expect(t).toThrow(`Test value is not a number.`);
     });
 
-    it('should return expected values for isString()', () => {
-      expect(isString('test string')).toBe(true);
-      expect(isString(123)).toBe(false);
-      expect(isString(null)).toBe(false);
+    it('should return expected values for isJsonString()', () => {
+      expect(isJsonString('test string')).toBe(true);
+      expect(isJsonString(123)).toBe(false);
+      expect(isJsonString(null)).toBe(false);
     });
 
     it('should return expected values for asString()', () => {
@@ -206,17 +206,17 @@ describe('json-helpers', () => {
       expect(t).toThrow(`Test value is not a string.`);
     });
 
-    it('should return expected values for isObject()', () => {
-      expect(isObject({})).toBe(true);
-      expect(isObject({ prop: 'value' })).toBe(true);
-      expect(isObject({ prop: 'value' })).toBe(true);
-      expect(isObject([])).toBe(false);
-      expect(isObject([1, 2])).toBe(false);
-      expect(isObject(Number(123))).toBe(false);
-      expect(isObject(String('123'))).toBe(false);
-      expect(isObject('string value')).toBe(false);
-      expect(isObject(123)).toBe(false);
-      expect(isObject(null)).toBe(false);
+    it('should return expected values for isJsonObject()', () => {
+      expect(isJsonObject({})).toBe(true);
+      expect(isJsonObject({ prop: 'value' })).toBe(true);
+      expect(isJsonObject({ prop: 'value' })).toBe(true);
+      expect(isJsonObject([])).toBe(false);
+      expect(isJsonObject([1, 2])).toBe(false);
+      expect(isJsonObject(Number(123))).toBe(false);
+      expect(isJsonObject(String('123'))).toBe(false);
+      expect(isJsonObject('string value')).toBe(false);
+      expect(isJsonObject(123)).toBe(false);
+      expect(isJsonObject(null)).toBe(false);
     });
 
     it('should return expected values for asObject()', () => {
@@ -244,18 +244,18 @@ describe('json-helpers', () => {
       expect(t).toThrow(`Test value is not a JSON object.`);
     });
 
-    it('should return expected values for isArray()', () => {
-      expect(isArray([])).toBe(true);
-      expect(isArray([1, 2])).toBe(true);
-      expect(isArray(['A', 'B'])).toBe(true);
+    it('should return expected values for isJsonArray()', () => {
+      expect(isJsonArray([])).toBe(true);
+      expect(isJsonArray([1, 2])).toBe(true);
+      expect(isJsonArray(['A', 'B'])).toBe(true);
       // eslint-disable-next-line @typescript-eslint/no-array-constructor
-      expect(isArray(Array())).toBe(true);
-      expect(isArray(Array.from('abcdef'))).toBe(true);
-      expect(isArray({})).toBe(false);
-      expect(isArray({ prop: 'value' })).toBe(false);
-      expect(isArray('string value')).toBe(false);
-      expect(isArray(123)).toBe(false);
-      expect(isArray(null)).toBe(false);
+      expect(isJsonArray(Array())).toBe(true);
+      expect(isJsonArray(Array.from('abcdef'))).toBe(true);
+      expect(isJsonArray({})).toBe(false);
+      expect(isJsonArray({ prop: 'value' })).toBe(false);
+      expect(isJsonArray('string value')).toBe(false);
+      expect(isJsonArray(123)).toBe(false);
+      expect(isJsonArray(null)).toBe(false);
     });
 
     it('should return expected values for asArray()', () => {
@@ -569,20 +569,20 @@ describe('json-helpers', () => {
         setFhirPrimitiveJson(PRIMITIVE_DATA_TYPE_STRING, null, jsonObj);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided propName is empty/undefined/null`);
+      expect(t).toThrow(`Provided propName is undefined/null`);
 
       t = () => {
         // @ts-expect-error: allow undefined for testing
         setFhirPrimitiveJson(PRIMITIVE_DATA_TYPE_STRING, undefined, jsonObj);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided propName is empty/undefined/null`);
+      expect(t).toThrow(`Provided propName is undefined/null`);
 
       t = () => {
         setFhirPrimitiveJson(PRIMITIVE_DATA_TYPE_STRING, '', jsonObj);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided propName is empty/undefined/null`);
+      expect(t).toThrow(`Provided propName is empty`);
 
       t = () => {
         // @ts-expect-error: allow null for testing
@@ -698,20 +698,20 @@ describe('json-helpers', () => {
         setFhirPrimitiveListJson([PRIMITIVE_DATA_TYPE_STRING], null, jsonObj);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided propName is empty/undefined/null`);
+      expect(t).toThrow(`Provided propName is undefined/null`);
 
       t = () => {
         // @ts-expect-error: allow undefined for testing
         setFhirPrimitiveListJson([PRIMITIVE_DATA_TYPE_STRING], undefined, jsonObj);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided propName is empty/undefined/null`);
+      expect(t).toThrow(`Provided propName is undefined/null`);
 
       t = () => {
         setFhirPrimitiveListJson([PRIMITIVE_DATA_TYPE_STRING], '', jsonObj);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided propName is empty/undefined/null`);
+      expect(t).toThrow(`Provided propName is empty`);
 
       t = () => {
         // @ts-expect-error: allow null for testing
@@ -798,20 +798,20 @@ describe('json-helpers', () => {
         setFhirComplexJson(COMPLEX_DATA_TYPE, null, jsonObj);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided propName is empty/undefined/null`);
+      expect(t).toThrow(`Provided propName is undefined/null`);
 
       t = () => {
         // @ts-expect-error: allow undefined for testing
         setFhirComplexJson(COMPLEX_DATA_TYPE, undefined, jsonObj);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided propName is empty/undefined/null`);
+      expect(t).toThrow(`Provided propName is undefined/null`);
 
       t = () => {
         setFhirComplexJson(COMPLEX_DATA_TYPE, '', jsonObj);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided propName is empty/undefined/null`);
+      expect(t).toThrow(`Provided propName is empty`);
 
       t = () => {
         // @ts-expect-error: allow null for testing
@@ -935,20 +935,20 @@ describe('json-helpers', () => {
         setFhirComplexListJson([COMPLEX_DATA_TYPE], null, jsonObj);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided propName is empty/undefined/null`);
+      expect(t).toThrow(`Provided propName is undefined/null`);
 
       t = () => {
         // @ts-expect-error: allow undefined for testing
         setFhirComplexListJson([COMPLEX_DATA_TYPE], undefined, jsonObj);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided propName is empty/undefined/null`);
+      expect(t).toThrow(`Provided propName is undefined/null`);
 
       t = () => {
         setFhirComplexListJson([COMPLEX_DATA_TYPE], '', jsonObj);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided propName is empty/undefined/null`);
+      expect(t).toThrow(`Provided propName is empty`);
 
       t = () => {
         // @ts-expect-error: allow null for testing
@@ -1036,20 +1036,20 @@ describe('json-helpers', () => {
         setFhirBackboneElementJson(new MockBackboneElement(), null, jsonObj);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided propName is empty/undefined/null`);
+      expect(t).toThrow(`Provided propName is undefined/null`);
 
       t = () => {
         // @ts-expect-error: allow undefined for testing
         setFhirBackboneElementJson(new MockBackboneElement(), undefined, jsonObj);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided propName is empty/undefined/null`);
+      expect(t).toThrow(`Provided propName is undefined/null`);
 
       t = () => {
         setFhirBackboneElementJson(new MockBackboneElement(), '', jsonObj);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided propName is empty/undefined/null`);
+      expect(t).toThrow(`Provided propName is empty`);
 
       t = () => {
         // @ts-expect-error: allow null for testing
@@ -1141,20 +1141,20 @@ describe('json-helpers', () => {
         setFhirBackboneElementListJson([new MockBackboneElement()], null, jsonObj);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided propName is empty/undefined/null`);
+      expect(t).toThrow(`Provided propName is undefined/null`);
 
       t = () => {
         // @ts-expect-error: allow undefined for testing
         setFhirBackboneElementListJson([new MockBackboneElement()], undefined, jsonObj);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided propName is empty/undefined/null`);
+      expect(t).toThrow(`Provided propName is undefined/null`);
 
       t = () => {
         setFhirBackboneElementListJson([new MockBackboneElement()], '', jsonObj);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided propName is empty/undefined/null`);
+      expect(t).toThrow(`Provided propName is empty`);
 
       t = () => {
         // @ts-expect-error: allow null for testing
@@ -1242,20 +1242,20 @@ describe('json-helpers', () => {
         setFhirBackboneTypeJson(new MockBackboneType(), null, jsonObj);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided propName is empty/undefined/null`);
+      expect(t).toThrow(`Provided propName is undefined/null`);
 
       t = () => {
         // @ts-expect-error: allow undefined for testing
         setFhirBackboneTypeJson(new MockBackboneType(), undefined, jsonObj);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided propName is empty/undefined/null`);
+      expect(t).toThrow(`Provided propName is undefined/null`);
 
       t = () => {
         setFhirBackboneTypeJson(new MockBackboneType(), '', jsonObj);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided propName is empty/undefined/null`);
+      expect(t).toThrow(`Provided propName is empty`);
 
       t = () => {
         // @ts-expect-error: allow null for testing
@@ -1347,20 +1347,20 @@ describe('json-helpers', () => {
         setFhirBackboneTypeListJson([new MockBackboneType()], null, jsonObj);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided propName is empty/undefined/null`);
+      expect(t).toThrow(`Provided propName is undefined/null`);
 
       t = () => {
         // @ts-expect-error: allow undefined for testing
         setFhirBackboneTypeListJson([new MockBackboneType()], undefined, jsonObj);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided propName is empty/undefined/null`);
+      expect(t).toThrow(`Provided propName is undefined/null`);
 
       t = () => {
         setFhirBackboneTypeListJson([new MockBackboneType()], '', jsonObj);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided propName is empty/undefined/null`);
+      expect(t).toThrow(`Provided propName is empty`);
 
       t = () => {
         // @ts-expect-error: allow null for testing
@@ -1481,20 +1481,20 @@ describe('json-helpers', () => {
         setFhirResourceJson(new MockTask(), null, jsonObj);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided propName is empty/undefined/null`);
+      expect(t).toThrow(`Provided propName is undefined/null`);
 
       t = () => {
         // @ts-expect-error: allow undefined for testing
         setFhirResourceJson(new MockTask(), undefined, jsonObj);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided propName is empty/undefined/null`);
+      expect(t).toThrow(`Provided propName is undefined/null`);
 
       t = () => {
         setFhirResourceJson(new MockTask(), '', jsonObj);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided propName is empty/undefined/null`);
+      expect(t).toThrow(`Provided propName is empty`);
 
       t = () => {
         // @ts-expect-error: allow null for testing
@@ -1621,20 +1621,20 @@ describe('json-helpers', () => {
         setFhirResourceListJson([new MockTask()], null, jsonObj);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided propName is empty/undefined/null`);
+      expect(t).toThrow(`Provided propName is undefined/null`);
 
       t = () => {
         // @ts-expect-error: allow undefined for testing
         setFhirResourceListJson([new MockTask()], undefined, jsonObj);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided propName is empty/undefined/null`);
+      expect(t).toThrow(`Provided propName is undefined/null`);
 
       t = () => {
         setFhirResourceListJson([new MockTask()], '', jsonObj);
       };
       expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided propName is empty/undefined/null`);
+      expect(t).toThrow(`Provided propName is empty`);
 
       t = () => {
         // @ts-expect-error: allow null for testing

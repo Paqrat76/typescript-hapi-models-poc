@@ -53,7 +53,7 @@ describe('BackboneElement', () => {
     expect(mockElement.isEmpty()).toBe(true);
     expect(mockElement.toJSON()).toBeUndefined();
 
-    mockElement.addModifierExtension();
+    mockElement.addModifierExtension(undefined);
     expect(mockElement.hasModifierExtension()).toBe(false);
     expect(mockElement.hasModifierExtension(testUrl)).toBe(false);
     expect(mockElement.getModifierExtension()).toEqual([] as Extension[]);

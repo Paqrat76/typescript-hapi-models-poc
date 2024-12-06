@@ -116,7 +116,7 @@
   constructor(xxxxFieldNameReq: XxxxPrimitiveType | xxxxPrimitive | null) {
 
     this.xxxxFieldNameReq = null;
-    if (!isNil(xxxxFieldNameReq)) {
+    if (isDefined<XxxxPrimitiveType | xxxxPrimitive | null>(xxxxFieldNameReq)) {
       if (xxxxFieldNameReq instanceof PrimitiveType) {
         this.setXxxxFieldNameReqElement(xxxxFieldNameReq);
       } else {
@@ -170,7 +170,7 @@
    * @returns this
    */
   public setXxxxFieldNameReqElement(element: XxxxPrimitiveType): this {
-    if (!isNil(element)) {
+    if (isDefined<XxxxPrimitiveType>(element)) {
       const optErrMsg = `Invalid XxxxParentClass.xxxxFieldNameReq; Provided value is not an instance of XxxxPrimitiveType.`;
       assertFhirType<XxxxPrimitiveType>(element, XxxxPrimitiveType, optErrMsg);
       this.xxxxFieldNameReq = element;
@@ -182,7 +182,7 @@
    * @returns `true` if the `xxxxFieldNameReq` property exists and has a value; `false` otherwise
    */
   public hasXxxxFieldNameReqElement(): boolean {
-    return !isNil(this.xxxxFieldNameReq) && !this.xxxxFieldNameReq.isEmpty();
+    return isDefined<XxxxPrimitiveType | null>(this.xxxxFieldNameReq) && !this.xxxxFieldNameReq.isEmpty();
   }
 
   /**
@@ -204,7 +204,7 @@
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setXxxxFieldNameReq(value: xxxxPrimitive): this {
-    if (!isNil(value)) {
+    if (isDefined<xxxxPrimitive>(value)) {
       const optErrMsg = `Invalid XxxxParentClass.xxxxFieldNameReq (${String(value)})`;
       this.xxxxFieldNameReq = new BooleanType(parseFhirPrimitiveData(value, xxxxPrimitiveSchema, optErrMsg));
     }
@@ -298,8 +298,8 @@
    * @param value - the `xxxxFieldNameArray` value
    * @returns this
    */
-  public addXxxxFieldNameArray(value?: XxxxPrimitiveType): this {
-    if (value !== undefined) {
+  public addXxxxFieldNameArray(value: XxxxPrimitiveType | undefined): this {
+    if (isDefined<XxxxPrimitiveType | undefined>(value)) {
       const optErrMsg = `Invalid XxxxParentClass.xxxxFieldNameArray; Provided element is not an instance of XxxxPrimitiveType.`;
       assertFhirType<XxxxPrimitiveType>(value, XxxxPrimitiveType, optErrMsg);
       this.initXxxxFieldNameArray();
@@ -351,10 +351,10 @@
 // =====================================================================
   private xxxxFieldNameArrayReq: XxxxPrimitiveType[] | null;
 
-  constructor(xxxxFieldNameArrayReq: XxxxPrimitiveType[]) {
+  constructor(xxxxFieldNameArrayReq: XxxxPrimitiveType[] | null) {
 
     this.xxxxFieldNameArrayReq = null;
-    if (!isNil(xxxxFieldNameArrayReq)) {
+    if (isDefined<XxxxPrimitiveType[] | null>(xxxxFieldNameArrayReq)) {
       this.setXxxxFieldNameArrayReq(xxxxFieldNameArrayReq);
     }
   }
@@ -404,7 +404,7 @@
    * @returns this
    */
   public setXxxxFieldNameArrayReq(value: XxxxPrimitiveType[]): this {
-    if (!isNil(value)) {
+    if (isDefined<XxxxPrimitiveType[]>(value)) {
       const optErrMsg = `Invalid XxxxParentClass.xxxxFieldNameArrayReq; Provided value array has an element that is not an instance of XxxxPrimitiveType.`;
       assertFhirTypeList<XxxxPrimitiveType>(value, XxxxPrimitiveType, optErrMsg);
       this.xxxxFieldNameArrayReq = value;
@@ -418,8 +418,8 @@
    * @param value - the `xxxxFieldNameArrayReq` value
    * @returns this
    */
-  public addXxxxFieldNameArrayReq(value: XxxxPrimitiveType): this {
-    if (!isNil(value)) {
+  public addXxxxFieldNameArrayReq(value: XxxxPrimitiveType | undefined): this {
+    if (isDefined<XxxxPrimitiveType | undefined>(value)) {
       const optErrMsg = `Invalid XxxxParentClass.xxxxFieldNameArrayReq; Provided element is not an instance of XxxxPrimitiveType.`;
       assertFhirType<XxxxPrimitiveType>(value, XxxxPrimitiveType, optErrMsg);
       this.initXxxxFieldNameArrayReq();
@@ -433,7 +433,7 @@
    */
   public hasXxxxFieldNameArrayReq(): boolean {
     return (
-      !isNil(this.xxxxFieldNameArrayReq) &&
+      isDefined<XxxxPrimitiveType[] | null>(this.xxxxFieldNameArrayReq) &&
       this.xxxxFieldNameArrayReq.length > 0 &&
       this.xxxxFieldNameArrayReq.some((item: XxxxPrimitiveType) => !item.isEmpty())
     );

@@ -22,6 +22,7 @@
  */
 
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
+import { isDefined } from '@src/fhir-core/utility/type-guards';
 import { fhirBoolean, fhirBooleanSchema, parseFhirPrimitiveData } from './primitive-types';
 
 /**
@@ -103,7 +104,7 @@ export class BooleanType extends PrimitiveType<fhirBoolean> {
   }
 
   private assignValue(value: fhirBoolean | undefined): void {
-    if (value !== undefined) {
+    if (isDefined<fhirBoolean | undefined>(value)) {
       this.boolValue = parseFhirPrimitiveData(value, fhirBooleanSchema, this.typeErrorMessage(value));
     } else {
       this.boolValue = undefined;

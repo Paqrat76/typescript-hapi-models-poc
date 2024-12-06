@@ -13,7 +13,7 @@ Individual data model libraries will be generated for each FHIR release starting
 These FHIR release-specific libraries will include the hand-crafted core code artifacts from this project along with the
 generated data models for all FHIR resources and complex data types.
 
-### References
+## References
 
 - FHIR Specifications
   - [FHIR R4](https://hl7.org/fhir/R4)

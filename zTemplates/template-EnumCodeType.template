@@ -221,7 +221,7 @@
    * @returns this
    */
   public setXxxxFieldNameReqEnumType(enumType: EnumCodeType): this {
-    if (!isNil(enumType)) {
+    if (isDefined<EnumCodeType>(enumType)) {
       const errMsgPrefix = `Invalid XxxxParentClass.xxxxFieldNameReq`;
       assertEnumCodeType<XxxxClassEnum>(enumType, XxxxClassEnum, errMsgPrefix);
       this.xxxxFieldNameReq = enumType;
@@ -233,7 +233,7 @@
    * @returns `true` if the `xxxxFieldNameReq` property exists and has a value; `false` otherwise
    */
   public hasXxxxFieldNameReqEnumType(): boolean {
-    return !isNil(this.xxxxFieldNameReq) && !this.xxxxFieldNameReq.isEmpty() && this.xxxxFieldNameReq.fhirCodeEnumeration.length > 0;
+    return isDefined<EnumCodeType | null>(this.xxxxFieldNameReq) && !this.xxxxFieldNameReq.isEmpty() && this.xxxxFieldNameReq.fhirCodeEnumeration.length > 0;
   }
 
   /**
@@ -253,7 +253,7 @@
    * @returns this
    */
   public setXxxxFieldNameReqElement(element: CodeType): this {
-    if (!isNil(element)) {
+    if (isDefined<CodeType>(element)) {
       const optErrMsg = `Invalid XxxxParentClass.xxxxFieldNameReq; Provided value is not an instance of CodeType.`;
       assertFhirType<CodeType>(element, CodeType, optErrMsg);
       this.xxxxFieldNameReq = new EnumCodeType(element, this.xxxxClassEnum);
@@ -285,7 +285,7 @@
    * @returns this
    */
   public setXxxxFieldNameReq(value: fhirCode): this {
-    if (!isNil(value)) {
+    if (isDefined<fhirCode>(value)) {
       this.xxxxFieldNameReq = new EnumCodeType(value, this.xxxxClassEnum);
     }
     return this;
@@ -390,8 +390,8 @@
    * @param enumType - the `xxxxFieldNameArray` value
    * @returns this
    */
-  public addXxxxFieldNameArrayEnumType(enumType?: EnumCodeType): this {
-    if (enumType !== undefined) {
+  public addXxxxFieldNameArrayEnumType(enumType: EnumCodeType | undefined): this {
+    if (isDefined<EnumCodeType | undefined>(enumType)) {
       const errMsgPrefix = `Invalid XxxxParentClass.xxxxFieldNameArray`;
       assertEnumCodeType<XxxxClassEnum>(enumType, XxxxClassEnum, errMsgPrefix);
       this.initXxxxFieldNameArray();
@@ -445,8 +445,8 @@
    * @param element - the `xxxxFieldNameArray` value
    * @returns this
    */
-  public addXxxxFieldNameArrayElement(element?: CodeType): this {
-    if (element !== undefined) {
+  public addXxxxFieldNameArrayElement(element: CodeType | undefined): this {
+    if (isDefined<CodeType | undefined>(element)) {
       const optErrMsg = `Invalid XxxxParentClass.xxxxFieldNameArray; Provided element is not an instance of CodeType.`;
       assertFhirType<CodeType>(element, CodeType, optErrMsg);
       this.initXxxxFieldNameArray();
@@ -502,8 +502,8 @@
    * @param value - the `xxxxFieldNameArray` value
    * @returns this
    */
-  public addXxxxFieldNameArray(value?: fhirCode): this {
-    if (value !== undefined) {
+  public addXxxxFieldNameArray(value: fhirCode | undefined): this {
+    if (isDefined<fhirCode | undefined>(value)) {
       this.initXxxxFieldNameArray();
       this.xxxxFieldNameArray?.push(new EnumCodeType(value, this.xxxxClassEnum));
     }
@@ -554,15 +554,12 @@
 
     this.xxxxClassEnum = new XxxxClassEnum();
 
-    this.xxxxFieldNameArrayReq = null;
-    if (!isNil(xxxxFieldNameArrayReq)) {
-      this.xxxxFieldNameArrayReq = constructorCodeValueAsEnumCodeTypeList<XxxxClassEnum>(
-        xxxxFieldNameArrayReq,
-        XxxxClassEnum,
-        this.xxxxClassEnum,
-        'XxxxParentClass.xxxxFieldNameArrayReq',
-      );
-    }
+    this.xxxxFieldNameArrayReq = constructorCodeValueAsEnumCodeTypeList<XxxxClassEnum>(
+      xxxxFieldNameArrayReq,
+      XxxxClassEnum,
+      this.xxxxClassEnum,
+      'XxxxParentClass.xxxxFieldNameArrayReq',
+    );
 
   }
 
@@ -618,7 +615,7 @@
    * @returns this
    */
   public setXxxxFieldNameArrayReqEnumType(enumTypes: EnumCodeType[]): this {
-    if (!isNil(enumTypes) && enumTypes.length > 0) {
+    if (isDefined<EnumCodeType[]>(enumTypes) && enumTypes.length > 0) {
       const errMsgPrefix = `Invalid XxxxParentClass.xxxxFieldNameArrayReq`;
       assertEnumCodeTypeList<XxxxClassEnum>(enumTypes, XxxxClassEnum, errMsgPrefix);
       this.xxxxFieldNameArrayReq = enumTypes;
@@ -632,8 +629,8 @@
    * @param enumType - the `xxxxFieldNameArrayReq` value
    * @returns this
    */
-  public addXxxxFieldNameArrayReqEnumType(enumType?: EnumCodeType): this {
-    if (!isNil(enumType) {
+  public addXxxxFieldNameArrayReqEnumType(enumType: EnumCodeType | undefined): this {
+    if (isDefined<EnumCodeType | undefined>(enumType) {
       const errMsgPrefix = `Invalid XxxxParentClass.xxxxFieldNameArrayReq`;
       assertEnumCodeType<XxxxClassEnum>(enumType, XxxxClassEnum, errMsgPrefix);
       this.initXxxxFieldNameArrayReq();
@@ -671,7 +668,7 @@
    * @returns this
    */
   public setXxxxFieldNameArrayReqElement(elements: CodeType[]): this {
-    if (!isNil(elements) && elements.length > 0) {
+    if (isDefined<CodeType[]>(elements) && elements.length > 0) {
       const optErrMsg = `Invalid XxxxParentClass.xxxxFieldNameArrayReq; Provided element array has an element that is not an instance of CodeType.`;
       assertFhirTypeList<CodeType>(elements, CodeType, optErrMsg);
       const enumCodeTypes = [] as EnumCodeType[];
@@ -689,8 +686,8 @@
    * @param element - the `xxxxFieldNameArrayReq` value
    * @returns this
    */
-  public addXxxxFieldNameArrayReqElement(element?: CodeType): this {
-    if (!isNil(element)) {
+  public addXxxxFieldNameArrayReqElement(element: CodeType | undefined): this {
+    if (isDefined<CodeType | undefined>(element)) {
       const optErrMsg = `Invalid XxxxParentClass.xxxxFieldNameArray; Provided element is not an instance of CodeType.`;
       assertFhirType<CodeType>(element, CodeType, optErrMsg);
       this.initXxxxFieldNameArrayReq();
@@ -728,7 +725,7 @@
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setXxxxFieldNameArrayReq(values: fhirCode[]): this {
-    if (!isNil(values)) {
+    if (isDefined<fhirCode[]>(values)) {
       const enumCodeTypes = [] as EnumCodeType[];
       values.forEach((value: fhirCode) => {
         enumCodeTypes.push(new EnumCodeType(value, this.xxxxClassEnum));
@@ -744,8 +741,8 @@
    * @param value - the `xxxxFieldNameArrayReq` value
    * @returns this
    */
-  public addXxxxFieldNameArrayReq(value?: fhirCode | null): this {
-    if (!isNil(value)) {
+  public addXxxxFieldNameArrayReq(value: fhirCode | undefined): this {
+    if (isDefined<fhirCode | undefined>(value)) {
       this.initXxxxFieldNameArrayReq();
       this.xxxxFieldNameArrayReq?.push(new EnumCodeType(value, this.xxxxClassEnum));
     }
