@@ -34,7 +34,6 @@
  */
 
 import { strict as assert } from 'node:assert';
-import { isEmpty, isNil } from 'lodash';
 import { Resource } from '@src/fhir-core/base-models/Resource';
 import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
 import { isFhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
@@ -42,6 +41,8 @@ import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { Group } from '@src/fhir-models/Group';
 import { PractitionerRole } from '@src/fhir-models/PractitionerRole';
+import { isDefined } from '@src/fhir-core/utility/type-guards';
+import { isEmpty } from '@src/fhir-core/utility/common-util';
 
 // Ignore for coverage because all parse methods have their own tests
 /* istanbul ignore next */
@@ -78,7 +79,7 @@ function getFhirModelParseResults(resourceTypeValue: string, jsonObj: JSON.Objec
  * @returns the parsed Resource or undefined
  */
 function parseContainedResource(json: JSON.Value | undefined, sourceField: string): Resource | undefined {
-  if (isNil(json) || (JSON.isObject(json) && isEmpty(json))) {
+  if (!isDefined<JSON.Value | undefined>(json) || (JSON.isJsonObject(json) && isEmpty(json))) {
     return undefined;
   }
   const jsonObj: JSON.Object = JSON.asObject(json, sourceField);

@@ -22,6 +22,7 @@
  */
 
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
+import { isDefined } from '@src/fhir-core/utility/type-guards';
 import { fhirBase64Binary, fhirBase64BinarySchema, parseFhirPrimitiveData } from './primitive-types';
 
 /**
@@ -82,7 +83,7 @@ export class Base64BinaryType extends PrimitiveType<fhirBase64Binary> {
   }
 
   private assignValue(value: fhirBase64Binary | undefined): void {
-    if (value !== undefined) {
+    if (isDefined<fhirBase64Binary | undefined>(value)) {
       super.setValue(parseFhirPrimitiveData(value, fhirBase64BinarySchema, this.typeErrorMessage()));
     } else {
       super.setValue(undefined);

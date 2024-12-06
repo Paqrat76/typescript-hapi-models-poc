@@ -35,6 +35,7 @@
  */
 
 import { DateTime, Zone } from 'luxon';
+import { isDefined } from '@src/fhir-core/utility/type-guards';
 import { InvalidDateTimeError } from '@src/fhir-core/errors/InvalidDateTimeError';
 
 /**
@@ -88,15 +89,15 @@ export interface DateTimeOpts {
  * @see [Luxon DateTime.fromISO()](https://moment.github.io/luxon/api-docs/index.html#datetimefromiso)
  */
 export function getDateTimeObject(value: string | undefined, opts?: DateTimeOpts): DateTime | undefined {
-  if (value === undefined) {
+  if (!isDefined<string | undefined>(value)) {
     return undefined;
   }
 
   let dt;
-  if (opts === undefined) {
-    dt = DateTime.fromISO(value);
-  } else {
+  if (isDefined<DateTimeOpts | undefined>(opts)) {
     dt = DateTime.fromISO(value, opts);
+  } else {
+    dt = DateTime.fromISO(value);
   }
 
   if (!dt.isValid) {
@@ -120,7 +121,7 @@ export function getDateTimeObject(value: string | undefined, opts?: DateTimeOpts
  * @see [Luxon DateTime.fromISO()](https://moment.github.io/luxon/api-docs/index.html#datetimefromiso)
  */
 export function getDateTimeObjectAsUTC(value: string | undefined): DateTime | undefined {
-  if (value === undefined) {
+  if (!isDefined<string | undefined>(value)) {
     return undefined;
   }
 

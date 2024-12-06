@@ -83,7 +83,7 @@
   constructor(xxxxFieldNameReq: XxxxClass | null) {
 
     this.xxxxFieldNameReq = null;
-    if (!isNil(xxxxFieldNameReq)) {
+    if (isDefined<XxxxClass | null>(xxxxFieldNameReq)) {
       this.setXxxxFieldNameReq(xxxxFieldNameReq);
     }
 
@@ -133,7 +133,7 @@
    * @returns this
    */
   public setXxxxFieldNameReq(value: XxxxClass): this {
-    if (!isNil(value)) {
+    if (isDefined<XxxxClass>(value)) {
       const optErrMsg = `Invalid XxxxParentClass.xxxxFieldNameReq; Provided element is not an instance of XxxxClass.`;
       assertFhirType<XxxxClass>(value, XxxxClass, optErrMsg);
       this.xxxxFieldNameReq = value;
@@ -145,7 +145,7 @@
    * @returns `true` if the `xxxxFieldNameReq` property exists and has a value; `false` otherwise
    */
   public hasXxxxFieldNameReq(): boolean {
-    return !isNil(this.xxxxFieldNameReq) && !this.xxxxFieldNameReq.isEmpty();
+    return isDefined<XxxxClass | null>(this.xxxxFieldNameReq) && !this.xxxxFieldNameReq.isEmpty();
   }
 
   // *** NOTE ***
@@ -226,8 +226,8 @@
    * @param value - the `xxxxFieldNameArray` value
    * @returns this
    */
-  public addXxxxFieldNameArray(value?: XxxxClass): this {
-    if (value !== undefined) {
+  public addXxxxFieldNameArray(value: XxxxClass | undefined): this {
+    if (isDefined<XxxxClass | undefined>(value)) {
       const optErrMsg = `Invalid XxxxParentClass.xxxxFieldNameArray; Provided element is not an instance of XxxxClass.`;
       assertFhirType<XxxxClass>(value, XxxxClass, optErrMsg);
       this.initXxxxFieldNameArray();
@@ -280,7 +280,7 @@
   constructor(xxxxFieldNameArrayReq: XxxxClass[] | null) {
 
     this.xxxxFieldNameArrayReq = null;
-    if (!isNil(xxxxFieldNameArrayReq)) {
+    if (isDefined<XxxxClass[] | null>(xxxxFieldNameArrayReq)) {
       this.setXxxxFieldNameArrayReq(xxxxFieldNameArrayReq);
     }
   }
@@ -330,7 +330,7 @@
    * @returns this
    */
   public setXxxxFieldNameArrayReq(value: XxxxClass[]): this {
-    if (!isNil(value)) {
+    if (isDefined<XxxxClass[]>(value)) {
       const optErrMsg = `Invalid XxxxParentClass.xxxxFieldNameArrayReq; Provided value array has an element that is not an instance of XxxxClass.`;
       assertFhirTypeList<XxxxClass>(value, XxxxClass, optErrMsg);
       this.xxxxFieldNameArrayReq = value;
@@ -344,8 +344,8 @@
    * @param value - the `xxxxFieldNameArrayReq` value
    * @returns this
    */
-  public addXxxxFieldNameArrayReq(value: XxxxClass): this {
-    if (!isNil(value)) {
+  public addXxxxFieldNameArrayReq(value: XxxxClass | undefined): this {
+    if (isDefined<XxxxClass | undefined>(value)) {
       const optErrMsg = `Invalid XxxxParentClass.xxxxFieldNameArrayReq; Provided element is not an instance of XxxxClass.`;
       assertFhirType<XxxxClass>(value, XxxxClass, optErrMsg);
       this.initXxxxFieldNameArrayReq();
@@ -359,7 +359,7 @@
    */
   public hasXxxxFieldNameArrayReq(): boolean {
     return (
-      !isNil(this.xxxxFieldNameArrayReq) &&
+      isDefined<XxxxClass[] | null>(this.xxxxFieldNameArrayReq) &&
       this.xxxxFieldNameArrayReq.length > 0 &&
       this.xxxxFieldNameArrayReq.some((item: XxxxClass) => !item.isEmpty())
     );

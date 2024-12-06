@@ -22,6 +22,7 @@
  */
 
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
+import { isDefined } from '@src/fhir-core/utility/type-guards';
 import { fhirUuid, fhirUuidSchema, parseFhirPrimitiveData } from './primitive-types';
 
 /**
@@ -82,7 +83,7 @@ export class UuidType extends PrimitiveType<fhirUuid> {
   }
 
   private assignValue(value: fhirUuid | undefined): void {
-    if (value !== undefined) {
+    if (isDefined<fhirUuid | undefined>(value)) {
       super.setValue(parseFhirPrimitiveData(value, fhirUuidSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);

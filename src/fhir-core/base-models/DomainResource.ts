@@ -34,7 +34,7 @@ import {
 } from '@src/fhir-core/base-models/core-fhir-models';
 import { fhirUri } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty, validateUrl } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirType, assertFhirTypeList } from '@src/fhir-core/utility/type-guards';
+import { assertFhirType, assertFhirTypeList, isDefined } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
@@ -178,14 +178,13 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
    * @param value - the `contained` value
    * @returns this
    */
-  public addContained(value?: Resource): this {
-    if (value === undefined) {
-      return this;
+  public addContained(value: Resource | undefined): this {
+    if (isDefined<Resource | undefined>(value)) {
+      const optErrMsg = `Invalid DomainResource.contained; Provided value is not a valid instance of Resource.`;
+      assertFhirResourceType(value, optErrMsg);
+      this.initContained();
+      this.contained?.push(value);
     }
-    const optErrMsg = `Invalid DomainResource.contained; Provided value is not a valid instance of Resource.`;
-    assertFhirResourceType(value, optErrMsg);
-    this.initContained();
-    this.contained?.push(value);
     return this;
   }
 
@@ -256,8 +255,8 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
   /**
    * {@inheritDoc IBaseExtension.addExtension}
    */
-  public addExtension(extension?: Extension): this {
-    if (extension !== undefined) {
+  public addExtension(extension: Extension | undefined): this {
+    if (isDefined<Extension | undefined>(extension)) {
       const optErrMsg = `Invalid DomainResource.extension; Provided extension is not an instance of Extension.`;
       assertFhirType<Extension>(extension, Extension, optErrMsg);
       this.initExtension();
@@ -348,7 +347,7 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
    * {@inheritDoc IBaseModifierExtension.addModifierExtension}
    */
   public addModifierExtension(extension: Extension | undefined): this {
-    if (extension !== undefined) {
+    if (isDefined<Extension | undefined>(extension)) {
       const optErrMsg = `Invalid DomainResource.modifierExtension; Provided extension is not an instance of Extension.`;
       assertFhirType<Extension>(extension, Extension, optErrMsg);
       this.initModifierExtension();

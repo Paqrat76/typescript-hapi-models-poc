@@ -37,7 +37,6 @@
  */
 
 import { strict as assert } from 'node:assert';
-import { isEmpty as _isEmpty, isNil } from 'lodash';
 import { Base } from '@src/fhir-core/base-models/Base';
 import { IBase } from '@src/fhir-core/base-models/IBase';
 import { RESOURCE_TYPES, FhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
@@ -55,8 +54,9 @@ import {
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { setFhirComplexJson, setFhirPrimitiveJson } from '@src/fhir-core/base-models/core-fhir-models';
+import { isEmpty as _isEmpty } from '@src/fhir-core/utility/common-util';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirType } from '@src/fhir-core/utility/type-guards';
+import { assertFhirType, assertIsDefined } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
@@ -449,9 +449,10 @@ export function assertFhirResourceType(
  * @category Utilities: JSON
  */
 export function setFhirResourceJson(resource: Resource, propName: string, jsonObj: JSON.Object): void {
-  assert(!isNil(resource), 'Provided resource is undefined/null');
-  assert(!_isEmpty(propName), 'Provided propName is empty/undefined/null');
-  assert(!isNil(jsonObj), 'Provided jsonObj is undefined/null');
+  assertIsDefined<Resource>(resource, 'Provided resource is undefined/null');
+  assertIsDefined<string>(propName, 'Provided propName is undefined/null');
+  assert(!_isEmpty(propName), 'Provided propName is empty');
+  assertIsDefined<JSON.Object>(jsonObj, 'Provided jsonObj is undefined/null');
   assertFhirResourceType(resource, 'Provided resource is not an instance of Resource');
 
   const resourceValue: JSON.Value | undefined = resource.toJSON();
@@ -474,9 +475,10 @@ export function setFhirResourceJson(resource: Resource, propName: string, jsonOb
  * @category Utilities: JSON
  */
 export function setFhirResourceListJson(resources: Resource[], propName: string, jsonObj: JSON.Object): void {
-  assert(!isNil(resources), 'Provided resources is undefined/null');
-  assert(!_isEmpty(propName), 'Provided propName is empty/undefined/null');
-  assert(!isNil(jsonObj), 'Provided jsonObj is undefined/null');
+  assertIsDefined<Resource[]>(resources, 'Provided resources is undefined/null');
+  assertIsDefined<string>(propName, 'Provided propName is undefined/null');
+  assert(!_isEmpty(propName), 'Provided propName is empty');
+  assertIsDefined<JSON.Object>(jsonObj, 'Provided jsonObj is undefined/null');
 
   const jsonArray: JSON.Array = [];
   for (const resource of resources) {

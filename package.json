@@ -1,6 +1,6 @@
 {
   "name": "typescript-hapi-models-poc",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "description": "POC project for TypeScript FHIR data models inspired by HAPI FHIR",
   "keywords": [
     "node",
@@ -37,7 +37,6 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "lodash": "^4.17.21",
     "luxon": "^3.5.0",
     "zod": "^3.23.8"
   },
@@ -48,7 +47,6 @@
     "@jest/globals": "^29.7.0",
     "@types/eslint__js": "^8.42.3",
     "@types/jest": "^29.5.14",
-    "@types/lodash": "^4.17.13",
     "@types/luxon": "^3.4.2",
     "@types/node": "^22.10.1",
     "eslint": "^9.16.0",

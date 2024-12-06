@@ -29,6 +29,7 @@ import {
   getDateTimeObjectAsUTC,
   getValueAsInstant,
 } from '@src/fhir-core/utility/date-time-util';
+import { isDefined } from '@src/fhir-core/utility/type-guards';
 import { fhirInstant, fhirInstantSchema, InstantTypeImpl, parseFhirPrimitiveData } from './primitive-types';
 
 /**
@@ -105,7 +106,7 @@ export class InstantType extends PrimitiveType<fhirInstant> implements InstantTy
   }
 
   private assignValue(value: fhirInstant | undefined): void {
-    if (value !== undefined) {
+    if (isDefined<fhirInstant | undefined>(value)) {
       super.setValue(parseFhirPrimitiveData(value, fhirInstantSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);

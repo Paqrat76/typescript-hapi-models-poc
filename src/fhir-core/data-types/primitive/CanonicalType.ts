@@ -22,6 +22,7 @@
  */
 
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
+import { isDefined } from '@src/fhir-core/utility/type-guards';
 import { fhirCanonical, fhirCanonicalSchema, parseFhirPrimitiveData } from './primitive-types';
 
 /**
@@ -81,7 +82,7 @@ export class CanonicalType extends PrimitiveType<fhirCanonical> {
   }
 
   private assignValue(value: fhirCanonical | undefined): void {
-    if (value !== undefined) {
+    if (isDefined<fhirCanonical | undefined>(value)) {
       super.setValue(parseFhirPrimitiveData(value, fhirCanonicalSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);

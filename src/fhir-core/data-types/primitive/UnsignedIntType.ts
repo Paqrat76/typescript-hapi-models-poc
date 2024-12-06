@@ -22,6 +22,7 @@
  */
 
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
+import { isDefined } from '@src/fhir-core/utility/type-guards';
 import { fhirUnsignedInt, fhirUnsignedIntSchema, parseFhirPrimitiveData } from './primitive-types';
 
 /**
@@ -81,7 +82,7 @@ export class UnsignedIntType extends PrimitiveType<fhirUnsignedInt> {
   }
 
   private assignValue(value: fhirUnsignedInt | undefined): void {
-    if (value !== undefined) {
+    if (isDefined<fhirUnsignedInt | undefined>(value)) {
       super.setValue(parseFhirPrimitiveData(value, fhirUnsignedIntSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);

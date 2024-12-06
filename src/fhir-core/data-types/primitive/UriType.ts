@@ -22,6 +22,7 @@
  */
 
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
+import { isDefined } from '@src/fhir-core/utility/type-guards';
 import { fhirUri, fhirUriSchema, parseFhirPrimitiveData } from './primitive-types';
 
 /**
@@ -82,7 +83,7 @@ export class UriType extends PrimitiveType<fhirUri> {
   }
 
   private assignValue(value: fhirUri | undefined): void {
-    if (value !== undefined) {
+    if (isDefined<fhirUri | undefined>(value)) {
       super.setValue(parseFhirPrimitiveData(value, fhirUriSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);

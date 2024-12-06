@@ -28,10 +28,10 @@
  */
 
 import { strict as assert } from 'node:assert';
-import { isEmpty as _isEmpty, isNil } from 'lodash';
 import { IBase } from '@src/fhir-core/base-models/IBase';
-import { isNonBlank } from '@src/fhir-core/utility/common-util';
+import { isEmpty, isNonBlank } from '@src/fhir-core/utility/common-util';
 import { fhirUriSchema } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { assertIsDefined, assertIsString, isDefined } from '@src/fhir-core/utility/type-guards';
 
 /**
  * Determine if all the provided elements are empty
@@ -45,7 +45,7 @@ import { fhirUriSchema } from '@src/fhir-core/data-types/primitive/primitive-typ
  * @category Utilities
  */
 export function isElementEmpty(...elements: (IBase | IBase[] | undefined | null)[]): boolean {
-  if (elements.length === 1 && _isEmpty(elements[0])) {
+  if (elements.length === 1 && isEmpty(elements[0])) {
     return true;
   } else {
     for (const element of elements) {
@@ -58,7 +58,7 @@ export function isElementEmpty(...elements: (IBase | IBase[] | undefined | null)
         }
       } else {
         // IBase or undefined
-        if (!isNil(element) && !element.isEmpty()) {
+        if (isDefined<IBase | IBase[] | undefined | null>(element) && !element.isEmpty()) {
           return false;
         }
       }
@@ -76,6 +76,7 @@ export function isElementEmpty(...elements: (IBase | IBase[] | undefined | null)
  * @category Utilities
  */
 export function validateUrl(url: string): void {
+  assertIsString(url, `Provided url is not a string`);
   assert(isNonBlank(url), 'The url must be defined and cannot be blank');
   const parseResult = fhirUriSchema.safeParse(url);
   assert(parseResult.success, 'The url must be a valid fhirUri');
@@ -90,6 +91,9 @@ export function validateUrl(url: string): void {
  * @category Utilities
  */
 export function extractFieldName(sourceField: string): string {
+  assertIsDefined<string>(sourceField, `Provided sourceField is undefined/null`);
+  assertIsString(sourceField, `Provided sourceField is not a string`);
+
   const lastDotIndex = sourceField.lastIndexOf('.');
   const fieldName = sourceField.substring(lastDotIndex + 1);
   // Handle polymorphic fields

@@ -21,7 +21,6 @@
  *
  */
 
-import { isEmpty, isNil } from 'lodash';
 import { REQUIRED_PROPERTIES_DO_NOT_EXIST, REQUIRED_PROPERTIES_REQD_IN_JSON } from '@src/fhir-core/constants';
 import { IBase } from '@src/fhir-core/base-models/IBase';
 import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
@@ -77,7 +76,8 @@ import {
   processDomainResourceJson,
 } from '@src/fhir-core/utility/fhir-parsers';
 import { parseContainedResources } from '@src/fhir-models/fhir-contained-resource-parser';
-import { assertFhirType, assertFhirTypeList } from '@src/fhir-core/utility/type-guards';
+import { assertFhirType, assertFhirTypeList, isDefined } from '@src/fhir-core/utility/type-guards';
+import { isEmpty } from '@src/fhir-core/utility/common-util';
 import { extractFieldName, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import { ChoiceDataTypes, ChoiceDataTypesMeta } from '@src/fhir-core/utility/decorators';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
@@ -122,7 +122,7 @@ export class Group extends DomainResource implements IBase {
     );
 
     this.actual = null;
-    if (!isNil(actual)) {
+    if (isDefined<BooleanType | fhirBoolean | null>(actual)) {
       if (actual instanceof PrimitiveType) {
         this.setActualElement(actual);
       } else {
@@ -138,7 +138,7 @@ export class Group extends DomainResource implements IBase {
    * @returns Group data model or undefined for `Group`
    */
   public static parse(sourceJson: JSON.Object): Group | undefined {
-    if (isNil(sourceJson) || (JSON.isObject(sourceJson) && isEmpty(sourceJson))) {
+    if (!isDefined<JSON.Object>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
     const classJsonObj: JSON.Object = JSON.asObject(sourceJson, `Group JSON`);
@@ -458,8 +458,8 @@ export class Group extends DomainResource implements IBase {
    * @param value - the `identifier` value
    * @returns this
    */
-  public addIdentifier(value?: Identifier): this {
-    if (value !== undefined) {
+  public addIdentifier(value: Identifier | undefined): this {
+    if (isDefined<Identifier | undefined>(value)) {
       const optErrMsg = `Invalid Group.identifier; Provided value is not an instance of Identifier.`;
       assertFhirType<Identifier>(value, Identifier, optErrMsg);
       this.initIdentifier();
@@ -557,7 +557,7 @@ export class Group extends DomainResource implements IBase {
    * @returns this
    */
   public setTypeEnumType(enumType: EnumCodeType): this {
-    if (!isNil(enumType)) {
+    if (isDefined<EnumCodeType>(enumType)) {
       const errMsgPrefix = `Invalid Group.type`;
       assertEnumCodeType<GroupTypeEnum>(enumType, GroupTypeEnum, errMsgPrefix);
       this.type = enumType;
@@ -569,7 +569,9 @@ export class Group extends DomainResource implements IBase {
    * @returns `true` if the `type` property exists and has a value; `false` otherwise
    */
   public hasTypeEnumType(): boolean {
-    return !isNil(this.type) && !this.type.isEmpty() && this.type.fhirCodeEnumeration.length > 0;
+    return (
+      isDefined<EnumCodeType | null>(this.type) && !this.type.isEmpty() && this.type.fhirCodeEnumeration.length > 0
+    );
   }
 
   /**
@@ -589,7 +591,7 @@ export class Group extends DomainResource implements IBase {
    * @returns this
    */
   public setTypeElement(element: CodeType): this {
-    if (!isNil(element)) {
+    if (isDefined<CodeType>(element)) {
       const optErrMsg = `Invalid Group.type; Provided value is not an instance of CodeType.`;
       assertFhirType<CodeType>(element, CodeType, optErrMsg);
       this.type = new EnumCodeType(element, this.groupTypeEnum);
@@ -621,7 +623,7 @@ export class Group extends DomainResource implements IBase {
    * @returns this
    */
   public setType(value: fhirCode): this {
-    if (!isNil(value)) {
+    if (isDefined<fhirCode>(value)) {
       this.type = new EnumCodeType(value, this.groupTypeEnum);
     }
     return this;
@@ -648,7 +650,7 @@ export class Group extends DomainResource implements IBase {
    * @returns this
    */
   public setActualElement(element: BooleanType): this {
-    if (!isNil(element)) {
+    if (isDefined<BooleanType>(element)) {
       const optErrMsg = `Invalid Group.actual; Provided value is not an instance of BooleanType.`;
       assertFhirType<BooleanType>(element, BooleanType, optErrMsg);
       this.actual = element;
@@ -660,7 +662,7 @@ export class Group extends DomainResource implements IBase {
    * @returns `true` if the `actual` property exists and has a value; `false` otherwise
    */
   public hasActualElement(): boolean {
-    return !isNil(this.actual) && !this.actual.isEmpty();
+    return isDefined<BooleanType | null>(this.actual) && !this.actual.isEmpty();
   }
 
   /**
@@ -682,7 +684,7 @@ export class Group extends DomainResource implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setActual(value: fhirBoolean): this {
-    if (!isNil(value)) {
+    if (isDefined<fhirBoolean>(value)) {
       const optErrMsg = `Invalid Group.actual (${String(value)})`;
       this.actual = new BooleanType(parseFhirPrimitiveData(value, fhirBooleanSchema, optErrMsg));
     }
@@ -890,8 +892,8 @@ export class Group extends DomainResource implements IBase {
    * @param value - the `characteristic` value
    * @returns this
    */
-  public addCharacteristic(value?: GroupCharacteristicComponent): this {
-    if (value !== undefined) {
+  public addCharacteristic(value: GroupCharacteristicComponent | undefined): this {
+    if (isDefined<GroupCharacteristicComponent | undefined>(value)) {
       const optErrMsg = `Invalid Group.characteristic; Provided value is not an instance of GroupCharacteristicComponent.`;
       assertFhirType<GroupCharacteristicComponent>(value, GroupCharacteristicComponent, optErrMsg);
       this.initCharacteristic();
@@ -946,8 +948,8 @@ export class Group extends DomainResource implements IBase {
    * @param value - the `member` value
    * @returns this
    */
-  public addMember(value?: GroupMemberComponent): this {
-    if (value !== undefined) {
+  public addMember(value: GroupMemberComponent | undefined): this {
+    if (isDefined<GroupMemberComponent | undefined>(value)) {
       const optErrMsg = `Invalid Group.member; Provided value is not an instance of GroupMemberComponent.`;
       assertFhirType<GroupMemberComponent>(value, GroupMemberComponent, optErrMsg);
       this.initMember();
@@ -1122,12 +1124,12 @@ export class GroupCharacteristicComponent extends BackboneElement {
     super();
 
     this.code = null;
-    if (!isNil(code)) {
+    if (isDefined<CodeableConcept | null>(code)) {
       this.setCode(code);
     }
 
     this.value = null;
-    if (!isNil(value)) {
+    if (isDefined<DataType | null>(value)) {
       this.setValue(value);
     }
 
@@ -1135,7 +1137,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
     if (exclude instanceof BooleanType) {
       this.setExcludeElement(exclude);
     } else {
-      if (!isNil(exclude)) {
+      if (isDefined<BooleanType | fhirBoolean | null>(exclude)) {
         this.setExclude(exclude);
       }
     }
@@ -1148,7 +1150,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
    * @returns GroupCharacteristicComponent data model or undefined for `Group.characteristic`
    */
   public static parse(sourceJson: JSON.Value): GroupCharacteristicComponent | undefined {
-    if (isNil(sourceJson) || (JSON.isObject(sourceJson) && isEmpty(sourceJson))) {
+    if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
     const backboneJsonObj: JSON.Object = JSON.asObject(sourceJson, `GroupCharacteristicComponent JSON`);
@@ -1303,7 +1305,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
    * @returns this
    */
   public setCode(value: CodeableConcept): this {
-    if (!isNil(value)) {
+    if (isDefined<CodeableConcept>(value)) {
       const optErrMsg = `Invalid Group.characteristic.code; Provided value is not an instance of CodeableConcept.`;
       assertFhirType<CodeableConcept>(value, CodeableConcept, optErrMsg);
       this.code = value;
@@ -1315,7 +1317,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
    * @returns `true` if the `code` property exists and has a value; `false` otherwise
    */
   public hasCode(): boolean {
-    return !isNil(this.code) && !this.code.isEmpty();
+    return isDefined<CodeableConcept | null>(this.code) && !this.code.isEmpty();
   }
 
   /**
@@ -1335,7 +1337,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
    */
   @ChoiceDataTypes('Group.characteristic.value[x]')
   public setValue(value: DataType): this {
-    if (!isNil(value)) {
+    if (isDefined<DataType | null>(value)) {
       // assertFhirType<DataType>(value, DataType) unnecessary because @ChoiceDataTypes decorator ensures proper type/value
       this.value = value;
     }
@@ -1346,7 +1348,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
    * @returns `true` if the `value` property exists and has a value; `false` otherwise
    */
   public hasValue(): boolean {
-    return !isNil(this.value) && !this.value.isEmpty();
+    return isDefined<DataType | null>(this.value) && !this.value.isEmpty();
   }
 
   /**
@@ -1368,7 +1370,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
    * @returns `true` if the `value` property exists as a CodeableConcept and has a value; `false` otherwise
    */
   public hasValueCodeableConcept(): boolean {
-    return !isNil(this.value) && !this.value.isEmpty() && this.value instanceof CodeableConcept;
+    return isDefined<DataType | null>(this.value) && !this.value.isEmpty() && this.value instanceof CodeableConcept;
   }
 
   /**
@@ -1390,7 +1392,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
    * @returns `true` if the `value` property exists as a boolean and has a value; `false` otherwise
    */
   public hasValueBooleanType(): boolean {
-    return !isNil(this.value) && !this.value.isEmpty() && this.value instanceof BooleanType;
+    return isDefined<DataType | null>(this.value) && !this.value.isEmpty() && this.value instanceof BooleanType;
   }
 
   /**
@@ -1412,7 +1414,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
    * @returns `true` if the `value` property exists as a Quantity and has a value; `false` otherwise
    */
   public hasValueQuantity(): boolean {
-    return !isNil(this.value) && !this.value.isEmpty() && this.value instanceof Quantity;
+    return isDefined<DataType | null>(this.value) && !this.value.isEmpty() && this.value instanceof Quantity;
   }
 
   /**
@@ -1434,7 +1436,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
    * @returns `true` if the `value` property exists as a Range and has a value; `false` otherwise
    */
   public hasValueRange(): boolean {
-    return !isNil(this.value) && !this.value.isEmpty() && this.value instanceof Range;
+    return isDefined<DataType | null>(this.value) && !this.value.isEmpty() && this.value instanceof Range;
   }
 
   /**
@@ -1456,7 +1458,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
    * @returns `true` if the `value` property exists as a Reference and has a value; `false` otherwise
    */
   public hasValueReference(): boolean {
-    return !isNil(this.value) && !this.value.isEmpty() && this.value instanceof Reference;
+    return isDefined<DataType | null>(this.value) && !this.value.isEmpty() && this.value instanceof Reference;
   }
 
   /**
@@ -1473,7 +1475,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
    * @returns this
    */
   public setExcludeElement(element: BooleanType): this {
-    if (!isNil(element)) {
+    if (isDefined<BooleanType>(element)) {
       const optErrMsg = `Invalid Group.characteristic.exclude; Provided value is not an instance of BooleanType.`;
       assertFhirType<BooleanType>(element, BooleanType, optErrMsg);
       this.exclude = element;
@@ -1485,7 +1487,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
    * @returns `true` if the `exclude` property exists and has a value; `false` otherwise
    */
   public hasExcludeElement(): boolean {
-    return !isNil(this.exclude) && !this.exclude.isEmpty();
+    return isDefined<BooleanType | null>(this.exclude) && !this.exclude.isEmpty();
   }
 
   /**
@@ -1507,7 +1509,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setExclude(value: fhirBoolean): this {
-    if (!isNil(value)) {
+    if (isDefined<fhirBoolean>(value)) {
       const optErrMsg = `Invalid Group.characteristic.exclude (${String(value)})`;
       this.exclude = new BooleanType(parseFhirPrimitiveData(value, fhirBooleanSchema, optErrMsg));
     }
@@ -1651,7 +1653,7 @@ export class GroupMemberComponent extends BackboneElement {
     super();
 
     this.entity = null;
-    if (!isNil(entity)) {
+    if (isDefined<Reference | null>(entity)) {
       this.setEntity(entity);
     }
   }
@@ -1663,7 +1665,7 @@ export class GroupMemberComponent extends BackboneElement {
    * @returns GroupMemberComponent data model or undefined for `Group.member`
    */
   public static parse(sourceJson: JSON.Value): GroupMemberComponent | undefined {
-    if (isNil(sourceJson) || (JSON.isObject(sourceJson) && isEmpty(sourceJson))) {
+    if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
     const backboneJsonObj: JSON.Object = JSON.asObject(sourceJson, `GroupMemberComponent JSON`);
@@ -1778,7 +1780,7 @@ export class GroupMemberComponent extends BackboneElement {
     'Group',
   ])
   public setEntity(value: Reference): this {
-    if (!isNil(value)) {
+    if (isDefined<Reference>(value)) {
       // assertFhirType<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
       this.entity = value;
     }
@@ -1789,7 +1791,7 @@ export class GroupMemberComponent extends BackboneElement {
    * @returns `true` if the `entity` property exists and has a value; `false` otherwise
    */
   public hasEntity(): boolean {
-    return !isNil(this.entity) && !this.entity.isEmpty();
+    return isDefined<Reference | null>(this.entity) && !this.entity.isEmpty();
   }
 
   /**

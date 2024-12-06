@@ -127,7 +127,7 @@ GitHub: [hapifhir/org.hl7.fhir.core](https://github.com/hapifhir/org.hl7.fhir.co
   - Transform Tools [JSON to io-ts](https://transform.tools/json-to-io-ts)
   - jsDocs.io [io-ts](https://www.jsdocs.io/package/io-ts)
 
-## JavaScript Object Serialization/Deserialization References
+## JavaScript Object Serialization/Deserialization
 
 ### FHIR Guidance
 
@@ -281,9 +281,22 @@ libraries satisfied the design goals.
 
 **Based on these reviews and my subsequent "deep dive", I decided to use the [Zod](https://www.npmjs.com/package/zod) library.**
 
-### JavaScript Object Serialization/Deserialization
+### JavaScript Object Serialization/Deserialization Approach
 
-TODO
+After researching this subject in many articles on the web and after investigating the various serialization/deserialization
+libraries (see above), I came to the conclusion that a "generic" approach to serialization/deserialization was overkill
+in this use case. While complex and primitive data type models are handcrafted, the ultimate goal is to use a code
+generator to create all FHIR resource data models for each version of FHIR. From experience, creating class templates
+for a code generator is a straight-forward process. Trying to generalize the serialization/deserialization functionality
+adds unnecessary complexity to the templates and the generated code.
+
+My goal for the serialization/deserialization functionality was to access the functionality from the FHIR resource data
+model classes - not from a separate "tool"/"parser" as is the case in the HAPI FHIR project. To that end, I decided to
+provide a public `toJSON()` instance method on each FHIR resource data model class to perform the serialization. This
+allows consumers of these data model classes to manipulate the data models instances as needed and then when ready,
+execute the `toJSON()` method of the instance to render the FHIR compatible JSON data object. For the deserialization
+process, I decided to provide a public static `parse(sourceJson: JSON.Object)` method that can consume the provided
+JSON data object and return a fully populated FHIR resource data model instance.
 
 ### Unit Testing Strategy
 

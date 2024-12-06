@@ -33,6 +33,7 @@ import {
   getValueAsYear,
   getValueAsYearMonth,
 } from '@src/fhir-core/utility/date-time-util';
+import { isDefined } from '@src/fhir-core/utility/type-guards';
 import { DateTimeTypeImpl, fhirDateTime, fhirDateTimeSchema, parseFhirPrimitiveData } from './primitive-types';
 
 /**
@@ -132,7 +133,7 @@ export class DateTimeType extends PrimitiveType<fhirDateTime> implements DateTim
   }
 
   private assignValue(value: fhirDateTime | undefined): void {
-    if (value !== undefined) {
+    if (isDefined<fhirDateTime | undefined>(value)) {
       super.setValue(parseFhirPrimitiveData(value, fhirDateTimeSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);

@@ -21,7 +21,7 @@
  *
  */
 
-import { upperFirst } from 'lodash';
+import { upperFirst } from '@src/fhir-core/utility/common-util';
 
 /**
  * FHIR open data types

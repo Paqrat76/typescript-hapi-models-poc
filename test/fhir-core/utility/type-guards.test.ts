@@ -22,7 +22,19 @@
  */
 
 import { AssertionError } from 'node:assert';
-import { assertFhirType, assertFhirTypeList, assertIsDefined, FhirTypeGuard } from '@src/fhir-core/utility/type-guards';
+import {
+  assertFhirType,
+  assertFhirTypeList,
+  assertIsDefined,
+  assertIsNumber,
+  assertIsString,
+  FhirTypeGuard,
+  isDefined,
+  isBoolean,
+  isNumber,
+  isString,
+  assertIsBoolean,
+} from '@src/fhir-core/utility/type-guards';
 import { isFhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
 import {
   assertFhirDataType,
@@ -56,40 +68,262 @@ describe('type-guards', () => {
     });
   });
 
-  describe('assertIsDefined', () => {
-    it('should not throw AssertionError for defined instance', () => {
-      const value = new StringType();
-      const t = () => {
-        assertIsDefined(value);
-      };
-      expect(t).not.toThrow(AssertionError);
+  describe('isDefined/assertIsDefined', () => {
+    const UNDEFINED_VALUE = undefined;
+    const NULL_VALUE = null;
+
+    describe('isDefined', () => {
+      it('should return false', () => {
+        // @ts-expect-error: allow for testing
+        expect(isDefined<string>(UNDEFINED_VALUE)).toBe(false);
+        // @ts-expect-error: allow for testing
+        expect(isDefined<string>(NULL_VALUE)).toBe(false);
+      });
+
+      it('should return true', () => {
+        expect(isDefined<string>('')).toBe(true);
+        expect(isDefined<string>('  ')).toBe(true);
+        expect(isDefined<string>('Abcde')).toBe(true);
+        expect(isDefined<string[]>([])).toBe(true);
+        expect(isDefined<number>(0)).toBe(true);
+        expect(isDefined<number>(12345)).toBe(true);
+        expect(isDefined<number>(-12345)).toBe(true);
+        expect(isDefined<boolean>(true)).toBe(true);
+        expect(isDefined<boolean>(false)).toBe(true);
+        expect(isDefined<object>({})).toBe(true);
+        expect(isDefined<StringType>(new StringType())).toBe(true);
+        expect(isDefined<MockTask>(new MockTask())).toBe(true);
+      });
     });
 
-    it('should throw AssertionError for undefined instance', () => {
-      const value = undefined;
-      const t = () => {
-        assertIsDefined(value);
-      };
-      expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Value is undefined.`);
+    describe('assertIsDefined', () => {
+      it('should not throw AssertionError for defined instance', () => {
+        const value = new StringType();
+        const t = () => {
+          assertIsDefined(value);
+        };
+        expect(t).not.toThrow(AssertionError);
+      });
+
+      it('should throw AssertionError for undefined instance', () => {
+        const t = () => {
+          assertIsDefined(UNDEFINED_VALUE);
+        };
+        expect(t).toThrow(AssertionError);
+        expect(t).toThrow(`Value is undefined.`);
+      });
+
+      it('should throw AssertionError for null instance', () => {
+        const t = () => {
+          assertIsDefined(NULL_VALUE);
+        };
+        expect(t).toThrow(AssertionError);
+        expect(t).toThrow(`Value is null.`);
+      });
+
+      it('should throw AssertionError for null instance with override error message', () => {
+        const t = () => {
+          assertIsDefined(NULL_VALUE, 'The provided value is null.');
+        };
+        expect(t).toThrow(AssertionError);
+        expect(t).toThrow(`The provided value is null.`);
+      });
+    });
+  });
+
+  describe('isString/assertIsString', () => {
+    const UNDEFINED_VALUE = undefined;
+    const NULL_VALUE = null;
+
+    describe('isString', () => {
+      it('should return false', () => {
+        expect(isString(UNDEFINED_VALUE)).toBe(false);
+        expect(isString(NULL_VALUE)).toBe(false);
+        expect(isString(true)).toBe(false);
+        expect(isString(123)).toBe(false);
+        expect(isString(123n)).toBe(false);
+        expect(isString(['a'])).toBe(false);
+        expect(isString({ key: 'value' })).toBe(false);
+      });
+
+      it('should return true', () => {
+        expect(isString('')).toBe(true);
+        expect(isString('  ')).toBe(true);
+        expect(isString('Abcde')).toBe(true);
+      });
     });
 
-    it('should throw AssertionError for null instance', () => {
-      const value = null;
-      const t = () => {
-        assertIsDefined(value);
-      };
-      expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Value is null.`);
+    describe('assertIsString', () => {
+      it('should not throw InvalidTypeError for defined instance', () => {
+        const t = () => {
+          assertIsString('Abcde');
+        };
+        expect(t).not.toThrow(InvalidTypeError);
+      });
+
+      it('should throw InvalidTypeError for invalid instance', () => {
+        const t = () => {
+          assertIsString(123);
+        };
+        expect(t).toThrow(InvalidTypeError);
+        expect(t).toThrow(`Provided value is not an instance of string.`);
+      });
+
+      it('should throw InvalidTypeError for undefined instance', () => {
+        const t = () => {
+          assertIsString(UNDEFINED_VALUE);
+        };
+        expect(t).toThrow(InvalidTypeError);
+        expect(t).toThrow(`Provided value is not an instance of string.`);
+      });
+
+      it('should throw InvalidTypeError for null instance', () => {
+        const t = () => {
+          assertIsString(NULL_VALUE);
+        };
+        expect(t).toThrow(InvalidTypeError);
+        expect(t).toThrow(`Provided value is not an instance of string.`);
+      });
+
+      it('should throw InvalidTypeError for null instance with override error message', () => {
+        const t = () => {
+          assertIsString(NULL_VALUE, 'The provided value is null.');
+        };
+        expect(t).toThrow(InvalidTypeError);
+        expect(t).toThrow(`The provided value is null.`);
+      });
+    });
+  });
+
+  describe('isNumber/assertIsNumber', () => {
+    const UNDEFINED_VALUE = undefined;
+    const NULL_VALUE = null;
+
+    describe('isNumber', () => {
+      it('should return false', () => {
+        expect(isNumber(UNDEFINED_VALUE)).toBe(false);
+        expect(isNumber(NULL_VALUE)).toBe(false);
+        expect(isNumber(123n)).toBe(false);
+        expect(isNumber(BigInt(123))).toBe(false);
+        expect(isNumber(true)).toBe(false);
+        expect(isNumber('')).toBe(false);
+        expect(isNumber(`Abcde`)).toBe(false);
+        expect(isNumber(['a'])).toBe(false);
+        expect(isNumber({ key: 'value' })).toBe(false);
+      });
+
+      it('should return true', () => {
+        expect(isNumber(0)).toBe(true);
+        expect(isNumber(123)).toBe(true);
+        expect(isNumber(-123)).toBe(true);
+        expect(isNumber(123.456)).toBe(true);
+      });
     });
 
-    it('should throw AssertionError for null instance with override error message', () => {
-      const value = null;
-      const t = () => {
-        assertIsDefined(value, 'The provided value is null.');
-      };
-      expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`The provided value is null.`);
+    describe('assertIsNumber', () => {
+      it('should not throw InvalidTypeError for defined instance', () => {
+        const t = () => {
+          assertIsNumber(123);
+        };
+        expect(t).not.toThrow(InvalidTypeError);
+      });
+
+      it('should throw InvalidTypeError for invalid instance', () => {
+        const t = () => {
+          assertIsNumber('123');
+        };
+        expect(t).toThrow(InvalidTypeError);
+        expect(t).toThrow(`Provided value is not an instance of number.`);
+      });
+
+      it('should throw InvalidTypeError for undefined instance', () => {
+        const t = () => {
+          assertIsNumber(UNDEFINED_VALUE);
+        };
+        expect(t).toThrow(InvalidTypeError);
+        expect(t).toThrow(`Provided value is not an instance of number.`);
+      });
+
+      it('should throw InvalidTypeError for null instance', () => {
+        const t = () => {
+          assertIsNumber(NULL_VALUE);
+        };
+        expect(t).toThrow(InvalidTypeError);
+        expect(t).toThrow(`Provided value is not an instance of number.`);
+      });
+
+      it('should throw InvalidTypeError for null instance with override error message', () => {
+        const t = () => {
+          assertIsNumber(NULL_VALUE, 'The provided value is null.');
+        };
+        expect(t).toThrow(InvalidTypeError);
+        expect(t).toThrow(`The provided value is null.`);
+      });
+    });
+  });
+
+  describe('isBoolean/assertIsBoolean', () => {
+    const UNDEFINED_VALUE = undefined;
+    const NULL_VALUE = null;
+
+    describe('isBoolean', () => {
+      it('should return false', () => {
+        expect(isBoolean(UNDEFINED_VALUE)).toBe(false);
+        expect(isBoolean(NULL_VALUE)).toBe(false);
+        expect(isBoolean(123n)).toBe(false);
+        expect(isBoolean(BigInt(123))).toBe(false);
+        expect(isBoolean(123)).toBe(false);
+        expect(isBoolean('')).toBe(false);
+        expect(isBoolean(`Abcde`)).toBe(false);
+        expect(isBoolean(['a'])).toBe(false);
+        expect(isBoolean({ key: 'value' })).toBe(false);
+      });
+
+      it('should return true', () => {
+        expect(isBoolean(true)).toBe(true);
+        expect(isBoolean(false)).toBe(true);
+      });
+    });
+
+    describe('assertIsBoolean', () => {
+      it('should not throw InvalidTypeError for defined instance', () => {
+        const t = () => {
+          assertIsBoolean(true);
+        };
+        expect(t).not.toThrow(InvalidTypeError);
+      });
+
+      it('should throw InvalidTypeError for invalid instance', () => {
+        const t = () => {
+          assertIsBoolean('true');
+        };
+        expect(t).toThrow(InvalidTypeError);
+        expect(t).toThrow(`Provided value is not an instance of boolean.`);
+      });
+
+      it('should throw InvalidTypeError for undefined instance', () => {
+        const t = () => {
+          assertIsBoolean(UNDEFINED_VALUE);
+        };
+        expect(t).toThrow(InvalidTypeError);
+        expect(t).toThrow(`Provided value is not an instance of boolean.`);
+      });
+
+      it('should throw InvalidTypeError for null instance', () => {
+        const t = () => {
+          assertIsBoolean(NULL_VALUE);
+        };
+        expect(t).toThrow(InvalidTypeError);
+        expect(t).toThrow(`Provided value is not an instance of boolean.`);
+      });
+
+      it('should throw InvalidTypeError for null instance with override error message', () => {
+        const t = () => {
+          assertIsBoolean(NULL_VALUE, 'The provided value is null.');
+        };
+        expect(t).toThrow(InvalidTypeError);
+        expect(t).toThrow(`The provided value is null.`);
+      });
     });
   });
 

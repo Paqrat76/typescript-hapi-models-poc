@@ -41,7 +41,6 @@
  */
 
 import { strict as assert } from 'node:assert';
-import { isEmpty as _isEmpty, isNil, upperFirst } from 'lodash';
 import { Base } from './Base';
 import { IBase } from './IBase';
 import { REQUIRED_PROPERTIES_DO_NOT_EXIST } from '@src/fhir-core/constants';
@@ -53,8 +52,9 @@ import {
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { OPEN_DATA_TYPES } from '@src/fhir-core/data-types/FhirDataType';
+import { isEmpty, upperFirst } from '@src/fhir-core/utility/common-util';
 import { isElementEmpty, validateUrl } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirType, assertFhirTypeList } from '@src/fhir-core/utility/type-guards';
+import { assertFhirType, assertFhirTypeList, assertIsDefined, isDefined } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
@@ -107,7 +107,7 @@ export interface IBaseExtension {
    *
    * @param extension - the Extension value to add to the `extension` property array
    */
-  addExtension: (extension?: Extension) => this;
+  addExtension: (extension: Extension | undefined) => this;
 
   /**
    * Removes the Extension having the provided url from the `extension` property array.
@@ -162,7 +162,7 @@ export interface IBaseModifierExtension {
    *
    * @param extension - the Extension value to add to the `modifierExtension` property array
    */
-  addModifierExtension: (extension?: Extension) => this;
+  addModifierExtension: (extension: Extension | undefined) => this;
 
   /**
    * Removes the Extension having the provided url from the `modifierExtension` property array.
@@ -255,7 +255,7 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
    * @returns `true` if `id` exists and has a value; `false` otherwise
    */
   public hasId(): boolean {
-    return !_isEmpty(this.id);
+    return !isEmpty(this.id);
   }
 
   /**
@@ -305,8 +305,8 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
   /**
    * {@inheritDoc IBaseExtension.addExtension}
    */
-  public addExtension(extension?: Extension): this {
-    if (extension !== undefined) {
+  public addExtension(extension: Extension | undefined): this {
+    if (isDefined<Extension | undefined>(extension)) {
       const optErrMsg = `Invalid Element.extension; Provided extension is not an instance of Extension.`;
       assertFhirType<Extension>(extension, Extension, optErrMsg);
       this.initExtension();
@@ -492,13 +492,13 @@ export abstract class BackboneElement extends Element implements IBase, IBaseMod
   /**
    * {@inheritDoc IBaseModifierExtension.addModifierExtension}
    */
-  public addModifierExtension(modifierExtension?: Extension): this {
-    if (modifierExtension !== undefined) {
+  public addModifierExtension(extension: Extension | undefined): this {
+    if (isDefined<Extension | undefined>(extension)) {
       const optErrMsg = `Invalid BackboneElement.modifierExtension; Provided extension is not an instance of Extension.`;
-      assertFhirType<Extension>(modifierExtension, Extension, optErrMsg);
+      assertFhirType<Extension>(extension, Extension, optErrMsg);
       this.initModifierExtension();
       // @ts-expect-error: initModifierExtension() ensures this.modifierExtension exists
-      this.modifierExtension.push(modifierExtension);
+      this.modifierExtension.push(extension);
     }
     return this;
   }
@@ -704,13 +704,13 @@ export abstract class BackboneType extends DataType implements IBase, IBaseModif
   /**
    * {@inheritDoc IBaseModifierExtension.addModifierExtension}
    */
-  public addModifierExtension(modifierExtension?: Extension): this {
-    if (modifierExtension !== undefined) {
+  public addModifierExtension(extension: Extension | undefined): this {
+    if (isDefined<Extension | undefined>(extension)) {
       const optErrMsg = `Invalid BackboneType.modifierExtension; Provided extension is not an instance of Extension.`;
-      assertFhirType<Extension>(modifierExtension, Extension, optErrMsg);
+      assertFhirType<Extension>(extension, Extension, optErrMsg);
       this.initModifierExtension();
       // @ts-expect-error: initModifierExtension() ensures this.modifierExtension exists
-      this.modifierExtension.push(modifierExtension);
+      this.modifierExtension.push(extension);
     }
     return this;
   }
@@ -1046,7 +1046,7 @@ export class Extension extends Element implements IBase {
    * @throws AssertionError for invalid value
    */
   public setUrl(value: fhirUri): this {
-    if (!isNil(value)) {
+    if (isDefined<fhirUri>(value)) {
       this.url = parseFhirPrimitiveData(value, fhirUriSchema, `Invalid Extension.url (${value})`);
     }
     return this;
@@ -1056,7 +1056,7 @@ export class Extension extends Element implements IBase {
    * @returns `true` if the `url` property exists and has a value; `false` otherwise
    */
   public hasUrl(): boolean {
-    return !_isEmpty(this.url);
+    return !isEmpty(this.url);
   }
 
   /**
@@ -1182,8 +1182,8 @@ export class Extension extends Element implements IBase {
  * @category Utilities: JSON
  */
 export function setPolymorphicValueJson(value: DataType, jsonObj: JSON.Object): void {
-  assert(!isNil(value), 'Provided value is undefined/null');
-  assert(!isNil(jsonObj), 'Provided jsonObj is undefined/null');
+  assertIsDefined<DataType>(value, 'Provided value is undefined/null');
+  assertIsDefined<JSON.Object>(jsonObj, 'Provided jsonObj is undefined/null');
   assertFhirDataType(value, 'Provided value is not an instance of DataType');
 
   const fhirType = value.fhirType();
@@ -1196,7 +1196,7 @@ export function setPolymorphicValueJson(value: DataType, jsonObj: JSON.Object): 
     jsonObj[valueKeyName] = json;
   } else if (typeof json === 'number') {
     jsonObj[valueKeyName] = json;
-  } else if (!_isEmpty(json)) {
+  } else if (!isEmpty(json)) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     jsonObj[valueKeyName] = json!;
   }
@@ -1214,14 +1214,14 @@ export function setPolymorphicValueJson(value: DataType, jsonObj: JSON.Object): 
  * @category Utilities: JSON
  */
 export function setFhirExtensionJson(extensions: Extension[], jsonObj: JSON.Object, isModifierExtension = false): void {
-  assert(!isNil(extensions), 'Provided extensions is undefined/null');
-  assert(!isNil(jsonObj), 'Provided jsonObj is undefined/null');
+  assertIsDefined<Extension[]>(extensions, 'Provided extensions is undefined/null');
+  assertIsDefined<JSON.Object>(jsonObj, 'Provided jsonObj is undefined/null');
 
   const jsonExtension = [] as JSON.Array;
   for (const extension of extensions) {
     assertFhirType<Extension>(extension, Extension, 'Provided item in extensions is not an instance of Extension');
     const extJson = extension.toJSON();
-    if (!_isEmpty(extJson)) {
+    if (!isEmpty(extJson)) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       jsonExtension.push(extJson!);
     }
@@ -1247,9 +1247,10 @@ export function setFhirExtensionJson(extensions: Extension[], jsonObj: JSON.Obje
  * @category Utilities: JSON
  */
 export function setFhirPrimitiveJson<T>(ptElement: PrimitiveType<T>, propName: string, jsonObj: JSON.Object): void {
-  assert(!isNil(ptElement), 'Provided ptElement is undefined/null');
-  assert(!_isEmpty(propName), 'Provided propName is empty/undefined/null');
-  assert(!isNil(jsonObj), 'Provided jsonObj is undefined/null');
+  assertIsDefined<PrimitiveType<T>>(ptElement, 'Provided ptElement is undefined/null');
+  assertIsDefined<string>(propName, 'Provided propName is undefined/null');
+  assertIsDefined<JSON.Object>(jsonObj, 'Provided jsonObj is undefined/null');
+  assert(!isEmpty(propName), 'Provided propName is empty');
   assertFhirPrimitiveType<T>(ptElement, 'Provided ptElement is not an instance of PrimitiveType');
 
   const primitiveValue: JSON.Value | undefined = ptElement.toJSON();
@@ -1260,7 +1261,7 @@ export function setFhirPrimitiveJson<T>(ptElement: PrimitiveType<T>, propName: s
   jsonObj[propName] = primitiveValue!;
 
   const siblingJson: JSON.Value | undefined = ptElement.toSiblingJSON();
-  if (!_isEmpty(siblingJson)) {
+  if (!isEmpty(siblingJson)) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     jsonObj[`_${propName}`] = siblingJson!;
   }
@@ -1284,16 +1285,17 @@ export function setFhirPrimitiveListJson<T>(
   propName: string,
   jsonObj: JSON.Object,
 ): void {
-  assert(!isNil(ptElements), 'Provided ptElements is undefined/null');
-  assert(!_isEmpty(propName), 'Provided propName is empty/undefined/null');
-  assert(!isNil(jsonObj), 'Provided jsonObj is undefined/null');
+  assertIsDefined<PrimitiveType<T>[]>(ptElements, 'Provided ptElements is undefined/null');
+  assertIsDefined<string>(propName, 'Provided propName is undefined/null');
+  assertIsDefined<JSON.Object>(jsonObj, 'Provided jsonObj is undefined/null');
+  assert(!isEmpty(propName), 'Provided propName is empty');
 
   const jsonArray: JSON.Array = [];
   const siblingArray: JSON.Array = [];
   for (const ptElement of ptElements) {
     assertFhirPrimitiveType<T>(ptElement, 'Provided item in ptElements is not an instance of PrimitiveType');
     const primitiveValue: JSON.Value | undefined = ptElement.toJSON();
-    if (_isEmpty(primitiveValue)) {
+    if (isEmpty(primitiveValue)) {
       jsonArray.push(null);
     } else {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -1301,7 +1303,7 @@ export function setFhirPrimitiveListJson<T>(
     }
 
     const siblingJson: JSON.Value | undefined = ptElement.toSiblingJSON();
-    if (_isEmpty(siblingJson)) {
+    if (isEmpty(siblingJson)) {
       siblingArray.push(null);
     } else {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -1337,13 +1339,14 @@ export function setFhirPrimitiveListJson<T>(
  * @category Utilities: JSON
  */
 export function setFhirComplexJson(cElement: DataType, propName: string, jsonObj: JSON.Object): void {
-  assert(!isNil(cElement), 'Provided cElement is undefined/null');
-  assert(!_isEmpty(propName), 'Provided propName is empty/undefined/null');
-  assert(!isNil(jsonObj), 'Provided jsonObj is undefined/null');
+  assertIsDefined<DataType>(cElement, 'Provided cElement is undefined/null');
+  assertIsDefined<string>(propName, 'Provided propName is undefined/null');
+  assertIsDefined<JSON.Object>(jsonObj, 'Provided jsonObj is undefined/null');
+  assert(!isEmpty(propName), 'Provided propName is empty');
   assertFhirDataType(cElement, 'Provided cElement is not an instance of DataType');
 
   const complexValue: JSON.Value | undefined = cElement.toJSON();
-  if (_isEmpty(complexValue)) {
+  if (isEmpty(complexValue)) {
     return;
   }
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -1362,15 +1365,16 @@ export function setFhirComplexJson(cElement: DataType, propName: string, jsonObj
  * @category Utilities: JSON
  */
 export function setFhirComplexListJson(cElements: DataType[], propName: string, jsonObj: JSON.Object): void {
-  assert(!isNil(cElements), 'Provided cElements is undefined/null');
-  assert(!_isEmpty(propName), 'Provided propName is empty/undefined/null');
-  assert(!isNil(jsonObj), 'Provided jsonObj is undefined/null');
+  assertIsDefined<DataType[]>(cElements, 'Provided cElements is undefined/null');
+  assertIsDefined<string>(propName, 'Provided propName is undefined/null');
+  assertIsDefined<JSON.Object>(jsonObj, 'Provided jsonObj is undefined/null');
+  assert(!isEmpty(propName), 'Provided propName is empty');
 
   const jsonArray: JSON.Array = [];
   for (const cElement of cElements) {
     assertFhirDataType(cElement, 'Provided item in cElements is not an instance of DataType');
     const complexValue: JSON.Value | undefined = cElement.toJSON();
-    if (!_isEmpty(complexValue)) {
+    if (!isEmpty(complexValue)) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       jsonArray.push(complexValue!);
     }
@@ -1392,13 +1396,14 @@ export function setFhirComplexListJson(cElements: DataType[], propName: string, 
  * @category Utilities: JSON
  */
 export function setFhirBackboneElementJson(bElement: BackboneElement, propName: string, jsonObj: JSON.Object): void {
-  assert(!isNil(bElement), 'Provided bElement is undefined/null');
-  assert(!_isEmpty(propName), 'Provided propName is empty/undefined/null');
-  assert(!isNil(jsonObj), 'Provided jsonObj is undefined/null');
+  assertIsDefined<BackboneElement>(bElement, 'Provided bElement is undefined/null');
+  assertIsDefined<string>(propName, 'Provided propName is undefined/null');
+  assertIsDefined<JSON.Object>(jsonObj, 'Provided jsonObj is undefined/null');
+  assert(!isEmpty(propName), 'Provided propName is empty');
   assertFhirBackboneElement(bElement, 'Provided bElement is not an instance of BackboneElement');
 
   const backboneValue: JSON.Value | undefined = bElement.toJSON();
-  if (_isEmpty(backboneValue)) {
+  if (isEmpty(backboneValue)) {
     return;
   }
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -1421,15 +1426,16 @@ export function setFhirBackboneElementListJson(
   propName: string,
   jsonObj: JSON.Object,
 ): void {
-  assert(!isNil(bElements), 'Provided bElements is undefined/null');
-  assert(!_isEmpty(propName), 'Provided propName is empty/undefined/null');
-  assert(!isNil(jsonObj), 'Provided jsonObj is undefined/null');
+  assertIsDefined<BackboneElement[]>(bElements, 'Provided bElements is undefined/null');
+  assertIsDefined<string>(propName, 'Provided propName is undefined/null');
+  assertIsDefined<JSON.Object>(jsonObj, 'Provided jsonObj is undefined/null');
+  assert(!isEmpty(propName), 'Provided propName is empty');
 
   const jsonArray: JSON.Array = [];
   for (const bElement of bElements) {
     assertFhirBackboneElement(bElement, 'Provided bElement is not an instance of BackboneElement');
     const backboneValue: JSON.Value | undefined = bElement.toJSON();
-    if (!_isEmpty(backboneValue)) {
+    if (!isEmpty(backboneValue)) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       jsonArray.push(backboneValue!);
     }
@@ -1451,13 +1457,14 @@ export function setFhirBackboneElementListJson(
  * @category Utilities: JSON
  */
 export function setFhirBackboneTypeJson(bType: BackboneType, propName: string, jsonObj: JSON.Object): void {
-  assert(!isNil(bType), 'Provided bType is undefined/null');
-  assert(!_isEmpty(propName), 'Provided propName is empty/undefined/null');
-  assert(!isNil(jsonObj), 'Provided jsonObj is undefined/null');
+  assertIsDefined<BackboneType>(bType, 'Provided bType is undefined/null');
+  assertIsDefined<string>(propName, 'Provided propName is undefined/null');
+  assertIsDefined<JSON.Object>(jsonObj, 'Provided jsonObj is undefined/null');
+  assert(!isEmpty(propName), 'Provided propName is empty');
   assertFhirBackboneType(bType, 'Provided bType is not an instance of BackboneType');
 
   const backboneValue: JSON.Value | undefined = bType.toJSON();
-  if (_isEmpty(backboneValue)) {
+  if (isEmpty(backboneValue)) {
     return;
   }
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -1476,15 +1483,16 @@ export function setFhirBackboneTypeJson(bType: BackboneType, propName: string, j
  * @category Utilities: JSON
  */
 export function setFhirBackboneTypeListJson(bTypes: BackboneType[], propName: string, jsonObj: JSON.Object): void {
-  assert(!isNil(bTypes), 'Provided bTypes is undefined/null');
-  assert(!_isEmpty(propName), 'Provided propName is empty/undefined/null');
-  assert(!isNil(jsonObj), 'Provided jsonObj is undefined/null');
+  assertIsDefined<BackboneType[]>(bTypes, 'Provided bTypes is undefined/null');
+  assertIsDefined<string>(propName, 'Provided propName is undefined/null');
+  assertIsDefined<JSON.Object>(jsonObj, 'Provided jsonObj is undefined/null');
+  assert(!isEmpty(propName), 'Provided propName is empty');
 
   const jsonArray: JSON.Array = [];
   for (const bType of bTypes) {
     assertFhirBackboneType(bType, 'Provided bType is not an instance of BackboneType');
     const backboneValue: JSON.Value | undefined = bType.toJSON();
-    if (!_isEmpty(backboneValue)) {
+    if (!isEmpty(backboneValue)) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       jsonArray.push(backboneValue!);
     }

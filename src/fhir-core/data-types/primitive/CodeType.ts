@@ -21,14 +21,13 @@
  *
  */
 
-import { isNil } from 'lodash';
 import { IFhirCodeDefinition, IFhirCodeEnum } from '@src/fhir-core/base-models/core-fhir-codes';
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
-import { fhirCode, fhirCodeSchema, parseFhirPrimitiveData } from './primitive-types';
-import { Class } from '@src/fhir-core/utility/type-guards';
+import { Class, isDefined } from '@src/fhir-core/utility/type-guards';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { fhirCode, fhirCodeSchema, parseFhirPrimitiveData } from './primitive-types';
 
 /**
  * This module contains the CodeType and EnumCodeType classes along with the related assertEnumCodeType()
@@ -99,7 +98,7 @@ export class CodeType extends PrimitiveType<fhirCode> {
   }
 
   private assignValue(value: fhirCode | undefined): void {
-    if (value !== undefined) {
+    if (isDefined<fhirCode | undefined>(value)) {
       super.setValue(parseFhirPrimitiveData(value, fhirCodeSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);
@@ -284,7 +283,7 @@ export function constructorCodeValueAsEnumCodeType<T>(
     codeValue = code;
   } else {
     try {
-      if (!isNil(code)) {
+      if (isDefined<EnumCodeType | CodeType | fhirCode | null>(code)) {
         codeValue = new EnumCodeType(code, typeEnum);
       }
     } catch (err) {

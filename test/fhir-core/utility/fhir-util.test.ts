@@ -37,6 +37,7 @@ import {
 import { GroupTypeEnum } from '@src/fhir-models/code-systems/GroupTypeEnum';
 import { IFhirCodeDefinition } from '@src/fhir-core/base-models/core-fhir-codes';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { MockCodeEnum } from '../../test-utils';
 
 describe('fhir-util', () => {
@@ -163,8 +164,8 @@ describe('fhir-util', () => {
         // @ts-expect-error: allow for testing
         validateUrl(UNDEFINED_URL);
       };
-      expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`The url must be defined and cannot be blank`);
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Provided url is not a string`);
     });
   });
 

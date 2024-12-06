@@ -21,7 +21,6 @@
  *
  */
 
-import { isEmpty as _isEmpty } from 'lodash';
 import { FHIR_MAX_STRING_LENGTH, fhirCode, fhirString } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { Base } from '@src/fhir-core/base-models/Base';
 import { Resource } from '@src/fhir-core/base-models/Resource';
@@ -45,6 +44,7 @@ import {
 } from '@src/fhir-core/base-models/core-fhir-models';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
+import { isEmpty as _isEmpty } from '../src';
 
 export {
   FHIR_MIN_INTEGER,

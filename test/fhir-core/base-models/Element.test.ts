@@ -104,7 +104,7 @@ describe('Element', () => {
     expect(mockElement.getExtension()).toEqual([] as Extension[]);
     expect(mockElement.isEmpty()).toBe(true);
 
-    mockElement.addExtension();
+    mockElement.addExtension(undefined);
     expect(mockElement.hasExtension()).toBe(false);
     expect(mockElement.hasExtension(testUrl)).toBe(false);
     expect(mockElement.getExtension()).toEqual([] as Extension[]);

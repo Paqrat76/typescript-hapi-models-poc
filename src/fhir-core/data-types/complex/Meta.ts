@@ -45,7 +45,7 @@ import {
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirType, assertFhirTypeList } from '@src/fhir-core/utility/type-guards';
+import { assertFhirType, assertFhirTypeList, isDefined } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
@@ -354,8 +354,8 @@ export class Meta extends DataType implements IBase {
    * @param value - the `profile` value
    * @returns this
    */
-  public addProfileElement(value?: CanonicalType): this {
-    if (value !== undefined) {
+  public addProfileElement(value: CanonicalType | undefined): this {
+    if (isDefined<CanonicalType | undefined>(value)) {
       const optErrMsg = `Invalid Meta.profile; Provided element is not an instance of CanonicalType.`;
       assertFhirType<CanonicalType>(value, CanonicalType, optErrMsg);
       this.initProfile();
@@ -419,8 +419,8 @@ export class Meta extends DataType implements IBase {
    * @param value - the `profile` value
    * @returns this
    */
-  public addProfile(value?: fhirCanonical): this {
-    if (value !== undefined) {
+  public addProfile(value: fhirCanonical | undefined): this {
+    if (isDefined<fhirCanonical | undefined>(value)) {
       const optErrMsg = `Invalid Meta.profile array item (${String(value)})`;
       const element = new CanonicalType(parseFhirPrimitiveData(value, fhirCanonicalSchema, optErrMsg));
       this.addProfileElement(element);
@@ -470,8 +470,8 @@ export class Meta extends DataType implements IBase {
    * @param value - the `security` value
    * @returns this
    */
-  public addSecurity(value?: Coding): this {
-    if (value !== undefined) {
+  public addSecurity(value: Coding | undefined): this {
+    if (isDefined<Coding | undefined>(value)) {
       const optErrMsg = `Invalid Meta.security; Provided value is not an instance of CodeType.`;
       assertFhirType<Coding>(value, Coding, optErrMsg);
       this.initSecurity();
@@ -524,8 +524,8 @@ export class Meta extends DataType implements IBase {
    * @param value - the `tag` value
    * @returns this
    */
-  public addTag(value?: Coding): this {
-    if (value !== undefined) {
+  public addTag(value: Coding | undefined): this {
+    if (isDefined<Coding | undefined>(value)) {
       const optErrMsg = `Invalid Meta.tag; Provided value is not an instance of CodeType.`;
       assertFhirType<Coding>(value, Coding, optErrMsg);
       this.initTag();

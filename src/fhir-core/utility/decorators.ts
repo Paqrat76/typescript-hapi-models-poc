@@ -35,10 +35,11 @@
  */
 
 import { strict as assert } from 'node:assert';
-import { lowerFirst } from 'lodash';
 import { DataType } from '@src/fhir-core/base-models/core-fhir-models';
-import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { DATA_TYPES, FhirDataType } from '@src/fhir-core/data-types/FhirDataType';
+import { lowerFirst } from '@src/fhir-core/utility/common-util';
+import { assertIsDefined, assertIsString } from '@src/fhir-core/utility/type-guards';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Symbol.metadata polyfill secret sauce for decorator metadata
 (Symbol.metadata as any) ??= Symbol('Symbol.metadata');
@@ -78,7 +79,7 @@ export interface ChoiceDatatypeMetaObj {
  * @category Utilities: Decorators
  */
 export function getChoiceDatatypeDefs(metadata: DecoratorMetadataObject | null): ChoiceDatatypeDef[] {
-  assert(metadata !== null, 'metadata should not be null');
+  assertIsDefined<DecoratorMetadataObject | null>(metadata, `Provided metadata is undefined/null`);
   // JSON.parse(JSON.stringify(metadata))) removes "[Object: null prototype]" from the Decorator metadata object
   const choiceDatatypeMetaObj = JSON.parse(JSON.stringify(metadata)) as ChoiceDatatypeMetaObj;
   assert(choiceDatatypeMetaObj.ChoiceDatatypes, 'metadata.ChoiceDatatypes does not exist');
@@ -98,8 +99,10 @@ export function getChoiceDatatypeDefsForField(
   metadata: DecoratorMetadataObject | null,
   fieldName: string,
 ): FhirDataType[] {
-  assert(metadata !== null, 'metadata should not be null');
-  assert(fieldName, 'fieldName must be provided');
+  assertIsDefined<DecoratorMetadataObject | null>(metadata, `Provided metadata is undefined/null`);
+  assertIsDefined<string>(fieldName, `Provided fieldName is undefined/null`);
+  assertIsString(fieldName, `Provided fieldName is not a string`);
+
   const choiceDatatypeDefs: ChoiceDatatypeDef[] = getChoiceDatatypeDefs(metadata);
   const fieldChoiceDataTypeDef = choiceDatatypeDefs.find((def) => def.fieldName === fieldName);
   assert(fieldChoiceDataTypeDef, `choiceDataTypeDef must exist for ${fieldName}`);

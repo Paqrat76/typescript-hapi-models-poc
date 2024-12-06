@@ -31,7 +31,7 @@ import {
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirType, assertFhirTypeList } from '@src/fhir-core/utility/type-guards';
+import { assertFhirType, assertFhirTypeList, isDefined } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
@@ -118,8 +118,8 @@ export class CodeableConcept extends DataType implements IBase {
    * @param value - the `coding` value
    * @returns this
    */
-  public addCoding(value?: Coding): this {
-    if (value !== undefined) {
+  public addCoding(value: Coding | undefined): this {
+    if (isDefined<Coding | undefined>(value)) {
       const optErrMsg = `Invalid CodeableConcept.coding; Provided value is not an instance of Coding.`;
       assertFhirType<Coding>(value, Coding, optErrMsg);
       this.initCoding();
