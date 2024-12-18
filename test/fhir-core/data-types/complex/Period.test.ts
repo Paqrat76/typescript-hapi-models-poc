@@ -28,6 +28,7 @@ import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { INVALID_NON_STRING_TYPE, UNDEFINED_VALUE } from '../../../test-utils';
 
 describe('Period', () => {
   const VALID_START_DATETIME = `2017-01-01T00:00:00.000Z`;
@@ -35,8 +36,6 @@ describe('Period', () => {
   const VALID_END_DATETIME = `2017-01-01T01:00:00.000Z`;
   const VALID_END_DATETIME_2 = `2017-01-01T01:15:00.000Z`;
   const INVALID_DATETIME = `invalid date time`;
-  const INVALID_DATETIME_TYPE = new StringType(`invalid date time`);
-  const UNDEFINED_DATETIME = undefined;
 
   describe('Core', () => {
     const expectedJson1 = { start: VALID_START_DATETIME, end: VALID_END_DATETIME };
@@ -77,8 +76,8 @@ describe('Period', () => {
       const periodType = new Period();
       periodType.setStart(VALID_START_DATETIME);
       periodType.setEnd(VALID_END_DATETIME);
-      let testPeriod = periodType.copy();
 
+      let testPeriod = periodType.copy();
       expect(testPeriod).toBeDefined();
       expect(testPeriod).toBeInstanceOf(DataType);
       expect(testPeriod).toBeInstanceOf(Period);
@@ -105,8 +104,11 @@ describe('Period', () => {
       expect(testPeriod.hasEnd()).toBe(true);
       expect(testPeriod.getEnd()).toStrictEqual(VALID_END_DATETIME);
 
-      periodType.setStart(UNDEFINED_DATETIME);
-      periodType.setEnd(UNDEFINED_DATETIME);
+      // Reset as empty
+
+      periodType.setStart(UNDEFINED_VALUE);
+      periodType.setEnd(UNDEFINED_VALUE);
+
       testPeriod = periodType.copy();
       expect(testPeriod).toBeDefined();
       expect(testPeriod).toBeInstanceOf(DataType);
@@ -259,55 +261,57 @@ describe('Period', () => {
       expect(testPeriod.getEnd()).toStrictEqual(VALID_END_DATETIME);
     });
 
-    it('should throw PrimitiveTypeError when initialized with invalid primitive Period.start value', () => {
+    it('should be properly reset by modifying all properties with primitive values', () => {
       const testPeriod = new Period();
-      const t = () => {
-        testPeriod.setStart(INVALID_DATETIME);
-      };
-      expect(t).toThrow(PrimitiveTypeError);
-      expect(t).toThrow(`Invalid Period.start (${INVALID_DATETIME})`);
-    });
 
-    it('should throw PrimitiveTypeError when initialized with invalid primitive Period.end value', () => {
-      const testPeriod = new Period();
-      const t = () => {
-        testPeriod.setEnd(INVALID_DATETIME);
-      };
-      expect(t).toThrow(PrimitiveTypeError);
-      expect(t).toThrow(`Invalid Period.end (${INVALID_DATETIME})`);
-    });
+      const startDt = new DateTimeType(VALID_START_DATETIME);
+      const endDt = new DateTimeType(VALID_END_DATETIME);
 
-    it('should be properly reset by modifying Period.start and Period.end with primitive values', () => {
-      const testPeriod = new Period();
       testPeriod.setStart(VALID_START_DATETIME);
       testPeriod.setEnd(VALID_END_DATETIME);
+
       expect(testPeriod).toBeDefined();
       expect(testPeriod.isEmpty()).toBe(false);
+
+      // Period properties
+      expect(testPeriod.hasStartElement()).toBe(true);
+      expect(testPeriod.getStartElement()).toEqual(startDt);
+      expect(testPeriod.hasEndElement()).toBe(true);
+      expect(testPeriod.getEndElement()).toEqual(endDt);
+
+      expect(testPeriod.hasStart()).toBe(true);
+      expect(testPeriod.getStart()).toStrictEqual(VALID_START_DATETIME);
+      expect(testPeriod.hasEnd()).toBe(true);
+      expect(testPeriod.getEnd()).toStrictEqual(VALID_END_DATETIME);
+
+      // Reset
+
+      const startPlus15Min = new DateTimeType(VALID_START_DATETIME_2);
+      const endPlus15Min = new DateTimeType(VALID_END_DATETIME_2);
 
       testPeriod.setStart(VALID_START_DATETIME_2);
       testPeriod.setEnd(VALID_END_DATETIME_2);
 
+      expect(testPeriod).toBeDefined();
+      expect(testPeriod.isEmpty()).toBe(false);
+
       // Period properties
       expect(testPeriod.hasStartElement()).toBe(true);
-      expect(testPeriod.getStartElement()).toEqual(new DateTimeType(VALID_START_DATETIME_2));
+      expect(testPeriod.getStartElement()).toEqual(startPlus15Min);
       expect(testPeriod.hasEndElement()).toBe(true);
-      expect(testPeriod.getEndElement()).toEqual(new DateTimeType(VALID_END_DATETIME_2));
+      expect(testPeriod.getEndElement()).toEqual(endPlus15Min);
 
       expect(testPeriod.hasStart()).toBe(true);
       expect(testPeriod.getStart()).toStrictEqual(VALID_START_DATETIME_2);
       expect(testPeriod.hasEnd()).toBe(true);
       expect(testPeriod.getEnd()).toStrictEqual(VALID_END_DATETIME_2);
-    });
 
-    it('should be properly reset by modifying Period.start and Period.end with undefined primitive values', () => {
-      const testPeriod = new Period();
-      testPeriod.setStart(VALID_START_DATETIME);
-      testPeriod.setEnd(VALID_END_DATETIME);
+      // Reset as empty
+
+      testPeriod.setStart(UNDEFINED_VALUE);
+      testPeriod.setEnd(UNDEFINED_VALUE);
+
       expect(testPeriod).toBeDefined();
-      expect(testPeriod.isEmpty()).toBe(false);
-
-      testPeriod.setStart(UNDEFINED_DATETIME);
-      testPeriod.setEnd(UNDEFINED_DATETIME);
       expect(testPeriod.isEmpty()).toBe(true);
 
       // Period properties
@@ -322,22 +326,32 @@ describe('Period', () => {
       expect(testPeriod.getEnd()).toBeUndefined();
     });
 
-    it('should throw TypeError when modifying Period.start > Period.end with primitive', () => {
+    it('should throw errors for invalid primitive values', () => {
       const testPeriod = new Period();
+
+      let t = () => {
+        testPeriod.setStart(INVALID_DATETIME);
+      };
+      expect(t).toThrow(PrimitiveTypeError);
+      expect(t).toThrow(`Invalid Period.start (${INVALID_DATETIME})`);
+
+      t = () => {
+        testPeriod.setEnd(INVALID_DATETIME);
+      };
+      expect(t).toThrow(PrimitiveTypeError);
+      expect(t).toThrow(`Invalid Period.end (${INVALID_DATETIME})`);
+
       testPeriod.setStart(VALID_START_DATETIME);
       testPeriod.setEnd(VALID_END_DATETIME);
-      const t = () => {
+      t = () => {
         testPeriod.setStart(VALID_END_DATETIME_2);
       };
       expect(t).toThrow(FhirError);
       expect(t).toThrow('Invalid Period; Period.start is not before or the same as Period.end');
-    });
 
-    it('should throw TypeError when modifying Period.end < Period.start with primitive', () => {
-      const testPeriod = new Period();
       testPeriod.setStart(VALID_START_DATETIME_2);
       testPeriod.setEnd(VALID_END_DATETIME_2);
-      const t = () => {
+      t = () => {
         testPeriod.setEnd(VALID_START_DATETIME);
       };
       expect(t).toThrow(FhirError);
@@ -479,50 +493,37 @@ describe('Period', () => {
       expect(testPeriod.getEnd()).toStrictEqual(VALID_END_DATETIME);
     });
 
-    it('should throw InvalidTypeError when reset with invalid PrimitiveType Period.start value', () => {
-      const testPeriod = new Period();
-      const t = () => {
-        // @ts-expect-error: ignore invalid type for test
-        testPeriod.setStartElement(INVALID_DATETIME_TYPE);
-      };
-      expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`Invalid Period.start; Provided element is not an instance of DateTimeType.`);
-    });
-
-    it('should throw InvalidTypeError when reset with invalid PrimitiveType Period.end value', () => {
-      const testPeriod = new Period();
-      const t = () => {
-        // @ts-expect-error: ignore invalid type for test
-        testPeriod.setEndElement(INVALID_DATETIME_TYPE);
-      };
-      expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`Invalid Period.end; Provided element is not an instance of DateTimeType.`);
-    });
-
-    it('should throw TypeError when initialized with DataType element Period.start > Period.end', () => {
-      const startDt = new DateTimeType(VALID_END_DATETIME);
-      const endDt = new DateTimeType(VALID_START_DATETIME);
+    it('should be properly reset by modifying all properties with DataType values', () => {
+      const startDt = new DateTimeType(VALID_START_DATETIME);
+      const endDt = new DateTimeType(VALID_END_DATETIME);
 
       const testPeriod = new Period();
       testPeriod.setStartElement(startDt);
-      const t = () => {
-        testPeriod.setEndElement(endDt);
-      };
-      expect(t).toThrow(FhirError);
-      expect(t).toThrow('Invalid Period; Period.start is not before or the same as Period.end');
-    });
+      testPeriod.setEndElement(endDt);
 
-    it('should be properly reset by modifying Period.start and Period.end with DataType element values', () => {
-      const testPeriod = new Period();
-      testPeriod.setStart(VALID_START_DATETIME);
-      testPeriod.setEnd(VALID_END_DATETIME);
       expect(testPeriod).toBeDefined();
       expect(testPeriod.isEmpty()).toBe(false);
+
+      // Period properties
+      expect(testPeriod.hasStartElement()).toBe(true);
+      expect(testPeriod.getStartElement()).toEqual(startDt);
+      expect(testPeriod.hasEndElement()).toBe(true);
+      expect(testPeriod.getEndElement()).toEqual(endDt);
+
+      expect(testPeriod.hasStart()).toBe(true);
+      expect(testPeriod.getStart()).toStrictEqual(VALID_START_DATETIME);
+      expect(testPeriod.hasEnd()).toBe(true);
+      expect(testPeriod.getEnd()).toStrictEqual(VALID_END_DATETIME);
+
+      // Reset
 
       const startPlus15Min = new DateTimeType(VALID_START_DATETIME_2);
       testPeriod.setStartElement(startPlus15Min);
       const endPlus15Min = new DateTimeType(VALID_END_DATETIME_2);
       testPeriod.setEndElement(endPlus15Min);
+
+      expect(testPeriod).toBeDefined();
+      expect(testPeriod.isEmpty()).toBe(false);
 
       // Period properties
       expect(testPeriod.hasStartElement()).toBe(true);
@@ -534,17 +535,13 @@ describe('Period', () => {
       expect(testPeriod.getStart()).toStrictEqual(VALID_START_DATETIME_2);
       expect(testPeriod.hasEnd()).toBe(true);
       expect(testPeriod.getEnd()).toStrictEqual(VALID_END_DATETIME_2);
-    });
 
-    it('should be properly reset by modifying Period.start and Period.end with undefined DataType element values', () => {
-      const testPeriod = new Period();
-      testPeriod.setStart(VALID_START_DATETIME);
-      testPeriod.setEnd(VALID_END_DATETIME);
+      // Reset as empty
+
+      testPeriod.setStartElement(UNDEFINED_VALUE);
+      testPeriod.setEndElement(UNDEFINED_VALUE);
+
       expect(testPeriod).toBeDefined();
-      expect(testPeriod.isEmpty()).toBe(false);
-
-      testPeriod.setStartElement(UNDEFINED_DATETIME);
-      testPeriod.setEndElement(UNDEFINED_DATETIME);
       expect(testPeriod.isEmpty()).toBe(true);
 
       // Period properties
@@ -559,22 +556,34 @@ describe('Period', () => {
       expect(testPeriod.getEnd()).toBeUndefined();
     });
 
-    it('should throw TypeError when modifying Period.start > Period.end with DataType element', () => {
+    it('should throw errors for invalid DataType values', () => {
       const testPeriod = new Period();
+
+      let t = () => {
+        // @ts-expect-error: ignore invalid type for test
+        testPeriod.setStartElement(INVALID_NON_STRING_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Period.start; Provided element is not an instance of DateTimeType.`);
+
+      t = () => {
+        // @ts-expect-error: ignore invalid type for test
+        testPeriod.setEndElement(INVALID_NON_STRING_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Period.end; Provided element is not an instance of DateTimeType.`);
+
       testPeriod.setStart(VALID_START_DATETIME);
       testPeriod.setEnd(VALID_END_DATETIME);
-      const t = () => {
+      t = () => {
         testPeriod.setStartElement(new DateTimeType(VALID_END_DATETIME_2));
       };
       expect(t).toThrow(FhirError);
       expect(t).toThrow('Invalid Period; Period.start is not before or the same as Period.end');
-    });
 
-    it('should throw TypeError when modifying Period.end < Period.start with DataType element', () => {
-      const testPeriod = new Period();
       testPeriod.setStart(VALID_START_DATETIME_2);
       testPeriod.setEnd(VALID_END_DATETIME_2);
-      const t = () => {
+      t = () => {
         testPeriod.setEndElement(new DateTimeType(VALID_START_DATETIME));
       };
       expect(t).toThrow(FhirError);

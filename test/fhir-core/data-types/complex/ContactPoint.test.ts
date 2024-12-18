@@ -32,7 +32,13 @@ import { ContactPointUseEnum } from '@src/fhir-core/data-types/code-systems/Cont
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
-import { FHIR_MAX_INTEGER } from '../../../test-utils';
+import {
+  INVALID_NON_STRING_TYPE,
+  INVALID_NON_STRING_TYPE_VALUE,
+  INVALID_STRING,
+  INVALID_STRING_TYPE,
+  UNDEFINED_VALUE,
+} from '../../../test-utils';
 
 describe('ContactPoint', () => {
   const VALID_SYSTEM_PHONE = `phone`;
@@ -50,22 +56,17 @@ describe('ContactPoint', () => {
   const VALID_USE_TEMP_TYPE = new CodeType(VALID_USE_TEMP);
 
   const UNSUPPORTED_ENUM_CODE = 'unsupportedEnumCode';
-  const INVALID_ENUM_CODE_TYPE = new CodeType(UNSUPPORTED_ENUM_CODE);
   const INVALID_CODE_TYPE = new CodeType(UNSUPPORTED_ENUM_CODE);
 
   const VALID_STRING = 'This is a valid string.';
   const VALID_STRING_TYPE = new StringType(VALID_STRING);
   const VALID_STRING_2 = 'This is another valid string!';
   const VALID_STRING_TYPE_2 = new StringType(VALID_STRING_2);
-  const INVALID_STRING = '';
-  const INVALID_STRING_TYPE = new CodeType(VALID_USE_TEMP);
 
   const VALID_POSITIVEINT = 13579;
   const VALID_POSITIVEINT_TYPE = new PositiveIntType(VALID_POSITIVEINT);
   const VALID_POSITIVEINT_2 = 24680;
   const VALID_POSITIVEINT_TYPE_2 = new PositiveIntType(VALID_POSITIVEINT_2);
-  const INVALID_POSITIVEINT = FHIR_MAX_INTEGER + 1;
-  const INVALID_POSITIVEINT_TYPE = new StringType('invalid PositiveInt');
 
   const VALID_START_DATETIME = `2017-01-01T00:00:00.000Z`;
   const VALID_START_DATETIME_2 = `2017-01-01T00:15:00.000Z`;
@@ -77,23 +78,20 @@ describe('ContactPoint', () => {
   const VALID_PERIOD_2 = new Period();
   VALID_PERIOD_2.setStart(VALID_START_DATETIME_2);
   VALID_PERIOD_2.setEnd(VALID_END_DATETIME_2);
-  const INVALID_PERIOD_TYPE = new StringType(`Invalid Period`);
 
-  const UNDEFINED_VALUE = undefined;
-
-  let contactPointSystemEnum: ContactPointSystemEnum;
-  let contactPointUseEnum: ContactPointUseEnum;
+  let testContactPointSystemEnum: ContactPointSystemEnum;
+  let testContactPointUseEnum: ContactPointUseEnum;
   beforeAll(() => {
-    contactPointSystemEnum = new ContactPointSystemEnum();
-    contactPointUseEnum = new ContactPointUseEnum();
+    testContactPointSystemEnum = new ContactPointSystemEnum();
+    testContactPointUseEnum = new ContactPointUseEnum();
   });
 
   describe('Core', () => {
     const expectedJson = {
-      system: 'phone',
-      value: 'This is a valid string.',
-      use: 'home',
-      rank: 13579,
+      system: VALID_SYSTEM_PHONE,
+      value: VALID_STRING,
+      use: VALID_USE_HOME,
+      rank: VALID_POSITIVEINT,
       period: { start: VALID_START_DATETIME, end: VALID_END_DATETIME },
     };
 
@@ -168,10 +166,10 @@ describe('ContactPoint', () => {
       // ContactPoint properties
       expect(testContactPoint.hasSystemEnumType()).toBe(true);
       expect(testContactPoint.getSystemEnumType()).toEqual(
-        new EnumCodeType(VALID_SYSTEM_PHONE, contactPointSystemEnum),
+        new EnumCodeType(VALID_SYSTEM_PHONE, testContactPointSystemEnum),
       );
       expect(testContactPoint.hasUseEnumType()).toBe(true);
-      expect(testContactPoint.getUseEnumType()).toEqual(new EnumCodeType(VALID_USE_HOME, contactPointUseEnum));
+      expect(testContactPoint.getUseEnumType()).toEqual(new EnumCodeType(VALID_USE_HOME, testContactPointUseEnum));
 
       expect(testContactPoint.hasSystemElement()).toBe(true);
       expect(testContactPoint.getSystemElement()).toMatchObject(VALID_SYSTEM_PHONE_TYPE);
@@ -195,10 +193,10 @@ describe('ContactPoint', () => {
 
       // Reset to empty
 
-      contactPoint.setSystemElement(UNDEFINED_VALUE);
-      contactPoint.setValueElement(UNDEFINED_VALUE);
-      contactPoint.setUseElement(UNDEFINED_VALUE);
-      contactPoint.setRankElement(UNDEFINED_VALUE);
+      contactPoint.setSystem(UNDEFINED_VALUE);
+      contactPoint.setValue(UNDEFINED_VALUE);
+      contactPoint.setUse(UNDEFINED_VALUE);
+      contactPoint.setRank(UNDEFINED_VALUE);
       contactPoint.setPeriod(UNDEFINED_VALUE);
 
       testContactPoint = contactPoint.copy();
@@ -245,43 +243,97 @@ describe('ContactPoint', () => {
     });
 
     it('should properly handle system enum', () => {
-      const contactPoint = new ContactPoint();
+      const testContactPoint = new ContactPoint();
 
-      contactPoint.setSystem(VALID_SYSTEM_PHONE);
-      expect(contactPoint.hasSystem()).toBe(true);
-      expect(contactPoint.getSystem()).toStrictEqual(VALID_SYSTEM_PHONE);
+      testContactPoint.setSystem(VALID_SYSTEM_PHONE);
+      expect(testContactPoint.hasSystem()).toBe(true);
+      expect(testContactPoint.getSystem()).toStrictEqual(VALID_SYSTEM_PHONE);
 
-      contactPoint.setSystemElement(VALID_SYSTEM_EMAIL_TYPE);
-      expect(contactPoint.hasSystemElement()).toBe(true);
-      expect(contactPoint.getSystemElement()).toMatchObject(VALID_SYSTEM_EMAIL_TYPE);
+      testContactPoint.setSystemElement(VALID_SYSTEM_EMAIL_TYPE);
+      expect(testContactPoint.hasSystemElement()).toBe(true);
+      expect(testContactPoint.getSystemElement()).toMatchObject(VALID_SYSTEM_EMAIL_TYPE);
 
-      contactPoint.setSystemEnumType(new EnumCodeType(VALID_SYSTEM_FAX_TYPE, contactPointSystemEnum));
-      expect(contactPoint.hasSystemEnumType()).toBe(true);
-      expect(contactPoint.getSystemEnumType()).toEqual(new EnumCodeType(VALID_SYSTEM_FAX_TYPE, contactPointSystemEnum));
+      testContactPoint.setSystemEnumType(new EnumCodeType(VALID_SYSTEM_FAX_TYPE, testContactPointSystemEnum));
+      expect(testContactPoint.hasSystemEnumType()).toBe(true);
+      expect(testContactPoint.getSystemEnumType()).toEqual(
+        new EnumCodeType(VALID_SYSTEM_FAX_TYPE, testContactPointSystemEnum),
+      );
 
-      contactPoint.setSystem(UNDEFINED_VALUE);
-      expect(contactPoint.hasSystemEnumType()).toBe(false);
-      expect(contactPoint.getSystemEnumType()).toBeUndefined();
+      testContactPoint.setSystem(UNDEFINED_VALUE);
+      expect(testContactPoint.hasSystem()).toBe(false);
+      expect(testContactPoint.getSystem()).toBeUndefined();
+
+      testContactPoint.setSystemElement(UNDEFINED_VALUE);
+      expect(testContactPoint.hasSystemElement()).toBe(false);
+      expect(testContactPoint.getSystemElement()).toBeUndefined();
+
+      testContactPoint.setSystemEnumType(UNDEFINED_VALUE);
+      expect(testContactPoint.hasSystemEnumType()).toBe(false);
+      expect(testContactPoint.getSystemEnumType()).toBeUndefined();
+
+      let t = () => {
+        testContactPoint.setSystem(UNSUPPORTED_ENUM_CODE);
+      };
+      expect(t).toThrow(InvalidCodeError);
+      expect(t).toThrow(`Unknown ContactPointSystemEnum 'code' value '${UNSUPPORTED_ENUM_CODE}'`);
+
+      t = () => {
+        testContactPoint.setSystemElement(INVALID_CODE_TYPE);
+      };
+      expect(t).toThrow(InvalidCodeError);
+      expect(t).toThrow(`Unknown ContactPointSystemEnum 'code' value '${UNSUPPORTED_ENUM_CODE}'`);
+
+      t = () => {
+        testContactPoint.setSystemElement(new EnumCodeType(UNSUPPORTED_ENUM_CODE, testContactPointSystemEnum));
+      };
+      expect(t).toThrow(InvalidCodeError);
+      expect(t).toThrow(`Unknown ContactPointSystemEnum 'code' value '${UNSUPPORTED_ENUM_CODE}'`);
     });
 
     it('should properly handle use enum', () => {
-      const contactPoint = new ContactPoint();
+      const testContactPoint = new ContactPoint();
 
-      contactPoint.setUse(VALID_USE_HOME);
-      expect(contactPoint.hasUse()).toBe(true);
-      expect(contactPoint.getUse()).toStrictEqual(VALID_USE_HOME);
+      testContactPoint.setUse(VALID_USE_HOME);
+      expect(testContactPoint.hasUse()).toBe(true);
+      expect(testContactPoint.getUse()).toStrictEqual(VALID_USE_HOME);
 
-      contactPoint.setUseElement(VALID_USE_WORK_TYPE);
-      expect(contactPoint.hasUseElement()).toBe(true);
-      expect(contactPoint.getUseElement()).toMatchObject(VALID_USE_WORK_TYPE);
+      testContactPoint.setUseElement(VALID_USE_WORK_TYPE);
+      expect(testContactPoint.hasUseElement()).toBe(true);
+      expect(testContactPoint.getUseElement()).toMatchObject(VALID_USE_WORK_TYPE);
 
-      contactPoint.setUseEnumType(new EnumCodeType(VALID_USE_TEMP_TYPE, contactPointUseEnum));
-      expect(contactPoint.hasUseEnumType()).toBe(true);
-      expect(contactPoint.getUseEnumType()).toEqual(new EnumCodeType(VALID_USE_TEMP_TYPE, contactPointUseEnum));
+      testContactPoint.setUseEnumType(new EnumCodeType(VALID_USE_TEMP, testContactPointUseEnum));
+      expect(testContactPoint.hasUseEnumType()).toBe(true);
+      expect(testContactPoint.getUseEnumType()).toEqual(new EnumCodeType(VALID_USE_TEMP_TYPE, testContactPointUseEnum));
 
-      contactPoint.setUse(UNDEFINED_VALUE);
-      expect(contactPoint.hasUseEnumType()).toBe(false);
-      expect(contactPoint.getUseEnumType()).toBeUndefined();
+      testContactPoint.setUse(UNDEFINED_VALUE);
+      expect(testContactPoint.hasUse()).toBe(false);
+      expect(testContactPoint.getUse()).toBeUndefined();
+
+      testContactPoint.setUseElement(UNDEFINED_VALUE);
+      expect(testContactPoint.hasUseElement()).toBe(false);
+      expect(testContactPoint.getUseElement()).toBeUndefined();
+
+      testContactPoint.setUseEnumType(UNDEFINED_VALUE);
+      expect(testContactPoint.hasUseEnumType()).toBe(false);
+      expect(testContactPoint.getUseEnumType()).toBeUndefined();
+
+      let t = () => {
+        testContactPoint.setUse(UNSUPPORTED_ENUM_CODE);
+      };
+      expect(t).toThrow(InvalidCodeError);
+      expect(t).toThrow(`Unknown ContactPointUseEnum 'code' value '${UNSUPPORTED_ENUM_CODE}'`);
+
+      t = () => {
+        testContactPoint.setUseElement(INVALID_CODE_TYPE);
+      };
+      expect(t).toThrow(InvalidCodeError);
+      expect(t).toThrow(`Unknown ContactPointUseEnum 'code' value '${UNSUPPORTED_ENUM_CODE}'`);
+
+      t = () => {
+        testContactPoint.setUseEnumType(new EnumCodeType(UNSUPPORTED_ENUM_CODE, testContactPointUseEnum));
+      };
+      expect(t).toThrow(InvalidCodeError);
+      expect(t).toThrow(`Unknown ContactPointUseEnum 'code' value '${UNSUPPORTED_ENUM_CODE}'`);
     });
 
     // Tests using primitives
@@ -312,10 +364,10 @@ describe('ContactPoint', () => {
       // ContactPoint properties
       expect(testContactPoint.hasSystemEnumType()).toBe(true);
       expect(testContactPoint.getSystemEnumType()).toEqual(
-        new EnumCodeType(VALID_SYSTEM_PHONE, contactPointSystemEnum),
+        new EnumCodeType(VALID_SYSTEM_PHONE, testContactPointSystemEnum),
       );
       expect(testContactPoint.hasUseEnumType()).toBe(true);
-      expect(testContactPoint.getUseEnumType()).toEqual(new EnumCodeType(VALID_USE_HOME, contactPointUseEnum));
+      expect(testContactPoint.getUseEnumType()).toEqual(new EnumCodeType(VALID_USE_HOME, testContactPointUseEnum));
 
       expect(testContactPoint.hasSystemElement()).toBe(true);
       expect(testContactPoint.getSystemElement()).toMatchObject(VALID_SYSTEM_PHONE_TYPE);
@@ -346,8 +398,35 @@ describe('ContactPoint', () => {
       testContactPoint.setRank(VALID_POSITIVEINT);
       testContactPoint.setPeriod(VALID_PERIOD);
 
-      expect(testContactPoint).toBeDefined();
-      expect(testContactPoint.isEmpty()).toBe(false);
+      // ContactPoint properties
+      expect(testContactPoint.hasSystemEnumType()).toBe(true);
+      expect(testContactPoint.getSystemEnumType()).toEqual(
+        new EnumCodeType(VALID_SYSTEM_PHONE, testContactPointSystemEnum),
+      );
+      expect(testContactPoint.hasUseEnumType()).toBe(true);
+      expect(testContactPoint.getUseEnumType()).toEqual(new EnumCodeType(VALID_USE_HOME, testContactPointUseEnum));
+
+      expect(testContactPoint.hasSystemElement()).toBe(true);
+      expect(testContactPoint.getSystemElement()).toMatchObject(VALID_SYSTEM_PHONE_TYPE);
+      expect(testContactPoint.hasValueElement()).toBe(true);
+      expect(testContactPoint.getValueElement()).toEqual(new StringType(VALID_STRING));
+      expect(testContactPoint.hasUseElement()).toBe(true);
+      expect(testContactPoint.getUseElement()).toMatchObject(VALID_USE_HOME_TYPE);
+      expect(testContactPoint.hasRankElement()).toBe(true);
+      expect(testContactPoint.getRankElement()).toEqual(new PositiveIntType(VALID_POSITIVEINT));
+      expect(testContactPoint.hasPeriod()).toBe(true);
+      expect(testContactPoint.getPeriod()).toEqual(VALID_PERIOD);
+
+      expect(testContactPoint.hasSystem()).toBe(true);
+      expect(testContactPoint.getSystem()).toStrictEqual(VALID_SYSTEM_PHONE);
+      expect(testContactPoint.hasValue()).toBe(true);
+      expect(testContactPoint.getValue()).toStrictEqual(VALID_STRING);
+      expect(testContactPoint.hasUse()).toBe(true);
+      expect(testContactPoint.getUse()).toStrictEqual(VALID_USE_HOME);
+      expect(testContactPoint.hasRank()).toBe(true);
+      expect(testContactPoint.getRank()).toStrictEqual(VALID_POSITIVEINT);
+
+      // Reset
 
       testContactPoint.setSystem(VALID_SYSTEM_EMAIL);
       testContactPoint.setValue(VALID_STRING_2);
@@ -355,19 +434,13 @@ describe('ContactPoint', () => {
       testContactPoint.setRank(VALID_POSITIVEINT_2);
       testContactPoint.setPeriod(VALID_PERIOD_2);
 
-      // inherited properties from Element
-      expect(testContactPoint.hasId()).toBe(false);
-      expect(testContactPoint.getId()).toBeUndefined();
-      expect(testContactPoint.hasExtension()).toBe(false);
-      expect(testContactPoint.getExtension()).toEqual([] as Extension[]);
-
       // ContactPoint properties
       expect(testContactPoint.hasSystemEnumType()).toBe(true);
       expect(testContactPoint.getSystemEnumType()).toEqual(
-        new EnumCodeType(VALID_SYSTEM_EMAIL, contactPointSystemEnum),
+        new EnumCodeType(VALID_SYSTEM_EMAIL, testContactPointSystemEnum),
       );
       expect(testContactPoint.hasUseEnumType()).toBe(true);
-      expect(testContactPoint.getUseEnumType()).toEqual(new EnumCodeType(VALID_USE_WORK, contactPointUseEnum));
+      expect(testContactPoint.getUseEnumType()).toEqual(new EnumCodeType(VALID_USE_WORK, testContactPointUseEnum));
 
       expect(testContactPoint.hasSystemElement()).toBe(true);
       expect(testContactPoint.getSystemElement()).toMatchObject(VALID_SYSTEM_EMAIL_TYPE);
@@ -423,45 +496,26 @@ describe('ContactPoint', () => {
       expect(testContactPoint.getRank()).toBeUndefined();
     });
 
-    it('should throw InvalidCodeError when reset with unsupported primitive ContactPoint.system value', () => {
+    it('should throw errors for invalid primitive values', () => {
       const testContactPoint = new ContactPoint();
-      const t = () => {
-        testContactPoint.setSystem(UNSUPPORTED_ENUM_CODE);
-      };
-      expect(t).toThrow(InvalidCodeError);
-      expect(t).toThrow(`Unknown ContactPointSystemEnum 'code' value '${UNSUPPORTED_ENUM_CODE}'`);
-    });
 
-    it('should throw PrimitiveTypeError when reset with invalid primitive ContactPoint.value value', () => {
-      const testContactPoint = new ContactPoint();
-      const t = () => {
+      let t = () => {
         testContactPoint.setValue(INVALID_STRING);
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid ContactPoint.value`);
-    });
 
-    it('should throw InvalidCodeError when reset with unsupported primitive ContactPoint.use value', () => {
-      const testContactPoint = new ContactPoint();
-      const t = () => {
-        testContactPoint.setUse(UNSUPPORTED_ENUM_CODE);
-      };
-      expect(t).toThrow(InvalidCodeError);
-      expect(t).toThrow(`Unknown ContactPointUseEnum 'code' value '${UNSUPPORTED_ENUM_CODE}'`);
-    });
-
-    it('should throw PrimitiveTypeError when reset with invalid primitive ContactPoint.rank value', () => {
-      const testContactPoint = new ContactPoint();
-      const t = () => {
-        testContactPoint.setRank(INVALID_POSITIVEINT);
+      t = () => {
+        // @ts-expect-error: allow for testing
+        testContactPoint.setRank(INVALID_NON_STRING_TYPE_VALUE);
       };
       expect(t).toThrow(PrimitiveTypeError);
-      expect(t).toThrow(`Invalid ContactPoint.rank (${String(INVALID_POSITIVEINT)})`);
+      expect(t).toThrow(`Invalid ContactPoint.rank (${INVALID_NON_STRING_TYPE_VALUE})`);
     });
 
     // Tests using DataType elements
 
-    it('should be properly instantiated with PrimitiveType values', () => {
+    it('should be properly instantiated with DataType values', () => {
       const testContactPoint = new ContactPoint();
       testContactPoint.setSystemElement(VALID_SYSTEM_PHONE_TYPE);
       testContactPoint.setValueElement(VALID_STRING_TYPE);
@@ -487,10 +541,10 @@ describe('ContactPoint', () => {
       // ContactPoint properties
       expect(testContactPoint.hasSystemEnumType()).toBe(true);
       expect(testContactPoint.getSystemEnumType()).toEqual(
-        new EnumCodeType(VALID_SYSTEM_PHONE, contactPointSystemEnum),
+        new EnumCodeType(VALID_SYSTEM_PHONE, testContactPointSystemEnum),
       );
       expect(testContactPoint.hasUseEnumType()).toBe(true);
-      expect(testContactPoint.getUseEnumType()).toEqual(new EnumCodeType(VALID_USE_HOME, contactPointUseEnum));
+      expect(testContactPoint.getUseEnumType()).toEqual(new EnumCodeType(VALID_USE_HOME, testContactPointUseEnum));
 
       expect(testContactPoint.hasSystemElement()).toBe(true);
       expect(testContactPoint.getSystemElement()).toMatchObject(VALID_SYSTEM_PHONE_TYPE);
@@ -513,7 +567,7 @@ describe('ContactPoint', () => {
       expect(testContactPoint.getRank()).toStrictEqual(VALID_POSITIVEINT);
     });
 
-    it('should be properly reset by modifying all properties with PrimitiveType values', () => {
+    it('should be properly reset by modifying all properties with DataType values', () => {
       const testContactPoint = new ContactPoint();
       testContactPoint.setSystemElement(VALID_SYSTEM_PHONE_TYPE);
       testContactPoint.setValueElement(VALID_STRING_TYPE);
@@ -521,8 +575,35 @@ describe('ContactPoint', () => {
       testContactPoint.setRankElement(VALID_POSITIVEINT_TYPE);
       testContactPoint.setPeriod(VALID_PERIOD);
 
-      expect(testContactPoint).toBeDefined();
-      expect(testContactPoint.isEmpty()).toBe(false);
+      // ContactPoint properties
+      expect(testContactPoint.hasSystemEnumType()).toBe(true);
+      expect(testContactPoint.getSystemEnumType()).toEqual(
+        new EnumCodeType(VALID_SYSTEM_PHONE, testContactPointSystemEnum),
+      );
+      expect(testContactPoint.hasUseEnumType()).toBe(true);
+      expect(testContactPoint.getUseEnumType()).toEqual(new EnumCodeType(VALID_USE_HOME, testContactPointUseEnum));
+
+      expect(testContactPoint.hasSystemElement()).toBe(true);
+      expect(testContactPoint.getSystemElement()).toMatchObject(VALID_SYSTEM_PHONE_TYPE);
+      expect(testContactPoint.hasValueElement()).toBe(true);
+      expect(testContactPoint.getValueElement()).toEqual(new StringType(VALID_STRING));
+      expect(testContactPoint.hasUseElement()).toBe(true);
+      expect(testContactPoint.getUseElement()).toMatchObject(VALID_USE_HOME_TYPE);
+      expect(testContactPoint.hasRankElement()).toBe(true);
+      expect(testContactPoint.getRankElement()).toEqual(new PositiveIntType(VALID_POSITIVEINT));
+      expect(testContactPoint.hasPeriod()).toBe(true);
+      expect(testContactPoint.getPeriod()).toEqual(VALID_PERIOD);
+
+      expect(testContactPoint.hasSystem()).toBe(true);
+      expect(testContactPoint.getSystem()).toStrictEqual(VALID_SYSTEM_PHONE);
+      expect(testContactPoint.hasValue()).toBe(true);
+      expect(testContactPoint.getValue()).toStrictEqual(VALID_STRING);
+      expect(testContactPoint.hasUse()).toBe(true);
+      expect(testContactPoint.getUse()).toStrictEqual(VALID_USE_HOME);
+      expect(testContactPoint.hasRank()).toBe(true);
+      expect(testContactPoint.getRank()).toStrictEqual(VALID_POSITIVEINT);
+
+      // Reset
 
       testContactPoint.setSystemElement(VALID_SYSTEM_EMAIL_TYPE);
       testContactPoint.setValueElement(VALID_STRING_TYPE_2);
@@ -530,19 +611,13 @@ describe('ContactPoint', () => {
       testContactPoint.setRankElement(VALID_POSITIVEINT_TYPE_2);
       testContactPoint.setPeriod(VALID_PERIOD_2);
 
-      // inherited properties from Element
-      expect(testContactPoint.hasId()).toBe(false);
-      expect(testContactPoint.getId()).toBeUndefined();
-      expect(testContactPoint.hasExtension()).toBe(false);
-      expect(testContactPoint.getExtension()).toEqual([] as Extension[]);
-
       // ContactPoint properties
       expect(testContactPoint.hasSystemEnumType()).toBe(true);
       expect(testContactPoint.getSystemEnumType()).toEqual(
-        new EnumCodeType(VALID_SYSTEM_EMAIL, contactPointSystemEnum),
+        new EnumCodeType(VALID_SYSTEM_EMAIL, testContactPointSystemEnum),
       );
       expect(testContactPoint.hasUseEnumType()).toBe(true);
-      expect(testContactPoint.getUseEnumType()).toEqual(new EnumCodeType(VALID_USE_WORK, contactPointUseEnum));
+      expect(testContactPoint.getUseEnumType()).toEqual(new EnumCodeType(VALID_USE_WORK, testContactPointUseEnum));
 
       expect(testContactPoint.hasSystemElement()).toBe(true);
       expect(testContactPoint.getSystemElement()).toMatchObject(VALID_SYSTEM_EMAIL_TYPE);
@@ -563,69 +638,62 @@ describe('ContactPoint', () => {
       expect(testContactPoint.getUse()).toStrictEqual(VALID_USE_WORK);
       expect(testContactPoint.hasRank()).toBe(true);
       expect(testContactPoint.getRank()).toStrictEqual(VALID_POSITIVEINT_2);
+
+      // Reset to empty
+
+      testContactPoint.setSystemElement(UNDEFINED_VALUE);
+      testContactPoint.setValueElement(UNDEFINED_VALUE);
+      testContactPoint.setUseElement(UNDEFINED_VALUE);
+      testContactPoint.setRankElement(UNDEFINED_VALUE);
+      testContactPoint.setPeriod(UNDEFINED_VALUE);
+
+      // ContactPoint properties
+      expect(testContactPoint.hasSystemEnumType()).toBe(false);
+      expect(testContactPoint.getSystemEnumType()).toBeUndefined();
+      expect(testContactPoint.hasUseEnumType()).toBe(false);
+      expect(testContactPoint.getUseEnumType()).toBeUndefined();
+
+      expect(testContactPoint.hasSystemElement()).toBe(false);
+      expect(testContactPoint.getSystemElement()).toBeUndefined();
+      expect(testContactPoint.hasValueElement()).toBe(false);
+      expect(testContactPoint.getValueElement()).toEqual(new StringType());
+      expect(testContactPoint.hasUseElement()).toBe(false);
+      expect(testContactPoint.getUseElement()).toBeUndefined();
+      expect(testContactPoint.hasRankElement()).toBe(false);
+      expect(testContactPoint.getRankElement()).toEqual(new PositiveIntType());
+      expect(testContactPoint.hasPeriod()).toBe(false);
+      expect(testContactPoint.getPeriod()).toEqual(new Period());
+
+      expect(testContactPoint.hasSystem()).toBe(false);
+      expect(testContactPoint.getSystem()).toBeUndefined();
+      expect(testContactPoint.hasValue()).toBe(false);
+      expect(testContactPoint.getValue()).toBeUndefined();
+      expect(testContactPoint.hasUse()).toBe(false);
+      expect(testContactPoint.getUse()).toBeUndefined();
+      expect(testContactPoint.hasRank()).toBe(false);
+      expect(testContactPoint.getRank()).toBeUndefined();
     });
 
-    it('should throw InvalidCodeError when reset with unsupported EnumCodeType ContactPoint.system value', () => {
+    it('should throw errors for invalid DataType values', () => {
       const testContactPoint = new ContactPoint();
-      const t = () => {
-        testContactPoint.setSystemEnumType(new EnumCodeType(INVALID_ENUM_CODE_TYPE, contactPointSystemEnum));
-      };
-      expect(t).toThrow(InvalidCodeError);
-      expect(t).toThrow(`Unknown ContactPointSystemEnum 'code' value '${UNSUPPORTED_ENUM_CODE}'`);
-    });
 
-    it('should throw InvalidCodeError when reset with unsupported PrimitiveType ContactPoint.system value', () => {
-      const testContactPoint = new ContactPoint();
-      const t = () => {
-        testContactPoint.setSystemElement(INVALID_CODE_TYPE);
-      };
-      expect(t).toThrow(InvalidCodeError);
-      expect(t).toThrow(`Unknown ContactPointSystemEnum 'code' value '${UNSUPPORTED_ENUM_CODE}'`);
-    });
-
-    it('should throw InvalidTypeError when reset with invalid PrimitiveType ContactPoint.value value', () => {
-      const testContactPoint = new ContactPoint();
-      const t = () => {
+      let t = () => {
         // @ts-expect-error: allow for testing
         testContactPoint.setValueElement(INVALID_STRING_TYPE);
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(`Invalid ContactPoint.value`);
-    });
 
-    it('should throw InvalidCodeError when reset with unsupported EnumCodeType ContactPoint.use value', () => {
-      const testContactPoint = new ContactPoint();
-      const t = () => {
-        testContactPoint.setUseEnumType(new EnumCodeType(INVALID_ENUM_CODE_TYPE, contactPointUseEnum));
-      };
-      expect(t).toThrow(InvalidCodeError);
-      expect(t).toThrow(`Unknown ContactPointUseEnum 'code' value '${UNSUPPORTED_ENUM_CODE}'`);
-    });
-
-    it('should throw InvalidCodeError when reset with unsupported PrimitiveType ContactPoint.use value', () => {
-      const testContactPoint = new ContactPoint();
-      const t = () => {
-        testContactPoint.setUseElement(INVALID_CODE_TYPE);
-      };
-      expect(t).toThrow(InvalidCodeError);
-      expect(t).toThrow(`Unknown ContactPointUseEnum 'code' value '${UNSUPPORTED_ENUM_CODE}'`);
-    });
-
-    it('should throw InvalidTypeError when reset with invalid PrimitiveType ContactPoint.rank value', () => {
-      const testContactPoint = new ContactPoint();
-      const t = () => {
+      t = () => {
         // @ts-expect-error: allow for testing
-        testContactPoint.setRankElement(INVALID_POSITIVEINT_TYPE);
+        testContactPoint.setRankElement(INVALID_NON_STRING_TYPE);
       };
       expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`ContactPoint.rank; Provided element is not an instance of PositiveIntType.`);
-    });
+      expect(t).toThrow(`Invalid ContactPoint.rank; Provided element is not an instance of PositiveIntType.`);
 
-    it('should throw InvalidTypeError when reset with invalid Period ContactPoint.period value', () => {
-      const testContactPoint = new ContactPoint();
-      const t = () => {
+      t = () => {
         // @ts-expect-error: allow for testing
-        testContactPoint.setPeriod(INVALID_PERIOD_TYPE);
+        testContactPoint.setPeriod(INVALID_NON_STRING_TYPE);
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(`Invalid ContactPoint.period; Provided element is not an instance of Period.`);
@@ -671,10 +739,10 @@ describe('ContactPoint', () => {
       // ContactPoint properties
       expect(testContactPoint.hasSystemEnumType()).toBe(true);
       expect(testContactPoint.getSystemEnumType()).toEqual(
-        new EnumCodeType(VALID_SYSTEM_PHONE, contactPointSystemEnum),
+        new EnumCodeType(VALID_SYSTEM_PHONE, testContactPointSystemEnum),
       );
       expect(testContactPoint.hasUseEnumType()).toBe(true);
-      expect(testContactPoint.getUseEnumType()).toEqual(new EnumCodeType(VALID_USE_HOME, contactPointUseEnum));
+      expect(testContactPoint.getUseEnumType()).toEqual(new EnumCodeType(VALID_USE_HOME, testContactPointUseEnum));
 
       expect(testContactPoint.hasSystemElement()).toBe(true);
       expect(testContactPoint.getSystemElement()).toMatchObject(VALID_SYSTEM_PHONE_TYPE);

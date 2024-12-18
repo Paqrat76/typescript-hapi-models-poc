@@ -27,6 +27,7 @@ import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { INVALID_NON_STRING_TYPE, INVALID_STRING, INVALID_STRING_TYPE, UNDEFINED_VALUE } from '../../../test-utils';
 
 describe('Reference', () => {
   const VALID_URI = `testUriType`;
@@ -39,7 +40,6 @@ describe('Reference', () => {
   const VALID_STRING_TYPE = new StringType(VALID_STRING);
   const VALID_STRING_2 = 'This is another valid string!';
   const VALID_STRING_TYPE_2 = new StringType(VALID_STRING_2);
-  const INVALID_STRING = '';
 
   const VALID_IDENTIFIER_VALUE_1 = 'Identifier value 1';
   const IDENTIFIER_TYPE_1 = new Identifier();
@@ -49,28 +49,14 @@ describe('Reference', () => {
   const IDENTIFIER_TYPE_2 = new Identifier();
   IDENTIFIER_TYPE_2.setValue(VALID_IDENTIFIER_VALUE_2);
 
-  const UNDEFINED_VALUE = undefined;
-  const INVALID_REFERENCE_TYPE = new UriType(VALID_URI);
-  const INVALID_TYPE_TYPE = new StringType(`Invalid Reference.type`);
-  const INVALID_IDENTIFIER_TYPE = new StringType(`Invalid Reference.identifier`);
-  const INVALID_DISPLAY_TYPE = new UriType(VALID_URI);
-
   describe('Core', () => {
-    const expectedJson1 = {
-      reference: 'This is a valid string.',
-      type: 'testUriType',
+    const expectedJson = {
+      reference: VALID_STRING,
+      type: VALID_URI,
       identifier: {
-        value: 'Identifier value 1',
+        value: VALID_IDENTIFIER_VALUE_1,
       },
-      display: 'This is another valid string!',
-    };
-    const expectedJson2 = {
-      reference: 'This is another valid string!',
-      type: 'testUriType2',
-      identifier: {
-        value: 'Identifier value 2',
-      },
-      display: 'This is a valid string.',
+      display: VALID_STRING_2,
     };
 
     it('should be properly instantiated as empty', () => {
@@ -114,8 +100,8 @@ describe('Reference', () => {
       referenceType.setType(VALID_URI);
       referenceType.setIdentifier(IDENTIFIER_TYPE_1);
       referenceType.setDisplay(VALID_STRING_2);
-      let testReference = referenceType.copy();
 
+      let testReference = referenceType.copy();
       expect(testReference).toBeDefined();
       expect(testReference).toBeInstanceOf(DataType);
       expect(testReference).toBeInstanceOf(Reference);
@@ -123,7 +109,7 @@ describe('Reference', () => {
       expect(testReference.fhirType()).toStrictEqual('Reference');
       expect(testReference.isEmpty()).toBe(false);
       expect(testReference.isComplexDataType()).toBe(true);
-      expect(testReference.toJSON()).toEqual(expectedJson1);
+      expect(testReference.toJSON()).toEqual(expectedJson);
 
       // inherited properties from Element
       expect(testReference.hasId()).toBe(false);
@@ -154,8 +140,8 @@ describe('Reference', () => {
       referenceType.setType(UNDEFINED_VALUE);
       referenceType.setIdentifier(UNDEFINED_VALUE);
       referenceType.setDisplay(UNDEFINED_VALUE);
-      testReference = referenceType.copy();
 
+      testReference = referenceType.copy();
       expect(testReference).toBeDefined();
       expect(testReference).toBeInstanceOf(DataType);
       expect(testReference).toBeInstanceOf(Reference);
@@ -205,7 +191,7 @@ describe('Reference', () => {
       expect(testReference.fhirType()).toStrictEqual('Reference');
       expect(testReference.isEmpty()).toBe(false);
       expect(testReference.isComplexDataType()).toBe(true);
-      expect(testReference.toJSON()).toEqual(expectedJson1);
+      expect(testReference.toJSON()).toEqual(expectedJson);
 
       // inherited properties from Element
       expect(testReference.hasId()).toBe(false);
@@ -239,19 +225,7 @@ describe('Reference', () => {
       testReference.setDisplay(VALID_STRING_2);
 
       expect(testReference).toBeDefined();
-      expect(testReference).toBeInstanceOf(DataType);
-      expect(testReference).toBeInstanceOf(Reference);
-      expect(testReference.constructor.name).toStrictEqual('Reference');
-      expect(testReference.fhirType()).toStrictEqual('Reference');
       expect(testReference.isEmpty()).toBe(false);
-      expect(testReference.isComplexDataType()).toBe(true);
-      expect(testReference.toJSON()).toEqual(expectedJson1);
-
-      // inherited properties from Element
-      expect(testReference.hasId()).toBe(false);
-      expect(testReference.getId()).toBeUndefined();
-      expect(testReference.hasExtension()).toBe(false);
-      expect(testReference.getExtension()).toEqual([] as Extension[]);
 
       // Reference properties
       expect(testReference.hasReferenceElement()).toBe(true);
@@ -269,6 +243,8 @@ describe('Reference', () => {
       expect(testReference.getIdentifier()).toEqual(IDENTIFIER_TYPE_1);
       expect(testReference.hasDisplay()).toBe(true);
       expect(testReference.getDisplay()).toStrictEqual(VALID_STRING_2);
+
+      // Reset
 
       testReference.setReference(VALID_STRING_2);
       testReference.setType(VALID_URI_2);
@@ -276,19 +252,7 @@ describe('Reference', () => {
       testReference.setDisplay(VALID_STRING);
 
       expect(testReference).toBeDefined();
-      expect(testReference).toBeInstanceOf(DataType);
-      expect(testReference).toBeInstanceOf(Reference);
-      expect(testReference.constructor.name).toStrictEqual('Reference');
-      expect(testReference.fhirType()).toStrictEqual('Reference');
       expect(testReference.isEmpty()).toBe(false);
-      expect(testReference.isComplexDataType()).toBe(true);
-      expect(testReference.toJSON()).toEqual(expectedJson2);
-
-      // inherited properties from Element
-      expect(testReference.hasId()).toBe(false);
-      expect(testReference.getId()).toBeUndefined();
-      expect(testReference.hasExtension()).toBe(false);
-      expect(testReference.getExtension()).toEqual([] as Extension[]);
 
       // Reference properties
       expect(testReference.hasReferenceElement()).toBe(true);
@@ -306,38 +270,87 @@ describe('Reference', () => {
       expect(testReference.getIdentifier()).toEqual(IDENTIFIER_TYPE_2);
       expect(testReference.hasDisplay()).toBe(true);
       expect(testReference.getDisplay()).toStrictEqual(VALID_STRING);
+
+      // Reset as empty
+
+      testReference.setReference(UNDEFINED_VALUE);
+      testReference.setType(UNDEFINED_VALUE);
+      testReference.setIdentifier(UNDEFINED_VALUE);
+      testReference.setDisplay(UNDEFINED_VALUE);
+
+      expect(testReference).toBeDefined();
+      expect(testReference.isEmpty()).toBe(true);
+
+      // Reference properties
+      expect(testReference.hasReferenceElement()).toBe(false);
+      expect(testReference.getReferenceElement()).toEqual(new StringType());
+      expect(testReference.hasTypeElement()).toBe(false);
+      expect(testReference.getTypeElement()).toEqual(new UriType());
+      expect(testReference.hasDisplayElement()).toBe(false);
+      expect(testReference.getDisplayElement()).toEqual(new StringType());
+
+      expect(testReference.hasReference()).toBe(false);
+      expect(testReference.getReference()).toBeUndefined();
+      expect(testReference.hasType()).toBe(false);
+      expect(testReference.getType()).toBeUndefined();
+      expect(testReference.hasIdentifier()).toBe(false);
+      expect(testReference.getIdentifier()).toEqual(new Identifier());
+      expect(testReference.hasDisplay()).toBe(false);
+      expect(testReference.getDisplay()).toBeUndefined();
     });
 
-    it('should throw PrimitiveTypeError when reset with invalid primitive Reference.reference value', () => {
+    it('should throw errors for invalid primitive values', () => {
       const testReference = new Reference();
-      const t = () => {
+
+      let t = () => {
         testReference.setReference(INVALID_STRING);
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid Reference.reference (${INVALID_STRING})`);
-    });
 
-    it('should throw PrimitiveTypeError when reset with invalid primitive Reference.type value', () => {
-      const testReference = new Reference();
-      const t = () => {
+      t = () => {
         testReference.setType(INVALID_URI);
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid Reference.type (${INVALID_URI})`);
-    });
 
-    it('should throw PrimitiveTypeError when reset with invalid primitive Reference.display value', () => {
-      const testReference = new Reference();
-      const t = () => {
+      t = () => {
         testReference.setDisplay(INVALID_STRING);
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid Reference.display (${INVALID_STRING})`);
     });
 
+    // it('should throw PrimitiveTypeError when reset with invalid primitive Reference.reference value', () => {
+    //   const testReference = new Reference();
+    //   const t = () => {
+    //     testReference.setReference(INVALID_STRING);
+    //   };
+    //   expect(t).toThrow(PrimitiveTypeError);
+    //   expect(t).toThrow(`Invalid Reference.reference (${INVALID_STRING})`);
+    // });
+
+    // it('should throw PrimitiveTypeError when reset with invalid primitive Reference.type value', () => {
+    //   const testReference = new Reference();
+    //   const t = () => {
+    //     testReference.setType(INVALID_URI);
+    //   };
+    //   expect(t).toThrow(PrimitiveTypeError);
+    //   expect(t).toThrow(`Invalid Reference.type (${INVALID_URI})`);
+    // });
+
+    // it('should throw PrimitiveTypeError when reset with invalid primitive Reference.display value', () => {
+    //   const testReference = new Reference();
+    //   const t = () => {
+    //     testReference.setDisplay(INVALID_STRING);
+    //   };
+    //   expect(t).toThrow(PrimitiveTypeError);
+    //   expect(t).toThrow(`Invalid Reference.display (${INVALID_STRING})`);
+    // });
+
     // Tests using DataType elements
 
-    it('should be properly instantiated with PrimitiveType values', () => {
+    it('should be properly instantiated with DataType values', () => {
       const testReference = new Reference();
       testReference.setReferenceElement(VALID_STRING_TYPE);
       testReference.setTypeElement(VALID_URI_TYPE);
@@ -351,7 +364,7 @@ describe('Reference', () => {
       expect(testReference.fhirType()).toStrictEqual('Reference');
       expect(testReference.isEmpty()).toBe(false);
       expect(testReference.isComplexDataType()).toBe(true);
-      expect(testReference.toJSON()).toEqual(expectedJson1);
+      expect(testReference.toJSON()).toEqual(expectedJson);
 
       // inherited properties from Element
       expect(testReference.hasId()).toBe(false);
@@ -377,7 +390,7 @@ describe('Reference', () => {
       expect(testReference.getDisplay()).toStrictEqual(VALID_STRING_2);
     });
 
-    it('should be properly reset by modifying all properties with PrimitiveType values', () => {
+    it('should be properly reset by modifying all properties with DataType values', () => {
       const testReference = new Reference();
       testReference.setReferenceElement(VALID_STRING_TYPE);
       testReference.setTypeElement(VALID_URI_TYPE);
@@ -385,19 +398,7 @@ describe('Reference', () => {
       testReference.setDisplayElement(VALID_STRING_TYPE_2);
 
       expect(testReference).toBeDefined();
-      expect(testReference).toBeInstanceOf(DataType);
-      expect(testReference).toBeInstanceOf(Reference);
-      expect(testReference.constructor.name).toStrictEqual('Reference');
-      expect(testReference.fhirType()).toStrictEqual('Reference');
       expect(testReference.isEmpty()).toBe(false);
-      expect(testReference.isComplexDataType()).toBe(true);
-      expect(testReference.toJSON()).toEqual(expectedJson1);
-
-      // inherited properties from Element
-      expect(testReference.hasId()).toBe(false);
-      expect(testReference.getId()).toBeUndefined();
-      expect(testReference.hasExtension()).toBe(false);
-      expect(testReference.getExtension()).toEqual([] as Extension[]);
 
       // Reference properties
       expect(testReference.hasReferenceElement()).toBe(true);
@@ -416,25 +417,14 @@ describe('Reference', () => {
       expect(testReference.hasDisplay()).toBe(true);
       expect(testReference.getDisplay()).toStrictEqual(VALID_STRING_2);
 
+      // Reset
       testReference.setReferenceElement(VALID_STRING_TYPE_2);
       testReference.setTypeElement(VALID_URI_TYPE_2);
       testReference.setIdentifier(IDENTIFIER_TYPE_2);
       testReference.setDisplayElement(VALID_STRING_TYPE);
 
       expect(testReference).toBeDefined();
-      expect(testReference).toBeInstanceOf(DataType);
-      expect(testReference).toBeInstanceOf(Reference);
-      expect(testReference.constructor.name).toStrictEqual('Reference');
-      expect(testReference.fhirType()).toStrictEqual('Reference');
       expect(testReference.isEmpty()).toBe(false);
-      expect(testReference.isComplexDataType()).toBe(true);
-      expect(testReference.toJSON()).toEqual(expectedJson2);
-
-      // inherited properties from Element
-      expect(testReference.hasId()).toBe(false);
-      expect(testReference.getId()).toBeUndefined();
-      expect(testReference.hasExtension()).toBe(false);
-      expect(testReference.getExtension()).toEqual([] as Extension[]);
 
       // Reference properties
       expect(testReference.hasReferenceElement()).toBe(true);
@@ -452,47 +442,106 @@ describe('Reference', () => {
       expect(testReference.getIdentifier()).toEqual(IDENTIFIER_TYPE_2);
       expect(testReference.hasDisplay()).toBe(true);
       expect(testReference.getDisplay()).toStrictEqual(VALID_STRING);
+
+      // Reset as empty
+
+      testReference.setReferenceElement(UNDEFINED_VALUE);
+      testReference.setTypeElement(UNDEFINED_VALUE);
+      testReference.setIdentifier(UNDEFINED_VALUE);
+      testReference.setDisplayElement(UNDEFINED_VALUE);
+
+      expect(testReference).toBeDefined();
+      expect(testReference.isEmpty()).toBe(true);
+
+      // Reference properties
+      expect(testReference.hasReferenceElement()).toBe(false);
+      expect(testReference.getReferenceElement()).toEqual(new StringType());
+      expect(testReference.hasTypeElement()).toBe(false);
+      expect(testReference.getTypeElement()).toEqual(new UriType());
+      expect(testReference.hasDisplayElement()).toBe(false);
+      expect(testReference.getDisplayElement()).toEqual(new StringType());
+
+      expect(testReference.hasReference()).toBe(false);
+      expect(testReference.getReference()).toBeUndefined();
+      expect(testReference.hasType()).toBe(false);
+      expect(testReference.getType()).toBeUndefined();
+      expect(testReference.hasIdentifier()).toBe(false);
+      expect(testReference.getIdentifier()).toEqual(new Identifier());
+      expect(testReference.hasDisplay()).toBe(false);
+      expect(testReference.getDisplay()).toBeUndefined();
     });
 
-    it('should throw InvalidTypeError when reset with invalid PrimitiveType Reference.reference value', () => {
+    it('should throw errors for invalid DataType values', () => {
       const testReference = new Reference();
-      const t = () => {
+
+      let t = () => {
         // @ts-expect-error: allow invalid type for testing
-        testReference.setReferenceElement(INVALID_REFERENCE_TYPE);
+        testReference.setReferenceElement(INVALID_STRING_TYPE);
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(`Invalid Reference.reference; Provided element is not an instance of StringType.`);
-    });
 
-    it('should throw InvalidTypeError when reset with invalid PrimitiveType Reference.type value', () => {
-      const testReference = new Reference();
-      const t = () => {
+      t = () => {
         // @ts-expect-error: allow invalid type for testing
-        testReference.setTypeElement(INVALID_TYPE_TYPE);
+        testReference.setTypeElement(INVALID_NON_STRING_TYPE);
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(`Invalid Reference.type; Provided element is not an instance of UriType.`);
-    });
 
-    it('should throw InvalidTypeError when reset with invalid PrimitiveType Reference.identifier value', () => {
-      const testReference = new Reference();
-      const t = () => {
+      t = () => {
         // @ts-expect-error: allow invalid type for testing
-        testReference.setIdentifier(INVALID_IDENTIFIER_TYPE);
+        testReference.setIdentifier(INVALID_NON_STRING_TYPE);
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(`Invalid Reference.identifier; Provided value is not an instance of Identifier.`);
-    });
 
-    it('should throw InvalidTypeError when reset with invalid PrimitiveType Reference.display value', () => {
-      const testReference = new Reference();
-      const t = () => {
+      t = () => {
         // @ts-expect-error: allow invalid type for testing
-        testReference.setDisplayElement(INVALID_DISPLAY_TYPE);
+        testReference.setDisplayElement(INVALID_STRING_TYPE);
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(`Invalid Reference.display; Provided element is not an instance of StringType.`);
     });
+
+    // it('should throw InvalidTypeError when reset with invalid PrimitiveType Reference.reference value', () => {
+    //   const testReference = new Reference();
+    //   const t = () => {
+    //     // @ts-expect-error: allow invalid type for testing
+    //     testReference.setReferenceElement(INVALID_STRING_TYPE);
+    //   };
+    //   expect(t).toThrow(InvalidTypeError);
+    //   expect(t).toThrow(`Invalid Reference.reference; Provided element is not an instance of StringType.`);
+    // });
+
+    // it('should throw InvalidTypeError when reset with invalid PrimitiveType Reference.type value', () => {
+    //   const testReference = new Reference();
+    //   const t = () => {
+    //     // @ts-expect-error: allow invalid type for testing
+    //     testReference.setTypeElement(INVALID_NON_STRING_TYPE);
+    //   };
+    //   expect(t).toThrow(InvalidTypeError);
+    //   expect(t).toThrow(`Invalid Reference.type; Provided element is not an instance of UriType.`);
+    // });
+
+    // it('should throw InvalidTypeError when reset with invalid PrimitiveType Reference.identifier value', () => {
+    //   const testReference = new Reference();
+    //   const t = () => {
+    //     // @ts-expect-error: allow invalid type for testing
+    //     testReference.setIdentifier(INVALID_NON_STRING_TYPE);
+    //   };
+    //   expect(t).toThrow(InvalidTypeError);
+    //   expect(t).toThrow(`Invalid Reference.identifier; Provided value is not an instance of Identifier.`);
+    // });
+
+    // it('should throw InvalidTypeError when reset with invalid PrimitiveType Reference.display value', () => {
+    //   const testReference = new Reference();
+    //   const t = () => {
+    //     // @ts-expect-error: allow invalid type for testing
+    //     testReference.setDisplayElement(INVALID_STRING_TYPE);
+    //   };
+    //   expect(t).toThrow(InvalidTypeError);
+    //   expect(t).toThrow(`Invalid Reference.display; Provided element is not an instance of StringType.`);
+    // });
   });
 
   describe('Serialization/Deserialization', () => {

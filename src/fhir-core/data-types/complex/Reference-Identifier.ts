@@ -52,9 +52,9 @@ import {
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import { RESOURCE_TYPES, FhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
-import { assertFhirType, FhirTypeGuard } from '@src/fhir-core/utility/type-guards';
-import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { assertFhirType, FhirTypeGuard, isDefined } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -156,9 +156,13 @@ export class Reference extends DataType implements IBase {
    * @returns this
    */
   public setReferenceElement(element: StringType | undefined): this {
-    const optErrMsg = `Invalid Reference.reference; Provided element is not an instance of StringType.`;
-    assertFhirType<StringType>(element, StringType, optErrMsg);
-    this.reference = element;
+    if (isDefined<StringType | undefined>(element)) {
+      const optErrMsg = `Invalid Reference.reference; Provided element is not an instance of StringType.`;
+      assertFhirType<StringType>(element, StringType, optErrMsg);
+      this.reference = element;
+    } else {
+      this.reference = undefined;
+    }
     return this;
   }
 
@@ -184,9 +188,12 @@ export class Reference extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setReference(value: fhirString | undefined): this {
-    const optErrMsg = `Invalid Reference.reference (${String(value)})`;
-    this.reference =
-      value === undefined ? undefined : new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
+    if (isDefined<fhirString | undefined>(value)) {
+      const optErrMsg = `Invalid Reference.reference (${String(value)})`;
+      this.reference = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
+    } else {
+      this.reference = undefined;
+    }
     return this;
   }
 
@@ -211,9 +218,13 @@ export class Reference extends DataType implements IBase {
    * @returns this
    */
   public setTypeElement(element: UriType | undefined): this {
-    const optErrMsg = `Invalid Reference.type; Provided element is not an instance of UriType.`;
-    assertFhirType<UriType>(element, UriType, optErrMsg);
-    this.type = element;
+    if (isDefined<UriType | undefined>(element)) {
+      const optErrMsg = `Invalid Reference.type; Provided element is not an instance of UriType.`;
+      assertFhirType<UriType>(element, UriType, optErrMsg);
+      this.type = element;
+    } else {
+      this.type = undefined;
+    }
     return this;
   }
 
@@ -239,8 +250,12 @@ export class Reference extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setType(value: fhirUri | undefined): this {
-    const optErrMsg = `Invalid Reference.type (${String(value)})`;
-    this.type = value === undefined ? undefined : new UriType(parseFhirPrimitiveData(value, fhirUriSchema, optErrMsg));
+    if (isDefined<fhirUri | undefined>(value)) {
+      const optErrMsg = `Invalid Reference.type (${String(value)})`;
+      this.type = new UriType(parseFhirPrimitiveData(value, fhirUriSchema, optErrMsg));
+    } else {
+      this.type = undefined;
+    }
     return this;
   }
 
@@ -265,9 +280,13 @@ export class Reference extends DataType implements IBase {
    * @returns this
    */
   public setIdentifier(value: Identifier | undefined): this {
-    const optErrMsg = `Invalid Reference.identifier; Provided value is not an instance of Identifier.`;
-    assertFhirType<Identifier>(value, Identifier, optErrMsg);
-    this.identifier = value;
+    if (isDefined<Identifier | undefined>(value)) {
+      const optErrMsg = `Invalid Reference.identifier; Provided value is not an instance of Identifier.`;
+      assertFhirType<Identifier>(value, Identifier, optErrMsg);
+      this.identifier = value;
+    } else {
+      this.identifier = undefined;
+    }
     return this;
   }
 
@@ -292,9 +311,13 @@ export class Reference extends DataType implements IBase {
    * @returns this
    */
   public setDisplayElement(element: StringType | undefined): this {
-    const optErrMsg = `Invalid Reference.display; Provided element is not an instance of StringType.`;
-    assertFhirType<StringType>(element, StringType, optErrMsg);
-    this.display = element;
+    if (isDefined<StringType | undefined>(element)) {
+      const optErrMsg = `Invalid Reference.display; Provided element is not an instance of StringType.`;
+      assertFhirType<StringType>(element, StringType, optErrMsg);
+      this.display = element;
+    } else {
+      this.display = undefined;
+    }
     return this;
   }
 
@@ -320,9 +343,12 @@ export class Reference extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setDisplay(value: fhirString | undefined): this {
-    const optErrMsg = `Invalid Reference.display (${String(value)})`;
-    this.display =
-      value === undefined ? undefined : new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
+    if (isDefined<fhirString | undefined>(value)) {
+      const optErrMsg = `Invalid Reference.display (${String(value)})`;
+      this.display = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
+    } else {
+      this.display = undefined;
+    }
     return this;
   }
 
@@ -538,9 +564,13 @@ export class Identifier extends DataType implements IBase {
    * @returns this
    */
   public setUseElement(element: CodeType | undefined): this {
-    const optErrMsg = `Invalid Identifier.use; Provided element is not an instance of CodeType.`;
-    assertFhirType<CodeType>(element, CodeType, optErrMsg);
-    this.use = element;
+    if (isDefined<CodeType | undefined>(element)) {
+      const optErrMsg = `Invalid Identifier.use; Provided element is not an instance of CodeType.`;
+      assertFhirType<CodeType>(element, CodeType, optErrMsg);
+      this.use = element;
+    } else {
+      this.use = undefined;
+    }
     return this;
   }
 
@@ -566,8 +596,12 @@ export class Identifier extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setUse(value: fhirCode | undefined): this {
-    const optErrMsg = `Invalid Identifier.use (${String(value)})`;
-    this.use = value === undefined ? undefined : new CodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg));
+    if (isDefined<fhirCode | undefined>(value)) {
+      const optErrMsg = `Invalid Identifier.use (${String(value)})`;
+      this.use = new CodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg));
+    } else {
+      this.use = undefined;
+    }
     return this;
   }
 
@@ -592,9 +626,13 @@ export class Identifier extends DataType implements IBase {
    * @returns this
    */
   public setType(value: CodeableConcept | undefined): this {
-    const optErrMsg = `Invalid Identifier.type; Provided element is not an instance of CodeableConcept.`;
-    assertFhirType<CodeableConcept>(value, CodeableConcept, optErrMsg);
-    this.type = value;
+    if (isDefined<CodeableConcept | undefined>(value)) {
+      const optErrMsg = `Invalid Identifier.type; Provided element is not an instance of CodeableConcept.`;
+      assertFhirType<CodeableConcept>(value, CodeableConcept, optErrMsg);
+      this.type = value;
+    } else {
+      this.type = undefined;
+    }
     return this;
   }
 
@@ -619,9 +657,13 @@ export class Identifier extends DataType implements IBase {
    * @returns this
    */
   public setSystemElement(element: UriType | undefined): this {
-    const optErrMsg = `Invalid Identifier.system; Provided element is not an instance of UriType.`;
-    assertFhirType<UriType>(element, UriType, optErrMsg);
-    this.system = element;
+    if (isDefined<UriType | undefined>(element)) {
+      const optErrMsg = `Invalid Identifier.system; Provided element is not an instance of UriType.`;
+      assertFhirType<UriType>(element, UriType, optErrMsg);
+      this.system = element;
+    } else {
+      this.system = undefined;
+    }
     return this;
   }
 
@@ -647,9 +689,12 @@ export class Identifier extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setSystem(value: fhirUri | undefined): this {
-    const optErrMsg = `Invalid Identifier.system (${String(value)})`;
-    this.system =
-      value === undefined ? undefined : new UriType(parseFhirPrimitiveData(value, fhirUriSchema, optErrMsg));
+    if (isDefined<fhirUri | undefined>(value)) {
+      const optErrMsg = `Invalid Identifier.system (${String(value)})`;
+      this.system = new UriType(parseFhirPrimitiveData(value, fhirUriSchema, optErrMsg));
+    } else {
+      this.system = undefined;
+    }
     return this;
   }
 
@@ -674,9 +719,13 @@ export class Identifier extends DataType implements IBase {
    * @returns this
    */
   public setValueElement(element: StringType | undefined): this {
-    const optErrMsg = `Invalid Identifier.value; Provided element is not an instance of StringType.`;
-    assertFhirType<StringType>(element, StringType, optErrMsg);
-    this.value = element;
+    if (isDefined<StringType | undefined>(element)) {
+      const optErrMsg = `Invalid Identifier.value; Provided element is not an instance of StringType.`;
+      assertFhirType<StringType>(element, StringType, optErrMsg);
+      this.value = element;
+    } else {
+      this.value = undefined;
+    }
     return this;
   }
 
@@ -702,9 +751,12 @@ export class Identifier extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setValue(value: fhirString | undefined): this {
-    const optErrMsg = `Invalid Identifier.value (${String(value)})`;
-    this.value =
-      value === undefined ? undefined : new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
+    if (isDefined<fhirString | undefined>(value)) {
+      const optErrMsg = `Invalid Identifier.value (${String(value)})`;
+      this.value = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
+    } else {
+      this.value = undefined;
+    }
     return this;
   }
 
@@ -729,9 +781,13 @@ export class Identifier extends DataType implements IBase {
    * @returns this
    */
   public setPeriod(value: Period | undefined): this {
-    const optErrMsg = `Invalid Identifier.period; Provided element is not an instance of Period.`;
-    assertFhirType<Period>(value, Period, optErrMsg);
-    this.period = value;
+    if (isDefined<Period | undefined>(value)) {
+      const optErrMsg = `Invalid Identifier.period; Provided element is not an instance of Period.`;
+      assertFhirType<Period>(value, Period, optErrMsg);
+      this.period = value;
+    } else {
+      this.period = undefined;
+    }
     return this;
   }
 
@@ -759,8 +815,12 @@ export class Identifier extends DataType implements IBase {
    */
   @ReferenceTargets('Identifier.assigner', ['Organization'])
   public setAssigner(value: Reference | undefined): this {
-    // assertFhirType<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
-    this.assigner = value;
+    if (isDefined<Reference | undefined>(value)) {
+      // assertFhirType<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
+      this.assigner = value;
+    } else {
+      this.assigner = undefined;
+    }
     return this;
   }
 
@@ -925,7 +985,8 @@ export function ReferenceTargets(sourceField: string, referenceTargets: FhirReso
 }
 
 /**
- * Validate the Reference value throwing an InvalidTypeError if it is not valid.
+ * Validate the Reference value throwing an InvalidTypeError if it is not valid. Only used by the
+ * ReferenceTargets decorator function.
  *
  * @param referenceTargets - FhirResourceType array of target references.
  * @param argValue - Argument value from original decorated function

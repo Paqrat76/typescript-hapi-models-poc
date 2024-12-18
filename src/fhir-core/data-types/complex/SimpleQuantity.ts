@@ -26,6 +26,7 @@ import { Quantity } from '@src/fhir-core/data-types/complex/Quantity';
 import { IBase } from '@src/fhir-core/base-models/IBase';
 import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { fhirCode } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { isDefined } from '@src/fhir-core/utility/type-guards';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -62,7 +63,7 @@ export class SimpleQuantity extends Quantity implements IBase {
    * @throws AsseretionError if any defined enumType is passed in
    */
   public override setComparatorEnumType(enumType: EnumCodeType | undefined): this {
-    assert(enumType === undefined, `SimpleQuantity does not support the 'comparator' element.`);
+    assert(!isDefined<EnumCodeType | undefined>(enumType), `SimpleQuantity does not support the 'comparator' element.`);
     return this;
   }
 
@@ -74,7 +75,7 @@ export class SimpleQuantity extends Quantity implements IBase {
    * @throws AsseretionError if any defined element is passed in
    */
   public override setComparatorElement(element: CodeType | undefined): this {
-    assert(element === undefined, `SimpleQuantity does not support the 'comparator' element.`);
+    assert(!isDefined<CodeType | undefined>(element), `SimpleQuantity does not support the 'comparator' element.`);
     return this;
   }
 
@@ -86,7 +87,7 @@ export class SimpleQuantity extends Quantity implements IBase {
    * @throws AsseretionError if any defined value is passed in
    */
   public override setComparator(value: fhirCode | undefined): this {
-    assert(value === undefined, `SimpleQuantity does not support the 'comparator' element.`);
+    assert(!isDefined<fhirCode | undefined>(value), `SimpleQuantity does not support the 'comparator' element.`);
     return this;
   }
 

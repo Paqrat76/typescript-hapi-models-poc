@@ -42,6 +42,7 @@ import {
   fhirBoolean,
   fhirBooleanSchema,
   fhirCode,
+  fhirCodeSchema,
   fhirString,
   fhirStringSchema,
   fhirTime,
@@ -75,7 +76,7 @@ import {
   processDomainResourceJson,
 } from '@src/fhir-core/utility/fhir-parsers';
 import { parseContainedResources } from '@src/fhir-models/fhir-contained-resource-parser';
-import { assertFhirType, assertFhirTypeList, isDefined } from '@src/fhir-core/utility/type-guards';
+import { assertFhirType, assertFhirTypeList, assertIsDefined, isDefined } from '@src/fhir-core/utility/type-guards';
 import { isEmpty } from '@src/fhir-core/utility/common-util';
 import { extractFieldName, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
@@ -519,9 +520,13 @@ export class PractitionerRole extends DomainResource implements IBase {
    * @returns this
    */
   public setIdentifier(value: Identifier[] | undefined): this {
-    const optErrMsg = `Invalid PractitionerRole.identifier; Provided value array has an element that is not an instance of Identifier.`;
-    assertFhirTypeList<Identifier>(value, Identifier, optErrMsg);
-    this.identifier = value;
+    if (isDefined<Identifier[] | undefined>(value)) {
+      const optErrMsg = `Invalid PractitionerRole.identifier; Provided value array has an element that is not an instance of Identifier.`;
+      assertFhirTypeList<Identifier>(value, Identifier, optErrMsg);
+      this.identifier = value;
+    } else {
+      this.identifier = undefined;
+    }
     return this;
   }
 
@@ -575,9 +580,13 @@ export class PractitionerRole extends DomainResource implements IBase {
    * @returns this
    */
   public setActiveElement(element: BooleanType | undefined): this {
-    const optErrMsg = `Invalid PractitionerRole.active; Provided value is not an instance of BooleanType.`;
-    assertFhirType<BooleanType>(element, BooleanType, optErrMsg);
-    this.active = element;
+    if (isDefined<BooleanType | undefined>(element)) {
+      const optErrMsg = `Invalid PractitionerRole.active; Provided value is not an instance of BooleanType.`;
+      assertFhirType<BooleanType>(element, BooleanType, optErrMsg);
+      this.active = element;
+    } else {
+      this.active = undefined;
+    }
     return this;
   }
 
@@ -603,9 +612,12 @@ export class PractitionerRole extends DomainResource implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setActive(value: fhirBoolean | undefined): this {
-    const optErrMsg = `Invalid PractitionerRole.active (${String(value)})`;
-    this.active =
-      value === undefined ? undefined : new BooleanType(parseFhirPrimitiveData(value, fhirBooleanSchema, optErrMsg));
+    if (isDefined<fhirBoolean | undefined>(value)) {
+      const optErrMsg = `Invalid PractitionerRole.active (${String(value)})`;
+      this.active = new BooleanType(parseFhirPrimitiveData(value, fhirBooleanSchema, optErrMsg));
+    } else {
+      this.active = undefined;
+    }
     return this;
   }
 
@@ -630,9 +642,13 @@ export class PractitionerRole extends DomainResource implements IBase {
    * @returns this
    */
   public setPeriod(value: Period | undefined): this {
-    const optErrMsg = `Invalid PractitionerRole.period; Provided value is not an instance of Period.`;
-    assertFhirType<Period>(value, Period, optErrMsg);
-    this.period = value;
+    if (isDefined<Period | undefined>(value)) {
+      const optErrMsg = `Invalid PractitionerRole.period; Provided value is not an instance of Period.`;
+      assertFhirType<Period>(value, Period, optErrMsg);
+      this.period = value;
+    } else {
+      this.period = undefined;
+    }
     return this;
   }
 
@@ -660,8 +676,12 @@ export class PractitionerRole extends DomainResource implements IBase {
    */
   @ReferenceTargets('PractitionerRole.practitioner', ['Practitioner'])
   public setPractitioner(value: Reference | undefined): this {
-    // assertFhirType<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
-    this.practitioner = value;
+    if (isDefined<Reference | undefined>(value)) {
+      // assertFhirType<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
+      this.practitioner = value;
+    } else {
+      this.practitioner = undefined;
+    }
     return this;
   }
 
@@ -689,8 +709,12 @@ export class PractitionerRole extends DomainResource implements IBase {
    */
   @ReferenceTargets('PractitionerRole.organization', ['Organization'])
   public setOrganization(value: Reference | undefined): this {
-    // assertFhirType<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
-    this.organization = value;
+    if (isDefined<Reference | undefined>(value)) {
+      // assertFhirType<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
+      this.organization = value;
+    } else {
+      this.organization = undefined;
+    }
     return this;
   }
 
@@ -715,9 +739,13 @@ export class PractitionerRole extends DomainResource implements IBase {
    * @returns this
    */
   public setCode(value: CodeableConcept[] | undefined): this {
-    const optErrMsg = `Invalid PractitionerRole.code; Provided value array has an element that is not an instance of CodeableConcept.`;
-    assertFhirTypeList<CodeableConcept>(value, CodeableConcept, optErrMsg);
-    this.code = value;
+    if (isDefined<CodeableConcept[] | undefined>(value)) {
+      const optErrMsg = `Invalid PractitionerRole.code; Provided value array has an element that is not an instance of CodeableConcept.`;
+      assertFhirTypeList<CodeableConcept>(value, CodeableConcept, optErrMsg);
+      this.code = value;
+    } else {
+      this.code = undefined;
+    }
     return this;
   }
 
@@ -769,9 +797,13 @@ export class PractitionerRole extends DomainResource implements IBase {
    * @returns this
    */
   public setSpecialty(value: CodeableConcept[] | undefined): this {
-    const optErrMsg = `Invalid PractitionerRole.specialty; Provided value array has an element that is not an instance of CodeableConcept.`;
-    assertFhirTypeList<CodeableConcept>(value, CodeableConcept, optErrMsg);
-    this.specialty = value;
+    if (isDefined<CodeableConcept[] | undefined>(value)) {
+      const optErrMsg = `Invalid PractitionerRole.specialty; Provided value array has an element that is not an instance of CodeableConcept.`;
+      assertFhirTypeList<CodeableConcept>(value, CodeableConcept, optErrMsg);
+      this.specialty = value;
+    } else {
+      this.specialty = undefined;
+    }
     return this;
   }
 
@@ -826,8 +858,12 @@ export class PractitionerRole extends DomainResource implements IBase {
    */
   @ReferenceTargets('PractitionerRole.location', ['Location'])
   public setLocation(value: Reference[] | undefined): this {
-    // assertFhirTypeList<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
-    this.location = value;
+    if (isDefined<Reference[] | undefined>(value)) {
+      // assertFhirTypeList<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
+      this.location = value;
+    } else {
+      this.location = undefined;
+    }
     return this;
   }
 
@@ -882,8 +918,12 @@ export class PractitionerRole extends DomainResource implements IBase {
    */
   @ReferenceTargets('PractitionerRole.healthcareService', ['HealthcareService'])
   public setHealthcareService(value: Reference[] | undefined): this {
-    // assertFhirTypeList<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
-    this.healthcareService = value;
+    if (isDefined<Reference[] | undefined>(value)) {
+      // assertFhirTypeList<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
+      this.healthcareService = value;
+    } else {
+      this.healthcareService = undefined;
+    }
     return this;
   }
 
@@ -937,9 +977,13 @@ export class PractitionerRole extends DomainResource implements IBase {
    * @returns this
    */
   public setTelecom(value: ContactPoint[] | undefined): this {
-    const optErrMsg = `Invalid PractitionerRole.telecom; Provided value array has an element that is not an instance of ContactPoint.`;
-    assertFhirTypeList<ContactPoint>(value, ContactPoint, optErrMsg);
-    this.telecom = value;
+    if (isDefined<ContactPoint[] | undefined>(value)) {
+      const optErrMsg = `Invalid PractitionerRole.telecom; Provided value array has an element that is not an instance of ContactPoint.`;
+      assertFhirTypeList<ContactPoint>(value, ContactPoint, optErrMsg);
+      this.telecom = value;
+    } else {
+      this.telecom = undefined;
+    }
     return this;
   }
 
@@ -993,13 +1037,17 @@ export class PractitionerRole extends DomainResource implements IBase {
    * @returns this
    */
   public setAvailableTime(value: PractitionerRoleAvailableTimeComponent[] | undefined): this {
-    const optErrMsg = `Invalid PractitionerRole.availableTime; Provided value array has an element that is not an instance of PractitionerRoleAvailableTimeComponent.`;
-    assertFhirTypeList<PractitionerRoleAvailableTimeComponent>(
-      value,
-      PractitionerRoleAvailableTimeComponent,
-      optErrMsg,
-    );
-    this.availableTime = value;
+    if (isDefined<PractitionerRoleAvailableTimeComponent[] | undefined>(value)) {
+      const optErrMsg = `Invalid PractitionerRole.availableTime; Provided value array has an element that is not an instance of PractitionerRoleAvailableTimeComponent.`;
+      assertFhirTypeList<PractitionerRoleAvailableTimeComponent>(
+        value,
+        PractitionerRoleAvailableTimeComponent,
+        optErrMsg,
+      );
+      this.availableTime = value;
+    } else {
+      this.availableTime = undefined;
+    }
     return this;
   }
 
@@ -1053,9 +1101,17 @@ export class PractitionerRole extends DomainResource implements IBase {
    * @returns this
    */
   public setNotAvailable(value: PractitionerRoleNotAvailableComponent[] | undefined): this {
-    const optErrMsg = `Invalid PractitionerRole.notAvailable; Provided value array has an element that is not an instance of PractitionerRoleNotAvailableComponent.`;
-    assertFhirTypeList<PractitionerRoleNotAvailableComponent>(value, PractitionerRoleNotAvailableComponent, optErrMsg);
-    this.notAvailable = value;
+    if (isDefined<PractitionerRoleNotAvailableComponent[] | undefined>(value)) {
+      const optErrMsg = `Invalid PractitionerRole.notAvailable; Provided value array has an element that is not an instance of PractitionerRoleNotAvailableComponent.`;
+      assertFhirTypeList<PractitionerRoleNotAvailableComponent>(
+        value,
+        PractitionerRoleNotAvailableComponent,
+        optErrMsg,
+      );
+      this.notAvailable = value;
+    } else {
+      this.notAvailable = undefined;
+    }
     return this;
   }
 
@@ -1109,9 +1165,13 @@ export class PractitionerRole extends DomainResource implements IBase {
    * @returns this
    */
   public setAvailabilityExceptionsElement(element: StringType | undefined): this {
-    const optErrMsg = `Invalid PractitionerRole.availabilityExceptions; Provided element is not an instance of StringType.`;
-    assertFhirType<StringType>(element, StringType, optErrMsg);
-    this.availabilityExceptions = element;
+    if (isDefined<StringType | undefined>(element)) {
+      const optErrMsg = `Invalid PractitionerRole.availabilityExceptions; Provided element is not an instance of StringType.`;
+      assertFhirType<StringType>(element, StringType, optErrMsg);
+      this.availabilityExceptions = element;
+    } else {
+      this.availabilityExceptions = undefined;
+    }
     return this;
   }
 
@@ -1137,9 +1197,12 @@ export class PractitionerRole extends DomainResource implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setAvailabilityExceptions(value: fhirString | undefined): this {
-    const optErrMsg = `Invalid PractitionerRole.availabilityExceptions`;
-    this.availabilityExceptions =
-      value === undefined ? undefined : new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
+    if (isDefined<fhirString | undefined>(value)) {
+      const optErrMsg = `Invalid PractitionerRole.availabilityExceptions`;
+      this.availabilityExceptions = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
+    } else {
+      this.availabilityExceptions = undefined;
+    }
     return this;
   }
 
@@ -1165,8 +1228,12 @@ export class PractitionerRole extends DomainResource implements IBase {
    */
   @ReferenceTargets('PractitionerRole.endpoint', ['Endpoint'])
   public setEndpoint(value: Reference[] | undefined): this {
-    // assertFhirTypeList<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
-    this.endpoint = value;
+    if (isDefined<Reference[] | undefined>(value)) {
+      // assertFhirTypeList<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
+      this.endpoint = value;
+    } else {
+      this.endpoint = undefined;
+    }
     return this;
   }
 
@@ -1494,9 +1561,13 @@ export class PractitionerRoleAvailableTimeComponent extends BackboneElement {
    * @returns this
    */
   public setDaysOfWeekEnumType(enumTypes: EnumCodeType[] | undefined): this {
-    const errMsgPrefix = `Invalid PractitionerRole.availableTime.daysOfWeek`;
-    assertEnumCodeTypeList<DaysOfWeekEnum>(enumTypes, DaysOfWeekEnum, errMsgPrefix);
-    this.daysOfWeek = enumTypes;
+    if (isDefined<EnumCodeType[] | undefined>(enumTypes)) {
+      const errMsgPrefix = `Invalid PractitionerRole.availableTime.daysOfWeek`;
+      assertEnumCodeTypeList<DaysOfWeekEnum>(enumTypes, DaysOfWeekEnum, errMsgPrefix);
+      this.daysOfWeek = enumTypes;
+    } else {
+      this.daysOfWeek = undefined;
+    }
     return this;
   }
 
@@ -1545,13 +1616,17 @@ export class PractitionerRoleAvailableTimeComponent extends BackboneElement {
    * @returns this
    */
   public setDaysOfWeekElement(elements: CodeType[] | undefined): this {
-    const optErrMsg = `Invalid PractitionerRole.availableTime.daysOfWeek; Provided element array has an element that is not an instance of CodeType.`;
-    assertFhirTypeList<CodeType>(elements, CodeType, optErrMsg);
-    const enumCodeTypes = [] as EnumCodeType[];
-    elements.forEach((type: CodeType) => {
-      enumCodeTypes.push(new EnumCodeType(type, this.daysOfWeekEnum));
-    });
-    this.daysOfWeek = enumCodeTypes;
+    if (isDefined<CodeType[] | undefined>(elements)) {
+      const optErrMsg = `Invalid PractitionerRole.availableTime.daysOfWeek; Provided element array has an element that is not an instance of CodeType.`;
+      assertFhirTypeList<CodeType>(elements, CodeType, optErrMsg);
+      const enumCodeTypes = [] as EnumCodeType[];
+      elements.forEach((type: CodeType) => {
+        enumCodeTypes.push(new EnumCodeType(type, this.daysOfWeekEnum));
+      });
+      this.daysOfWeek = enumCodeTypes;
+    } else {
+      this.daysOfWeek = undefined;
+    }
     return this;
   }
 
@@ -1600,10 +1675,13 @@ export class PractitionerRoleAvailableTimeComponent extends BackboneElement {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setDaysOfWeek(values: fhirCode[] | undefined): this {
-    if (values !== undefined) {
+    if (isDefined<fhirCode[] | undefined>(values)) {
       const enumCodeTypes = [] as EnumCodeType[];
+      const optErrMsg = `Invalid PractitionerRole.availableTime.daysOfWeek; Provided value is not an instance of fhirCode.`;
       values.forEach((value: fhirCode) => {
-        enumCodeTypes.push(new EnumCodeType(value, this.daysOfWeekEnum));
+        enumCodeTypes.push(
+          new EnumCodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg), this.daysOfWeekEnum),
+        );
       });
       this.daysOfWeek = enumCodeTypes;
     } else {
@@ -1621,7 +1699,10 @@ export class PractitionerRoleAvailableTimeComponent extends BackboneElement {
   public addDaysOfWeek(value: fhirCode | undefined): this {
     if (isDefined<fhirCode | undefined>(value)) {
       this.initDaysOfWeek();
-      this.daysOfWeek?.push(new EnumCodeType(value, this.daysOfWeekEnum));
+      const optErrMsg = `Invalid PractitionerRole.availableTime.daysOfWeek; Provided value is not an instance of fhirCode.`;
+      this.daysOfWeek?.push(
+        new EnumCodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg), this.daysOfWeekEnum),
+      );
     }
     return this;
   }
@@ -1656,9 +1737,13 @@ export class PractitionerRoleAvailableTimeComponent extends BackboneElement {
    * @returns this
    */
   public setAllDayElement(element: BooleanType | undefined): this {
-    const optErrMsg = `Invalid PractitionerRole.availableTime.allDay; Provided value is not an instance of BooleanType.`;
-    assertFhirType<BooleanType>(element, BooleanType, optErrMsg);
-    this.allDay = element;
+    if (isDefined<BooleanType | undefined>(element)) {
+      const optErrMsg = `Invalid PractitionerRole.availableTime.allDay; Provided value is not an instance of BooleanType.`;
+      assertFhirType<BooleanType>(element, BooleanType, optErrMsg);
+      this.allDay = element;
+    } else {
+      this.allDay = undefined;
+    }
     return this;
   }
 
@@ -1684,9 +1769,12 @@ export class PractitionerRoleAvailableTimeComponent extends BackboneElement {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setAllDay(value: fhirBoolean | undefined): this {
-    const optErrMsg = `Invalid PractitionerRole.availableTime.allDay (${String(value)})`;
-    this.allDay =
-      value === undefined ? undefined : new BooleanType(parseFhirPrimitiveData(value, fhirBooleanSchema, optErrMsg));
+    if (isDefined<fhirBoolean | undefined>(value)) {
+      const optErrMsg = `Invalid PractitionerRole.availableTime.allDay (${String(value)})`;
+      this.allDay = new BooleanType(parseFhirPrimitiveData(value, fhirBooleanSchema, optErrMsg));
+    } else {
+      this.allDay = undefined;
+    }
     return this;
   }
 
@@ -1711,9 +1799,13 @@ export class PractitionerRoleAvailableTimeComponent extends BackboneElement {
    * @returns this
    */
   public setAvailableStartTimeElement(element: TimeType | undefined): this {
-    const optErrMsg = `Invalid PractitionerRole.availableTime.availableStartTime; Provided value is not an instance of TimeType.`;
-    assertFhirType<TimeType>(element, TimeType, optErrMsg);
-    this.availableStartTime = element;
+    if (isDefined<TimeType | undefined>(element)) {
+      const optErrMsg = `Invalid PractitionerRole.availableTime.availableStartTime; Provided value is not an instance of TimeType.`;
+      assertFhirType<TimeType>(element, TimeType, optErrMsg);
+      this.availableStartTime = element;
+    } else {
+      this.availableStartTime = undefined;
+    }
     return this;
   }
 
@@ -1739,9 +1831,12 @@ export class PractitionerRoleAvailableTimeComponent extends BackboneElement {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setAvailableStartTime(value: fhirTime | undefined): this {
-    const optErrMsg = `Invalid PractitionerRole.availableTime.availableStartTime (${String(value)})`;
-    this.availableStartTime =
-      value === undefined ? undefined : new TimeType(parseFhirPrimitiveData(value, fhirTimeSchema, optErrMsg));
+    if (isDefined<fhirTime | undefined>(value)) {
+      const optErrMsg = `Invalid PractitionerRole.availableTime.availableStartTime (${String(value)})`;
+      this.availableStartTime = new TimeType(parseFhirPrimitiveData(value, fhirTimeSchema, optErrMsg));
+    } else {
+      this.availableStartTime = undefined;
+    }
     return this;
   }
 
@@ -1766,9 +1861,13 @@ export class PractitionerRoleAvailableTimeComponent extends BackboneElement {
    * @returns this
    */
   public setAvailableEndTimeElement(element: TimeType | undefined): this {
-    const optErrMsg = `Invalid PractitionerRole.availableTime.availableEndTime; Provided value is not an instance of TimeType.`;
-    assertFhirType<TimeType>(element, TimeType, optErrMsg);
-    this.availableEndTime = element;
+    if (isDefined<TimeType | undefined>(element)) {
+      const optErrMsg = `Invalid PractitionerRole.availableTime.availableEndTime; Provided value is not an instance of TimeType.`;
+      assertFhirType<TimeType>(element, TimeType, optErrMsg);
+      this.availableEndTime = element;
+    } else {
+      this.availableEndTime = undefined;
+    }
     return this;
   }
 
@@ -1794,9 +1893,12 @@ export class PractitionerRoleAvailableTimeComponent extends BackboneElement {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setAvailableEndTime(value: fhirTime | undefined): this {
-    const optErrMsg = `Invalid PractitionerRole.availableTime.availableEndTime (${String(value)})`;
-    this.availableEndTime =
-      value === undefined ? undefined : new TimeType(parseFhirPrimitiveData(value, fhirTimeSchema, optErrMsg));
+    if (isDefined<fhirTime | undefined>(value)) {
+      const optErrMsg = `Invalid PractitionerRole.availableTime.availableEndTime (${String(value)})`;
+      this.availableEndTime = new TimeType(parseFhirPrimitiveData(value, fhirTimeSchema, optErrMsg));
+    } else {
+      this.availableEndTime = undefined;
+    }
     return this;
   }
 
@@ -1991,11 +2093,10 @@ export class PractitionerRoleNotAvailableComponent extends BackboneElement {
    * @returns this
    */
   public setDescriptionElement(element: StringType): this {
-    if (isDefined<StringType>(element)) {
-      const optErrMsg = `Invalid PractitionerRole.notAvailable.description; Provided value is not an instance of StringType.`;
-      assertFhirType<StringType>(element, StringType, optErrMsg);
-      this.description = element;
-    }
+    assertIsDefined<StringType>(element, `PractitionerRole.notAvailable.description is required`);
+    const optErrMsg = `Invalid PractitionerRole.notAvailable.description; Provided value is not an instance of StringType.`;
+    assertFhirType<StringType>(element, StringType, optErrMsg);
+    this.description = element;
     return this;
   }
 
@@ -2028,10 +2129,9 @@ export class PractitionerRoleNotAvailableComponent extends BackboneElement {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setDescription(value: fhirString): this {
-    if (isDefined<fhirString>(value)) {
-      const optErrMsg = `Invalid PractitionerRole.notAvailable.description`;
-      this.description = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
-    }
+    assertIsDefined<fhirString>(value, `PractitionerRole.notAvailable.description is required`);
+    const optErrMsg = `Invalid PractitionerRole.notAvailable.description`;
+    this.description = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
     return this;
   }
 
@@ -2056,9 +2156,13 @@ export class PractitionerRoleNotAvailableComponent extends BackboneElement {
    * @returns this
    */
   public setDuring(value: Period | undefined): this {
-    const optErrMsg = `Invalid PractitionerRole.notAvailable.during; Provided value is not an instance of Period.`;
-    assertFhirType<Period>(value, Period, optErrMsg);
-    this.during = value;
+    if (isDefined<Period | undefined>(value)) {
+      const optErrMsg = `Invalid PractitionerRole.notAvailable.during; Provided value is not an instance of Period.`;
+      assertFhirType<Period>(value, Period, optErrMsg);
+      this.during = value;
+    } else {
+      this.during = undefined;
+    }
     return this;
   }
 

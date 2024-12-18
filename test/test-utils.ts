@@ -42,9 +42,9 @@ import {
   setFhirComplexJson,
   setFhirPrimitiveJson,
 } from '@src/fhir-core/base-models/core-fhir-models';
+import { isEmpty as _isEmpty } from '@src/fhir-core/utility/common-util';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
-import { isEmpty as _isEmpty } from '../src';
 
 export {
   FHIR_MIN_INTEGER,
@@ -102,7 +102,7 @@ export const INVALID_NON_STRING_TYPE_VALUE = 'Invalid datatype';
 export const INVALID_NON_STRING_TYPE = new StringType(INVALID_NON_STRING_TYPE_VALUE);
 export const INVALID_STRING_TYPE_VALUE = 12345;
 export const INVALID_STRING_TYPE = new IntegerType(INVALID_STRING_TYPE_VALUE);
-
+export const INVALID_STRING = '';
 export const TOO_BIG_STRING = getString(FHIR_MAX_STRING_LENGTH + 2);
 
 export function getString(maxLength: number): string {

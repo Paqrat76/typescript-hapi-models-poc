@@ -31,6 +31,7 @@ import { PositiveIntType } from '@src/fhir-core/data-types/primitive/PositiveInt
 import { Period } from '@src/fhir-core/data-types/complex/Period';
 import {
   fhirCode,
+  fhirCodeSchema,
   fhirPositiveInt,
   fhirPositiveIntSchema,
   fhirString,
@@ -38,7 +39,7 @@ import {
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirType } from '@src/fhir-core/utility/type-guards';
+import { assertFhirType, isDefined } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
@@ -51,7 +52,7 @@ import * as JSON from '@src/fhir-core/utility/json-helpers';
  *
  * **FHIR Specification**
  * - **Short:** Details of a Technology mediated contact point (phone, fax, email, etc.)
- * - **Definition:** Details for all kinds of technology mediated contact points for a person or organization, including telephone, email, etc."
+ * - **Definition:** Details for all kinds of technology mediated contact points for a person or organization, including telephone, email, etc.
  * - **FHIR Version:** 4.0.1
  *
  * @privateRemarks
@@ -170,9 +171,13 @@ export class ContactPoint extends DataType implements IBase {
    * @returns this
    */
   public setSystemEnumType(enumType: EnumCodeType | undefined): this {
-    const errMsgPrefix = 'ContactPoint.system';
-    assertEnumCodeType<ContactPointSystemEnum>(enumType, ContactPointSystemEnum, errMsgPrefix);
-    this.system = enumType;
+    if (isDefined<EnumCodeType | undefined>(enumType)) {
+      const errMsgPrefix = 'ContactPoint.system';
+      assertEnumCodeType<ContactPointSystemEnum>(enumType, ContactPointSystemEnum, errMsgPrefix);
+      this.system = enumType;
+    } else {
+      this.system = undefined;
+    }
     return this;
   }
 
@@ -200,13 +205,13 @@ export class ContactPoint extends DataType implements IBase {
    * @returns this
    */
   public setSystemElement(element: CodeType | undefined): this {
-    if (element === undefined) {
+    if (isDefined<CodeType | undefined>(element)) {
+      const optErrMsg = `Invalid ContactPoint.system; Provided element is not an instance of CodeType.`;
+      assertFhirType<CodeType>(element, CodeType, optErrMsg);
+      this.system = new EnumCodeType(element, this.contactPointSystemEnum);
+    } else {
       this.system = undefined;
-      return this;
     }
-    const optErrMsg = `Invalid ContactPoint.system; Provided element is not an instance of CodeType.`;
-    assertFhirType<CodeType>(element, CodeType, optErrMsg);
-    this.system = new EnumCodeType(element, this.contactPointSystemEnum);
     return this;
   }
 
@@ -234,11 +239,15 @@ export class ContactPoint extends DataType implements IBase {
    * @returns this
    */
   public setSystem(value: fhirCode | undefined): this {
-    if (value === undefined) {
+    if (isDefined<fhirCode | undefined>(value)) {
+      const optErrMsg = `Invalid ContactPoint.system; Provided value is not an instance of fhirCode.`;
+      this.system = new EnumCodeType(
+        parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg),
+        this.contactPointSystemEnum,
+      );
+    } else {
       this.system = undefined;
-      return this;
     }
-    this.system = new EnumCodeType(value, this.contactPointSystemEnum);
     return this;
   }
 
@@ -263,9 +272,13 @@ export class ContactPoint extends DataType implements IBase {
    * @returns this
    */
   public setValueElement(element: StringType | undefined): this {
-    const optErrMsg = `Invalid ContactPoint.value; Provided element is not an instance of StringType.`;
-    assertFhirType<StringType>(element, StringType, optErrMsg);
-    this.value = element;
+    if (isDefined<StringType | undefined>(element)) {
+      const optErrMsg = `Invalid ContactPoint.value; Provided element is not an instance of StringType.`;
+      assertFhirType<StringType>(element, StringType, optErrMsg);
+      this.value = element;
+    } else {
+      this.value = undefined;
+    }
     return this;
   }
 
@@ -291,9 +304,12 @@ export class ContactPoint extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setValue(value: fhirString | undefined): this {
-    const optErrMsg = `Invalid ContactPoint.value`;
-    this.value =
-      value === undefined ? undefined : new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
+    if (isDefined<fhirString | undefined>(value)) {
+      const optErrMsg = `Invalid ContactPoint.value`;
+      this.value = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
+    } else {
+      this.value = undefined;
+    }
     return this;
   }
 
@@ -318,9 +334,13 @@ export class ContactPoint extends DataType implements IBase {
    * @returns this
    */
   public setUseEnumType(enumType: EnumCodeType | undefined): this {
-    const errMsgPrefix = 'ContactPoint.use';
-    assertEnumCodeType<ContactPointUseEnum>(enumType, ContactPointUseEnum, errMsgPrefix);
-    this.use = enumType;
+    if (isDefined<EnumCodeType | undefined>(enumType)) {
+      const errMsgPrefix = 'ContactPoint.use';
+      assertEnumCodeType<ContactPointUseEnum>(enumType, ContactPointUseEnum, errMsgPrefix);
+      this.use = enumType;
+    } else {
+      this.use = undefined;
+    }
     return this;
   }
 
@@ -348,13 +368,13 @@ export class ContactPoint extends DataType implements IBase {
    * @returns this
    */
   public setUseElement(element: CodeType | undefined): this {
-    if (element === undefined) {
+    if (isDefined<CodeType | undefined>(element)) {
+      const optErrMsg = `Invalid ContactPoint.use; Provided element is not an instance of CodeType.`;
+      assertFhirType<CodeType>(element, CodeType, optErrMsg);
+      this.use = new EnumCodeType(element, this.contactPointUseEnum);
+    } else {
       this.use = undefined;
-      return this;
     }
-    const optErrMsg = `Invalid ContactPoint.use; Provided element is not an instance of CodeType.`;
-    assertFhirType<CodeType>(element, CodeType, optErrMsg);
-    this.use = new EnumCodeType(element, this.contactPointUseEnum);
     return this;
   }
 
@@ -382,11 +402,12 @@ export class ContactPoint extends DataType implements IBase {
    * @returns this
    */
   public setUse(value: fhirCode | undefined): this {
-    if (value === undefined) {
+    if (isDefined<fhirCode | undefined>(value)) {
+      const optErrMsg = `Invalid ContactPoint.use; Provided value is not an instance of fhirCode.`;
+      this.use = new EnumCodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg), this.contactPointUseEnum);
+    } else {
       this.use = undefined;
-      return this;
     }
-    this.use = new EnumCodeType(value, this.contactPointUseEnum);
     return this;
   }
 
@@ -411,9 +432,13 @@ export class ContactPoint extends DataType implements IBase {
    * @returns this
    */
   public setRankElement(element: PositiveIntType | undefined): this {
-    const optErrMsg = `Invalid ContactPoint.rank; Provided element is not an instance of PositiveIntType.`;
-    assertFhirType<PositiveIntType>(element, PositiveIntType, optErrMsg);
-    this.rank = element;
+    if (isDefined<PositiveIntType | undefined>(element)) {
+      const optErrMsg = `Invalid ContactPoint.rank; Provided element is not an instance of PositiveIntType.`;
+      assertFhirType<PositiveIntType>(element, PositiveIntType, optErrMsg);
+      this.rank = element;
+    } else {
+      this.rank = undefined;
+    }
     return this;
   }
 
@@ -439,11 +464,12 @@ export class ContactPoint extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setRank(value: fhirPositiveInt | undefined): this {
-    const optErrMsg = `Invalid ContactPoint.rank (${String(value)})`;
-    this.rank =
-      value === undefined
-        ? undefined
-        : new PositiveIntType(parseFhirPrimitiveData(value, fhirPositiveIntSchema, optErrMsg));
+    if (isDefined<fhirPositiveInt | undefined>(value)) {
+      const optErrMsg = `Invalid ContactPoint.rank (${String(value)})`;
+      this.rank = new PositiveIntType(parseFhirPrimitiveData(value, fhirPositiveIntSchema, optErrMsg));
+    } else {
+      this.rank = undefined;
+    }
     return this;
   }
 
@@ -468,9 +494,13 @@ export class ContactPoint extends DataType implements IBase {
    * @returns this
    */
   public setPeriod(value: Period | undefined): this {
-    const optErrMsg = `Invalid ContactPoint.period; Provided element is not an instance of Period.`;
-    assertFhirType<Period>(value, Period, optErrMsg);
-    this.period = value;
+    if (isDefined<Period | undefined>(value)) {
+      const optErrMsg = `Invalid ContactPoint.period; Provided element is not an instance of Period.`;
+      assertFhirType<Period>(value, Period, optErrMsg);
+      this.period = value;
+    } else {
+      this.period = undefined;
+    }
     return this;
   }
 

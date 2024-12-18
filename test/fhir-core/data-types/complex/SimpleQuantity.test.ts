@@ -30,6 +30,7 @@ import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { QuantityComparatorEnum } from '@src/fhir-core/data-types/code-systems/QuantityComparatorEnum';
+import { UNDEFINED_VALUE } from '../../../test-utils';
 
 describe('SimpleQuantity', () => {
   const VALID_DECIMAL = 13.579;
@@ -55,8 +56,6 @@ describe('SimpleQuantity', () => {
   const VALID_CODE_2 = `testCodeType2`;
   const VALID_CODE_TYPE_2 = new CodeType(VALID_CODE_2);
 
-  const UNDEFINED_VALUE = undefined;
-
   let quantityComparatorEnum: QuantityComparatorEnum;
   beforeAll(() => {
     quantityComparatorEnum = new QuantityComparatorEnum();
@@ -64,10 +63,10 @@ describe('SimpleQuantity', () => {
 
   describe('Core', () => {
     const expectedJson = {
-      value: 13.579,
-      unit: 'This is a valid string.',
-      system: 'testUriType',
-      code: 'testCodeType',
+      value: VALID_DECIMAL,
+      unit: VALID_STRING,
+      system: VALID_URI,
+      code: VALID_CODE,
     };
 
     it('should be properly instantiated as empty', () => {
@@ -113,49 +112,6 @@ describe('SimpleQuantity', () => {
       expect(testSimpleQuantity.getSystem()).toBeUndefined();
       expect(testSimpleQuantity.hasCode()).toBe(false);
       expect(testSimpleQuantity.getCode()).toBeUndefined();
-    });
-
-    it('should properly handle comparator enum', () => {
-      const testSimpleQuantity = new SimpleQuantity();
-
-      testSimpleQuantity.setComparator(UNDEFINED_VALUE);
-      expect(testSimpleQuantity.hasComparator()).toBe(false);
-      expect(testSimpleQuantity.getComparator()).toBeUndefined();
-
-      testSimpleQuantity.setComparatorElement(UNDEFINED_VALUE);
-      expect(testSimpleQuantity.hasComparatorElement()).toBe(false);
-      expect(testSimpleQuantity.getComparatorElement()).toBeUndefined();
-
-      testSimpleQuantity.setComparatorEnumType(UNDEFINED_VALUE);
-      expect(testSimpleQuantity.hasComparatorEnumType()).toBe(false);
-      expect(testSimpleQuantity.getComparatorEnumType()).toBeUndefined();
-    });
-
-    it('should throw AssertionError when reset with primitive Quantity.comparator value', () => {
-      const testSimpleQuantity = new SimpleQuantity();
-      const t = () => {
-        testSimpleQuantity.setComparator(VALID_CODE_LESS_THAN);
-      };
-      expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`SimpleQuantity does not support the 'comparator' element.`);
-    });
-
-    it('should throw AssertionError when reset with PrimitiveType Quantity.comparator value', () => {
-      const testSimpleQuantity = new SimpleQuantity();
-      const t = () => {
-        testSimpleQuantity.setComparatorElement(VALID_CODE_LESS_THAN_TYPE);
-      };
-      expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`SimpleQuantity does not support the 'comparator' element.`);
-    });
-
-    it('should throw AssertionError when reset with PrimitiveType Quantity.comparator value', () => {
-      const testSimpleQuantity = new SimpleQuantity();
-      const t = () => {
-        testSimpleQuantity.setComparatorEnumType(new EnumCodeType(VALID_CODE_LESS_THAN, quantityComparatorEnum));
-      };
-      expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`SimpleQuantity does not support the 'comparator' element.`);
     });
 
     it('should properly copy()', () => {
@@ -253,6 +209,40 @@ describe('SimpleQuantity', () => {
       expect(testSimpleQuantity.getSystem()).toStrictEqual(VALID_URI_2);
       expect(testSimpleQuantity.hasCode()).toBe(true);
       expect(testSimpleQuantity.getCode()).toStrictEqual(VALID_CODE_2);
+    });
+
+    it('should properly handle comparator enum', () => {
+      const testSimpleQuantity = new SimpleQuantity();
+
+      testSimpleQuantity.setComparator(UNDEFINED_VALUE);
+      expect(testSimpleQuantity.hasComparator()).toBe(false);
+      expect(testSimpleQuantity.getComparator()).toBeUndefined();
+
+      testSimpleQuantity.setComparatorElement(UNDEFINED_VALUE);
+      expect(testSimpleQuantity.hasComparatorElement()).toBe(false);
+      expect(testSimpleQuantity.getComparatorElement()).toBeUndefined();
+
+      testSimpleQuantity.setComparatorEnumType(UNDEFINED_VALUE);
+      expect(testSimpleQuantity.hasComparatorEnumType()).toBe(false);
+      expect(testSimpleQuantity.getComparatorEnumType()).toBeUndefined();
+
+      let t = () => {
+        testSimpleQuantity.setComparator(VALID_CODE_LESS_THAN);
+      };
+      expect(t).toThrow(AssertionError);
+      expect(t).toThrow(`SimpleQuantity does not support the 'comparator' element.`);
+
+      t = () => {
+        testSimpleQuantity.setComparatorElement(VALID_CODE_LESS_THAN_TYPE);
+      };
+      expect(t).toThrow(AssertionError);
+      expect(t).toThrow(`SimpleQuantity does not support the 'comparator' element.`);
+
+      t = () => {
+        testSimpleQuantity.setComparatorEnumType(new EnumCodeType(VALID_CODE_LESS_THAN, quantityComparatorEnum));
+      };
+      expect(t).toThrow(AssertionError);
+      expect(t).toThrow(`SimpleQuantity does not support the 'comparator' element.`);
     });
   });
 

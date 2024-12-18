@@ -214,7 +214,7 @@ describe('PractitionerRoleAvailableTimeComponent', () => {
       expect(testPractitionerRoleAvailableTimeComponent.getAvailableEndTime()).toBeUndefined();
     });
 
-    it('should be properly reset by modifying all properties', () => {
+    it('should be properly reset by modifying all properties with primitives', () => {
       const testPractitionerRoleAvailableTimeComponent = new PractitionerRoleAvailableTimeComponent();
       testPractitionerRoleAvailableTimeComponent.setId(VALID_ID);
       testPractitionerRoleAvailableTimeComponent.setExtension([VALID_EXTENSION]);
@@ -224,6 +224,168 @@ describe('PractitionerRoleAvailableTimeComponent', () => {
       testPractitionerRoleAvailableTimeComponent.setAllDay(false);
       testPractitionerRoleAvailableTimeComponent.setAvailableStartTime(VALID_START_TIME);
       testPractitionerRoleAvailableTimeComponent.setAvailableEndTime(VALID_END_TIME);
+
+      expect(testPractitionerRoleAvailableTimeComponent).toBeDefined();
+      expect(testPractitionerRoleAvailableTimeComponent.isEmpty()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.toJSON()).toBeDefined();
+
+      // inherited properties from BackboneElement
+      expect(testPractitionerRoleAvailableTimeComponent.hasId()).toBe(true);
+      expect(testPractitionerRoleAvailableTimeComponent.getId()).toStrictEqual(VALID_ID);
+      expect(testPractitionerRoleAvailableTimeComponent.hasExtension()).toBe(true);
+      expect(testPractitionerRoleAvailableTimeComponent.getExtension()).toEqual([VALID_EXTENSION]);
+      expect(testPractitionerRoleAvailableTimeComponent.hasModifierExtension()).toBe(true);
+      expect(testPractitionerRoleAvailableTimeComponent.getModifierExtension()).toEqual([VALID_MODIFIER_EXTENSION]);
+
+      // PractitionerRoleAvailableTimeComponent properties
+      const enumCodeMon = new EnumCodeType(VALID_DOW_MON, daysOfWeekEnum);
+      const enumCodeFri = new EnumCodeType(VALID_DOW_FRI, daysOfWeekEnum);
+      expect(testPractitionerRoleAvailableTimeComponent.hasDaysOfWeekEnumType()).toBe(true);
+      expect(testPractitionerRoleAvailableTimeComponent.getDaysOfWeekEnumType()).toEqual([enumCodeMon, enumCodeFri]);
+      expect(testPractitionerRoleAvailableTimeComponent.hasDaysOfWeekElement()).toBe(true);
+      expect(testPractitionerRoleAvailableTimeComponent.getDaysOfWeekElement()).toEqual([
+        enumCodeMon as CodeType,
+        enumCodeFri as CodeType,
+      ]);
+      expect(testPractitionerRoleAvailableTimeComponent.hasDaysOfWeek()).toBe(true);
+      expect(testPractitionerRoleAvailableTimeComponent.getDaysOfWeek()).toEqual([VALID_DOW_MON, VALID_DOW_FRI]);
+      expect(testPractitionerRoleAvailableTimeComponent.hasAllDayElement()).toBe(true);
+      expect(testPractitionerRoleAvailableTimeComponent.getAllDayElement()).toEqual(new BooleanType(false));
+      expect(testPractitionerRoleAvailableTimeComponent.hasAllDay()).toBe(true);
+      expect(testPractitionerRoleAvailableTimeComponent.getAllDay()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.hasAvailableStartTimeElement()).toBe(true);
+      expect(testPractitionerRoleAvailableTimeComponent.getAvailableStartTimeElement()).toEqual(
+        new TimeType(VALID_START_TIME),
+      );
+      expect(testPractitionerRoleAvailableTimeComponent.hasAvailableStartTime()).toBe(true);
+      expect(testPractitionerRoleAvailableTimeComponent.getAvailableStartTime()).toStrictEqual(VALID_START_TIME);
+      expect(testPractitionerRoleAvailableTimeComponent.hasAvailableEndTimeElement()).toBe(true);
+      expect(testPractitionerRoleAvailableTimeComponent.getAvailableEndTimeElement()).toEqual(
+        new TimeType(VALID_END_TIME),
+      );
+      expect(testPractitionerRoleAvailableTimeComponent.hasAvailableEndTime()).toBe(true);
+      expect(testPractitionerRoleAvailableTimeComponent.getAvailableEndTime()).toStrictEqual(VALID_END_TIME);
+
+      // Reset
+
+      testPractitionerRoleAvailableTimeComponent.setId(VALID_ID_2);
+      testPractitionerRoleAvailableTimeComponent.setExtension([VALID_EXTENSION_2]);
+      testPractitionerRoleAvailableTimeComponent.setModifierExtension([VALID_MODIFIER_EXTENSION_2]);
+      const enumCodeSat = new EnumCodeType(VALID_DOW_SAT, daysOfWeekEnum);
+      const enumCodeSun = new EnumCodeType(VALID_DOW_SUN, daysOfWeekEnum);
+      testPractitionerRoleAvailableTimeComponent.setDaysOfWeekEnumType([enumCodeSat]);
+      testPractitionerRoleAvailableTimeComponent.addDaysOfWeekEnumType(enumCodeSun);
+      testPractitionerRoleAvailableTimeComponent.setAllDay(true);
+      testPractitionerRoleAvailableTimeComponent.setAvailableStartTime(VALID_START_TIME_2);
+      testPractitionerRoleAvailableTimeComponent.setAvailableEndTime(VALID_END_TIME_2);
+
+      // inherited properties from BackboneElement
+      expect(testPractitionerRoleAvailableTimeComponent.hasId()).toBe(true);
+      expect(testPractitionerRoleAvailableTimeComponent.getId()).toStrictEqual(VALID_ID_2);
+      expect(testPractitionerRoleAvailableTimeComponent.hasExtension()).toBe(true);
+      expect(testPractitionerRoleAvailableTimeComponent.getExtension()).toEqual([VALID_EXTENSION_2]);
+      expect(testPractitionerRoleAvailableTimeComponent.hasModifierExtension()).toBe(true);
+      expect(testPractitionerRoleAvailableTimeComponent.getModifierExtension()).toEqual([VALID_MODIFIER_EXTENSION_2]);
+
+      // PractitionerRoleAvailableTimeComponent properties
+      expect(testPractitionerRoleAvailableTimeComponent.hasDaysOfWeekEnumType()).toBe(true);
+      expect(testPractitionerRoleAvailableTimeComponent.getDaysOfWeekEnumType()).toEqual([enumCodeSat, enumCodeSun]);
+      expect(testPractitionerRoleAvailableTimeComponent.hasDaysOfWeekElement()).toBe(true);
+      expect(testPractitionerRoleAvailableTimeComponent.getDaysOfWeekElement()).toEqual([
+        enumCodeSat as CodeType,
+        enumCodeSun as CodeType,
+      ]);
+      expect(testPractitionerRoleAvailableTimeComponent.hasDaysOfWeek()).toBe(true);
+      expect(testPractitionerRoleAvailableTimeComponent.getDaysOfWeek()).toEqual([VALID_DOW_SAT, VALID_DOW_SUN]);
+      expect(testPractitionerRoleAvailableTimeComponent.hasAllDayElement()).toBe(true);
+      expect(testPractitionerRoleAvailableTimeComponent.getAllDayElement()).toEqual(new BooleanType(true));
+      expect(testPractitionerRoleAvailableTimeComponent.hasAllDay()).toBe(true);
+      expect(testPractitionerRoleAvailableTimeComponent.getAllDay()).toBe(true);
+      expect(testPractitionerRoleAvailableTimeComponent.hasAvailableStartTimeElement()).toBe(true);
+      expect(testPractitionerRoleAvailableTimeComponent.getAvailableStartTimeElement()).toEqual(
+        new TimeType(VALID_START_TIME_2),
+      );
+      expect(testPractitionerRoleAvailableTimeComponent.hasAvailableStartTime()).toBe(true);
+      expect(testPractitionerRoleAvailableTimeComponent.getAvailableStartTime()).toStrictEqual(VALID_START_TIME_2);
+      expect(testPractitionerRoleAvailableTimeComponent.hasAvailableEndTimeElement()).toBe(true);
+      expect(testPractitionerRoleAvailableTimeComponent.getAvailableEndTimeElement()).toEqual(
+        new TimeType(VALID_END_TIME_2),
+      );
+      expect(testPractitionerRoleAvailableTimeComponent.hasAvailableEndTime()).toBe(true);
+      expect(testPractitionerRoleAvailableTimeComponent.getAvailableEndTime()).toStrictEqual(VALID_END_TIME_2);
+
+      // Reset as empty
+
+      testPractitionerRoleAvailableTimeComponent.setId(UNDEFINED_VALUE);
+      testPractitionerRoleAvailableTimeComponent.setExtension(UNDEFINED_VALUE);
+      testPractitionerRoleAvailableTimeComponent.setModifierExtension(UNDEFINED_VALUE);
+      testPractitionerRoleAvailableTimeComponent.setDaysOfWeekEnumType(UNDEFINED_VALUE);
+      testPractitionerRoleAvailableTimeComponent.addDaysOfWeekEnumType(UNDEFINED_VALUE);
+      testPractitionerRoleAvailableTimeComponent.setAllDay(UNDEFINED_VALUE);
+      testPractitionerRoleAvailableTimeComponent.setAvailableStartTime(UNDEFINED_VALUE);
+      testPractitionerRoleAvailableTimeComponent.setAvailableEndTime(UNDEFINED_VALUE);
+
+      // inherited properties from BackboneElement
+      expect(testPractitionerRoleAvailableTimeComponent.hasId()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.getId()).toBeUndefined();
+      expect(testPractitionerRoleAvailableTimeComponent.hasExtension()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.getExtension()).toEqual([] as Extension[]);
+      expect(testPractitionerRoleAvailableTimeComponent.hasModifierExtension()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.getModifierExtension()).toEqual([] as Extension[]);
+
+      // PractitionerRoleAvailableTimeComponent properties
+      expect(testPractitionerRoleAvailableTimeComponent.hasDaysOfWeekEnumType()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.getDaysOfWeekEnumType()).toEqual([] as EnumCodeType[]);
+      expect(testPractitionerRoleAvailableTimeComponent.hasDaysOfWeekElement()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.getDaysOfWeekElement()).toEqual([] as CodeType[]);
+      expect(testPractitionerRoleAvailableTimeComponent.hasDaysOfWeek()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.getDaysOfWeek()).toEqual([] as fhirCode[]);
+      expect(testPractitionerRoleAvailableTimeComponent.hasAllDayElement()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.getAllDayElement()).toEqual(new BooleanType());
+      expect(testPractitionerRoleAvailableTimeComponent.hasAllDay()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.getAllDay()).toBeUndefined();
+      expect(testPractitionerRoleAvailableTimeComponent.hasAvailableStartTimeElement()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.getAvailableStartTimeElement()).toEqual(new TimeType());
+      expect(testPractitionerRoleAvailableTimeComponent.hasAvailableStartTime()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.getAvailableStartTime()).toBeUndefined();
+      expect(testPractitionerRoleAvailableTimeComponent.hasAvailableEndTimeElement()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.getAvailableEndTimeElement()).toEqual(new TimeType());
+      expect(testPractitionerRoleAvailableTimeComponent.hasAvailableEndTime()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.getAvailableEndTime()).toBeUndefined();
+
+      // Reset setDaysOfWeekElement for coverage
+
+      testPractitionerRoleAvailableTimeComponent.setDaysOfWeek([VALID_DOW_TUE]);
+      testPractitionerRoleAvailableTimeComponent.addDaysOfWeek(VALID_DOW_THU);
+      expect(testPractitionerRoleAvailableTimeComponent.hasDaysOfWeek()).toBe(true);
+      expect(testPractitionerRoleAvailableTimeComponent.getDaysOfWeek()).toEqual([VALID_DOW_TUE, VALID_DOW_THU]);
+
+      testPractitionerRoleAvailableTimeComponent.setDaysOfWeekEnumType(undefined);
+      testPractitionerRoleAvailableTimeComponent.addDaysOfWeekEnumType(undefined);
+      expect(testPractitionerRoleAvailableTimeComponent.hasDaysOfWeekEnumType()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.getDaysOfWeekEnumType()).toEqual([] as EnumCodeType[]);
+
+      testPractitionerRoleAvailableTimeComponent.setDaysOfWeekElement(undefined);
+      testPractitionerRoleAvailableTimeComponent.addDaysOfWeekElement(undefined);
+      expect(testPractitionerRoleAvailableTimeComponent.hasDaysOfWeekElement()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.getDaysOfWeekElement()).toEqual([] as CodeType[]);
+
+      testPractitionerRoleAvailableTimeComponent.setDaysOfWeek(undefined);
+      testPractitionerRoleAvailableTimeComponent.addDaysOfWeek(undefined);
+      expect(testPractitionerRoleAvailableTimeComponent.hasDaysOfWeek()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.getDaysOfWeek()).toEqual([] as fhirCode[]);
+    });
+
+    it('should be properly reset by modifying all properties with DataTypes', () => {
+      const testPractitionerRoleAvailableTimeComponent = new PractitionerRoleAvailableTimeComponent();
+      testPractitionerRoleAvailableTimeComponent.setId(VALID_ID);
+      testPractitionerRoleAvailableTimeComponent.setExtension([VALID_EXTENSION]);
+      testPractitionerRoleAvailableTimeComponent.setModifierExtension([VALID_MODIFIER_EXTENSION]);
+      testPractitionerRoleAvailableTimeComponent.setDaysOfWeekElement([new CodeType(VALID_DOW_MON)]);
+      testPractitionerRoleAvailableTimeComponent.addDaysOfWeekElement(new CodeType(VALID_DOW_FRI));
+      testPractitionerRoleAvailableTimeComponent.setAllDayElement(new BooleanType(false));
+      testPractitionerRoleAvailableTimeComponent.setAvailableStartTimeElement(new TimeType(VALID_START_TIME));
+      testPractitionerRoleAvailableTimeComponent.setAvailableEndTimeElement(new TimeType(VALID_END_TIME));
 
       expect(testPractitionerRoleAvailableTimeComponent).toBeDefined();
       expect(testPractitionerRoleAvailableTimeComponent.isEmpty()).toBe(false);
@@ -314,7 +476,47 @@ describe('PractitionerRoleAvailableTimeComponent', () => {
       expect(testPractitionerRoleAvailableTimeComponent.hasAvailableEndTime()).toBe(true);
       expect(testPractitionerRoleAvailableTimeComponent.getAvailableEndTime()).toStrictEqual(VALID_END_TIME_2);
 
+      // Reset as empty
+
+      testPractitionerRoleAvailableTimeComponent.setId(UNDEFINED_VALUE);
+      testPractitionerRoleAvailableTimeComponent.setExtension(UNDEFINED_VALUE);
+      testPractitionerRoleAvailableTimeComponent.setModifierExtension(UNDEFINED_VALUE);
+      testPractitionerRoleAvailableTimeComponent.setDaysOfWeekEnumType(UNDEFINED_VALUE);
+      testPractitionerRoleAvailableTimeComponent.addDaysOfWeekEnumType(UNDEFINED_VALUE);
+      testPractitionerRoleAvailableTimeComponent.setAllDayElement(UNDEFINED_VALUE);
+      testPractitionerRoleAvailableTimeComponent.setAvailableStartTimeElement(UNDEFINED_VALUE);
+      testPractitionerRoleAvailableTimeComponent.setAvailableEndTimeElement(UNDEFINED_VALUE);
+
+      // inherited properties from BackboneElement
+      expect(testPractitionerRoleAvailableTimeComponent.hasId()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.getId()).toBeUndefined();
+      expect(testPractitionerRoleAvailableTimeComponent.hasExtension()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.getExtension()).toEqual([] as Extension[]);
+      expect(testPractitionerRoleAvailableTimeComponent.hasModifierExtension()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.getModifierExtension()).toEqual([] as Extension[]);
+
+      // PractitionerRoleAvailableTimeComponent properties
+      expect(testPractitionerRoleAvailableTimeComponent.hasDaysOfWeekEnumType()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.getDaysOfWeekEnumType()).toEqual([] as EnumCodeType[]);
+      expect(testPractitionerRoleAvailableTimeComponent.hasDaysOfWeekElement()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.getDaysOfWeekElement()).toEqual([] as CodeType[]);
+      expect(testPractitionerRoleAvailableTimeComponent.hasDaysOfWeek()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.getDaysOfWeek()).toEqual([] as fhirCode[]);
+      expect(testPractitionerRoleAvailableTimeComponent.hasAllDayElement()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.getAllDayElement()).toEqual(new BooleanType());
+      expect(testPractitionerRoleAvailableTimeComponent.hasAllDay()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.getAllDay()).toBeUndefined();
+      expect(testPractitionerRoleAvailableTimeComponent.hasAvailableStartTimeElement()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.getAvailableStartTimeElement()).toEqual(new TimeType());
+      expect(testPractitionerRoleAvailableTimeComponent.hasAvailableStartTime()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.getAvailableStartTime()).toBeUndefined();
+      expect(testPractitionerRoleAvailableTimeComponent.hasAvailableEndTimeElement()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.getAvailableEndTimeElement()).toEqual(new TimeType());
+      expect(testPractitionerRoleAvailableTimeComponent.hasAvailableEndTime()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.getAvailableEndTime()).toBeUndefined();
+
       // Reset setDaysOfWeekElement for coverage
+
       const codeTypeTue = new CodeType(VALID_DOW_TUE);
       const codeTypeThu = new CodeType(VALID_DOW_THU);
       const enumCodeTue = new EnumCodeType(VALID_DOW_TUE, daysOfWeekEnum);
@@ -327,6 +529,21 @@ describe('PractitionerRoleAvailableTimeComponent', () => {
         enumCodeTue as CodeType,
         enumCodeThu as CodeType,
       ]);
+
+      testPractitionerRoleAvailableTimeComponent.setDaysOfWeekEnumType(undefined);
+      testPractitionerRoleAvailableTimeComponent.addDaysOfWeekEnumType(undefined);
+      expect(testPractitionerRoleAvailableTimeComponent.hasDaysOfWeekEnumType()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.getDaysOfWeekEnumType()).toEqual([] as EnumCodeType[]);
+
+      testPractitionerRoleAvailableTimeComponent.setDaysOfWeekElement(undefined);
+      testPractitionerRoleAvailableTimeComponent.addDaysOfWeekElement(undefined);
+      expect(testPractitionerRoleAvailableTimeComponent.hasDaysOfWeekElement()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.getDaysOfWeekElement()).toEqual([] as CodeType[]);
+
+      testPractitionerRoleAvailableTimeComponent.setDaysOfWeek(undefined);
+      testPractitionerRoleAvailableTimeComponent.addDaysOfWeek(undefined);
+      expect(testPractitionerRoleAvailableTimeComponent.hasDaysOfWeek()).toBe(false);
+      expect(testPractitionerRoleAvailableTimeComponent.getDaysOfWeek()).toEqual([] as fhirCode[]);
     });
   });
 

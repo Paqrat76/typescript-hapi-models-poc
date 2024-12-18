@@ -25,9 +25,9 @@ import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConce
 import { DataType, Extension } from '@src/fhir-core/base-models/core-fhir-models';
 import { Coding } from '@src/fhir-core/data-types/complex/Coding';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
-import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { INVALID_NON_STRING_TYPE, INVALID_STRING_TYPE, UNDEFINED_VALUE } from '../../../test-utils';
 
 describe('CodeableConcept', () => {
   const VALID_URI = `testUriType`;
@@ -51,23 +51,21 @@ describe('CodeableConcept', () => {
   VALID_CODING_2.setCode(VALID_CODE_2);
   VALID_CODING_2.setDisplay(VALID_STRING_2);
 
-  const UNDEFINED_VALUE = undefined;
-
   describe('Core', () => {
     const expectedJson = {
       coding: [
         {
-          code: 'testCodeType',
-          display: 'This is a valid string.',
-          system: 'testUriType',
+          system: VALID_URI,
+          code: VALID_CODE,
+          display: VALID_STRING,
         },
         {
-          code: 'testCodeType2',
-          display: 'This is another valid string!',
-          system: 'testUriType2',
+          system: VALID_URI_2,
+          code: VALID_CODE_2,
+          display: VALID_STRING_2,
         },
       ],
-      text: 'This is a valid string.',
+      text: VALID_STRING,
     };
 
     it('should be properly instantiated as empty', () => {
@@ -96,188 +94,12 @@ describe('CodeableConcept', () => {
       expect(testCodeableConcept.getText()).toBeUndefined();
     });
 
-    it('should be properly instantiated with addCoding', () => {
-      const testCodeableConcept = new CodeableConcept();
-      testCodeableConcept.addCoding(VALID_CODING);
-      testCodeableConcept.addCoding(VALID_CODING_2);
-      testCodeableConcept.setText(VALID_STRING);
-
-      expect(testCodeableConcept).toBeDefined();
-      expect(testCodeableConcept).toBeInstanceOf(DataType);
-      expect(testCodeableConcept).toBeInstanceOf(CodeableConcept);
-      expect(testCodeableConcept.constructor.name).toStrictEqual('CodeableConcept');
-      expect(testCodeableConcept.fhirType()).toStrictEqual('CodeableConcept');
-      expect(testCodeableConcept.isEmpty()).toBe(false);
-      expect(testCodeableConcept.isComplexDataType()).toBe(true);
-      expect(testCodeableConcept.toJSON()).toEqual(expectedJson);
-
-      // inherited properties from Element
-      expect(testCodeableConcept.hasId()).toBe(false);
-      expect(testCodeableConcept.getId()).toBeUndefined();
-      expect(testCodeableConcept.hasExtension()).toBe(false);
-      expect(testCodeableConcept.getExtension()).toEqual([] as Extension[]);
-
-      // CodeableConcept properties
-      expect(testCodeableConcept.hasCoding()).toBe(true);
-      expect(testCodeableConcept.getCoding()).toHaveLength(2);
-      expect(testCodeableConcept.getCoding()).toEqual(expect.arrayContaining([VALID_CODING, VALID_CODING_2]));
-      expect(testCodeableConcept.hasTextElement()).toBe(true);
-      expect(testCodeableConcept.getTextElement()).toEqual(VALID_STRING_TYPE);
-      expect(testCodeableConcept.hasText()).toBe(true);
-      expect(testCodeableConcept.getText()).toStrictEqual(VALID_STRING);
-    });
-
-    it('should be properly instantiated with setCoding', () => {
-      const testCodeableConcept = new CodeableConcept();
-      testCodeableConcept.setCoding([VALID_CODING, VALID_CODING_2]);
-      testCodeableConcept.setTextElement(VALID_STRING_TYPE);
-
-      expect(testCodeableConcept).toBeDefined();
-      expect(testCodeableConcept).toBeInstanceOf(DataType);
-      expect(testCodeableConcept).toBeInstanceOf(CodeableConcept);
-      expect(testCodeableConcept.constructor.name).toStrictEqual('CodeableConcept');
-      expect(testCodeableConcept.fhirType()).toStrictEqual('CodeableConcept');
-      expect(testCodeableConcept.isEmpty()).toBe(false);
-      expect(testCodeableConcept.isComplexDataType()).toBe(true);
-      expect(testCodeableConcept.toJSON()).toEqual(expectedJson);
-
-      // inherited properties from Element
-      expect(testCodeableConcept.hasId()).toBe(false);
-      expect(testCodeableConcept.getId()).toBeUndefined();
-      expect(testCodeableConcept.hasExtension()).toBe(false);
-      expect(testCodeableConcept.getExtension()).toEqual([] as Extension[]);
-
-      // CodeableConcept properties
-      expect(testCodeableConcept.hasCoding()).toBe(true);
-      expect(testCodeableConcept.getCoding()).toHaveLength(2);
-      expect(testCodeableConcept.getCoding()).toEqual(expect.arrayContaining([VALID_CODING, VALID_CODING_2]));
-      expect(testCodeableConcept.hasTextElement()).toBe(true);
-      expect(testCodeableConcept.getTextElement()).toEqual(VALID_STRING_TYPE);
-      expect(testCodeableConcept.hasText()).toBe(true);
-      expect(testCodeableConcept.getText()).toStrictEqual(VALID_STRING);
-    });
-
-    it('should throw PrimitiveTypeError when initialized with invalid primitive text value', () => {
-      const testCodeableConcept = new CodeableConcept();
-      const t = () => {
-        testCodeableConcept.setText(INVALID_STRING);
-      };
-      expect(t).toThrow(PrimitiveTypeError);
-      expect(t).toThrow(`Invalid CodeableConcept.text (invalid value provided)`);
-    });
-
-    it('should throw PrimitiveTypeError when initialized with invalid PrimitiveType text value', () => {
-      const testCodeableConcept = new CodeableConcept();
-      const t = () => {
-        // @ts-expect-error: ignore invalid type for test
-        testCodeableConcept.setTextElement(INVALID_STRING);
-      };
-      expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`Invalid CodeableConcept.text; Provided element is not an instance of StringType.`);
-    });
-
-    it('should throw InvalidTypeError when initialized with invalid Coding[] value', () => {
-      const testCodeableConcept = new CodeableConcept();
-      const invalidCodingType = new UriType(VALID_URI);
-      const t = () => {
-        // @ts-expect-error: ignore invalid type for test
-        testCodeableConcept.setCoding([invalidCodingType]);
-      };
-      expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(
-        `Invalid CodeableConcept.coding; Provided value array has an element that is not an instance of Coding.`,
-      );
-    });
-
-    it('should throw InvalidTypeError when adding invalid PrimitiveType CodeableConcept.coding value', () => {
-      const testCodeableConcept = new CodeableConcept();
-      const invalidCodingType = new UriType(VALID_URI);
-      const t = () => {
-        // @ts-expect-error: ignore invalid type for test
-        testCodeableConcept.addCoding(invalidCodingType);
-      };
-      expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`Invalid CodeableConcept.coding; Provided value is not an instance of Coding.`);
-    });
-
-    it('should be properly reset by modifying all properties', () => {
-      const testCodeableConcept = new CodeableConcept();
-
-      testCodeableConcept.setCoding([VALID_CODING]);
-      testCodeableConcept.setText(VALID_STRING);
-      expect(testCodeableConcept).toBeDefined();
-      expect(testCodeableConcept.isEmpty()).toBe(false);
-      expect(testCodeableConcept.hasCoding()).toBe(true);
-      expect(testCodeableConcept.getCoding()).toEqual([VALID_CODING]);
-      expect(testCodeableConcept.hasTextElement()).toBe(true);
-      expect(testCodeableConcept.getTextElement()).toEqual(VALID_STRING_TYPE);
-      expect(testCodeableConcept.hasText()).toBe(true);
-      expect(testCodeableConcept.getText()).toStrictEqual(VALID_STRING);
-
-      testCodeableConcept.setCoding([VALID_CODING_2]);
-      testCodeableConcept.setTextElement(VALID_STRING_TYPE_2);
-      expect(testCodeableConcept).toBeDefined();
-      expect(testCodeableConcept.isEmpty()).toBe(false);
-      expect(testCodeableConcept.hasCoding()).toBe(true);
-      expect(testCodeableConcept.getCoding()).toEqual([VALID_CODING_2]);
-      expect(testCodeableConcept.hasTextElement()).toBe(true);
-      expect(testCodeableConcept.getTextElement()).toEqual(VALID_STRING_TYPE_2);
-      expect(testCodeableConcept.hasText()).toBe(true);
-      expect(testCodeableConcept.getText()).toStrictEqual(VALID_STRING_2);
-    });
-
-    it('should be properly reset by modifying all properties with undefined values', () => {
-      // undefined - primitive text
-      const testCodeableConcept = new CodeableConcept();
-      testCodeableConcept.addCoding(UNDEFINED_VALUE);
-      testCodeableConcept.setText(UNDEFINED_VALUE);
-      expect(testCodeableConcept).toBeDefined();
-      expect(testCodeableConcept.isEmpty()).toBe(true);
-      expect(testCodeableConcept.isComplexDataType()).toBe(true);
-      expect(testCodeableConcept.toJSON()).toBeUndefined();
-
-      // inherited properties from Element
-      expect(testCodeableConcept.hasId()).toBe(false);
-      expect(testCodeableConcept.getId()).toBeUndefined();
-      expect(testCodeableConcept.hasExtension()).toBe(false);
-      expect(testCodeableConcept.getExtension()).toEqual([] as Extension[]);
-
-      // CodeableConcept properties
-      expect(testCodeableConcept.hasCoding()).toBe(false);
-      expect(testCodeableConcept.getCoding()).toEqual([] as Coding[]);
-      expect(testCodeableConcept.hasTextElement()).toBe(false);
-      expect(testCodeableConcept.getTextElement()).toEqual(new StringType());
-      expect(testCodeableConcept.hasText()).toBe(false);
-      expect(testCodeableConcept.getText()).toBeUndefined();
-
-      // undefined - PrimitiveType text
-      testCodeableConcept.setCoding(UNDEFINED_VALUE);
-      testCodeableConcept.setTextElement(UNDEFINED_VALUE);
-      expect(testCodeableConcept).toBeDefined();
-      expect(testCodeableConcept.isEmpty()).toBe(true);
-
-      // inherited properties from Element
-      expect(testCodeableConcept.hasId()).toBe(false);
-      expect(testCodeableConcept.getId()).toBeUndefined();
-      expect(testCodeableConcept.hasExtension()).toBe(false);
-      expect(testCodeableConcept.getExtension()).toEqual([] as Extension[]);
-
-      // CodeableConcept properties
-      expect(testCodeableConcept.hasCoding()).toBe(false);
-      expect(testCodeableConcept.getCoding()).toEqual([] as Coding[]);
-      expect(testCodeableConcept.hasTextElement()).toBe(false);
-      expect(testCodeableConcept.getTextElement()).toEqual(new StringType());
-      expect(testCodeableConcept.hasText()).toBe(false);
-      expect(testCodeableConcept.getText()).toBeUndefined();
-    });
-
     it('should properly copy()', () => {
-      let codeableConceptType = new CodeableConcept();
-      codeableConceptType.addCoding(VALID_CODING);
-      codeableConceptType.addCoding(VALID_CODING_2);
+      const codeableConceptType = new CodeableConcept();
+      codeableConceptType.setCoding([VALID_CODING, VALID_CODING_2]);
       codeableConceptType.setText(VALID_STRING);
-      let testCodeableConcept = codeableConceptType.copy();
 
+      let testCodeableConcept = codeableConceptType.copy();
       expect(testCodeableConcept).toBeDefined();
       expect(testCodeableConcept).toBeInstanceOf(DataType);
       expect(testCodeableConcept).toBeInstanceOf(CodeableConcept);
@@ -302,8 +124,11 @@ describe('CodeableConcept', () => {
       expect(testCodeableConcept.hasText()).toBe(true);
       expect(testCodeableConcept.getText()).toStrictEqual(VALID_STRING);
 
-      // copy empty
-      codeableConceptType = new CodeableConcept();
+      // Reset as empty
+
+      codeableConceptType.setCoding(UNDEFINED_VALUE);
+      codeableConceptType.setText(UNDEFINED_VALUE);
+
       testCodeableConcept = codeableConceptType.copy();
       expect(testCodeableConcept).toBeDefined();
       expect(testCodeableConcept).toBeInstanceOf(DataType);
@@ -327,6 +152,226 @@ describe('CodeableConcept', () => {
       expect(testCodeableConcept.getTextElement()).toEqual(new StringType());
       expect(testCodeableConcept.hasText()).toBe(false);
       expect(testCodeableConcept.getText()).toBeUndefined();
+    });
+
+    // Tests using primitives
+
+    it('should be properly instantiated with primitive values', () => {
+      const testCodeableConcept = new CodeableConcept();
+      testCodeableConcept.setCoding([VALID_CODING, VALID_CODING_2]);
+      testCodeableConcept.setText(VALID_STRING);
+
+      expect(testCodeableConcept).toBeDefined();
+      expect(testCodeableConcept.isEmpty()).toBe(false);
+
+      // inherited properties from Element
+      expect(testCodeableConcept.hasId()).toBe(false);
+      expect(testCodeableConcept.getId()).toBeUndefined();
+      expect(testCodeableConcept.hasExtension()).toBe(false);
+      expect(testCodeableConcept.getExtension()).toEqual([] as Extension[]);
+
+      // CodeableConcept properties
+      expect(testCodeableConcept.hasCoding()).toBe(true);
+      expect(testCodeableConcept.getCoding()).toHaveLength(2);
+      expect(testCodeableConcept.getCoding()).toEqual(expect.arrayContaining([VALID_CODING, VALID_CODING_2]));
+      expect(testCodeableConcept.hasTextElement()).toBe(true);
+      expect(testCodeableConcept.getTextElement()).toEqual(VALID_STRING_TYPE);
+      expect(testCodeableConcept.hasText()).toBe(true);
+      expect(testCodeableConcept.getText()).toStrictEqual(VALID_STRING);
+    });
+
+    it('should be properly reset by modifying all properties with primitive values', () => {
+      const testCodeableConcept = new CodeableConcept();
+      testCodeableConcept.setCoding([VALID_CODING, VALID_CODING_2]);
+      testCodeableConcept.setText(VALID_STRING);
+
+      expect(testCodeableConcept).toBeDefined();
+      expect(testCodeableConcept.isEmpty()).toBe(false);
+
+      // inherited properties from Element
+      expect(testCodeableConcept.hasId()).toBe(false);
+      expect(testCodeableConcept.getId()).toBeUndefined();
+      expect(testCodeableConcept.hasExtension()).toBe(false);
+      expect(testCodeableConcept.getExtension()).toEqual([] as Extension[]);
+
+      // CodeableConcept properties
+      expect(testCodeableConcept.hasCoding()).toBe(true);
+      expect(testCodeableConcept.getCoding()).toHaveLength(2);
+      expect(testCodeableConcept.getCoding()).toEqual(expect.arrayContaining([VALID_CODING, VALID_CODING_2]));
+      expect(testCodeableConcept.hasTextElement()).toBe(true);
+      expect(testCodeableConcept.getTextElement()).toEqual(VALID_STRING_TYPE);
+      expect(testCodeableConcept.hasText()).toBe(true);
+      expect(testCodeableConcept.getText()).toStrictEqual(VALID_STRING);
+
+      // Reset
+
+      testCodeableConcept.setText(VALID_STRING_2);
+
+      expect(testCodeableConcept).toBeDefined();
+      expect(testCodeableConcept.isEmpty()).toBe(false);
+
+      // inherited properties from Element
+      expect(testCodeableConcept.hasId()).toBe(false);
+      expect(testCodeableConcept.getId()).toBeUndefined();
+      expect(testCodeableConcept.hasExtension()).toBe(false);
+      expect(testCodeableConcept.getExtension()).toEqual([] as Extension[]);
+
+      // CodeableConcept properties
+      expect(testCodeableConcept.hasCoding()).toBe(true);
+      expect(testCodeableConcept.getCoding()).toHaveLength(2);
+      expect(testCodeableConcept.getCoding()).toEqual(expect.arrayContaining([VALID_CODING, VALID_CODING_2]));
+      expect(testCodeableConcept.hasTextElement()).toBe(true);
+      expect(testCodeableConcept.getTextElement()).toEqual(VALID_STRING_TYPE_2);
+      expect(testCodeableConcept.hasText()).toBe(true);
+      expect(testCodeableConcept.getText()).toStrictEqual(VALID_STRING_2);
+
+      // Reset to empty
+
+      testCodeableConcept.setCoding(UNDEFINED_VALUE);
+      testCodeableConcept.setText(UNDEFINED_VALUE);
+
+      // CodeableConcept properties
+      expect(testCodeableConcept.hasCoding()).toBe(false);
+      expect(testCodeableConcept.getCoding()).toEqual([] as Coding[]);
+      expect(testCodeableConcept.hasTextElement()).toBe(false);
+      expect(testCodeableConcept.getTextElement()).toEqual(new StringType());
+      expect(testCodeableConcept.hasText()).toBe(false);
+      expect(testCodeableConcept.getText()).toBeUndefined();
+    });
+
+    it('should throw errors for invalid primitive values', () => {
+      const testCodeableConcept = new CodeableConcept();
+
+      const t = () => {
+        testCodeableConcept.setText(INVALID_STRING);
+      };
+      expect(t).toThrow(PrimitiveTypeError);
+      expect(t).toThrow(`Invalid CodeableConcept.text (invalid value provided)`);
+    });
+
+    // Tests using DataType elements
+
+    it('should be properly instantiated with DataType values', () => {
+      const testCodeableConcept = new CodeableConcept();
+      testCodeableConcept.setCoding([VALID_CODING, VALID_CODING_2]);
+      testCodeableConcept.setTextElement(VALID_STRING_TYPE);
+
+      expect(testCodeableConcept).toBeDefined();
+      expect(testCodeableConcept.isEmpty()).toBe(false);
+
+      // inherited properties from Element
+      expect(testCodeableConcept.hasId()).toBe(false);
+      expect(testCodeableConcept.getId()).toBeUndefined();
+      expect(testCodeableConcept.hasExtension()).toBe(false);
+      expect(testCodeableConcept.getExtension()).toEqual([] as Extension[]);
+
+      // CodeableConcept properties
+      expect(testCodeableConcept.hasCoding()).toBe(true);
+      expect(testCodeableConcept.getCoding()).toHaveLength(2);
+      expect(testCodeableConcept.getCoding()).toEqual(expect.arrayContaining([VALID_CODING, VALID_CODING_2]));
+      expect(testCodeableConcept.hasTextElement()).toBe(true);
+      expect(testCodeableConcept.getTextElement()).toEqual(VALID_STRING_TYPE);
+      expect(testCodeableConcept.hasText()).toBe(true);
+      expect(testCodeableConcept.getText()).toStrictEqual(VALID_STRING);
+    });
+
+    it('should be properly reset by modifying all properties with DataType values', () => {
+      const testCodeableConcept = new CodeableConcept();
+      testCodeableConcept.setCoding([VALID_CODING, VALID_CODING_2]);
+      testCodeableConcept.setTextElement(VALID_STRING_TYPE);
+
+      expect(testCodeableConcept).toBeDefined();
+      expect(testCodeableConcept.isEmpty()).toBe(false);
+
+      // inherited properties from Element
+      expect(testCodeableConcept.hasId()).toBe(false);
+      expect(testCodeableConcept.getId()).toBeUndefined();
+      expect(testCodeableConcept.hasExtension()).toBe(false);
+      expect(testCodeableConcept.getExtension()).toEqual([] as Extension[]);
+
+      // CodeableConcept properties
+      expect(testCodeableConcept.hasCoding()).toBe(true);
+      expect(testCodeableConcept.getCoding()).toHaveLength(2);
+      expect(testCodeableConcept.getCoding()).toEqual(expect.arrayContaining([VALID_CODING, VALID_CODING_2]));
+      expect(testCodeableConcept.hasTextElement()).toBe(true);
+      expect(testCodeableConcept.getTextElement()).toEqual(VALID_STRING_TYPE);
+      expect(testCodeableConcept.hasText()).toBe(true);
+      expect(testCodeableConcept.getText()).toStrictEqual(VALID_STRING);
+
+      // Reset
+
+      testCodeableConcept.setTextElement(VALID_STRING_TYPE_2);
+
+      expect(testCodeableConcept).toBeDefined();
+      expect(testCodeableConcept.isEmpty()).toBe(false);
+
+      // inherited properties from Element
+      expect(testCodeableConcept.hasId()).toBe(false);
+      expect(testCodeableConcept.getId()).toBeUndefined();
+      expect(testCodeableConcept.hasExtension()).toBe(false);
+      expect(testCodeableConcept.getExtension()).toEqual([] as Extension[]);
+
+      // CodeableConcept properties
+      expect(testCodeableConcept.hasCoding()).toBe(true);
+      expect(testCodeableConcept.getCoding()).toHaveLength(2);
+      expect(testCodeableConcept.getCoding()).toEqual(expect.arrayContaining([VALID_CODING, VALID_CODING_2]));
+      expect(testCodeableConcept.hasTextElement()).toBe(true);
+      expect(testCodeableConcept.getTextElement()).toEqual(VALID_STRING_TYPE_2);
+      expect(testCodeableConcept.hasText()).toBe(true);
+      expect(testCodeableConcept.getText()).toStrictEqual(VALID_STRING_2);
+
+      // Reset to empty
+
+      testCodeableConcept.setCoding(UNDEFINED_VALUE);
+      testCodeableConcept.setTextElement(UNDEFINED_VALUE);
+
+      // CodeableConcept properties
+      expect(testCodeableConcept.hasCoding()).toBe(false);
+      expect(testCodeableConcept.getCoding()).toEqual([] as Coding[]);
+      expect(testCodeableConcept.hasTextElement()).toBe(false);
+      expect(testCodeableConcept.getTextElement()).toEqual(new StringType());
+      expect(testCodeableConcept.hasText()).toBe(false);
+      expect(testCodeableConcept.getText()).toBeUndefined();
+    });
+
+    it('should be properly reset by adding data elements to DataType lists', () => {
+      const testCodeableConcept = new CodeableConcept();
+      expect(testCodeableConcept).toBeDefined();
+      expect(testCodeableConcept.isEmpty()).toBe(true);
+
+      testCodeableConcept.addCoding(VALID_CODING);
+      testCodeableConcept.addCoding(VALID_CODING_2);
+      testCodeableConcept.addCoding(UNDEFINED_VALUE);
+      expect(testCodeableConcept.hasCoding()).toBe(true);
+      expect(testCodeableConcept.getCoding()).toHaveLength(2);
+      expect(testCodeableConcept.getCoding()).toEqual(expect.arrayContaining([VALID_CODING, VALID_CODING_2]));
+    });
+
+    it('should throw errors for invalid DataType values', () => {
+      const testCodeableConcept = new CodeableConcept();
+
+      let t = () => {
+        // @ts-expect-error: allow for testing
+        testCodeableConcept.setTextElement(INVALID_STRING_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid CodeableConcept.text; Provided element is not an instance of StringType.`);
+
+      t = () => {
+        // @ts-expect-error: allow for testing
+        testCodeableConcept.setCoding([INVALID_NON_STRING_TYPE]);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(
+        `Invalid CodeableConcept.coding; Provided value array has an element that is not an instance of Coding.`,
+      );
+
+      t = () => {
+        // @ts-expect-error: allow for testing
+        testCodeableConcept.addCoding(INVALID_NON_STRING_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid CodeableConcept.coding; Provided value is not an instance of Coding.`);
     });
   });
 

@@ -434,7 +434,7 @@ describe('PractitionerRole', () => {
       expect(testPractitionerRole.getEndpoint()).toEqual([] as Reference[]);
     });
 
-    it('should be properly reset by modifying all properties', () => {
+    it('should be properly reset by modifying all properties with primitives', () => {
       const testPractitionerRole = new PractitionerRole();
 
       testPractitionerRole.setId(VALID_ID);
@@ -542,6 +542,279 @@ describe('PractitionerRole', () => {
 
       testPractitionerRole.setIdentifier(UNDEFINED_VALUE);
       testPractitionerRole.addIdentifier(IDENTIFIER_TYPE_2);
+      testPractitionerRole.setActive(false);
+      testPractitionerRole.setPeriod(VALID_PERIOD_2);
+      testPractitionerRole.setPractitioner(VALID_REFERENCE_PRACTITIONER_2);
+      testPractitionerRole.setOrganization(VALID_REFERENCE_ORGANIZATION_2);
+      testPractitionerRole.setCode(UNDEFINED_VALUE);
+      testPractitionerRole.addCode(VALID_CODEABLECONCEPT_2);
+      testPractitionerRole.setSpecialty(UNDEFINED_VALUE);
+      testPractitionerRole.addSpecialty(VALID_CODEABLECONCEPT);
+      testPractitionerRole.setLocation(UNDEFINED_VALUE);
+      testPractitionerRole.addLocation(VALID_REFERENCE_LOCATION_2);
+      testPractitionerRole.setHealthcareService(UNDEFINED_VALUE);
+      testPractitionerRole.addHealthcareService(VALID_REFERENCE_HEALTHCARE_SERVICE_2);
+      testPractitionerRole.setTelecom(UNDEFINED_VALUE);
+      testPractitionerRole.addTelecom(VALID_CONTACTPOINT_2);
+      testPractitionerRole.setAvailableTime(UNDEFINED_VALUE);
+      testPractitionerRole.addAvailableTime(VALID_AVAILABLE_TIME_2);
+      testPractitionerRole.setNotAvailable(UNDEFINED_VALUE);
+      testPractitionerRole.addNotAvailable(VALID_NOT_AVAILABLE_2);
+      testPractitionerRole.setAvailabilityExceptions(VALID_STRING_2);
+      testPractitionerRole.setEndpoint(UNDEFINED_VALUE);
+      testPractitionerRole.addEndpoint(VALID_REFERENCE_ENDPOINT_2);
+
+      // inherited properties from Resource/DomainResource
+      expect(testPractitionerRole.hasIdElement()).toBe(true);
+      expect(testPractitionerRole.getIdElement()).toEqual(VALID_ID_TYPE_2);
+      expect(testPractitionerRole.hasId()).toBe(true);
+      expect(testPractitionerRole.getId()).toStrictEqual(VALID_ID_2);
+      expect(testPractitionerRole.hasMeta()).toBe(true);
+      expect(testPractitionerRole.getMeta()).toEqual(VALID_META_2);
+      expect(testPractitionerRole.hasImplicitRulesElement()).toBe(true);
+      expect(testPractitionerRole.getImplicitRulesElement()).toEqual(new UriType(IMPLICIT_RULES_VALUE_2));
+      expect(testPractitionerRole.hasImplicitRules()).toBe(true);
+      expect(testPractitionerRole.getImplicitRules()).toStrictEqual(IMPLICIT_RULES_VALUE_2);
+      expect(testPractitionerRole.hasLanguageElement()).toBe(true);
+      expect(testPractitionerRole.getLanguageElement()).toEqual(new CodeType(LANGUAGE_VALUE_2));
+      expect(testPractitionerRole.hasLanguage()).toBe(true);
+      expect(testPractitionerRole.getLanguage()).toStrictEqual(LANGUAGE_VALUE_2);
+      expect(testPractitionerRole.hasText()).toBe(true);
+      expect(testPractitionerRole.getText()).toEqual(VALID_NARRATIVE_2);
+      expect(testPractitionerRole.hasContained()).toBe(false);
+      expect(testPractitionerRole.getContained()).toEqual([] as Resource[]);
+      expect(testPractitionerRole.hasExtension()).toBe(true);
+      expect(testPractitionerRole.getExtension()).toEqual([VALID_EXTENSION_2]);
+      expect(testPractitionerRole.hasModifierExtension()).toBe(true);
+      expect(testPractitionerRole.getModifierExtension()).toEqual([VALID_MODIFIER_EXTENSION_2]);
+
+      // PractitionerRoleAvailableTimeComponent properties
+      expect(testPractitionerRole.hasIdentifier()).toBe(true);
+      expect(testPractitionerRole.getIdentifier()).toEqual([IDENTIFIER_TYPE_2]);
+      expect(testPractitionerRole.hasActiveElement()).toBe(true);
+      expect(testPractitionerRole.getActiveElement()).toEqual(new BooleanType(false));
+      expect(testPractitionerRole.hasActive()).toBe(true);
+      expect(testPractitionerRole.getActive()).toBe(false);
+      expect(testPractitionerRole.hasPeriod()).toBe(true);
+      expect(testPractitionerRole.getPeriod()).toEqual(VALID_PERIOD_2);
+      expect(testPractitionerRole.hasPractitioner()).toBe(true);
+      expect(testPractitionerRole.getPractitioner()).toEqual(VALID_REFERENCE_PRACTITIONER_2);
+      expect(testPractitionerRole.hasOrganization()).toBe(true);
+      expect(testPractitionerRole.getOrganization()).toEqual(VALID_REFERENCE_ORGANIZATION_2);
+      expect(testPractitionerRole.hasCode()).toBe(true);
+      expect(testPractitionerRole.getCode()).toEqual([VALID_CODEABLECONCEPT_2]);
+      expect(testPractitionerRole.hasSpecialty()).toBe(true);
+      expect(testPractitionerRole.getSpecialty()).toEqual([VALID_CODEABLECONCEPT]);
+      expect(testPractitionerRole.hasLocation()).toBe(true);
+      expect(testPractitionerRole.getLocation()).toEqual([VALID_REFERENCE_LOCATION_2]);
+      expect(testPractitionerRole.hasHealthcareService()).toBe(true);
+      expect(testPractitionerRole.getHealthcareService()).toEqual([VALID_REFERENCE_HEALTHCARE_SERVICE_2]);
+      expect(testPractitionerRole.hasTelecom()).toBe(true);
+      expect(testPractitionerRole.getTelecom()).toEqual([VALID_CONTACTPOINT_2]);
+      expect(testPractitionerRole.hasAvailableTime()).toBe(true);
+      expect(testPractitionerRole.getAvailableTime()).toEqual([VALID_AVAILABLE_TIME_2]);
+      expect(testPractitionerRole.hasNotAvailable()).toBe(true);
+      expect(testPractitionerRole.getNotAvailable()).toEqual([VALID_NOT_AVAILABLE_2]);
+      expect(testPractitionerRole.hasAvailabilityExceptionsElement()).toBe(true);
+      expect(testPractitionerRole.getAvailabilityExceptionsElement()).toEqual(new StringType(VALID_STRING_2));
+      expect(testPractitionerRole.hasAvailabilityExceptions()).toBe(true);
+      expect(testPractitionerRole.getAvailabilityExceptions()).toStrictEqual(VALID_STRING_2);
+      expect(testPractitionerRole.hasEndpoint()).toBe(true);
+      expect(testPractitionerRole.getEndpoint()).toEqual([VALID_REFERENCE_ENDPOINT_2]);
+
+      // Reset as empty
+
+      testPractitionerRole.setId(UNDEFINED_VALUE);
+      testPractitionerRole.setMeta(UNDEFINED_VALUE);
+      testPractitionerRole.setImplicitRules(UNDEFINED_VALUE);
+      testPractitionerRole.setLanguage(UNDEFINED_VALUE);
+      testPractitionerRole.setText(UNDEFINED_VALUE);
+      testPractitionerRole.setContained(undefined); // Do not have valid resource data model to use
+      testPractitionerRole.setExtension(UNDEFINED_VALUE);
+      testPractitionerRole.setModifierExtension(UNDEFINED_VALUE);
+
+      testPractitionerRole.setIdentifier(UNDEFINED_VALUE);
+      testPractitionerRole.setActive(UNDEFINED_VALUE);
+      testPractitionerRole.setPeriod(UNDEFINED_VALUE);
+      testPractitionerRole.setPractitioner(UNDEFINED_VALUE);
+      testPractitionerRole.setOrganization(UNDEFINED_VALUE);
+      testPractitionerRole.setCode(UNDEFINED_VALUE);
+      testPractitionerRole.setSpecialty(UNDEFINED_VALUE);
+      testPractitionerRole.setLocation(UNDEFINED_VALUE);
+      testPractitionerRole.setHealthcareService(UNDEFINED_VALUE);
+      testPractitionerRole.setTelecom(UNDEFINED_VALUE);
+      testPractitionerRole.setAvailableTime(UNDEFINED_VALUE);
+      testPractitionerRole.setNotAvailable(UNDEFINED_VALUE);
+      testPractitionerRole.setAvailabilityExceptions(UNDEFINED_VALUE);
+      testPractitionerRole.setEndpoint(UNDEFINED_VALUE);
+
+      // inherited properties from Resource/DomainResource
+      expect(testPractitionerRole.hasIdElement()).toBe(false);
+      expect(testPractitionerRole.getIdElement()).toEqual(new IdType());
+      expect(testPractitionerRole.hasId()).toBe(false);
+      expect(testPractitionerRole.getId()).toBeUndefined();
+      expect(testPractitionerRole.hasMeta()).toBe(false);
+      expect(testPractitionerRole.getMeta()).toEqual(new Meta());
+      expect(testPractitionerRole.hasImplicitRulesElement()).toBe(false);
+      expect(testPractitionerRole.getImplicitRulesElement()).toEqual(new UriType());
+      expect(testPractitionerRole.hasImplicitRules()).toBe(false);
+      expect(testPractitionerRole.getImplicitRules()).toBeUndefined();
+      expect(testPractitionerRole.hasLanguageElement()).toBe(false);
+      expect(testPractitionerRole.getLanguageElement()).toEqual(new CodeType());
+      expect(testPractitionerRole.hasLanguage()).toBe(false);
+      expect(testPractitionerRole.getLanguage()).toBeUndefined();
+      expect(testPractitionerRole.hasText()).toBe(false);
+      expect(testPractitionerRole.getText()).toEqual(new Narrative(null, null));
+      expect(testPractitionerRole.hasContained()).toBe(false);
+      expect(testPractitionerRole.getContained()).toEqual([] as Resource[]);
+      expect(testPractitionerRole.hasExtension()).toBe(false);
+      expect(testPractitionerRole.getExtension()).toEqual([] as Extension[]);
+      expect(testPractitionerRole.hasModifierExtension()).toBe(false);
+      expect(testPractitionerRole.getModifierExtension()).toEqual([] as Extension[]);
+
+      // PractitionerRole properties
+      expect(testPractitionerRole.hasIdentifier()).toBe(false);
+      expect(testPractitionerRole.getIdentifier()).toEqual([] as Identifier[]);
+      expect(testPractitionerRole.hasActiveElement()).toBe(false);
+      expect(testPractitionerRole.getActiveElement()).toEqual(new BooleanType());
+      expect(testPractitionerRole.hasActive()).toBe(false);
+      expect(testPractitionerRole.getActive()).toBeUndefined();
+      expect(testPractitionerRole.hasPeriod()).toBe(false);
+      expect(testPractitionerRole.getPeriod()).toEqual(new Period());
+      expect(testPractitionerRole.hasPractitioner()).toBe(false);
+      expect(testPractitionerRole.getPractitioner()).toEqual(new Reference());
+      expect(testPractitionerRole.hasOrganization()).toBe(false);
+      expect(testPractitionerRole.getOrganization()).toEqual(new Reference());
+      expect(testPractitionerRole.hasCode()).toBe(false);
+      expect(testPractitionerRole.getCode()).toEqual([] as CodeableConcept[]);
+      expect(testPractitionerRole.hasSpecialty()).toBe(false);
+      expect(testPractitionerRole.getSpecialty()).toEqual([] as CodeableConcept[]);
+      expect(testPractitionerRole.hasLocation()).toBe(false);
+      expect(testPractitionerRole.getLocation()).toEqual([] as Reference[]);
+      expect(testPractitionerRole.hasHealthcareService()).toBe(false);
+      expect(testPractitionerRole.getHealthcareService()).toEqual([] as Reference[]);
+      expect(testPractitionerRole.hasTelecom()).toBe(false);
+      expect(testPractitionerRole.getTelecom()).toEqual([] as ContactPoint[]);
+      expect(testPractitionerRole.hasAvailableTime()).toBe(false);
+      expect(testPractitionerRole.getAvailableTime()).toEqual([] as PractitionerRoleAvailableTimeComponent[]);
+      expect(testPractitionerRole.hasNotAvailable()).toBe(false);
+      expect(testPractitionerRole.getNotAvailable()).toEqual([] as PractitionerRoleNotAvailableComponent[]);
+      expect(testPractitionerRole.hasAvailabilityExceptionsElement()).toBe(false);
+      expect(testPractitionerRole.getAvailabilityExceptionsElement()).toEqual(new StringType());
+      expect(testPractitionerRole.hasAvailabilityExceptions()).toBe(false);
+      expect(testPractitionerRole.getAvailabilityExceptions()).toBeUndefined();
+      expect(testPractitionerRole.hasEndpoint()).toBe(false);
+      expect(testPractitionerRole.getEndpoint()).toEqual([] as Reference[]);
+    });
+
+    it('should be properly reset by modifying all properties with DataTypes', () => {
+      const testPractitionerRole = new PractitionerRole();
+
+      testPractitionerRole.setIdElement(VALID_ID_TYPE);
+      testPractitionerRole.setMeta(VALID_META);
+      testPractitionerRole.setImplicitRulesElement(new UriType(IMPLICIT_RULES_VALUE));
+      testPractitionerRole.setLanguageElement(new CodeType(LANGUAGE_VALUE));
+      testPractitionerRole.setText(VALID_NARRATIVE);
+      testPractitionerRole.setContained(undefined); // Do not have valid resource data model to use
+      testPractitionerRole.setExtension([VALID_EXTENSION]);
+      testPractitionerRole.setModifierExtension([VALID_MODIFIER_EXTENSION]);
+
+      testPractitionerRole.setIdentifier([IDENTIFIER_TYPE]);
+      testPractitionerRole.setActiveElement(new BooleanType(true));
+      testPractitionerRole.setPeriod(VALID_PERIOD);
+      testPractitionerRole.setPractitioner(VALID_REFERENCE_PRACTITIONER);
+      testPractitionerRole.setOrganization(VALID_REFERENCE_ORGANIZATION);
+      testPractitionerRole.setCode([VALID_CODEABLECONCEPT]);
+      testPractitionerRole.setSpecialty([VALID_CODEABLECONCEPT_2]);
+      testPractitionerRole.setLocation([VALID_REFERENCE_LOCATION]);
+      testPractitionerRole.setHealthcareService([VALID_REFERENCE_HEALTHCARE_SERVICE]);
+      testPractitionerRole.setTelecom([VALID_CONTACTPOINT]);
+      testPractitionerRole.setAvailableTime([VALID_AVAILABLE_TIME]);
+      testPractitionerRole.setNotAvailable([VALID_NOT_AVAILABLE]);
+      testPractitionerRole.setAvailabilityExceptionsElement(new StringType(VALID_STRING));
+      testPractitionerRole.setEndpoint([VALID_REFERENCE_ENDPOINT]);
+
+      expect(testPractitionerRole).toBeDefined();
+      expect(testPractitionerRole).toBeInstanceOf(PractitionerRole);
+      expect(testPractitionerRole).toBeInstanceOf(DomainResource);
+      expect(testPractitionerRole).toBeInstanceOf(Resource);
+      expect(testPractitionerRole).toBeInstanceOf(Base);
+      expect(testPractitionerRole.constructor.name).toStrictEqual('PractitionerRole');
+      expect(testPractitionerRole.fhirType()).toStrictEqual('PractitionerRole');
+      expect(testPractitionerRole.isEmpty()).toBe(false);
+      expect(testPractitionerRole.toJSON()).toBeDefined();
+
+      // inherited properties from Resource/DomainResource
+      expect(testPractitionerRole.hasIdElement()).toBe(true);
+      expect(testPractitionerRole.getIdElement()).toEqual(VALID_ID_TYPE);
+      expect(testPractitionerRole.hasId()).toBe(true);
+      expect(testPractitionerRole.getId()).toStrictEqual(VALID_ID);
+      expect(testPractitionerRole.hasMeta()).toBe(true);
+      expect(testPractitionerRole.getMeta()).toEqual(VALID_META);
+      expect(testPractitionerRole.hasImplicitRulesElement()).toBe(true);
+      expect(testPractitionerRole.getImplicitRulesElement()).toEqual(new UriType(IMPLICIT_RULES_VALUE));
+      expect(testPractitionerRole.hasImplicitRules()).toBe(true);
+      expect(testPractitionerRole.getImplicitRules()).toStrictEqual(IMPLICIT_RULES_VALUE);
+      expect(testPractitionerRole.hasLanguageElement()).toBe(true);
+      expect(testPractitionerRole.getLanguageElement()).toEqual(new CodeType(LANGUAGE_VALUE));
+      expect(testPractitionerRole.hasLanguage()).toBe(true);
+      expect(testPractitionerRole.getLanguage()).toStrictEqual(LANGUAGE_VALUE);
+      expect(testPractitionerRole.hasText()).toBe(true);
+      expect(testPractitionerRole.getText()).toEqual(VALID_NARRATIVE);
+      expect(testPractitionerRole.hasContained()).toBe(false);
+      expect(testPractitionerRole.getContained()).toEqual([] as Resource[]);
+      expect(testPractitionerRole.hasExtension()).toBe(true);
+      expect(testPractitionerRole.getExtension()).toEqual([VALID_EXTENSION]);
+      expect(testPractitionerRole.hasModifierExtension()).toBe(true);
+      expect(testPractitionerRole.getModifierExtension()).toEqual([VALID_MODIFIER_EXTENSION]);
+
+      // PractitionerRoleAvailableTimeComponent properties
+      expect(testPractitionerRole.hasIdentifier()).toBe(true);
+      expect(testPractitionerRole.getIdentifier()).toEqual([IDENTIFIER_TYPE]);
+      expect(testPractitionerRole.hasActiveElement()).toBe(true);
+      expect(testPractitionerRole.getActiveElement()).toEqual(new BooleanType(true));
+      expect(testPractitionerRole.hasActive()).toBe(true);
+      expect(testPractitionerRole.getActive()).toBe(true);
+      expect(testPractitionerRole.hasPeriod()).toBe(true);
+      expect(testPractitionerRole.getPeriod()).toEqual(VALID_PERIOD);
+      expect(testPractitionerRole.hasPractitioner()).toBe(true);
+      expect(testPractitionerRole.getPractitioner()).toEqual(VALID_REFERENCE_PRACTITIONER);
+      expect(testPractitionerRole.hasOrganization()).toBe(true);
+      expect(testPractitionerRole.getOrganization()).toEqual(VALID_REFERENCE_ORGANIZATION);
+      expect(testPractitionerRole.hasCode()).toBe(true);
+      expect(testPractitionerRole.getCode()).toEqual([VALID_CODEABLECONCEPT]);
+      expect(testPractitionerRole.hasSpecialty()).toBe(true);
+      expect(testPractitionerRole.getSpecialty()).toEqual([VALID_CODEABLECONCEPT_2]);
+      expect(testPractitionerRole.hasLocation()).toBe(true);
+      expect(testPractitionerRole.getLocation()).toEqual([VALID_REFERENCE_LOCATION]);
+      expect(testPractitionerRole.hasHealthcareService()).toBe(true);
+      expect(testPractitionerRole.getHealthcareService()).toEqual([VALID_REFERENCE_HEALTHCARE_SERVICE]);
+      expect(testPractitionerRole.hasTelecom()).toBe(true);
+      expect(testPractitionerRole.getTelecom()).toEqual([VALID_CONTACTPOINT]);
+      expect(testPractitionerRole.hasAvailableTime()).toBe(true);
+      expect(testPractitionerRole.getAvailableTime()).toEqual([VALID_AVAILABLE_TIME]);
+      expect(testPractitionerRole.hasNotAvailable()).toBe(true);
+      expect(testPractitionerRole.getNotAvailable()).toEqual([VALID_NOT_AVAILABLE]);
+      expect(testPractitionerRole.hasAvailabilityExceptionsElement()).toBe(true);
+      expect(testPractitionerRole.getAvailabilityExceptionsElement()).toEqual(new StringType(VALID_STRING));
+      expect(testPractitionerRole.hasAvailabilityExceptions()).toBe(true);
+      expect(testPractitionerRole.getAvailabilityExceptions()).toStrictEqual(VALID_STRING);
+      expect(testPractitionerRole.hasEndpoint()).toBe(true);
+      expect(testPractitionerRole.getEndpoint()).toEqual([VALID_REFERENCE_ENDPOINT]);
+
+      // Reset
+
+      testPractitionerRole.setIdElement(VALID_ID_TYPE_2);
+      testPractitionerRole.setMeta(VALID_META_2);
+      testPractitionerRole.setImplicitRulesElement(new UriType(IMPLICIT_RULES_VALUE_2));
+      testPractitionerRole.setLanguageElement(new CodeType(LANGUAGE_VALUE_2));
+      testPractitionerRole.setText(VALID_NARRATIVE_2);
+      testPractitionerRole.setContained(undefined); // Do not have valid resource data model to use
+      testPractitionerRole.setExtension([VALID_EXTENSION_2]);
+      testPractitionerRole.setModifierExtension([VALID_MODIFIER_EXTENSION_2]);
+
+      testPractitionerRole.setIdentifier(UNDEFINED_VALUE);
+      testPractitionerRole.addIdentifier(IDENTIFIER_TYPE_2);
       testPractitionerRole.setActiveElement(new BooleanType(false));
       testPractitionerRole.setPeriod(VALID_PERIOD_2);
       testPractitionerRole.setPractitioner(VALID_REFERENCE_PRACTITIONER_2);
@@ -621,6 +894,90 @@ describe('PractitionerRole', () => {
       expect(testPractitionerRole.getAvailabilityExceptions()).toStrictEqual(VALID_STRING_2);
       expect(testPractitionerRole.hasEndpoint()).toBe(true);
       expect(testPractitionerRole.getEndpoint()).toEqual([VALID_REFERENCE_ENDPOINT_2]);
+
+      // Reset as empty
+
+      testPractitionerRole.setIdElement(UNDEFINED_VALUE);
+      testPractitionerRole.setMeta(UNDEFINED_VALUE);
+      testPractitionerRole.setImplicitRulesElement(UNDEFINED_VALUE);
+      testPractitionerRole.setLanguageElement(UNDEFINED_VALUE);
+      testPractitionerRole.setText(UNDEFINED_VALUE);
+      testPractitionerRole.setContained(undefined); // Do not have valid resource data model to use
+      testPractitionerRole.setExtension(UNDEFINED_VALUE);
+      testPractitionerRole.setModifierExtension(UNDEFINED_VALUE);
+
+      testPractitionerRole.setIdentifier(UNDEFINED_VALUE);
+      testPractitionerRole.setActiveElement(UNDEFINED_VALUE);
+      testPractitionerRole.setPeriod(UNDEFINED_VALUE);
+      testPractitionerRole.setPractitioner(UNDEFINED_VALUE);
+      testPractitionerRole.setOrganization(UNDEFINED_VALUE);
+      testPractitionerRole.setCode(UNDEFINED_VALUE);
+      testPractitionerRole.setSpecialty(UNDEFINED_VALUE);
+      testPractitionerRole.setLocation(UNDEFINED_VALUE);
+      testPractitionerRole.setHealthcareService(UNDEFINED_VALUE);
+      testPractitionerRole.setTelecom(UNDEFINED_VALUE);
+      testPractitionerRole.setAvailableTime(UNDEFINED_VALUE);
+      testPractitionerRole.setNotAvailable(UNDEFINED_VALUE);
+      testPractitionerRole.setAvailabilityExceptionsElement(UNDEFINED_VALUE);
+      testPractitionerRole.setEndpoint(UNDEFINED_VALUE);
+
+      // inherited properties from Resource/DomainResource
+      expect(testPractitionerRole.hasIdElement()).toBe(false);
+      expect(testPractitionerRole.getIdElement()).toEqual(new IdType());
+      expect(testPractitionerRole.hasId()).toBe(false);
+      expect(testPractitionerRole.getId()).toBeUndefined();
+      expect(testPractitionerRole.hasMeta()).toBe(false);
+      expect(testPractitionerRole.getMeta()).toEqual(new Meta());
+      expect(testPractitionerRole.hasImplicitRulesElement()).toBe(false);
+      expect(testPractitionerRole.getImplicitRulesElement()).toEqual(new UriType());
+      expect(testPractitionerRole.hasImplicitRules()).toBe(false);
+      expect(testPractitionerRole.getImplicitRules()).toBeUndefined();
+      expect(testPractitionerRole.hasLanguageElement()).toBe(false);
+      expect(testPractitionerRole.getLanguageElement()).toEqual(new CodeType());
+      expect(testPractitionerRole.hasLanguage()).toBe(false);
+      expect(testPractitionerRole.getLanguage()).toBeUndefined();
+      expect(testPractitionerRole.hasText()).toBe(false);
+      expect(testPractitionerRole.getText()).toEqual(new Narrative(null, null));
+      expect(testPractitionerRole.hasContained()).toBe(false);
+      expect(testPractitionerRole.getContained()).toEqual([] as Resource[]);
+      expect(testPractitionerRole.hasExtension()).toBe(false);
+      expect(testPractitionerRole.getExtension()).toEqual([] as Extension[]);
+      expect(testPractitionerRole.hasModifierExtension()).toBe(false);
+      expect(testPractitionerRole.getModifierExtension()).toEqual([] as Extension[]);
+
+      // PractitionerRole properties
+      expect(testPractitionerRole.hasIdentifier()).toBe(false);
+      expect(testPractitionerRole.getIdentifier()).toEqual([] as Identifier[]);
+      expect(testPractitionerRole.hasActiveElement()).toBe(false);
+      expect(testPractitionerRole.getActiveElement()).toEqual(new BooleanType());
+      expect(testPractitionerRole.hasActive()).toBe(false);
+      expect(testPractitionerRole.getActive()).toBeUndefined();
+      expect(testPractitionerRole.hasPeriod()).toBe(false);
+      expect(testPractitionerRole.getPeriod()).toEqual(new Period());
+      expect(testPractitionerRole.hasPractitioner()).toBe(false);
+      expect(testPractitionerRole.getPractitioner()).toEqual(new Reference());
+      expect(testPractitionerRole.hasOrganization()).toBe(false);
+      expect(testPractitionerRole.getOrganization()).toEqual(new Reference());
+      expect(testPractitionerRole.hasCode()).toBe(false);
+      expect(testPractitionerRole.getCode()).toEqual([] as CodeableConcept[]);
+      expect(testPractitionerRole.hasSpecialty()).toBe(false);
+      expect(testPractitionerRole.getSpecialty()).toEqual([] as CodeableConcept[]);
+      expect(testPractitionerRole.hasLocation()).toBe(false);
+      expect(testPractitionerRole.getLocation()).toEqual([] as Reference[]);
+      expect(testPractitionerRole.hasHealthcareService()).toBe(false);
+      expect(testPractitionerRole.getHealthcareService()).toEqual([] as Reference[]);
+      expect(testPractitionerRole.hasTelecom()).toBe(false);
+      expect(testPractitionerRole.getTelecom()).toEqual([] as ContactPoint[]);
+      expect(testPractitionerRole.hasAvailableTime()).toBe(false);
+      expect(testPractitionerRole.getAvailableTime()).toEqual([] as PractitionerRoleAvailableTimeComponent[]);
+      expect(testPractitionerRole.hasNotAvailable()).toBe(false);
+      expect(testPractitionerRole.getNotAvailable()).toEqual([] as PractitionerRoleNotAvailableComponent[]);
+      expect(testPractitionerRole.hasAvailabilityExceptionsElement()).toBe(false);
+      expect(testPractitionerRole.getAvailabilityExceptionsElement()).toEqual(new StringType());
+      expect(testPractitionerRole.hasAvailabilityExceptions()).toBe(false);
+      expect(testPractitionerRole.getAvailabilityExceptions()).toBeUndefined();
+      expect(testPractitionerRole.hasEndpoint()).toBe(false);
+      expect(testPractitionerRole.getEndpoint()).toEqual([] as Reference[]);
     });
   });
 

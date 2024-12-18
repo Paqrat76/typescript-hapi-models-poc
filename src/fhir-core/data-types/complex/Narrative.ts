@@ -40,7 +40,7 @@ import {
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirType, isDefined } from '@src/fhir-core/utility/type-guards';
+import { assertFhirType, assertIsDefined, isDefined } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
 
@@ -143,12 +143,11 @@ export class Narrative extends DataType implements IBase {
    * @param enumType - the `status` value
    * @returns this
    */
-  public setStatueEnumType(enumType: EnumCodeType): this {
-    if (isDefined<EnumCodeType>(enumType)) {
-      const errMsgPrefix = 'Invalid Narrative.status';
-      assertEnumCodeType<NarrativeStatusEnum>(enumType, NarrativeStatusEnum, errMsgPrefix);
-      this.status = enumType;
-    }
+  public setStatusEnumType(enumType: EnumCodeType): this {
+    assertIsDefined<EnumCodeType>(enumType, `Narrative.status is required`);
+    const errMsgPrefix = 'Invalid Narrative.status';
+    assertEnumCodeType<NarrativeStatusEnum>(enumType, NarrativeStatusEnum, errMsgPrefix);
+    this.status = enumType;
     return this;
   }
 
@@ -180,11 +179,10 @@ export class Narrative extends DataType implements IBase {
    * @returns this
    */
   public setStatusElement(element: CodeType): this {
-    if (isDefined<CodeType>(element)) {
-      const optErrMsg = `Invalid Narrative.status; Provided element is not an instance of CodeType.`;
-      assertFhirType<CodeType>(element, CodeType, optErrMsg);
-      this.status = new EnumCodeType(element, this.narrativeStatusEnum);
-    }
+    assertIsDefined<CodeType>(element, `Narrative.status is required`);
+    const optErrMsg = `Invalid Narrative.status; Provided element is not an instance of CodeType.`;
+    assertFhirType<CodeType>(element, CodeType, optErrMsg);
+    this.status = new EnumCodeType(element, this.narrativeStatusEnum);
     return this;
   }
 
@@ -212,13 +210,9 @@ export class Narrative extends DataType implements IBase {
    * @returns this
    */
   public setStatus(value: fhirCode): this {
-    if (isDefined<fhirCode>(value)) {
-      const optErrMsg = `Invalid Narrative.status (${String(value)})`;
-      this.status = new EnumCodeType(
-        parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg),
-        this.narrativeStatusEnum,
-      );
-    }
+    assertIsDefined<fhirCode>(value, `Narrative.status is required`);
+    const optErrMsg = `Invalid Narrative.status (${String(value)})`;
+    this.status = new EnumCodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg), this.narrativeStatusEnum);
     return this;
   }
 
@@ -243,11 +237,10 @@ export class Narrative extends DataType implements IBase {
    * @returns this
    */
   public setDivElement(element: XhtmlType): this {
-    if (isDefined<XhtmlType>(element)) {
-      const optErrMsg = `Invalid Narrative.div; Provided element is not an instance of XhtmlType.`;
-      assertFhirType<XhtmlType>(element, XhtmlType, optErrMsg);
-      this.div = element;
-    }
+    assertIsDefined<XhtmlType>(element, `Narrative.div is required`);
+    const optErrMsg = `Invalid Narrative.div; Provided element is not an instance of XhtmlType.`;
+    assertFhirType<XhtmlType>(element, XhtmlType, optErrMsg);
+    this.div = element;
     return this;
   }
 
@@ -277,10 +270,9 @@ export class Narrative extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setDiv(value: fhirXhtml): this {
-    if (isDefined<fhirXhtml>(value)) {
-      const optErrMsg = `Invalid Narrative.div (invalid value provided)`;
-      this.div = new XhtmlType(parseFhirPrimitiveData(value, fhirXhtmlSchema, optErrMsg));
-    }
+    assertIsDefined<fhirXhtml>(value, `Narrative.div is required`);
+    const optErrMsg = `Invalid Narrative.div (invalid value provided)`;
+    this.div = new XhtmlType(parseFhirPrimitiveData(value, fhirXhtmlSchema, optErrMsg));
     return this;
   }
 

@@ -27,8 +27,16 @@ import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
+import { fhirBoolean } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import {
+  INVALID_NON_STRING_TYPE,
+  INVALID_NON_STRING_TYPE_VALUE,
+  INVALID_STRING_TYPE,
+  TOO_BIG_STRING,
+  UNDEFINED_VALUE,
+} from '../../../test-utils';
 
 describe('Coding', () => {
   const VALID_URI = `testUriType`;
@@ -36,40 +44,33 @@ describe('Coding', () => {
   const VALID_URI_2 = `testUriType2`;
   const VALID_URI_TYPE_2 = new UriType(VALID_URI_2);
   const INVALID_URI = ' invalid Uri ';
-  const INVALID_URI_TYPE = new StringType(VALID_URI);
 
   const VALID_CODE = `testCodeType`;
   const VALID_CODE_TYPE = new CodeType(VALID_CODE);
   const VALID_CODE_2 = `testCodeType2`;
   const VALID_CODE_TYPE_2 = new CodeType(VALID_CODE_2);
   const INVALID_CODE = ' invalid CodeType ';
-  const INVALID_CODE_TYPE = new StringType(VALID_CODE);
 
   const VALID_STRING = 'This is a valid string.';
   const VALID_STRING_TYPE = new StringType(VALID_STRING);
   const VALID_STRING_2 = 'This is another valid string!';
   const VALID_STRING_TYPE_2 = new StringType(VALID_STRING_2);
-  const INVALID_STRING = '';
-  const INVALID_STRING_TYPE = new UriType(VALID_URI);
 
   const VALID_VERSION = 'validVersion';
   const VALID_VERSION_TYPE = new StringType(VALID_VERSION);
-  const INVALID_VERSION_TYPE = new UriType(VALID_URI);
 
-  //const VALID_BOOLEAN_FALSE = false as fhirBoolean;
-  const VALID_BOOLEAN_TYPE_FALSE = new BooleanType(false);
-  const INVALID_BOOLEAN = 'invalidBoolean';
-  const INVALID_BOOLEAN_TYPE = new UriType(VALID_URI);
-
-  const UNDEFINED_VALUE = undefined;
+  const VALID_BOOLEAN_FALSE = false as fhirBoolean;
+  const VALID_BOOLEAN_TYPE_FALSE = new BooleanType(VALID_BOOLEAN_FALSE);
+  const VALID_BOOLEAN_TRUE = true as fhirBoolean;
+  const VALID_BOOLEAN_TYPE_TRUE = new BooleanType(VALID_BOOLEAN_TRUE);
 
   describe('Core', () => {
     const expectedJson = {
-      code: 'testCodeType',
-      display: 'This is a valid string.',
-      system: 'testUriType',
-      version: 'validVersion',
-      userSelected: false,
+      system: VALID_URI,
+      version: VALID_VERSION,
+      code: VALID_CODE,
+      display: VALID_STRING,
+      userSelected: VALID_BOOLEAN_FALSE,
     };
 
     it('should be properly instantiated as empty', () => {
@@ -119,9 +120,9 @@ describe('Coding', () => {
       codingType.setCode(VALID_CODE);
       codingType.setDisplay(VALID_STRING);
       codingType.setVersion(VALID_VERSION);
-      codingType.setUserSelected(false);
-      let testCoding = codingType.copy();
+      codingType.setUserSelected(VALID_BOOLEAN_FALSE);
 
+      let testCoding = codingType.copy();
       expect(testCoding).toBeDefined();
       expect(testCoding).toBeInstanceOf(DataType);
       expect(testCoding).toBeInstanceOf(Coding);
@@ -147,7 +148,7 @@ describe('Coding', () => {
       expect(testCoding.hasDisplayElement()).toBe(true);
       expect(testCoding.getDisplayElement()).toEqual(new StringType(VALID_STRING));
       expect(testCoding.hasUserSelectedElement()).toBe(true);
-      expect(testCoding.getUserSelectedElement()).toEqual(new BooleanType(false));
+      expect(testCoding.getUserSelectedElement()).toEqual(VALID_BOOLEAN_TYPE_FALSE);
 
       expect(testCoding.hasSystem()).toBe(true);
       expect(testCoding.getSystem()).toStrictEqual(VALID_URI);
@@ -158,17 +159,17 @@ describe('Coding', () => {
       expect(testCoding.hasDisplay()).toBe(true);
       expect(testCoding.getDisplay()).toStrictEqual(VALID_STRING);
       expect(testCoding.hasUserSelected()).toBe(true);
-      expect(testCoding.getUserSelected()).toBe(false);
+      expect(testCoding.getUserSelected()).toBe(VALID_BOOLEAN_FALSE);
 
       // Reset to empty
 
-      codingType.setSystemElement(UNDEFINED_VALUE);
-      codingType.setCodeElement(UNDEFINED_VALUE);
-      codingType.setDisplayElement(UNDEFINED_VALUE);
-      codingType.setVersionElement(UNDEFINED_VALUE);
-      codingType.setUserSelectedElement(UNDEFINED_VALUE);
-      testCoding = codingType.copy();
+      codingType.setSystem(UNDEFINED_VALUE);
+      codingType.setCode(UNDEFINED_VALUE);
+      codingType.setDisplay(UNDEFINED_VALUE);
+      codingType.setVersion(UNDEFINED_VALUE);
+      codingType.setUserSelected(UNDEFINED_VALUE);
 
+      testCoding = codingType.copy();
       expect(testCoding).toBeDefined();
       expect(testCoding).toBeInstanceOf(DataType);
       expect(testCoding).toBeInstanceOf(Coding);
@@ -216,7 +217,8 @@ describe('Coding', () => {
       testCoding.setCode(VALID_CODE);
       testCoding.setDisplay(VALID_STRING);
       testCoding.setVersion(VALID_VERSION);
-      testCoding.setUserSelected(false);
+      testCoding.setUserSelected(VALID_BOOLEAN_FALSE);
+
       expect(testCoding).toBeDefined();
       expect(testCoding).toBeInstanceOf(DataType);
       expect(testCoding).toBeInstanceOf(Coding);
@@ -242,7 +244,7 @@ describe('Coding', () => {
       expect(testCoding.hasDisplayElement()).toBe(true);
       expect(testCoding.getDisplayElement()).toStrictEqual(VALID_STRING_TYPE);
       expect(testCoding.hasUserSelectedElement()).toBe(true);
-      expect(testCoding.getUserSelectedElement()).toEqual(new BooleanType(false));
+      expect(testCoding.getUserSelectedElement()).toEqual(VALID_BOOLEAN_TYPE_FALSE);
 
       expect(testCoding.hasSystem()).toBe(true);
       expect(testCoding.getSystem()).toStrictEqual(VALID_URI);
@@ -253,7 +255,7 @@ describe('Coding', () => {
       expect(testCoding.hasDisplay()).toBe(true);
       expect(testCoding.getDisplay()).toStrictEqual(VALID_STRING);
       expect(testCoding.hasUserSelected()).toBe(true);
-      expect(testCoding.getUserSelected()).toBe(false);
+      expect(testCoding.getUserSelected()).toBe(VALID_BOOLEAN_FALSE);
     });
 
     it('should be properly reset by modifying all properties with primitive values', () => {
@@ -262,18 +264,46 @@ describe('Coding', () => {
       testCoding.setCode(VALID_CODE);
       testCoding.setDisplay(VALID_STRING);
       testCoding.setVersion(VALID_VERSION);
-      testCoding.setUserSelected(false);
+      testCoding.setUserSelected(VALID_BOOLEAN_FALSE);
+
       expect(testCoding).toBeDefined();
       expect(testCoding.isEmpty()).toBe(false);
-      expect(testCoding.isComplexDataType()).toBe(true);
-      expect(testCoding.toJSON()).toEqual(expectedJson);
+
+      // Coding properties
+      expect(testCoding.hasSystemElement()).toBe(true);
+      expect(testCoding.getSystemElement()).toStrictEqual(VALID_URI_TYPE);
+      expect(testCoding.hasVersionElement()).toBe(true);
+      expect(testCoding.getVersionElement()).toEqual(new StringType(VALID_VERSION));
+      expect(testCoding.hasCodeElement()).toBe(true);
+      expect(testCoding.getCodeElement()).toStrictEqual(VALID_CODE_TYPE);
+      expect(testCoding.hasDisplayElement()).toBe(true);
+      expect(testCoding.getDisplayElement()).toStrictEqual(VALID_STRING_TYPE);
+      expect(testCoding.hasUserSelectedElement()).toBe(true);
+      expect(testCoding.getUserSelectedElement()).toEqual(VALID_BOOLEAN_TYPE_FALSE);
+
+      expect(testCoding.hasSystem()).toBe(true);
+      expect(testCoding.getSystem()).toStrictEqual(VALID_URI);
+      expect(testCoding.hasVersion()).toBe(true);
+      expect(testCoding.getVersion()).toStrictEqual(VALID_VERSION);
+      expect(testCoding.hasCode()).toBe(true);
+      expect(testCoding.getCode()).toStrictEqual(VALID_CODE);
+      expect(testCoding.hasDisplay()).toBe(true);
+      expect(testCoding.getDisplay()).toStrictEqual(VALID_STRING);
+      expect(testCoding.hasUserSelected()).toBe(true);
+      expect(testCoding.getUserSelected()).toBe(VALID_BOOLEAN_FALSE);
+
+      // Reset
 
       testCoding.setSystem(VALID_URI_2);
       testCoding.setCode(VALID_CODE_2);
       testCoding.setDisplay(VALID_STRING_2);
       testCoding.setVersion(VALID_STRING_2);
-      testCoding.setUserSelected(false);
+      testCoding.setUserSelected(VALID_BOOLEAN_TRUE);
 
+      expect(testCoding).toBeDefined();
+      expect(testCoding.isEmpty()).toBe(false);
+
+      // Coding properties
       expect(testCoding.hasSystemElement()).toBe(true);
       expect(testCoding.getSystemElement()).toStrictEqual(VALID_URI_TYPE_2);
       expect(testCoding.hasVersionElement()).toBe(true);
@@ -283,7 +313,7 @@ describe('Coding', () => {
       expect(testCoding.hasDisplayElement()).toBe(true);
       expect(testCoding.getDisplayElement()).toStrictEqual(VALID_STRING_TYPE_2);
       expect(testCoding.hasUserSelectedElement()).toBe(true);
-      expect(testCoding.getUserSelectedElement()).toStrictEqual(VALID_BOOLEAN_TYPE_FALSE);
+      expect(testCoding.getUserSelectedElement()).toStrictEqual(VALID_BOOLEAN_TYPE_TRUE);
 
       expect(testCoding.hasSystem()).toBe(true);
       expect(testCoding.getSystem()).toStrictEqual(VALID_URI_2);
@@ -294,7 +324,9 @@ describe('Coding', () => {
       expect(testCoding.hasDisplay()).toBe(true);
       expect(testCoding.getDisplay()).toStrictEqual(VALID_STRING_2);
       expect(testCoding.hasUserSelected()).toBe(true);
-      expect(testCoding.getUserSelected()).toBe(false);
+      expect(testCoding.getUserSelected()).toBe(VALID_BOOLEAN_TRUE);
+
+      // Reset to empty
 
       testCoding.setSystem(UNDEFINED_VALUE);
       testCoding.setCode(UNDEFINED_VALUE);
@@ -302,6 +334,10 @@ describe('Coding', () => {
       testCoding.setVersion(UNDEFINED_VALUE);
       testCoding.setUserSelected(UNDEFINED_VALUE);
 
+      expect(testCoding).toBeDefined();
+      expect(testCoding.isEmpty()).toBe(true);
+
+      // Coding properties
       expect(testCoding.hasSystemElement()).toBe(false);
       expect(testCoding.getSystemElement()).toEqual(new UriType());
       expect(testCoding.hasVersionElement()).toBe(false);
@@ -325,111 +361,51 @@ describe('Coding', () => {
       expect(testCoding.getUserSelected()).toBeUndefined();
     });
 
-    it('should throw PrimitiveTypeError when reset with invalid primitive Coding.system value', () => {
+    it('should throw errors for invalid primitive values', () => {
       const testCoding = new Coding();
-      const t = () => {
+
+      let t = () => {
         testCoding.setSystem(INVALID_URI);
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid Coding.system (${INVALID_URI})`);
-    });
 
-    it('should throw InvalidTypeError when reset with invalid PrimitiveType Coding.system value', () => {
-      const testCoding = new Coding();
-      const t = () => {
-        // @ts-expect-error: allow invalid type for test
-        testCoding.setSystemElement(INVALID_URI_TYPE);
-      };
-      expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`Invalid Coding.system; Provided element is not an instance of UriType.`);
-    });
-
-    it('should throw PrimitiveTypeError when reset with invalid primitive Coding.version value', () => {
-      const testCoding = new Coding();
-      const t = () => {
-        testCoding.setVersion(INVALID_STRING);
+      t = () => {
+        testCoding.setVersion(TOO_BIG_STRING);
       };
       expect(t).toThrow(PrimitiveTypeError);
-      expect(t).toThrow(`Invalid Coding.version (${INVALID_STRING})`);
-    });
+      expect(t).toThrow(`Invalid Coding.version (${TOO_BIG_STRING})`);
 
-    it('should throw InvalidTypeError when reset with invalid PrimitiveType Coding.version value', () => {
-      const testCoding = new Coding();
-      const t = () => {
-        // @ts-expect-error: allow invalid type for test
-        testCoding.setVersionElement(INVALID_VERSION_TYPE);
-      };
-      expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`Invalid Coding.version; Provided element is not an instance of StringType.`);
-    });
-
-    it('should throw PrimitiveTypeError when reset with invalid primitive Coding.code value', () => {
-      const testCoding = new Coding();
-      const t = () => {
+      t = () => {
         testCoding.setCode(INVALID_CODE);
       };
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid Coding.code (${INVALID_CODE})`);
-    });
 
-    it('should throw InvalidTypeError when reset with invalid PrimitiveType Coding.code value', () => {
-      const testCoding = new Coding();
-      const t = () => {
-        // @ts-expect-error: allow invalid type for test
-        testCoding.setCodeElement(INVALID_CODE_TYPE);
-      };
-      expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`Invalid Coding.code; Provided element is not an instance of CodeType.`);
-    });
-
-    it('should throw PrimitiveTypeError when reset with invalid primitive Coding.display value', () => {
-      const testCoding = new Coding();
-      const t = () => {
-        testCoding.setDisplay(INVALID_STRING);
+      t = () => {
+        testCoding.setDisplay(TOO_BIG_STRING);
       };
       expect(t).toThrow(PrimitiveTypeError);
-      expect(t).toThrow(`Invalid Coding.display (${INVALID_STRING})`);
-    });
+      expect(t).toThrow(`Invalid Coding.display (${TOO_BIG_STRING})`);
 
-    it('should throw InvalidTypeError when reset with invalid PrimitiveType Coding.display value', () => {
-      const testCoding = new Coding();
-      const t = () => {
-        // @ts-expect-error: allow invalid type for test
-        testCoding.setDisplayElement(INVALID_STRING_TYPE);
-      };
-      expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`Invalid Coding.display; Provided element is not an instance of StringType.`);
-    });
-
-    it('should throw PrimitiveTypeError when reset with invalid primitive Coding.userSelected value', () => {
-      const testCoding = new Coding();
-      const t = () => {
+      t = () => {
         // @ts-expect-error: allow non-boolean to test error handling
-        testCoding.setUserSelected(INVALID_BOOLEAN);
+        testCoding.setUserSelected(INVALID_NON_STRING_TYPE_VALUE);
       };
       expect(t).toThrow(PrimitiveTypeError);
-      expect(t).toThrow(`Invalid Coding.userSelected (${INVALID_BOOLEAN})`);
-    });
-
-    it('should throw InvalidTypeError when reset with invalid PrimitiveType Coding.userSelected value', () => {
-      const testCoding = new Coding();
-      const t = () => {
-        // @ts-expect-error: allow invalid type for test
-        testCoding.setUserSelectedElement(INVALID_BOOLEAN_TYPE);
-      };
-      expect(t).toThrow(InvalidTypeError);
-      expect(t).toThrow(`Invalid Coding.userSelected; Provided element is not an instance of BooleanType.`);
+      expect(t).toThrow(`Invalid Coding.userSelected (${INVALID_NON_STRING_TYPE_VALUE})`);
     });
 
     // Tests using DataType elements
 
-    it('should be properly instantiated with PrimitiveType values', () => {
+    it('should be properly instantiated with DataType values', () => {
       const testCoding = new Coding();
       testCoding.setSystemElement(VALID_URI_TYPE);
       testCoding.setCodeElement(VALID_CODE_TYPE);
       testCoding.setDisplayElement(VALID_STRING_TYPE);
       testCoding.setVersionElement(VALID_VERSION_TYPE);
       testCoding.setUserSelectedElement(VALID_BOOLEAN_TYPE_FALSE);
+
       expect(testCoding).toBeDefined();
       expect(testCoding).toBeInstanceOf(DataType);
       expect(testCoding).toBeInstanceOf(Coding);
@@ -455,6 +431,41 @@ describe('Coding', () => {
       expect(testCoding.hasDisplayElement()).toBe(true);
       expect(testCoding.getDisplayElement()).toStrictEqual(VALID_STRING_TYPE);
       expect(testCoding.hasUserSelectedElement()).toBe(true);
+      expect(testCoding.getUserSelectedElement()).toEqual(VALID_BOOLEAN_TYPE_FALSE);
+
+      expect(testCoding.hasSystem()).toBe(true);
+      expect(testCoding.getSystem()).toStrictEqual(VALID_URI);
+      expect(testCoding.hasVersion()).toBe(true);
+      expect(testCoding.getVersion()).toStrictEqual(VALID_VERSION);
+      expect(testCoding.hasCode()).toBe(true);
+      expect(testCoding.getCode()).toStrictEqual(VALID_CODE);
+      expect(testCoding.hasDisplay()).toBe(true);
+      expect(testCoding.getDisplay()).toStrictEqual(VALID_STRING);
+      expect(testCoding.hasUserSelected()).toBe(true);
+      expect(testCoding.getUserSelected()).toBe(VALID_BOOLEAN_FALSE);
+    });
+
+    it('should be properly reset by modifying all properties with DataType values', () => {
+      const testCoding = new Coding();
+      testCoding.setSystemElement(VALID_URI_TYPE);
+      testCoding.setCodeElement(VALID_CODE_TYPE);
+      testCoding.setDisplayElement(VALID_STRING_TYPE);
+      testCoding.setVersionElement(VALID_VERSION_TYPE);
+      testCoding.setUserSelectedElement(VALID_BOOLEAN_TYPE_FALSE);
+
+      expect(testCoding).toBeDefined();
+      expect(testCoding.isEmpty()).toBe(false);
+
+      // Coding properties
+      expect(testCoding.hasSystemElement()).toBe(true);
+      expect(testCoding.getSystemElement()).toStrictEqual(VALID_URI_TYPE);
+      expect(testCoding.hasVersionElement()).toBe(true);
+      expect(testCoding.getVersionElement()).toEqual(new StringType(VALID_VERSION));
+      expect(testCoding.hasCodeElement()).toBe(true);
+      expect(testCoding.getCodeElement()).toStrictEqual(VALID_CODE_TYPE);
+      expect(testCoding.hasDisplayElement()).toBe(true);
+      expect(testCoding.getDisplayElement()).toStrictEqual(VALID_STRING_TYPE);
+      expect(testCoding.hasUserSelectedElement()).toBe(true);
       expect(testCoding.getUserSelectedElement()).toEqual(new BooleanType(false));
 
       expect(testCoding.hasSystem()).toBe(true);
@@ -467,19 +478,8 @@ describe('Coding', () => {
       expect(testCoding.getDisplay()).toStrictEqual(VALID_STRING);
       expect(testCoding.hasUserSelected()).toBe(true);
       expect(testCoding.getUserSelected()).toBe(false);
-    });
 
-    it('should be properly reset by modifying all properties with PrimitiveType values', () => {
-      const testCoding = new Coding();
-      testCoding.setSystemElement(VALID_URI_TYPE);
-      testCoding.setCodeElement(VALID_CODE_TYPE);
-      testCoding.setDisplayElement(VALID_STRING_TYPE);
-      testCoding.setVersionElement(VALID_VERSION_TYPE);
-      testCoding.setUserSelectedElement(VALID_BOOLEAN_TYPE_FALSE);
-      expect(testCoding).toBeDefined();
-      expect(testCoding.isEmpty()).toBe(false);
-      expect(testCoding.isComplexDataType()).toBe(true);
-      expect(testCoding.toJSON()).toEqual(expectedJson);
+      // Reset
 
       testCoding.setSystemElement(VALID_URI_TYPE_2);
       testCoding.setCodeElement(VALID_CODE_TYPE_2);
@@ -487,6 +487,10 @@ describe('Coding', () => {
       testCoding.setVersionElement(VALID_STRING_TYPE_2);
       testCoding.setUserSelectedElement(VALID_BOOLEAN_TYPE_FALSE);
 
+      expect(testCoding).toBeDefined();
+      expect(testCoding.isEmpty()).toBe(false);
+
+      // Coding properties
       expect(testCoding.hasSystemElement()).toBe(true);
       expect(testCoding.getSystemElement()).toStrictEqual(VALID_URI_TYPE_2);
       expect(testCoding.hasVersionElement()).toBe(true);
@@ -509,12 +513,18 @@ describe('Coding', () => {
       expect(testCoding.hasUserSelected()).toBe(true);
       expect(testCoding.getUserSelected()).toBe(false);
 
+      // Reset to empty
+
       testCoding.setSystemElement(UNDEFINED_VALUE);
       testCoding.setCodeElement(UNDEFINED_VALUE);
       testCoding.setDisplayElement(UNDEFINED_VALUE);
       testCoding.setVersionElement(UNDEFINED_VALUE);
       testCoding.setUserSelectedElement(UNDEFINED_VALUE);
 
+      expect(testCoding).toBeDefined();
+      expect(testCoding.isEmpty()).toBe(true);
+
+      // Coding properties
       expect(testCoding.hasSystemElement()).toBe(false);
       expect(testCoding.getSystemElement()).toEqual(new UriType());
       expect(testCoding.hasVersionElement()).toBe(false);
@@ -536,6 +546,45 @@ describe('Coding', () => {
       expect(testCoding.getDisplay()).toBeUndefined();
       expect(testCoding.hasUserSelected()).toBe(false);
       expect(testCoding.getUserSelected()).toBeUndefined();
+    });
+
+    it('should throw errors for invalid DataType values', () => {
+      const testCoding = new Coding();
+
+      let t = () => {
+        // @ts-expect-error: allow invalid type for test
+        testCoding.setSystemElement(INVALID_NON_STRING_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Coding.system; Provided element is not an instance of UriType.`);
+
+      t = () => {
+        // @ts-expect-error: allow invalid type for test
+        testCoding.setVersionElement(INVALID_STRING_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Coding.version; Provided element is not an instance of StringType.`);
+
+      t = () => {
+        // @ts-expect-error: allow invalid type for test
+        testCoding.setCodeElement(INVALID_NON_STRING_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Coding.code; Provided element is not an instance of CodeType.`);
+
+      t = () => {
+        // @ts-expect-error: allow invalid type for test
+        testCoding.setDisplayElement(INVALID_STRING_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Coding.display; Provided element is not an instance of StringType.`);
+
+      t = () => {
+        // @ts-expect-error: allow invalid type for test
+        testCoding.setUserSelectedElement(INVALID_NON_STRING_TYPE);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(`Invalid Coding.userSelected; Provided element is not an instance of BooleanType.`);
     });
   });
 

@@ -26,7 +26,7 @@ import { IBase } from '@src/fhir-core/base-models/IBase';
 import { SimpleQuantity } from '@src/fhir-core/data-types/complex/SimpleQuantity';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
-import { assertFhirType } from '@src/fhir-core/utility/type-guards';
+import { assertFhirType, isDefined } from '@src/fhir-core/utility/type-guards';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -98,9 +98,13 @@ export class Range extends DataType implements IBase {
    * @returns this
    */
   public setLow(value: SimpleQuantity | undefined): this {
-    const optErrMsg = `Invalid Range.low; Provided value is not an instance of SimpleQuantity.`;
-    assertFhirType<SimpleQuantity>(value, SimpleQuantity, optErrMsg);
-    this.low = value;
+    if (isDefined<SimpleQuantity | undefined>(value)) {
+      const optErrMsg = `Invalid Range.low; Provided value is not an instance of SimpleQuantity.`;
+      assertFhirType<SimpleQuantity>(value, SimpleQuantity, optErrMsg);
+      this.low = value;
+    } else {
+      this.low = undefined;
+    }
     return this;
   }
 
@@ -125,9 +129,13 @@ export class Range extends DataType implements IBase {
    * @returns this
    */
   public setHigh(value: SimpleQuantity | undefined): this {
-    const optErrMsg = `Invalid Range.high; Provided value is not an instance of SimpleQuantity.`;
-    assertFhirType<SimpleQuantity>(value, SimpleQuantity, optErrMsg);
-    this.high = value;
+    if (isDefined<SimpleQuantity | undefined>(value)) {
+      const optErrMsg = `Invalid Range.high; Provided value is not an instance of SimpleQuantity.`;
+      assertFhirType<SimpleQuantity>(value, SimpleQuantity, optErrMsg);
+      this.high = value;
+    } else {
+      this.high = undefined;
+    }
     return this;
   }
 

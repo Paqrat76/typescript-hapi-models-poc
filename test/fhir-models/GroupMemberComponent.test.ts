@@ -21,6 +21,7 @@
  *
  */
 
+import { AssertionError } from 'node:assert';
 import { GroupMemberComponent } from '@src/fhir-models/Group';
 import { BackboneElement, Element, Extension } from '@src/fhir-core/base-models/core-fhir-models';
 import { Base } from '@src/fhir-core/base-models/Base';
@@ -146,6 +147,23 @@ describe('GroupMemberComponent', () => {
       expect(testGroupMemberComponent.getInactive()).toBeUndefined();
     });
 
+    it('should throw AssertionError when reset with null/undefined GroupMemberComponent.entity value', () => {
+      const testGroupMemberComponent = new GroupMemberComponent(VALID_REFERENCE_VALUE_1);
+      let t = () => {
+        // @ts-expect-error: allow for testing
+        testGroupMemberComponent.setEntity(null);
+      };
+      expect(t).toThrow(AssertionError);
+      expect(t).toThrow(`Group.member.entity is required`);
+
+      t = () => {
+        // @ts-expect-error: allow for testing
+        testGroupMemberComponent.setEntity(undefined);
+      };
+      expect(t).toThrow(AssertionError);
+      expect(t).toThrow(`Group.member.entity is required`);
+    });
+
     it('should be properly instantiated with valid values', () => {
       const testGroupMemberComponent = new GroupMemberComponent(VALID_REFERENCE_VALUE_1);
 
@@ -220,8 +238,8 @@ describe('GroupMemberComponent', () => {
       groupMemberComponent.setId(UNDEFINED_VALUE);
       groupMemberComponent.setExtension(UNDEFINED_VALUE);
       groupMemberComponent.setModifierExtension(UNDEFINED_VALUE);
-      // @ts-expect-error: allow for test - verify null will result in no change to entity!
-      groupMemberComponent.setEntity(null);
+      // Setting to null or undefined results in an AssertionError because this field is required
+      // groupMemberComponent.setEntity(null);
       groupMemberComponent.setPeriod(UNDEFINED_VALUE);
       groupMemberComponent.setInactiveElement(UNDEFINED_VALUE);
 
@@ -256,7 +274,7 @@ describe('GroupMemberComponent', () => {
       expect(testGroupMemberComponent.getInactive()).toBeUndefined();
     });
 
-    it('should be properly reset by modifying all properties', () => {
+    it('should be properly reset by modifying all properties with primitives', () => {
       const testGroupMemberComponent = new GroupMemberComponent(null);
       testGroupMemberComponent.setId(VALID_ID);
       testGroupMemberComponent.setExtension([VALID_EXTENSION]);
@@ -264,6 +282,93 @@ describe('GroupMemberComponent', () => {
       testGroupMemberComponent.setEntity(VALID_REFERENCE_VALUE_1);
       testGroupMemberComponent.setPeriod(VALID_PERIOD);
       testGroupMemberComponent.setInactive(VALID_BOOLEAN_TRUE);
+
+      expect(testGroupMemberComponent).toBeDefined();
+      expect(testGroupMemberComponent.isEmpty()).toBe(false);
+      expect(testGroupMemberComponent.toJSON()).toBeDefined();
+
+      // inherited properties from BackboneElement
+      expect(testGroupMemberComponent.hasId()).toBe(true);
+      expect(testGroupMemberComponent.getId()).toStrictEqual(VALID_ID);
+      expect(testGroupMemberComponent.hasExtension()).toBe(true);
+      expect(testGroupMemberComponent.getExtension()).toEqual([VALID_EXTENSION]);
+      expect(testGroupMemberComponent.hasModifierExtension()).toBe(true);
+      expect(testGroupMemberComponent.getModifierExtension()).toEqual([VALID_MODIFIER_EXTENSION]);
+
+      // GroupMemberComponent properties
+      expect(testGroupMemberComponent.hasEntity()).toBe(true);
+      expect(testGroupMemberComponent.getEntity()).toEqual(VALID_REFERENCE_VALUE_1);
+      expect(testGroupMemberComponent.hasPeriod()).toBe(true);
+      expect(testGroupMemberComponent.getPeriod()).toEqual(VALID_PERIOD);
+      expect(testGroupMemberComponent.hasInactiveElement()).toBe(true);
+      expect(testGroupMemberComponent.getInactiveElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
+      expect(testGroupMemberComponent.hasInactive()).toBe(true);
+      expect(testGroupMemberComponent.getInactive()).toStrictEqual(VALID_BOOLEAN_TRUE);
+
+      // Reset
+
+      testGroupMemberComponent.setId(VALID_ID_2);
+      testGroupMemberComponent.setExtension([VALID_EXTENSION_2]);
+      testGroupMemberComponent.setModifierExtension([VALID_MODIFIER_EXTENSION_2]);
+      testGroupMemberComponent.setEntity(VALID_REFERENCE_VALUE_3);
+      testGroupMemberComponent.setPeriod(VALID_PERIOD_2);
+      testGroupMemberComponent.setInactive(VALID_BOOLEAN_FALSE);
+
+      // inherited properties from BackboneElement
+      expect(testGroupMemberComponent.hasId()).toBe(true);
+      expect(testGroupMemberComponent.getId()).toStrictEqual(VALID_ID_2);
+      expect(testGroupMemberComponent.hasExtension()).toBe(true);
+      expect(testGroupMemberComponent.getExtension()).toEqual([VALID_EXTENSION_2]);
+      expect(testGroupMemberComponent.hasModifierExtension()).toBe(true);
+      expect(testGroupMemberComponent.getModifierExtension()).toEqual([VALID_MODIFIER_EXTENSION_2]);
+
+      // GroupMemberComponent properties
+      expect(testGroupMemberComponent.hasEntity()).toBe(true);
+      expect(testGroupMemberComponent.getEntity()).toEqual(VALID_REFERENCE_VALUE_3);
+      expect(testGroupMemberComponent.hasPeriod()).toBe(true);
+      expect(testGroupMemberComponent.getPeriod()).toEqual(VALID_PERIOD_2);
+      expect(testGroupMemberComponent.hasInactiveElement()).toBe(true);
+      expect(testGroupMemberComponent.getInactiveElement()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
+      expect(testGroupMemberComponent.hasInactive()).toBe(true);
+      expect(testGroupMemberComponent.getInactive()).toStrictEqual(VALID_BOOLEAN_FALSE);
+
+      // Reset as empty
+
+      testGroupMemberComponent.setId(UNDEFINED_VALUE);
+      testGroupMemberComponent.setExtension(UNDEFINED_VALUE);
+      testGroupMemberComponent.setModifierExtension(UNDEFINED_VALUE);
+      // Following field is required and will throw an error is set to "empty"
+      //testGroupMemberComponent.setEntity(VALID_REFERENCE_VALUE_3);
+      testGroupMemberComponent.setPeriod(UNDEFINED_VALUE);
+      testGroupMemberComponent.setInactive(UNDEFINED_VALUE);
+
+      // inherited properties from BackboneElement
+      expect(testGroupMemberComponent.hasId()).toBe(false);
+      expect(testGroupMemberComponent.getId()).toBeUndefined();
+      expect(testGroupMemberComponent.hasExtension()).toBe(false);
+      expect(testGroupMemberComponent.getExtension()).toEqual([] as Extension[]);
+      expect(testGroupMemberComponent.hasModifierExtension()).toBe(false);
+      expect(testGroupMemberComponent.getModifierExtension()).toEqual([] as Extension[]);
+
+      // GroupMemberComponent properties
+      expect(testGroupMemberComponent.hasEntity()).toBe(true);
+      expect(testGroupMemberComponent.getEntity()).toEqual(VALID_REFERENCE_VALUE_3);
+      expect(testGroupMemberComponent.hasPeriod()).toBe(false);
+      expect(testGroupMemberComponent.getPeriod()).toEqual(new Period());
+      expect(testGroupMemberComponent.hasInactiveElement()).toBe(false);
+      expect(testGroupMemberComponent.getInactiveElement()).toEqual(new BooleanType());
+      expect(testGroupMemberComponent.hasInactive()).toBe(false);
+      expect(testGroupMemberComponent.getInactive()).toBeUndefined();
+    });
+
+    it('should be properly reset by modifying all properties with DataTypes', () => {
+      const testGroupMemberComponent = new GroupMemberComponent(null);
+      testGroupMemberComponent.setId(VALID_ID);
+      testGroupMemberComponent.setExtension([VALID_EXTENSION]);
+      testGroupMemberComponent.setModifierExtension([VALID_MODIFIER_EXTENSION]);
+      testGroupMemberComponent.setEntity(VALID_REFERENCE_VALUE_1);
+      testGroupMemberComponent.setPeriod(VALID_PERIOD);
+      testGroupMemberComponent.setInactiveElement(new BooleanType(VALID_BOOLEAN_TRUE));
 
       expect(testGroupMemberComponent).toBeDefined();
       expect(testGroupMemberComponent.isEmpty()).toBe(false);
@@ -313,6 +418,34 @@ describe('GroupMemberComponent', () => {
       expect(testGroupMemberComponent.getInactiveElement()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
       expect(testGroupMemberComponent.hasInactive()).toBe(true);
       expect(testGroupMemberComponent.getInactive()).toStrictEqual(VALID_BOOLEAN_FALSE);
+
+      // Reset as empty
+
+      testGroupMemberComponent.setId(UNDEFINED_VALUE);
+      testGroupMemberComponent.setExtension(UNDEFINED_VALUE);
+      testGroupMemberComponent.setModifierExtension(UNDEFINED_VALUE);
+      // Following field is required and will throw an error is set to "empty"
+      //testGroupMemberComponent.setEntity(VALID_REFERENCE_VALUE_3);
+      testGroupMemberComponent.setPeriod(UNDEFINED_VALUE);
+      testGroupMemberComponent.setInactiveElement(UNDEFINED_VALUE);
+
+      // inherited properties from BackboneElement
+      expect(testGroupMemberComponent.hasId()).toBe(false);
+      expect(testGroupMemberComponent.getId()).toBeUndefined();
+      expect(testGroupMemberComponent.hasExtension()).toBe(false);
+      expect(testGroupMemberComponent.getExtension()).toEqual([] as Extension[]);
+      expect(testGroupMemberComponent.hasModifierExtension()).toBe(false);
+      expect(testGroupMemberComponent.getModifierExtension()).toEqual([] as Extension[]);
+
+      // GroupMemberComponent properties
+      expect(testGroupMemberComponent.hasEntity()).toBe(true);
+      expect(testGroupMemberComponent.getEntity()).toEqual(VALID_REFERENCE_VALUE_3);
+      expect(testGroupMemberComponent.hasPeriod()).toBe(false);
+      expect(testGroupMemberComponent.getPeriod()).toEqual(new Period());
+      expect(testGroupMemberComponent.hasInactiveElement()).toBe(false);
+      expect(testGroupMemberComponent.getInactiveElement()).toEqual(new BooleanType());
+      expect(testGroupMemberComponent.hasInactive()).toBe(false);
+      expect(testGroupMemberComponent.getInactive()).toBeUndefined();
     });
   });
 

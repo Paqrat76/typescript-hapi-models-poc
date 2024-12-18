@@ -1,5 +1,5 @@
 /**
- * Templates for primitive data models and classes based on the BackboneElement
+ * Templates for primitive data models and classes based on the PrimitiveType
  * Templates are provided for:
  * - PrimitiveType - Optional
  * - PrimitiveType - Required
@@ -7,8 +7,6 @@
  * - PrimitiveType Array - Required
  *
  */
-
-{
 
 //***** region PrimitiveType - Optional ********************************************************************************
 
@@ -49,9 +47,13 @@
    * @returns this
    */
   public setXxxxFieldNameElement(element: XxxxPrimitiveType | undefined): this {
-    const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided value is not an instance of XxxxPrimitiveType.`;
-    assertFhirType<XxxxPrimitiveType>(element, XxxxPrimitiveType, optErrMsg);
-    this.xxxxFieldName = element;
+    if (isDefined<XxxxPrimitiveType | undefined>(element)) {
+      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided element is not an instance of XxxxPrimitiveType.`;
+      assertFhirType<XxxxPrimitiveType>(element, XxxxPrimitiveType, optErrMsg);
+      this.xxxxFieldName = element;
+    } else {
+      this.xxxxFieldName = undefined;
+    }
     return this;
   }
 
@@ -77,9 +79,12 @@
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setXxxxFieldName(value: xxxxPrimitive | undefined): this {
-    const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName (${String(value)})`;
-    this.xxxxFieldName =
-      value === undefined ? undefined : new XxxxPrimitiveType(parseFhirPrimitiveData(value, xxxxPrimitiveSchema, optErrMsg));
+    if (isDefined<xxxxPrimitive | undefined>(value)) {
+      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName (${String(value)})`;
+      this.xxxxFieldName = new XxxxPrimitiveType(parseFhirPrimitiveData(value, xxxxPrimitiveSchema, optErrMsg));
+    } else {
+      this.xxxxFieldName = undefined;
+    }
     return this;
   }
 
@@ -108,19 +113,19 @@
 // PrimitiveType 1..1
 // XxxxPrimitiveType / xxxxPrimitive / xxxxJsonType
 //   ex: BooleanType / fhirBoolean   / ( boolean | string | number )
-// (xxxxFieldNameReq / XxxxFieldNameReq)
+// (xxxxFieldName / XxxxFieldName)
 // XxxxParentClass
 // =====================================================================
-  private xxxxFieldNameReq: XxxxPrimitiveType | null;
+  private xxxxFieldName: XxxxPrimitiveType | null;
 
-  constructor(xxxxFieldNameReq: XxxxPrimitiveType | xxxxPrimitive | null) {
+  constructor(xxxxFieldName: XxxxPrimitiveType | xxxxPrimitive | null) {
 
-    this.xxxxFieldNameReq = null;
-    if (isDefined<XxxxPrimitiveType | xxxxPrimitive | null>(xxxxFieldNameReq)) {
-      if (xxxxFieldNameReq instanceof PrimitiveType) {
-        this.setXxxxFieldNameReqElement(xxxxFieldNameReq);
+    this.xxxxFieldName = null;
+    if (isDefined<XxxxPrimitiveType | xxxxPrimitive | null>(xxxxFieldName)) {
+      if (xxxxFieldName instanceof PrimitiveType) {
+        this.setXxxxFieldNameElement(xxxxFieldName);
       } else {
-        this.setXxxxFieldNameReq(xxxxFieldNameReq);
+        this.setXxxxFieldName(xxxxFieldName);
       }
     }
 
@@ -134,14 +139,14 @@
     // Add following near top of method ONLY IF it does not already exist
     const missingReqdProperties: string[] = [];
 
-    sourceField = 'XxxxParentClass.xxxxFieldNameReq';
+    sourceField = 'XxxxParentClass.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
     if (fieldName in classJsonObj) {
       const datatype: XxxxPrimitiveType | undefined = parseXxxxPrimitiveType(classJsonObj[fieldName], sourceField);
       if (datatype === undefined) {
         missingReqdProperties.push(sourceField);
       } else {
-        instance.setXxxxFieldNameReqElement(datatype);
+        instance.setXxxxFieldNameElement(datatype);
       }
     } else {
       missingReqdProperties.push(sourceField);
@@ -157,65 +162,63 @@
   }
 
   /**
-   * @returns the `xxxxFieldNameReq` property value as a PrimitiveType
+   * @returns the `xxxxFieldName` property value as a PrimitiveType
    */
-  public getXxxxFieldNameReqElement(): XxxxPrimitiveType | null {
-    return this.xxxxFieldNameReq;
+  public getXxxxFieldNameElement(): XxxxPrimitiveType | null {
+    return this.xxxxFieldName;
   }
 
   /**
-   * Assigns the provided PrimitiveType value to the `xxxxFieldNameReq` property.
+   * Assigns the provided PrimitiveType value to the `xxxxFieldName` property.
    *
-   * @param element - the `xxxxFieldNameReq` value
+   * @param element - the `xxxxFieldName` value
    * @returns this
    */
-  public setXxxxFieldNameReqElement(element: XxxxPrimitiveType): this {
-    if (isDefined<XxxxPrimitiveType>(element)) {
-      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldNameReq; Provided value is not an instance of XxxxPrimitiveType.`;
-      assertFhirType<XxxxPrimitiveType>(element, XxxxPrimitiveType, optErrMsg);
-      this.xxxxFieldNameReq = element;
-    }
+  public setXxxxFieldNameElement(element: XxxxPrimitiveType): this {
+    assertIsDefined<XxxxPrimitiveType>(element, `XxxxParentClass.xxxxFieldName is required`);
+    const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided value is not an instance of XxxxPrimitiveType.`;
+    assertFhirType<XxxxPrimitiveType>(element, XxxxPrimitiveType, optErrMsg);
+    this.xxxxFieldName = element;
     return this;
   }
 
   /**
-   * @returns `true` if the `xxxxFieldNameReq` property exists and has a value; `false` otherwise
+   * @returns `true` if the `xxxxFieldName` property exists and has a value; `false` otherwise
    */
-  public hasXxxxFieldNameReqElement(): boolean {
-    return isDefined<XxxxPrimitiveType | null>(this.xxxxFieldNameReq) && !this.xxxxFieldNameReq.isEmpty();
+  public hasXxxxFieldNameElement(): boolean {
+    return isDefined<XxxxPrimitiveType | null>(this.xxxxFieldName) && !this.xxxxFieldName.isEmpty();
   }
 
   /**
-   * @returns the `xxxxFieldNameReq` property value as a primitive value
+   * @returns the `xxxxFieldName` property value as a primitive value
    */
-  public getXxxxFieldNameReq(): xxxxPrimitive | null {
-    if (this.xxxxFieldNameReq?.getValue() === undefined) {
+  public getXxxxFieldName(): xxxxPrimitive | null {
+    if (this.xxxxFieldName?.getValue() === undefined) {
       return null;
     }
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return this.xxxxFieldNameReq.getValue()!;
+    return this.xxxxFieldName.getValue()!;
   }
 
   /**
-   * Assigns the provided primitive value to the `xxxxFieldNameReq` property.
+   * Assigns the provided primitive value to the `xxxxFieldName` property.
    *
-   * @param value - the `xxxxFieldNameReq` value
+   * @param value - the `xxxxFieldName` value
    * @returns this
    * @throws PrimitiveTypeError for invalid primitive types
    */
-  public setXxxxFieldNameReq(value: xxxxPrimitive): this {
-    if (isDefined<xxxxPrimitive>(value)) {
-      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldNameReq (${String(value)})`;
-      this.xxxxFieldNameReq = new BooleanType(parseFhirPrimitiveData(value, xxxxPrimitiveSchema, optErrMsg));
-    }
+  public setXxxxFieldName(value: xxxxPrimitive): this {
+    assertIsDefined<xxxxPrimitive>(value, `XxxxParentClass.xxxxFieldName is required`);
+    const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName (${String(value)})`;
+    this.xxxxFieldName = new XxxxPrimitiveType(parseFhirPrimitiveData(value, xxxxPrimitiveSchema, optErrMsg));
     return this;
   }
 
   /**
-   * @returns `true` if the `xxxxFieldNameReq` property exists and has a value; `false` otherwise
+   * @returns `true` if the `xxxxFieldName` property exists and has a value; `false` otherwise
    */
-  public hasXxxxFieldNameReq(): boolean {
-    return this.hasXxxxFieldNameReqElement();
+  public hasXxxxFieldName(): boolean {
+    return this.hasXxxxFieldNameElement();
   }
 
   // *** NOTE ***
@@ -226,11 +229,11 @@
     // Add following near top of method ONLY IF it does not already exist
     const missingReqdProperties: string[] = [];
 
-    if (this.hasXxxxFieldNameReqElement()) {
+    if (this.hasXxxxFieldNameElement()) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      setFhirPrimitiveJson<xxxxPrimitive>(this.getXxxxFieldNameReqElement()!, 'xxxxFieldNameReq', jsonObj);
+      setFhirPrimitiveJson<xxxxPrimitive>(this.getXxxxFieldNameElement()!, 'xxxxFieldName', jsonObj);
     } else {
-      missingReqdProperties.push(`XxxxParentClass.xxxxFieldNameReq`);
+      missingReqdProperties.push(`XxxxParentClass.xxxxFieldName`);
     }
 
     // *** NOTE ***
@@ -250,81 +253,144 @@
 // PrimitiveType 0..*
 // XxxxPrimitiveType[] / xxxxPrimitive / xxxxJsonType
 //   ex: BooleanType[] / fhirBoolean   / ( boolean | string | number )
-// (xxxxFieldNameArray / XxxxFieldNameArray)
+// (xxxxFieldName / XxxxFieldName)
 // XxxxParentClass
 // =====================================================================
-  private xxxxFieldNameArray?: XxxxPrimitiveType[] | undefined;
+  private xxxxFieldName?: XxxxPrimitiveType[] | undefined;
 
   // *** NOTE ***
   // Only copy the internal code block!
   public static parse(sourceJson: JSON.Object): XxxxPrimitiveType | undefined {
 
-    sourceField = 'XxxxParentClass.xxxxFieldNameArray';
+    sourceField = 'XxxxParentClass.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
     if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
         const datatype: XxxxPrimitiveType | undefined = parseXxxxPrimitiveType(dataElementJson, `${sourceField}[${String(idx)}]`);
-        instance.addXxxxFieldNameArray(datatype);
+        instance.addXxxxFieldNameElement(datatype);
       });
     }
 
   }
 
   /**
-   * @returns the `xxxxFieldNameArray` property value as a XxxxPrimitiveType array
+   * @returns the `xxxxFieldName` property value as a XxxxPrimitiveType array
    */
-  public getXxxxFieldNameArray(): XxxxPrimitiveType[] {
-    return this.xxxxFieldNameArray ?? ([] as XxxxPrimitiveType[]);
+  public getXxxxFieldNameElement(): XxxxPrimitiveType[] {
+    return this.xxxxFieldName ?? ([] as XxxxPrimitiveType[]);
   }
 
   /**
-   * Assigns the provided XxxxPrimitiveType array value to the `xxxxFieldNameArray` property.
+   * Assigns the provided XxxxPrimitiveType array value to the `xxxxFieldName` property.
    *
-   * @param value - the `xxxxFieldNameArray` array value
+   * @param element - the `xxxxFieldName` array value
    * @returns this
    */
-  public setXxxxFieldNameArray(value: XxxxPrimitiveType[] | undefined): this {
-    const optErrMsg = `Invalid XxxxParentClass.xxxxFieldNameArray; Provided value array has an element that is not an instance of XxxxPrimitiveType.`;
-    assertFhirTypeList<XxxxPrimitiveType>(value, XxxxPrimitiveType, optErrMsg);
-    this.xxxxFieldNameArray = value;
-    return this;
-  }
-
-  /**
-   * Add the provided XxxxPrimitiveType value to the `xxxxFieldNameArray` array property.
-   *
-   * @param value - the `xxxxFieldNameArray` value
-   * @returns this
-   */
-  public addXxxxFieldNameArray(value: XxxxPrimitiveType | undefined): this {
-    if (isDefined<XxxxPrimitiveType | undefined>(value)) {
-      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldNameArray; Provided element is not an instance of XxxxPrimitiveType.`;
-      assertFhirType<XxxxPrimitiveType>(value, XxxxPrimitiveType, optErrMsg);
-      this.initXxxxFieldNameArray();
-      this.xxxxFieldNameArray?.push(value);
+  public setXxxxFieldNameElement(element: XxxxPrimitiveType[] | undefined): this {
+    if (isDefined<XxxxPrimitiveType[] | undefined>(element)) {
+      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided value array has an element that is not an instance of XxxxPrimitiveType.`;
+      assertFhirTypeList<XxxxPrimitiveType>(element, XxxxPrimitiveType, optErrMsg);
+      this.xxxxFieldName = element;
+    } else {
+      this.xxxxFieldName = undefined;
     }
     return this;
   }
 
   /**
-   * @returns `true` if the `xxxxFieldNameArray` property exists and has a value; `false` otherwise
+   * Add the provided XxxxPrimitiveType value to the `xxxxFieldName` array property.
+   *
+   * @param element - the `xxxxFieldName` value
+   * @returns this
    */
-  public hasXxxxFieldNameArray(): boolean {
+  public addXxxxFieldNameElement(element: XxxxPrimitiveType | undefined): this {
+    if (isDefined<XxxxPrimitiveType | undefined>(element)) {
+      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided element is not an instance of XxxxPrimitiveType.`;
+      assertFhirType<XxxxPrimitiveType>(element, XxxxPrimitiveType, optErrMsg);
+      this.initXxxxFieldName();
+    }
+    return this;
+  }
+
+  /**
+   * @returns `true` if the `xxxxFieldName` property exists and has a value; `false` otherwise
+   */
+  public hasXxxxFieldNameElement(): boolean {
     return (
-      this.xxxxFieldNameArray !== undefined &&
-      this.xxxxFieldNameArray.length > 0 &&
-      this.xxxxFieldNameArray.some((item: XxxxPrimitiveType) => !item.isEmpty())
+      this.xxxxFieldName !== undefined &&
+      this.xxxxFieldName.length > 0 &&
+      this.xxxxFieldName.some((item: XxxxPrimitiveType) => !item.isEmpty())
     );
   }
 
   /**
-   * Initialize the `xxxxFieldNameArray` property
+   * @returns the `xxxxFieldName` property value as a primitive value array
    */
-  private initXxxxFieldNameArray(): void {
-    if (this.xxxxFieldNameArray === undefined) {
-      this.xxxxFieldNameArray = [] as XxxxPrimitiveType[];
+  public getXxxxFieldName(): xxxxPrimitive[] {
+    this.initXxxxFieldName();
+    const xxxxFieldNameValues = [] as xxxxPrimitive[];
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    for (const xxxxFieldName of this.xxxxFieldName!) {
+      const value = xxxxFieldName.getValue();
+      if (value !== undefined) {
+        xxxxFieldNameValues.push(value);
+      }
+    }
+    return xxxxFieldNameValues;
+  }
+
+  /**
+   * Assigns the provided primitive value array to the `xxxxFieldName` property.
+   *
+   * @param value - the `xxxxFieldName` value array
+   * @returns this
+   * @throws PrimitiveTypeError for invalid primitive types
+   */
+  public setXxxxFieldName(value: xxxxPrimitive[] | undefined): this {
+    if (isDefined<xxxxPrimitive[] | undefined>(value)) {
+      const xxxxFieldNameElements = [] as XxxxPrimitiveType[];
+      for (const xxxxFieldNameValue of value) {
+        const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName array item (${String(xxxxFieldNameValue)})`;
+        const element = new XxxxPrimitiveType(parseFhirPrimitiveData(xxxxFieldNameValue, xxxxPrimitiveSchema, optErrMsg));
+        xxxxFieldNameElements.push(element);
+      }
+      this.xxxxFieldName = xxxxFieldNameElements;
+    } else {
+      this.xxxxFieldName = undefined;
+    }
+    return this;
+  }
+
+  /**
+   * Add the provided primitive value to the `xxxxFieldName` array property.
+   *
+   * @param value - the `xxxxFieldName` value
+   * @returns this
+   */
+  public addXxxxFieldName(value: xxxxPrimitive | undefined): this {
+    if (isDefined<xxxxPrimitive | undefined>(value)) {
+      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName array item (${String(value)})`;
+      const element = new XxxxPrimitiveType(parseFhirPrimitiveData(value, xxxxPrimitiveSchema, optErrMsg));
+      this.addXxxxFieldNameElement(element);
+    }
+    return this;
+  }
+
+  /**
+   * @returns `true` if the `xxxxFieldName` property exists and has a value; `false` otherwise
+   */
+  public hasXxxxFieldName(): boolean {
+    return this.hasXxxxFieldNameElement();
+  }
+
+  /**
+   * Initialize the `xxxxFieldName` property
+   */
+  private initXxxxFieldName(): void {
+    if (this.xxxxFieldName === undefined) {
+      this.xxxxFieldName = [] as XxxxPrimitiveType[];
     }
   }
 
@@ -332,8 +398,8 @@
   // Only copy the "if" block!
   public override toJSON(): JSON.Value | undefined {
 
-    if (this.hasXxxxFieldNameArray()) {
-      setFhirPrimitiveListJson(this.getXxxxFieldNameArray(), 'xxxxFieldNameArray', jsonObj);
+    if (this.hasXxxxFieldName()) {
+      setFhirPrimitiveListJson(this.getXxxxFieldNameElement(), 'xxxxFieldName', jsonObj);
     }
 
   }
@@ -346,16 +412,16 @@
 // PrimitiveType 1..*
 // XxxxPrimitiveType[] / xxxxPrimitive / xxxxJsonType
 //   ex: BooleanType[] / fhirBoolean   / ( boolean | string | number )
-// (xxxxFieldNameArrayReq / XxxxFieldNameArrayReq)
+// (xxxxFieldName / XxxxFieldName)
 // XxxxParentClass
 // =====================================================================
-  private xxxxFieldNameArrayReq: XxxxPrimitiveType[] | null;
+  private xxxxFieldName: XxxxPrimitiveType[] | null;
 
-  constructor(xxxxFieldNameArrayReq: XxxxPrimitiveType[] | null) {
+  constructor(xxxxFieldName: XxxxPrimitiveType[] | null) {
 
-    this.xxxxFieldNameArrayReq = null;
-    if (isDefined<XxxxPrimitiveType[] | null>(xxxxFieldNameArrayReq)) {
-      this.setXxxxFieldNameArrayReq(xxxxFieldNameArrayReq);
+    this.xxxxFieldName = null;
+    if (isDefined<XxxxPrimitiveType[] | null>(xxxxFieldName)) {
+      this.setXxxxFieldNameElement(xxxxFieldName);
     }
   }
 
@@ -367,14 +433,14 @@
     // Add following near top of method ONLY IF it does not already exist
     const missingReqdProperties: string[] = [];
 
-    sourceField = 'XxxxParentClass.xxxxFieldNameArrayReq';
+    sourceField = 'XxxxParentClass.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
     if (fieldName in classJsonObj) {
       const datatype: XxxxPrimitiveType | undefined = parseXxxxPrimitiveType(classJsonObj[fieldName], sourceField);
       if (datatype === undefined) {
         missingReqdProperties.push(sourceField);
       } else {
-        instance.setXxxxFieldNameArrayReq(datatype);
+        instance.setXxxxFieldNameElement(datatype);
       }
     } else {
       missingReqdProperties.push(sourceField);
@@ -391,60 +457,116 @@
 
 
   /**
-   * @returns the `xxxxFieldNameArrayReq` property value as a XxxxPrimitiveType array
+   * @returns the `xxxxFieldName` property value as a XxxxPrimitiveType array
    */
-  public getXxxxFieldNameArrayReq(): XxxxPrimitiveType[] | null {
-    return this.xxxxFieldNameArrayReq;
+  public getXxxxFieldNameElement(): XxxxPrimitiveType[] | null {
+    return this.xxxxFieldName;
   }
 
   /**
-   * Assigns the provided XxxxPrimitiveType array value to the `xxxxFieldNameArrayReq` property.
+   * Assigns the provided XxxxPrimitiveType array value to the `xxxxFieldName` property.
    *
-   * @param value - the `xxxxFieldNameArrayReq` array value
+   * @param element - the `xxxxFieldName` array value
    * @returns this
    */
-  public setXxxxFieldNameArrayReq(value: XxxxPrimitiveType[]): this {
-    if (isDefined<XxxxPrimitiveType[]>(value)) {
-      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldNameArrayReq; Provided value array has an element that is not an instance of XxxxPrimitiveType.`;
-      assertFhirTypeList<XxxxPrimitiveType>(value, XxxxPrimitiveType, optErrMsg);
-      this.xxxxFieldNameArrayReq = value;
-    }
+  public setXxxxFieldNameElement(element: XxxxPrimitiveType[]): this {
+    assertIsDefined<XxxxPrimitiveType[]>(element, `XxxxParentClass.xxxxFieldName is required`);
+    const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided value array has an element that is not an instance of XxxxPrimitiveType.`;
+    assertFhirTypeList<XxxxPrimitiveType>(element, XxxxPrimitiveType, optErrMsg);
+    this.xxxxFieldName = element;
     return this;
   }
 
   /**
-   * Add the provided XxxxPrimitiveType value to the `xxxxFieldNameArrayReq` array property.
+   * Add the provided XxxxPrimitiveType value to the `xxxxFieldName` array property.
    *
-   * @param value - the `xxxxFieldNameArrayReq` value
+   * @param element - the `xxxxFieldName` value
    * @returns this
    */
-  public addXxxxFieldNameArrayReq(value: XxxxPrimitiveType | undefined): this {
+  public addXxxxFieldNameElement(element: XxxxPrimitiveType | undefined): this {
     if (isDefined<XxxxPrimitiveType | undefined>(value)) {
-      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldNameArrayReq; Provided element is not an instance of XxxxPrimitiveType.`;
-      assertFhirType<XxxxPrimitiveType>(value, XxxxPrimitiveType, optErrMsg);
-      this.initXxxxFieldNameArrayReq();
-      this.xxxxFieldNameArrayReq?.push(value);
+      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided element is not an instance of XxxxPrimitiveType.`;
+      assertFhirType<XxxxPrimitiveType>(element, XxxxPrimitiveType, optErrMsg);
+      this.initXxxxFieldName();
+      this.xxxxFieldName?.push(element);
     }
     return this;
   }
 
   /**
-   * @returns `true` if the `xxxxFieldNameArrayReq` property exists and has a value; `false` otherwise
+   * @returns `true` if the `xxxxFieldName` property exists and has a value; `false` otherwise
    */
-  public hasXxxxFieldNameArrayReq(): boolean {
+  public hasXxxxFieldNameElement(): boolean {
     return (
-      isDefined<XxxxPrimitiveType[] | null>(this.xxxxFieldNameArrayReq) &&
-      this.xxxxFieldNameArrayReq.length > 0 &&
-      this.xxxxFieldNameArrayReq.some((item: XxxxPrimitiveType) => !item.isEmpty())
+      isDefined<XxxxPrimitiveType[] | null>(this.xxxxFieldName) &&
+      this.xxxxFieldName.length > 0 &&
+      this.xxxxFieldName.some((item: XxxxPrimitiveType) => !item.isEmpty())
     );
   }
 
   /**
-   * Initialize the `xxxxFieldNameArrayReq` property
+   * @returns the `xxxxFieldName` property value as a primitive value array
    */
-  private initXxxxFieldNameArrayReq(): void {
-    if (!this.hasXxxxFieldNameArrayReq()) {
-      this.xxxxFieldNameArrayReq = [] as XxxxPrimitiveType[];
+  public getXxxxFieldName(): xxxxPrimitive[] {
+    this.initXxxxFieldName();
+    const xxxxFieldNameValues = [] as xxxxPrimitive[];
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    for (const xxxxFieldName of this.xxxxFieldName!) {
+      const value = xxxxFieldName.getValue();
+      if (value !== undefined) {
+        xxxxFieldNameValues.push(value);
+      }
+    }
+    return xxxxFieldNameValues;
+  }
+
+  /**
+   * Assigns the provided primitive value array to the `xxxxFieldName` property.
+   *
+   * @param value - the `xxxxFieldName` value array
+   * @returns this
+   * @throws PrimitiveTypeError for invalid primitive types
+   */
+  public setXxxxFieldName(value: xxxxPrimitive[] | undefined): this {
+    assertIsDefined<xxxxPrimitive[]>(value, `XxxxParentClass.xxxxFieldName is required`);
+    const xxxxFieldNameElements = [] as XxxxPrimitiveType[];
+    for (const xxxxFieldNameValue of value) {
+      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName array item (${String(xxxxFieldNameValue)})`;
+      const element = new XxxxPrimitiveType(parseFhirPrimitiveData(xxxxFieldNameValue, xxxxPrimitiveSchema, optErrMsg));
+      xxxxFieldNameElements.push(element);
+    }
+    this.xxxxFieldName = xxxxFieldNameElements;
+    return this;
+  }
+
+  /**
+   * Add the provided primitive value to the `xxxxFieldName` array property.
+   *
+   * @param value - the `xxxxFieldName` value
+   * @returns this
+   */
+  public addXxxxFieldName(value: xxxxPrimitive | undefined): this {
+    if (isDefined<xxxxPrimitive | undefined>(value)) {
+      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName array item (${String(value)})`;
+      const element = new XxxxPrimitiveType(parseFhirPrimitiveData(value, xxxxPrimitiveSchema, optErrMsg));
+      this.addXxxxFieldNameElement(element);
+    }
+    return this;
+  }
+
+  /**
+   * @returns `true` if the `xxxxFieldName` property exists and has a value; `false` otherwise
+   */
+  public hasXxxxFieldName(): boolean {
+    return this.hasXxxxFieldNameElement();
+  }
+
+  /**
+   * Initialize the `xxxxFieldName` property
+   */
+  private initXxxxFieldName(): void {
+    if (!this.hasXxxxFieldName()) {
+      this.xxxxFieldName = [] as XxxxPrimitiveType[];
     }
   }
 
@@ -456,10 +578,10 @@
     // Add following near top of method ONLY IF it does not already exist
     const missingReqdProperties: string[] = [];
 
-    if (this.hasXxxxFieldNameArrayReq()) {
-      setFhirPrimitiveListJson(this.getXxxxFieldNameArrayReq(), 'xxxxFieldNameArrayReq', jsonObj);
+    if (this.hasXxxxFieldNameElement()) {
+      setFhirPrimitiveListJson(this.getXxxxFieldNameElement(), 'xxxxFieldName', jsonObj);
     } else {
-      missingReqdProperties.push(`XxxxParentClass.xxxxFieldNameArrayReq`);
+      missingReqdProperties.push(`XxxxParentClass.xxxxFieldName`);
     }
 
      // *** NOTE ***
@@ -472,5 +594,3 @@
   }
 
 //endregion
-
-}

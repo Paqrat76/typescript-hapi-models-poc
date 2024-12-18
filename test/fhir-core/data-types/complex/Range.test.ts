@@ -26,6 +26,7 @@ import { Range } from '@src/fhir-core/data-types/complex/Range';
 import { SimpleQuantity } from '@src/fhir-core/data-types/complex/SimpleQuantity';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { INVALID_NON_STRING_TYPE, UNDEFINED_VALUE } from '../../../test-utils';
 
 describe('Range', () => {
   const VALID_DECIMAL = 13.579;
@@ -50,22 +51,19 @@ describe('Range', () => {
   SIMPLE_QUANTITY_2.setSystem(VALID_URI_2);
   SIMPLE_QUANTITY_2.setCode(VALID_CODE_2);
 
-  const UNDEFINED_VALUE = undefined;
-  const INVALID_SIMPLE_QUANTITY = new StringType('Invalid SimpleQuantity');
-
   describe('Core', () => {
     const expectedJson1 = {
       low: {
-        value: 13.579,
-        unit: 'This is a valid string.',
-        system: 'testUriType',
-        code: 'testCodeType',
+        value: VALID_DECIMAL,
+        unit: VALID_STRING,
+        system: VALID_URI,
+        code: VALID_CODE,
       },
       high: {
-        value: 24.68,
-        unit: 'This is another valid string!',
-        system: 'testUriType2',
-        code: 'testCodeType2',
+        value: VALID_DECIMAL_2,
+        unit: VALID_STRING_2,
+        system: VALID_URI_2,
+        code: VALID_CODE_2,
       },
     };
     const expectedJson2 = {
@@ -111,8 +109,8 @@ describe('Range', () => {
       const rangeType = new Range();
       rangeType.setLow(SIMPLE_QUANTITY_1);
       rangeType.setHigh(SIMPLE_QUANTITY_2);
-      let testRange = rangeType.copy();
 
+      let testRange = rangeType.copy();
       expect(testRange).toBeDefined();
       expect(testRange).toBeInstanceOf(DataType);
       expect(testRange).toBeInstanceOf(Range);
@@ -159,10 +157,12 @@ describe('Range', () => {
       expect(testRange.hasHigh()).toBe(true);
       expect(testRange.getHigh()).toEqual(SIMPLE_QUANTITY_1);
 
+      // Reset as empty
+
       rangeType.setLow(UNDEFINED_VALUE);
       rangeType.setHigh(UNDEFINED_VALUE);
-      testRange = rangeType.copy();
 
+      testRange = rangeType.copy();
       expect(testRange).toBeDefined();
       expect(testRange).toBeInstanceOf(DataType);
       expect(testRange).toBeInstanceOf(Range);
@@ -185,21 +185,83 @@ describe('Range', () => {
       expect(testRange.getHigh()).toEqual(new SimpleQuantity());
     });
 
-    it('should throw InvalidTypeError when reset with invalid PrimitiveType Range.low value', () => {
+    it('should be properly instantiated with values', () => {
       const testRange = new Range();
-      const t = () => {
+      testRange.setLow(SIMPLE_QUANTITY_1);
+      testRange.setHigh(SIMPLE_QUANTITY_2);
+
+      expect(testRange).toBeDefined();
+      expect(testRange.isEmpty()).toBe(false);
+
+      // inherited properties from Element
+      expect(testRange.hasId()).toBe(false);
+      expect(testRange.getId()).toBeUndefined();
+      expect(testRange.hasExtension()).toBe(false);
+      expect(testRange.getExtension()).toEqual([] as Extension[]);
+
+      // Range properties
+      expect(testRange.hasLow()).toBe(true);
+      expect(testRange.getLow()).toEqual(SIMPLE_QUANTITY_1);
+      expect(testRange.hasHigh()).toBe(true);
+      expect(testRange.getHigh()).toEqual(SIMPLE_QUANTITY_2);
+    });
+
+    it('should be properly reset by modifying all properties', () => {
+      const testRange = new Range();
+      testRange.setLow(SIMPLE_QUANTITY_1);
+      testRange.setHigh(SIMPLE_QUANTITY_2);
+
+      expect(testRange).toBeDefined();
+      expect(testRange.isEmpty()).toBe(false);
+
+      // Range properties
+      expect(testRange.hasLow()).toBe(true);
+      expect(testRange.getLow()).toEqual(SIMPLE_QUANTITY_1);
+      expect(testRange.hasHigh()).toBe(true);
+      expect(testRange.getHigh()).toEqual(SIMPLE_QUANTITY_2);
+
+      // Reset
+
+      testRange.setLow(SIMPLE_QUANTITY_2);
+      testRange.setHigh(SIMPLE_QUANTITY_1);
+
+      expect(testRange).toBeDefined();
+      expect(testRange.isEmpty()).toBe(false);
+
+      // Range properties
+      expect(testRange.hasLow()).toBe(true);
+      expect(testRange.getLow()).toEqual(SIMPLE_QUANTITY_2);
+      expect(testRange.hasHigh()).toBe(true);
+      expect(testRange.getHigh()).toEqual(SIMPLE_QUANTITY_1);
+
+      // Reset as empty
+
+      testRange.setLow(UNDEFINED_VALUE);
+      testRange.setHigh(UNDEFINED_VALUE);
+
+      expect(testRange).toBeDefined();
+      expect(testRange.isEmpty()).toBe(true);
+
+      // Range properties
+      expect(testRange.hasLow()).toBe(false);
+      expect(testRange.getLow()).toEqual(new SimpleQuantity());
+      expect(testRange.hasHigh()).toBe(false);
+      expect(testRange.getHigh()).toEqual(new SimpleQuantity());
+    });
+
+    it('should throw errors for invalid values', () => {
+      const testRange = new Range();
+
+      let t = () => {
         // @ts-expect-error: ignore invalid type for test
-        testRange.setLow(INVALID_SIMPLE_QUANTITY);
+        testRange.setLow(INVALID_NON_STRING_TYPE);
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(`Invalid Range.low; Provided value is not an instance of SimpleQuantity.`);
-    });
 
-    it('should throw InvalidTypeError when reset with invalid PrimitiveType Range.high value', () => {
-      const testRange = new Range();
-      const t = () => {
+      t = () => {
         // @ts-expect-error: ignore invalid type for test
-        testRange.setHigh(INVALID_SIMPLE_QUANTITY);
+        testRange.setHigh(INVALID_NON_STRING_TYPE);
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(`Invalid Range.high; Provided value is not an instance of SimpleQuantity.`);
