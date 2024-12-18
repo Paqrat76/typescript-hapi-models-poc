@@ -106,9 +106,13 @@ export class CodeableConcept extends DataType implements IBase {
    * @returns this
    */
   public setCoding(value: Coding[] | undefined): this {
-    const optErrMsg = `Invalid CodeableConcept.coding; Provided value array has an element that is not an instance of Coding.`;
-    assertFhirTypeList<Coding>(value, Coding, optErrMsg);
-    this.coding = value;
+    if (isDefined<Coding[] | undefined>(value)) {
+      const optErrMsg = `Invalid CodeableConcept.coding; Provided value array has an element that is not an instance of Coding.`;
+      assertFhirTypeList<Coding>(value, Coding, optErrMsg);
+      this.coding = value;
+    } else {
+      this.coding = undefined;
+    }
     return this;
   }
 
@@ -158,9 +162,13 @@ export class CodeableConcept extends DataType implements IBase {
    * @returns this
    */
   public setTextElement(element: StringType | undefined): this {
-    const optErrMsg = `Invalid CodeableConcept.text; Provided element is not an instance of StringType.`;
-    assertFhirType<StringType>(element, StringType, optErrMsg);
-    this.text = element;
+    if (isDefined<StringType | undefined>(element)) {
+      const optErrMsg = `Invalid CodeableConcept.text; Provided element is not an instance of StringType.`;
+      assertFhirType<StringType>(element, StringType, optErrMsg);
+      this.text = element;
+    } else {
+      this.text = undefined;
+    }
     return this;
   }
 
@@ -186,9 +194,12 @@ export class CodeableConcept extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setText(value: fhirString | undefined): this {
-    const optErrMsg = `Invalid CodeableConcept.text (invalid value provided)`;
-    this.text =
-      value === undefined ? undefined : new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
+    if (isDefined<fhirString | undefined>(value)) {
+      const optErrMsg = `Invalid CodeableConcept.text (invalid value provided)`;
+      this.text = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
+    } else {
+      this.text = undefined;
+    }
     return this;
   }
 

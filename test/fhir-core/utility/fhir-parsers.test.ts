@@ -56,6 +56,7 @@ import {
   parseCodeableConcept,
   parseCoding,
   parseContactPoint,
+  //parseHumanName,
   parseIdentifier,
   parseMeta,
   parseNarrative,
@@ -91,6 +92,7 @@ import { XhtmlType } from '@src/fhir-core/data-types/primitive/XhtmlType';
 import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
 import { Coding } from '@src/fhir-core/data-types/complex/Coding';
 import { ContactPoint } from '@src/fhir-core/data-types/complex/ContactPoint';
+//import { HumanName } from '@src/fhir-core/data-types/complex/HumanName';
 import { Identifier, Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
 import { Meta } from '@src/fhir-core/data-types/complex/Meta';
 import { Narrative } from '@src/fhir-core/data-types/complex/Narrative';
@@ -2295,6 +2297,88 @@ describe('fhir-parsers', () => {
         expect(testType?.toJSON()).toEqual(VALID_JSON);
       });
     });
+
+    // describe('parseHumanName', () => {
+    //   it('should return undefined for empty json', () => {
+    //     let testType = parseHumanName({});
+    //     expect(testType).toBeUndefined();
+    //
+    //     testType = parseHumanName(undefined);
+    //     expect(testType).toBeUndefined();
+    //
+    //     testType = parseHumanName(null);
+    //     expect(testType).toBeUndefined();
+    //   });
+    //
+    //   it('should throw TypeError for invalid json type', () => {
+    //     const t = () => {
+    //       parseHumanName('NOT AN OBJECT');
+    //     };
+    //     expect(t).toThrow(TypeError);
+    //     expect(t).toThrow(`HumanName JSON is not a JSON object.`);
+    //   });
+    //
+    //   it('should return HumanName for valid json', () => {
+    //     const VALID_JSON = {
+    //       id: 'id1234',
+    //       extension: [
+    //         {
+    //           url: 'testUrl1',
+    //           valueString: 'base extension string value 1',
+    //         },
+    //         {
+    //           url: 'testUrl2',
+    //           valueString: 'base extension string value 2',
+    //         },
+    //       ],
+    //       use: 'official',
+    //       text: 'Text representation of the full name',
+    //       _text: {
+    //         id: 'S-1357',
+    //         extension: [
+    //           {
+    //             url: 'simpleUrl',
+    //             valueString: 'simple extension string value',
+    //           },
+    //         ],
+    //       },
+    //       family: 'Family name',
+    //       _family: {
+    //         extension: [
+    //           {
+    //             id: 'C-2468',
+    //             url: 'complexUrl',
+    //             extension: [
+    //               {
+    //                 url: 'complexChildUrl1',
+    //                 valueString: 'complex child extension string value 1',
+    //               },
+    //               {
+    //                 url: 'complexChildUrl2',
+    //                 valueString: 'complex child extension string value 2',
+    //               },
+    //             ],
+    //           },
+    //         ],
+    //       },
+    //       given: ['Firstname', 'Middlename'],
+    //       prefix: ['Mr.'],
+    //       suffix: ['DDLM', 'PhD'],
+    //       period: {
+    //         start: '2017-01-01T00:00:00.000Z',
+    //       },
+    //     };
+    //
+    //     const testType: HumanName | undefined = parseHumanName(VALID_JSON);
+    //     expect(testType).toBeDefined();
+    //     expect(testType).toBeInstanceOf(HumanName);
+    //     expect(testType?.constructor.name).toStrictEqual('HumanName');
+    //     expect(testType?.fhirType()).toStrictEqual('HumanName');
+    //     expect(testType?.isEmpty()).toBe(false);
+    //     expect(testType?.isComplexDataType()).toBe(true);
+    //     expect(testType?.toJSON()).toEqual(VALID_JSON);
+    //   });
+    // });
 
     describe('parseIdentifier', () => {
       it('should return undefined for empty json', () => {

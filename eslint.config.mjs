@@ -54,6 +54,14 @@ export default tseslint.config(
     },
     rules: {
       // Additional rules
+      // https://typescript-eslint.io/rules/consistent-type-assertions/
+      '@typescript-eslint/consistent-type-assertions': [
+        'error',
+        {
+          assertionStyle: 'as',
+          objectLiteralTypeAssertions: 'allow',
+        },
+      ],
       // https://www.npmjs.com/package/eslint-plugin-node-import?activeTab=readme#rules
       'node-import/prefer-node-protocol': 'error',
       // https://typescript-eslint.io/rules/method-signature-style/

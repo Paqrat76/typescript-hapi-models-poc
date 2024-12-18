@@ -695,6 +695,18 @@ describe('type-guards', () => {
         expect(t).not.toThrow(InvalidCodeError);
       });
 
+      it('should not throw InvalidCodeError for empty EnumCodeType', () => {
+        let t = () => {
+          assertEnumCodeType<MockCodeEnum>(undefined, MockCodeEnum);
+        };
+        expect(t).not.toThrow();
+
+        t = () => {
+          assertEnumCodeType<MockCodeEnum>(null, MockCodeEnum);
+        };
+        expect(t).not.toThrow();
+      });
+
       it('should throw InvalidCodeError for invalid EnumCodeType', () => {
         const enumCodeType = new EnumCodeType('<', new QuantityComparatorEnum());
         const t = () => {

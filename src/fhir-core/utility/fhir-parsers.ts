@@ -67,6 +67,7 @@ import { UuidType } from '@src/fhir-core/data-types/primitive/UuidType';
 import { XhtmlType } from '@src/fhir-core/data-types/primitive/XhtmlType';
 import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
 import { Coding } from '@src/fhir-core/data-types/complex/Coding';
+//import { HumanName } from '@src/fhir-core/data-types/complex/HumanName';
 import { Identifier, Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
 import { Meta } from '@src/fhir-core/data-types/complex/Meta';
 import { Narrative } from '@src/fhir-core/data-types/complex/Narrative';
@@ -425,6 +426,8 @@ export function getValueXData(jsonObj: JSON.Object): DataType | undefined {
           return parseCoding(dataValue);
         case 'valueContactPoint':
           return parseContactPoint(dataValue);
+        // case 'valueHumanName':
+        //   return parseHumanName(dataValue);
         case 'valueIdentifier':
           return parseIdentifier(dataValue);
         case 'valueMeta':
@@ -1316,6 +1319,79 @@ export function parseContactPoint(json: JSON.Value | undefined, sourceField?: st
   assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
   return instance;
 }
+
+// /**
+//  * Parse the provided json into HumanName data model.
+//  *
+//  * @param json - JSON representing HumanName
+//  * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to HumanName
+//  * @returns HumanName data model or undefined
+//  *
+//  * @category Utilities: FHIR Parsers
+//  */
+// export function parseHumanName(json: JSON.Value | undefined, sourceField?: string): HumanName | undefined {
+//   if (!JSON.hasFhirData(json)) {
+//     return undefined;
+//   }
+//
+//   const source = isDefined<string | undefined>(sourceField) ? sourceField : 'HumanName';
+//
+//   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+//   const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
+//   const instance = new HumanName();
+//
+//   processElementJson(instance, datatypeJsonObj);
+//
+//   if ('use' in datatypeJsonObj) {
+//     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'use', 'string');
+//     const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
+//     instance.setUseElement(datatype);
+//   }
+//
+//   if ('text' in datatypeJsonObj) {
+//     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'text', 'string');
+//     const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
+//     instance.setTextElement(datatype);
+//   }
+//
+//   if ('family' in datatypeJsonObj) {
+//     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'family', 'string');
+//     const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
+//     instance.setFamilyElement(datatype);
+//   }
+//
+//   if ('given' in datatypeJsonObj) {
+//     const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(datatypeJsonObj, source, 'given', 'string');
+//     dataJsonArray.forEach((dataJson: PrimitiveTypeJson) => {
+//       const datatype: StringType | undefined = parseStringType(dataJson.dtJson, dataJson.dtSiblingJson);
+//       instance.addGivenElement(datatype);
+//     });
+//   }
+//
+//   if ('prefix' in datatypeJsonObj) {
+//     const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(datatypeJsonObj, source, 'prefix', 'string');
+//     dataJsonArray.forEach((dataJson: PrimitiveTypeJson) => {
+//       const datatype: StringType | undefined = parseStringType(dataJson.dtJson, dataJson.dtSiblingJson);
+//       instance.addPrefixElement(datatype);
+//     });
+//   }
+//
+//   if ('suffix' in datatypeJsonObj) {
+//     const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(datatypeJsonObj, source, 'suffix', 'string');
+//     dataJsonArray.forEach((dataJson: PrimitiveTypeJson) => {
+//       const datatype: StringType | undefined = parseStringType(dataJson.dtJson, dataJson.dtSiblingJson);
+//       instance.addSuffixElement(datatype);
+//     });
+//   }
+//
+//   if ('period' in datatypeJsonObj) {
+//     const datatype: Period | undefined = parsePeriod(datatypeJsonObj['period'], `${source}.period`);
+//     instance.setPeriod(datatype);
+//   }
+//
+//   assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
+//   return instance;
+// }
 
 /**
  * Parse the provided json into Identifier data model.

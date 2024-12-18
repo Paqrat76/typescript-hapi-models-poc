@@ -6,6 +6,10 @@
   Consider the following:
   - [Patient](https://hl7.org/fhir/R4/patient.html)
     - Most important FHIR resource!!
+    - Add following complex datatypes:
+      - HumanName
+      - Address
+      - Attachment
   - [Organization](https://hl7.org/fhir/R4/organization.html)
     - simple resource that is referenced by many other resources (`contained` example for other resources)
   - [Bundle](https://hl7.org/fhir/R4/bundle.html)

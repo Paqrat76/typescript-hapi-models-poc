@@ -206,6 +206,9 @@ export function assertEnumCodeType<T>(
   enumCodeType: Class<T>,
   errorMessagePrefix?: string,
 ): asserts type is T {
+  if (type === undefined || type === null) {
+    return;
+  }
   const prefix = errorMessagePrefix ? `${errorMessagePrefix}; ` : '';
   if (type instanceof EnumCodeType) {
     if (type.enumSource() !== enumCodeType.name) {
@@ -222,7 +225,7 @@ export function assertEnumCodeType<T>(
  * EnumCodeType assertion for a list of any EnumCodeType classes
  *
  * @typeParam T - the enumCodeType class
- * @param typeInstance - array of class instances to evaluate
+ * @param types - array of class instances to evaluate
  * @param enumCodeType - class name for evaluation
  * @param errorMessagePrefix - optional error message prefix for the error message
  * @throws InvalidTypeError when FhirTypeGuard assertion is false
@@ -230,16 +233,16 @@ export function assertEnumCodeType<T>(
  * @category Type Guards/Assertions
  */
 export function assertEnumCodeTypeList<T>(
-  typeInstance: unknown[] | undefined | null,
+  types: unknown[] | undefined | null,
   enumCodeType: Class<T>,
   errorMessagePrefix?: string,
-): asserts typeInstance is [T] {
-  if (typeInstance === undefined || typeInstance === null || typeInstance.length === 0) {
+): asserts types is [T] {
+  if (types === undefined || types === null || types.length === 0) {
     return;
   }
   const prefix = errorMessagePrefix ? `${errorMessagePrefix}; ` : '';
   let invalidItemCount = 0;
-  for (const type of typeInstance) {
+  for (const type of types) {
     if (type instanceof EnumCodeType) {
       if (type.enumSource() !== enumCodeType.name) {
         invalidItemCount++;

@@ -21,6 +21,7 @@
  *
  */
 
+import { AssertionError } from 'node:assert';
 import { PractitionerRoleNotAvailableComponent } from '@src/fhir-models/PractitionerRole';
 import { Base } from '@src/fhir-core/base-models/Base';
 import { BackboneElement, Element, Extension } from '@src/fhir-core/base-models/core-fhir-models';
@@ -126,7 +127,7 @@ describe('PractitionerRoleNotAvailableComponent', () => {
       expect(testPractitionerRoleNotAvailableComponent.getDuring()).toEqual(new Period());
     });
 
-    it('should be properly instantiated with a PrimitiveType', () => {
+    it('should be properly instantiated with a DataType', () => {
       const testPractitionerRoleNotAvailableComponent = new PractitionerRoleNotAvailableComponent(VALID_STRING_TYPE);
 
       expect(testPractitionerRoleNotAvailableComponent).toBeDefined();
@@ -156,6 +157,37 @@ describe('PractitionerRoleNotAvailableComponent', () => {
       expect(testPractitionerRoleNotAvailableComponent.getDescriptionElement()).toEqual(VALID_STRING_TYPE);
       expect(testPractitionerRoleNotAvailableComponent.hasDuring()).toBe(false);
       expect(testPractitionerRoleNotAvailableComponent.getDuring()).toEqual(new Period());
+    });
+
+    it('should throw AssertionError when reset with null/undefined PractitionerRole.notAvailable.description value', () => {
+      const testPractitionerRoleNotAvailableComponent = new PractitionerRoleNotAvailableComponent(VALID_STRING);
+      let t = () => {
+        // @ts-expect-error: allow for testing
+        testPractitionerRoleNotAvailableComponent.setDescriptionElement(null);
+      };
+      expect(t).toThrow(AssertionError);
+      expect(t).toThrow(`PractitionerRole.notAvailable.description is required`);
+
+      t = () => {
+        // @ts-expect-error: allow for testing
+        testPractitionerRoleNotAvailableComponent.setDescription(null);
+      };
+      expect(t).toThrow(AssertionError);
+      expect(t).toThrow(`PractitionerRole.notAvailable.description is required`);
+
+      t = () => {
+        // @ts-expect-error: allow for testing
+        testPractitionerRoleNotAvailableComponent.setDescriptionElement(undefined);
+      };
+      expect(t).toThrow(AssertionError);
+      expect(t).toThrow(`PractitionerRole.notAvailable.description is required`);
+
+      t = () => {
+        // @ts-expect-error: allow for testing
+        testPractitionerRoleNotAvailableComponent.setDescription(undefined);
+      };
+      expect(t).toThrow(AssertionError);
+      expect(t).toThrow(`PractitionerRole.notAvailable.description is required`);
     });
 
     it('should properly copy()', () => {
@@ -200,9 +232,8 @@ describe('PractitionerRoleNotAvailableComponent', () => {
       practitionerRoleNotAvailableComponent.setId(UNDEFINED_VALUE);
       practitionerRoleNotAvailableComponent.setExtension(UNDEFINED_VALUE);
       practitionerRoleNotAvailableComponent.setModifierExtension(UNDEFINED_VALUE);
-      // NOTE: description cannot be reset to undefined/null; therefore the original value is NOT reset
-      // @ts-expect-error: allow for testing
-      practitionerRoleNotAvailableComponent.setDescriptionElement(null);
+      // Setting to null or undefined results in an AssertionError because this field is required
+      // practitionerRoleNotAvailableComponent.setDescriptionElement(null);
       practitionerRoleNotAvailableComponent.setDuring(UNDEFINED_VALUE);
 
       testPractitionerRoleNotAvailableComponent = practitionerRoleNotAvailableComponent.copy();

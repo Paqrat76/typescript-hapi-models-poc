@@ -137,7 +137,7 @@ export function assertFhirTypeList<T>(
   className: Class<T>,
   errorMessage?: string,
 ): asserts listInstance is [T] {
-  if (listInstance === undefined || listInstance === null) {
+  if (listInstance === undefined || listInstance === null || listInstance.length === 0) {
     return;
   }
   let invalidItemCount = 0;

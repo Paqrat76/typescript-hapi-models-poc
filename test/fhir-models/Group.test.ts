@@ -21,6 +21,7 @@
  *
  */
 
+import { AssertionError } from 'node:assert';
 import { Group, GroupCharacteristicComponent, GroupMemberComponent } from '@src/fhir-models/Group';
 import { PractitionerRole } from '@src/fhir-models/PractitionerRole';
 import { Extension } from '@src/fhir-core/base-models/core-fhir-models';
@@ -390,84 +391,7 @@ describe('Group', () => {
       expect(testGroup.getMember()).toEqual([] as GroupMemberComponent[]);
     });
 
-    it('should throw InvalidCodeError when instantiated with invalid primitive values', () => {
-      let t = () => {
-        new Group(UNSUPPORTED_ENUM_CODE, null);
-      };
-      expect(t).toThrow(InvalidCodeError);
-      expect(t).toThrow(`Invalid Group.type; Unknown GroupTypeEnum 'code' value '${UNSUPPORTED_ENUM_CODE}'`);
-
-      t = () => {
-        new Group(UNDEFINED_ENUM_CODE_VALUE, null);
-      };
-      expect(t).toThrow(InvalidCodeError);
-      expect(t).toThrow(`Invalid Group.type; Unknown GroupTypeEnum 'code' value '${UNDEFINED_ENUM_CODE_VALUE}'`);
-
-      t = () => {
-        new Group(INVALID_CODE, null);
-      };
-      expect(t).toThrow(InvalidCodeError);
-      expect(t).toThrow(`Invalid Group.type; Invalid value for CodeType (${INVALID_CODE})`);
-
-      t = () => {
-        // @ts-expect-error: allow for testing
-        new Group(null, INVALID_BOOLEAN);
-      };
-      expect(t).toThrow(PrimitiveTypeError);
-      expect(t).toThrow(`Invalid Group.actual (${INVALID_BOOLEAN})`);
-    });
-
-    it('should throw InvalidCodeError when instantiated with invalid PrimitiveType values', () => {
-      let t = () => {
-        new Group(new EnumCodeType('generated', inValidTypeEnum), null);
-      };
-      expect(t).toThrow(InvalidCodeError);
-      expect(t).toThrow(`Invalid Group.type; Invalid type parameter (MockCodeEnum); Should be GroupTypeEnum.`);
-
-      t = () => {
-        // @ts-expect-error: allow invalid type for testing
-        new Group(new StringType('invalidCode'), null);
-      };
-      expect(t).toThrow(InvalidCodeError);
-      expect(t).toThrow(`Invalid Group.type; Provided code value is not an instance of CodeType`);
-
-      t = () => {
-        new Group(INVALID_CODE, null);
-      };
-      expect(t).toThrow(InvalidCodeError);
-      expect(t).toThrow(`Invalid Group.type; Invalid value for CodeType (${INVALID_CODE})`);
-
-      t = () => {
-        // @ts-expect-error: allow for testing
-        new Group(null, INVALID_BOOLEAN);
-      };
-      expect(t).toThrow(PrimitiveTypeError);
-      expect(t).toThrow(`Invalid Group.actual (${INVALID_BOOLEAN})`);
-    });
-
-    it('should properly initialize property arrays when adding elements', () => {
-      const testGroup = new Group(null, null);
-
-      testGroup.addIdentifier(VALID_IDENTIFIER_1);
-      expect(testGroup.hasIdentifier()).toBe(true);
-      expect(testGroup.getIdentifier()).toEqual([VALID_IDENTIFIER_1]);
-
-      const groupCharacteristicComponent1 = new GroupCharacteristicComponent(
-        VALID_CODEABLECONCEPT_1,
-        new BooleanType(VALID_BOOLEAN_FALSE),
-        VALID_BOOLEAN_TRUE,
-      );
-      testGroup.addCharacteristic(groupCharacteristicComponent1);
-      expect(testGroup.hasCharacteristic()).toBe(true);
-      expect(testGroup.getCharacteristic()).toEqual([groupCharacteristicComponent1]);
-
-      const testGroupMemberComponent1 = new GroupMemberComponent(VALID_REFERENCE_VALUE_1);
-      testGroup.addMember(testGroupMemberComponent1);
-      expect(testGroup.hasMember()).toBe(true);
-      expect(testGroup.getMember()).toEqual([testGroupMemberComponent1]);
-    });
-
-    it('should properly copy() undefined values', () => {
+    it('should properly copy()', () => {
       const group = new Group(null, null);
 
       group.setId(VALID_ID);
@@ -580,10 +504,10 @@ describe('Group', () => {
 
       group.setIdentifier(UNDEFINED_VALUE);
       group.setActive(UNDEFINED_VALUE);
-      // @ts-expect-error: Setting to null from setter results in no change
-      group.setType(null);
-      // @ts-expect-error: Setting to null from setter results in no change
-      group.setActual(null);
+      // Setting to null or undefined results in an AssertionError because this field is required
+      // group.setType(null);
+      // Setting to null or undefined results in an AssertionError because this field is required
+      // group.setActual(null);
       group.setCode(UNDEFINED_VALUE);
       group.setName(UNDEFINED_VALUE);
       group.setQuantity(UNDEFINED_VALUE);
@@ -667,7 +591,29 @@ describe('Group', () => {
       expect(testGroup.getMember()).toEqual([] as GroupMemberComponent[]);
     });
 
-    it('should be properly reset by modifying all properties', () => {
+    it('should properly initialize property arrays when adding elements', () => {
+      const testGroup = new Group(null, null);
+
+      testGroup.addIdentifier(VALID_IDENTIFIER_1);
+      expect(testGroup.hasIdentifier()).toBe(true);
+      expect(testGroup.getIdentifier()).toEqual([VALID_IDENTIFIER_1]);
+
+      const groupCharacteristicComponent1 = new GroupCharacteristicComponent(
+        VALID_CODEABLECONCEPT_1,
+        new BooleanType(VALID_BOOLEAN_FALSE),
+        VALID_BOOLEAN_TRUE,
+      );
+      testGroup.addCharacteristic(groupCharacteristicComponent1);
+      expect(testGroup.hasCharacteristic()).toBe(true);
+      expect(testGroup.getCharacteristic()).toEqual([groupCharacteristicComponent1]);
+
+      const testGroupMemberComponent1 = new GroupMemberComponent(VALID_REFERENCE_VALUE_1);
+      testGroup.addMember(testGroupMemberComponent1);
+      expect(testGroup.hasMember()).toBe(true);
+      expect(testGroup.getMember()).toEqual([testGroupMemberComponent1]);
+    });
+
+    it('should be properly reset by modifying all properties with primitives', () => {
       const testGroup = new Group(null, null);
 
       testGroup.setId(VALID_ID);
@@ -852,6 +798,388 @@ describe('Group', () => {
       expect(testGroup.hasMember()).toBe(true);
       expect(testGroup.getMember()).toEqual([testGroupMemberComponent2]);
 
+      // Reset to undefined
+
+      testGroup.setId(UNDEFINED_VALUE);
+      testGroup.setMeta(UNDEFINED_VALUE);
+      testGroup.setImplicitRules(UNDEFINED_VALUE);
+      testGroup.setLanguage(UNDEFINED_VALUE);
+      testGroup.setText(UNDEFINED_VALUE);
+      testGroup.setContained(UNDEFINED_VALUE);
+      testGroup.setExtension(UNDEFINED_VALUE);
+      testGroup.setModifierExtension(UNDEFINED_VALUE);
+
+      testGroup.setIdentifier(UNDEFINED_VALUE);
+      testGroup.setActive(UNDEFINED_VALUE);
+      // Setting to null or undefined results in an AssertionError because this field is required
+      // testGroup.setType(null);
+      // Setting to null or undefined results in an AssertionError because this field is required
+      // testGroup.setActual(null);
+      testGroup.setCode(UNDEFINED_VALUE);
+      testGroup.setName(UNDEFINED_VALUE);
+      testGroup.setQuantity(UNDEFINED_VALUE);
+      testGroup.setManagingEntity(UNDEFINED_VALUE);
+      testGroup.setCharacteristic(UNDEFINED_VALUE);
+      testGroup.setMember(UNDEFINED_VALUE);
+
+      expect(testGroup).toBeDefined();
+      expect(testGroup).toBeInstanceOf(Group);
+      expect(testGroup).toBeInstanceOf(DomainResource);
+      expect(testGroup).toBeInstanceOf(Resource);
+      expect(testGroup).toBeInstanceOf(Base);
+      expect(testGroup.constructor.name).toStrictEqual('Group');
+      expect(testGroup.resourceType()).toStrictEqual('Group');
+      expect(testGroup.fhirType()).toStrictEqual('Group');
+      expect(testGroup.isResource()).toBe(true);
+      expect(testGroup.isEmpty()).toBe(false);
+      // Setting to null from setter results in no change
+      expect(testGroup.toJSON()).toBeDefined();
+
+      // inherited properties from Resource/DomainResource
+      expect(testGroup.hasIdElement()).toBe(false);
+      expect(testGroup.getIdElement()).toEqual(new IdType());
+      expect(testGroup.hasId()).toBe(false);
+      expect(testGroup.getId()).toBeUndefined();
+      expect(testGroup.hasMeta()).toBe(false);
+      expect(testGroup.getMeta()).toEqual(new Meta());
+      expect(testGroup.hasImplicitRulesElement()).toBe(false);
+      expect(testGroup.getImplicitRulesElement()).toEqual(new UriType());
+      expect(testGroup.hasImplicitRules()).toBe(false);
+      expect(testGroup.getImplicitRules()).toBeUndefined();
+      expect(testGroup.hasLanguageElement()).toBe(false);
+      expect(testGroup.getLanguageElement()).toEqual(new CodeType());
+      expect(testGroup.hasLanguage()).toBe(false);
+      expect(testGroup.getLanguage()).toBeUndefined();
+      expect(testGroup.hasText()).toBe(false);
+      expect(testGroup.getText()).toEqual(new Narrative(null, null));
+      expect(testGroup.hasContained()).toBe(false);
+      expect(testGroup.getContained()).toEqual([] as Resource[]);
+      expect(testGroup.hasExtension()).toBe(false);
+      expect(testGroup.getExtension()).toEqual([] as Extension[]);
+      expect(testGroup.hasModifierExtension()).toBe(false);
+      expect(testGroup.getModifierExtension()).toEqual([] as Extension[]);
+
+      // Group properties
+      expect(testGroup.hasIdentifier()).toBe(false);
+      expect(testGroup.getIdentifier()).toEqual([] as Identifier[]);
+      expect(testGroup.hasActiveElement()).toBe(false);
+      expect(testGroup.getActiveElement()).toEqual(new BooleanType());
+      expect(testGroup.hasActive()).toBe(false);
+      expect(testGroup.getActive()).toBeUndefined();
+
+      // Setting type to null from setter results in no change
+      expect(testGroup.hasTypeEnumType()).toBe(true);
+      expect(testGroup.getTypeEnumType()).toEqual(new EnumCodeType(VALID_CODE_DEVICE, groupTypeEnum));
+      expect(testGroup.hasTypeElement()).toBe(true);
+      expect(testGroup.getTypeElement()).toMatchObject(VALID_CODE_DEVICE_TYPE);
+      expect(testGroup.hasType()).toBe(true);
+      expect(testGroup.getType()).toStrictEqual(VALID_CODE_DEVICE);
+
+      // Setting actual to null from setter results in no change
+      expect(testGroup.hasActualElement()).toBe(true);
+      expect(testGroup.getActualElement()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
+      expect(testGroup.hasActual()).toBe(true);
+      expect(testGroup.getActual()).toStrictEqual(VALID_BOOLEAN_FALSE);
+
+      expect(testGroup.hasNameElement()).toBe(false);
+      expect(testGroup.getNameElement()).toEqual(new StringType());
+      expect(testGroup.hasName()).toBe(false);
+      expect(testGroup.getName()).toBeUndefined();
+      expect(testGroup.hasQuantityElement()).toBe(false);
+      expect(testGroup.getQuantityElement()).toEqual(new UnsignedIntType());
+      expect(testGroup.hasQuantity()).toBe(false);
+      expect(testGroup.getQuantity()).toBeUndefined();
+      expect(testGroup.hasManagingEntity()).toBe(false);
+      expect(testGroup.getManagingEntity()).toEqual(new Reference());
+      expect(testGroup.hasCharacteristic()).toBe(false);
+      expect(testGroup.getCharacteristic()).toEqual([] as GroupCharacteristicComponent[]);
+      expect(testGroup.hasMember()).toBe(false);
+      expect(testGroup.getMember()).toEqual([] as GroupMemberComponent[]);
+    });
+
+    it('should be properly reset by modifying all properties with DataTypes', () => {
+      const testGroup = new Group(null, null);
+
+      testGroup.setIdElement(VALID_ID_TYPE);
+      testGroup.setMeta(VALID_META);
+      testGroup.setImplicitRulesElement(new UriType(IMPLICIT_RULES_VALUE));
+      testGroup.setLanguageElement(new CodeType(LANGUAGE_VALUE));
+      testGroup.setText(VALID_NARRATIVE);
+      testGroup.setContained([VALID_CONTAINED]);
+      testGroup.setExtension([VALID_EXTENSION]);
+      testGroup.setModifierExtension([VALID_MODIFIER_EXTENSION]);
+
+      testGroup.setIdentifier([VALID_IDENTIFIER_1]);
+      testGroup.setActiveElement(new BooleanType(VALID_BOOLEAN_TRUE));
+      testGroup.setTypeElement(new CodeType(VALID_CODE_PERSON));
+      testGroup.setActualElement(new BooleanType(VALID_BOOLEAN_TRUE));
+      testGroup.setCode(VALID_CODEABLECONCEPT_1);
+      testGroup.setNameElement(new StringType(VALID_STRING_1));
+      testGroup.setQuantityElement(new UnsignedIntType(VALID_UNSIGNED_INT_1));
+      testGroup.setManagingEntity(VALID_REFERENCE_VALUE_1);
+      const groupCharacteristicComponent1 = new GroupCharacteristicComponent(
+        VALID_CODEABLECONCEPT_1,
+        new BooleanType(VALID_BOOLEAN_TRUE),
+        VALID_BOOLEAN_TRUE,
+      );
+      testGroup.setCharacteristic([groupCharacteristicComponent1]);
+      const testGroupMemberComponent1 = new GroupMemberComponent(VALID_REFERENCE_VALUE_1);
+      testGroup.setMember([testGroupMemberComponent1]);
+
+      expect(testGroup).toBeDefined();
+      expect(testGroup).toBeInstanceOf(Group);
+      expect(testGroup).toBeInstanceOf(DomainResource);
+      expect(testGroup).toBeInstanceOf(Resource);
+      expect(testGroup).toBeInstanceOf(Base);
+      expect(testGroup.constructor.name).toStrictEqual('Group');
+      expect(testGroup.resourceType()).toStrictEqual('Group');
+      expect(testGroup.fhirType()).toStrictEqual('Group');
+      expect(testGroup.isResource()).toBe(true);
+      expect(testGroup.isEmpty()).toBe(false);
+      expect(testGroup.toJSON()).toBeDefined();
+
+      // inherited properties from Resource/DomainResource
+      expect(testGroup.hasIdElement()).toBe(true);
+      expect(testGroup.getIdElement()).toEqual(VALID_ID_TYPE);
+      expect(testGroup.hasId()).toBe(true);
+      expect(testGroup.getId()).toStrictEqual(VALID_ID);
+      expect(testGroup.hasMeta()).toBe(true);
+      expect(testGroup.getMeta()).toEqual(VALID_META);
+      expect(testGroup.hasImplicitRulesElement()).toBe(true);
+      expect(testGroup.getImplicitRulesElement()).toEqual(new UriType(IMPLICIT_RULES_VALUE));
+      expect(testGroup.hasImplicitRules()).toBe(true);
+      expect(testGroup.getImplicitRules()).toStrictEqual(IMPLICIT_RULES_VALUE);
+      expect(testGroup.hasLanguageElement()).toBe(true);
+      expect(testGroup.getLanguageElement()).toEqual(new CodeType(LANGUAGE_VALUE));
+      expect(testGroup.hasLanguage()).toBe(true);
+      expect(testGroup.getLanguage()).toStrictEqual(LANGUAGE_VALUE);
+      expect(testGroup.hasText()).toBe(true);
+      expect(testGroup.getText()).toEqual(VALID_NARRATIVE);
+      expect(testGroup.hasContained()).toBe(true);
+      expect(testGroup.getContained()).toEqual([VALID_CONTAINED]);
+      expect(testGroup.hasExtension()).toBe(true);
+      expect(testGroup.getExtension()).toEqual([VALID_EXTENSION]);
+      expect(testGroup.hasModifierExtension()).toBe(true);
+      expect(testGroup.getModifierExtension()).toEqual([VALID_MODIFIER_EXTENSION]);
+
+      // Group properties
+      expect(testGroup.hasIdentifier()).toBe(true);
+      expect(testGroup.getIdentifier()).toEqual([VALID_IDENTIFIER_1]);
+      expect(testGroup.hasActiveElement()).toBe(true);
+      expect(testGroup.getActiveElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
+      expect(testGroup.hasActive()).toBe(true);
+      expect(testGroup.getActive()).toStrictEqual(VALID_BOOLEAN_TRUE);
+      expect(testGroup.hasTypeEnumType()).toBe(true);
+      expect(testGroup.getTypeEnumType()).toEqual(new EnumCodeType(VALID_CODE_PERSON, groupTypeEnum));
+      expect(testGroup.hasTypeElement()).toBe(true);
+      expect(testGroup.getTypeElement()).toMatchObject(VALID_CODE_PERSON_TYPE);
+      expect(testGroup.hasType()).toBe(true);
+      expect(testGroup.getType()).toStrictEqual(VALID_CODE_PERSON);
+      expect(testGroup.hasActualElement()).toBe(true);
+      expect(testGroup.getActualElement()).toEqual(new BooleanType(VALID_BOOLEAN_TRUE));
+      expect(testGroup.hasActual()).toBe(true);
+      expect(testGroup.getActual()).toStrictEqual(VALID_BOOLEAN_TRUE);
+      expect(testGroup.hasCode()).toBe(true);
+      expect(testGroup.getCode()).toEqual(VALID_CODEABLECONCEPT_1);
+      expect(testGroup.hasNameElement()).toBe(true);
+      expect(testGroup.getNameElement()).toEqual(new StringType(VALID_STRING_1));
+      expect(testGroup.hasName()).toBe(true);
+      expect(testGroup.getName()).toStrictEqual(VALID_STRING_1);
+      expect(testGroup.hasQuantityElement()).toBe(true);
+      expect(testGroup.getQuantityElement()).toEqual(new UnsignedIntType(VALID_UNSIGNED_INT_1));
+      expect(testGroup.hasQuantity()).toBe(true);
+      expect(testGroup.getQuantity()).toStrictEqual(VALID_UNSIGNED_INT_1);
+      expect(testGroup.hasManagingEntity()).toBe(true);
+      expect(testGroup.getManagingEntity()).toEqual(VALID_REFERENCE_VALUE_1);
+      expect(testGroup.hasCharacteristic()).toBe(true);
+      expect(testGroup.getCharacteristic()).toEqual([groupCharacteristicComponent1]);
+      expect(testGroup.hasMember()).toBe(true);
+      expect(testGroup.getMember()).toEqual([testGroupMemberComponent1]);
+
+      // Reset
+
+      testGroup.setIdElement(VALID_ID_TYPE_2);
+      testGroup.setMeta(VALID_META_2);
+      testGroup.setImplicitRulesElement(new UriType(IMPLICIT_RULES_VALUE_2));
+      testGroup.setLanguageElement(new CodeType(LANGUAGE_VALUE_2));
+      testGroup.setText(VALID_NARRATIVE_2);
+      testGroup.setContained([VALID_CONTAINED_2]);
+      testGroup.setExtension([VALID_EXTENSION_2]);
+      testGroup.setModifierExtension([VALID_MODIFIER_EXTENSION_2]);
+
+      testGroup.setIdentifier([VALID_IDENTIFIER_2]);
+      testGroup.setActiveElement(new BooleanType(VALID_BOOLEAN_FALSE));
+      testGroup.setTypeElement(new CodeType(VALID_CODE_DEVICE));
+      testGroup.setActualElement(new BooleanType(VALID_BOOLEAN_FALSE));
+      testGroup.setCode(VALID_CODEABLECONCEPT_2);
+      testGroup.setNameElement(new StringType(VALID_STRING_2));
+      testGroup.setQuantityElement(new UnsignedIntType(VALID_UNSIGNED_INT_2));
+      testGroup.setManagingEntity(VALID_REFERENCE_VALUE_2);
+      const groupCharacteristicComponent2 = new GroupCharacteristicComponent(
+        VALID_CODEABLECONCEPT_2,
+        new BooleanType(VALID_BOOLEAN_FALSE),
+        VALID_BOOLEAN_FALSE,
+      );
+      testGroup.setCharacteristic([groupCharacteristicComponent2]);
+      const testGroupMemberComponent2 = new GroupMemberComponent(VALID_REFERENCE_VALUE_2);
+      testGroup.setMember([testGroupMemberComponent2]);
+
+      // inherited properties from Resource/DomainResource
+      expect(testGroup.hasIdElement()).toBe(true);
+      expect(testGroup.getIdElement()).toEqual(VALID_ID_TYPE_2);
+      expect(testGroup.hasId()).toBe(true);
+      expect(testGroup.getId()).toStrictEqual(VALID_ID_2);
+      expect(testGroup.hasMeta()).toBe(true);
+      expect(testGroup.getMeta()).toEqual(VALID_META_2);
+      expect(testGroup.hasImplicitRulesElement()).toBe(true);
+      expect(testGroup.getImplicitRulesElement()).toEqual(new UriType(IMPLICIT_RULES_VALUE_2));
+      expect(testGroup.hasImplicitRules()).toBe(true);
+      expect(testGroup.getImplicitRules()).toStrictEqual(IMPLICIT_RULES_VALUE_2);
+      expect(testGroup.hasLanguageElement()).toBe(true);
+      expect(testGroup.getLanguageElement()).toEqual(new CodeType(LANGUAGE_VALUE_2));
+      expect(testGroup.hasLanguage()).toBe(true);
+      expect(testGroup.getLanguage()).toStrictEqual(LANGUAGE_VALUE_2);
+      expect(testGroup.hasText()).toBe(true);
+      expect(testGroup.getText()).toEqual(VALID_NARRATIVE_2);
+      expect(testGroup.hasContained()).toBe(true);
+      expect(testGroup.getContained()).toEqual([VALID_CONTAINED_2]);
+      expect(testGroup.hasExtension()).toBe(true);
+      expect(testGroup.getExtension()).toEqual([VALID_EXTENSION_2]);
+      expect(testGroup.hasModifierExtension()).toBe(true);
+      expect(testGroup.getModifierExtension()).toEqual([VALID_MODIFIER_EXTENSION_2]);
+
+      // Group properties
+      expect(testGroup.hasIdentifier()).toBe(true);
+      expect(testGroup.getIdentifier()).toEqual([VALID_IDENTIFIER_2]);
+      expect(testGroup.hasActiveElement()).toBe(true);
+      expect(testGroup.getActiveElement()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
+      expect(testGroup.hasActive()).toBe(true);
+      expect(testGroup.getActive()).toStrictEqual(VALID_BOOLEAN_FALSE);
+      expect(testGroup.hasTypeEnumType()).toBe(true);
+      expect(testGroup.getTypeEnumType()).toEqual(new EnumCodeType(VALID_CODE_DEVICE, groupTypeEnum));
+      expect(testGroup.hasTypeElement()).toBe(true);
+      expect(testGroup.getTypeElement()).toMatchObject(VALID_CODE_DEVICE_TYPE);
+      expect(testGroup.hasType()).toBe(true);
+      expect(testGroup.getType()).toStrictEqual(VALID_CODE_DEVICE);
+      expect(testGroup.hasActualElement()).toBe(true);
+      expect(testGroup.getActualElement()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
+      expect(testGroup.hasActual()).toBe(true);
+      expect(testGroup.getActual()).toStrictEqual(VALID_BOOLEAN_FALSE);
+      expect(testGroup.hasCode()).toBe(true);
+      expect(testGroup.getCode()).toEqual(VALID_CODEABLECONCEPT_2);
+      expect(testGroup.hasNameElement()).toBe(true);
+      expect(testGroup.getNameElement()).toEqual(new StringType(VALID_STRING_2));
+      expect(testGroup.hasName()).toBe(true);
+      expect(testGroup.getName()).toStrictEqual(VALID_STRING_2);
+      expect(testGroup.hasQuantityElement()).toBe(true);
+      expect(testGroup.getQuantityElement()).toEqual(new UnsignedIntType(VALID_UNSIGNED_INT_2));
+      expect(testGroup.hasQuantity()).toBe(true);
+      expect(testGroup.getQuantity()).toStrictEqual(VALID_UNSIGNED_INT_2);
+      expect(testGroup.hasManagingEntity()).toBe(true);
+      expect(testGroup.getManagingEntity()).toEqual(VALID_REFERENCE_VALUE_2);
+      expect(testGroup.hasCharacteristic()).toBe(true);
+      expect(testGroup.getCharacteristic()).toEqual([groupCharacteristicComponent2]);
+      expect(testGroup.hasMember()).toBe(true);
+      expect(testGroup.getMember()).toEqual([testGroupMemberComponent2]);
+
+      // Reset to undefined
+
+      testGroup.setIdElement(UNDEFINED_VALUE);
+      testGroup.setMeta(UNDEFINED_VALUE);
+      testGroup.setImplicitRulesElement(UNDEFINED_VALUE);
+      testGroup.setLanguageElement(UNDEFINED_VALUE);
+      testGroup.setText(UNDEFINED_VALUE);
+      testGroup.setContained(UNDEFINED_VALUE);
+      testGroup.setExtension(UNDEFINED_VALUE);
+      testGroup.setModifierExtension(UNDEFINED_VALUE);
+
+      testGroup.setIdentifier(UNDEFINED_VALUE);
+      testGroup.setActiveElement(UNDEFINED_VALUE);
+      // Setting to null or undefined results in an AssertionError because this field is required
+      // testGroup.setTypeElement(null);
+      // Setting to null or undefined results in an AssertionError because this field is required
+      // testGroup.setActualElement(null);
+      testGroup.setCode(UNDEFINED_VALUE);
+      testGroup.setNameElement(UNDEFINED_VALUE);
+      testGroup.setQuantityElement(UNDEFINED_VALUE);
+      testGroup.setManagingEntity(UNDEFINED_VALUE);
+      testGroup.setCharacteristic(UNDEFINED_VALUE);
+      testGroup.setMember(UNDEFINED_VALUE);
+
+      expect(testGroup).toBeDefined();
+      expect(testGroup).toBeInstanceOf(Group);
+      expect(testGroup).toBeInstanceOf(DomainResource);
+      expect(testGroup).toBeInstanceOf(Resource);
+      expect(testGroup).toBeInstanceOf(Base);
+      expect(testGroup.constructor.name).toStrictEqual('Group');
+      expect(testGroup.resourceType()).toStrictEqual('Group');
+      expect(testGroup.fhirType()).toStrictEqual('Group');
+      expect(testGroup.isResource()).toBe(true);
+      expect(testGroup.isEmpty()).toBe(false);
+      // Setting to null from setter results in no change
+      expect(testGroup.toJSON()).toBeDefined();
+
+      // inherited properties from Resource/DomainResource
+      expect(testGroup.hasIdElement()).toBe(false);
+      expect(testGroup.getIdElement()).toEqual(new IdType());
+      expect(testGroup.hasId()).toBe(false);
+      expect(testGroup.getId()).toBeUndefined();
+      expect(testGroup.hasMeta()).toBe(false);
+      expect(testGroup.getMeta()).toEqual(new Meta());
+      expect(testGroup.hasImplicitRulesElement()).toBe(false);
+      expect(testGroup.getImplicitRulesElement()).toEqual(new UriType());
+      expect(testGroup.hasImplicitRules()).toBe(false);
+      expect(testGroup.getImplicitRules()).toBeUndefined();
+      expect(testGroup.hasLanguageElement()).toBe(false);
+      expect(testGroup.getLanguageElement()).toEqual(new CodeType());
+      expect(testGroup.hasLanguage()).toBe(false);
+      expect(testGroup.getLanguage()).toBeUndefined();
+      expect(testGroup.hasText()).toBe(false);
+      expect(testGroup.getText()).toEqual(new Narrative(null, null));
+      expect(testGroup.hasContained()).toBe(false);
+      expect(testGroup.getContained()).toEqual([] as Resource[]);
+      expect(testGroup.hasExtension()).toBe(false);
+      expect(testGroup.getExtension()).toEqual([] as Extension[]);
+      expect(testGroup.hasModifierExtension()).toBe(false);
+      expect(testGroup.getModifierExtension()).toEqual([] as Extension[]);
+
+      // Group properties
+      expect(testGroup.hasIdentifier()).toBe(false);
+      expect(testGroup.getIdentifier()).toEqual([] as Identifier[]);
+      expect(testGroup.hasActiveElement()).toBe(false);
+      expect(testGroup.getActiveElement()).toEqual(new BooleanType());
+      expect(testGroup.hasActive()).toBe(false);
+      expect(testGroup.getActive()).toBeUndefined();
+
+      // Setting type to null from setter results in no change
+      expect(testGroup.hasTypeEnumType()).toBe(true);
+      expect(testGroup.getTypeEnumType()).toEqual(new EnumCodeType(VALID_CODE_DEVICE, groupTypeEnum));
+      expect(testGroup.hasTypeElement()).toBe(true);
+      expect(testGroup.getTypeElement()).toMatchObject(VALID_CODE_DEVICE_TYPE);
+      expect(testGroup.hasType()).toBe(true);
+      expect(testGroup.getType()).toStrictEqual(VALID_CODE_DEVICE);
+
+      // Setting actual to null from setter results in no change
+      expect(testGroup.hasActualElement()).toBe(true);
+      expect(testGroup.getActualElement()).toEqual(new BooleanType(VALID_BOOLEAN_FALSE));
+      expect(testGroup.hasActual()).toBe(true);
+      expect(testGroup.getActual()).toStrictEqual(VALID_BOOLEAN_FALSE);
+
+      expect(testGroup.hasNameElement()).toBe(false);
+      expect(testGroup.getNameElement()).toEqual(new StringType());
+      expect(testGroup.hasName()).toBe(false);
+      expect(testGroup.getName()).toBeUndefined();
+      expect(testGroup.hasQuantityElement()).toBe(false);
+      expect(testGroup.getQuantityElement()).toEqual(new UnsignedIntType());
+      expect(testGroup.hasQuantity()).toBe(false);
+      expect(testGroup.getQuantity()).toBeUndefined();
+      expect(testGroup.hasManagingEntity()).toBe(false);
+      expect(testGroup.getManagingEntity()).toEqual(new Reference());
+      expect(testGroup.hasCharacteristic()).toBe(false);
+      expect(testGroup.getCharacteristic()).toEqual([] as GroupCharacteristicComponent[]);
+      expect(testGroup.hasMember()).toBe(false);
+      expect(testGroup.getMember()).toEqual([] as GroupMemberComponent[]);
+
       // setTypeEnumType() for coverage
       const enumType = new EnumCodeType(VALID_CODE_DEVICE, groupTypeEnum);
       testGroup.setTypeEnumType(enumType);
@@ -861,6 +1189,137 @@ describe('Group', () => {
       expect(testGroup.getTypeElement()).toMatchObject(VALID_CODE_DEVICE_TYPE);
       expect(testGroup.hasType()).toBe(true);
       expect(testGroup.getType()).toStrictEqual(VALID_CODE_DEVICE);
+    });
+
+    it('should throw AssertionError when reset with null/undefined Group.type value', () => {
+      const testGroup = new Group(VALID_CODE_PERSON, VALID_BOOLEAN_TRUE);
+      let t = () => {
+        // @ts-expect-error: allow for testing
+        testGroup.setTypeEnumType(null);
+      };
+      expect(t).toThrow(AssertionError);
+      expect(t).toThrow(`Group.type is required`);
+
+      t = () => {
+        // @ts-expect-error: allow for testing
+        testGroup.setTypeElement(null);
+      };
+      expect(t).toThrow(AssertionError);
+      expect(t).toThrow(`Group.type is required`);
+
+      t = () => {
+        // @ts-expect-error: allow for testing
+        testGroup.setType(null);
+      };
+      expect(t).toThrow(AssertionError);
+      expect(t).toThrow(`Group.type is required`);
+
+      t = () => {
+        // @ts-expect-error: allow for testing
+        testGroup.setTypeEnumType(undefined);
+      };
+      expect(t).toThrow(AssertionError);
+      expect(t).toThrow(`Group.type is required`);
+
+      t = () => {
+        // @ts-expect-error: allow for testing
+        testGroup.setTypeElement(undefined);
+      };
+      expect(t).toThrow(AssertionError);
+      expect(t).toThrow(`Group.type is required`);
+
+      t = () => {
+        // @ts-expect-error: allow for testing
+        testGroup.setType(undefined);
+      };
+      expect(t).toThrow(AssertionError);
+      expect(t).toThrow(`Group.type is required`);
+    });
+
+    it('should throw AssertionError when reset with null/undefined Group.actual value', () => {
+      const testGroup = new Group(VALID_CODE_PERSON, VALID_BOOLEAN_TRUE);
+      let t = () => {
+        // @ts-expect-error: allow for testing
+        testGroup.setActualElement(null);
+      };
+      expect(t).toThrow(AssertionError);
+      expect(t).toThrow(`Group.actual is required`);
+
+      t = () => {
+        // @ts-expect-error: allow for testing
+        testGroup.setActual(null);
+      };
+      expect(t).toThrow(AssertionError);
+      expect(t).toThrow(`Group.actual is required`);
+
+      t = () => {
+        // @ts-expect-error: allow for testing
+        testGroup.setActualElement(undefined);
+      };
+      expect(t).toThrow(AssertionError);
+      expect(t).toThrow(`Group.actual is required`);
+
+      t = () => {
+        // @ts-expect-error: allow for testing
+        testGroup.setActual(undefined);
+      };
+      expect(t).toThrow(AssertionError);
+      expect(t).toThrow(`Group.actual is required`);
+    });
+
+    it('should throw InvalidCodeError when instantiated with invalid primitive values', () => {
+      let t = () => {
+        new Group(UNSUPPORTED_ENUM_CODE, null);
+      };
+      expect(t).toThrow(InvalidCodeError);
+      expect(t).toThrow(`Invalid Group.type; Unknown GroupTypeEnum 'code' value '${UNSUPPORTED_ENUM_CODE}'`);
+
+      t = () => {
+        new Group(UNDEFINED_ENUM_CODE_VALUE, null);
+      };
+      expect(t).toThrow(InvalidCodeError);
+      expect(t).toThrow(`Invalid Group.type; Unknown GroupTypeEnum 'code' value '${UNDEFINED_ENUM_CODE_VALUE}'`);
+
+      t = () => {
+        new Group(INVALID_CODE, null);
+      };
+      expect(t).toThrow(InvalidCodeError);
+      expect(t).toThrow(`Invalid Group.type; Invalid value for CodeType (${INVALID_CODE})`);
+
+      t = () => {
+        // @ts-expect-error: allow for testing
+        new Group(null, INVALID_BOOLEAN);
+      };
+      expect(t).toThrow(PrimitiveTypeError);
+      expect(t).toThrow(`Invalid Group.actual (${INVALID_BOOLEAN})`);
+    });
+
+    it('should throw InvalidCodeError when instantiated with invalid PrimitiveType values', () => {
+      let t = () => {
+        new Group(new EnumCodeType('generated', inValidTypeEnum), null);
+      };
+      expect(t).toThrow(InvalidCodeError);
+      expect(t).toThrow(`Invalid Group.type; Invalid type parameter (MockCodeEnum); Should be GroupTypeEnum.`);
+
+      t = () => {
+        // @ts-expect-error: allow invalid type for testing
+        new Group(new StringType('invalidCode'), null);
+      };
+      expect(t).toThrow(InvalidCodeError);
+      expect(t).toThrow(`Invalid Group.type; Provided code value is not an instance of CodeType`);
+
+      t = () => {
+        new Group(INVALID_CODE, null);
+      };
+      expect(t).toThrow(InvalidCodeError);
+      expect(t).toThrow(`Invalid Group.type; Invalid value for CodeType (${INVALID_CODE})`);
+
+      t = () => {
+        // @ts-expect-error: allow for testing
+        new Group(null, INVALID_BOOLEAN);
+      };
+      expect(t).toThrow(PrimitiveTypeError);
+      expect(t).toThrow(`Invalid Group.actual (${INVALID_BOOLEAN})`);
     });
   });
 

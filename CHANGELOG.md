@@ -19,6 +19,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [0.13.0] - 24-12-18
+
+### Changed
+
+- Updated dependencies
+- Refactored EnumCodeType methods for consistency and correctness
+- Refactored "get"/"add" methods for consistency and correctness
+- Refactored complex data type unit tests for consistency and completeness
+- Refactored FHIR model unit tests for consistency and completeness
+
+### Fixed
+
+- Corrected issues in various template files
+
+
 ## [0.12.0] - 2024-12-06
 
 ### Added
@@ -253,7 +268,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   - Added primitive data types: EnumCodeType
   - Added FHIR code system: NarrativeStatusEnum
 - Added support for TypeDoc and the ability to generate library documentation
--
+
 ### Changed
 
 - Updated dependencies

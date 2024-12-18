@@ -426,7 +426,7 @@ The `<StructureDefinition.snapshot.element[i].path>` will be reformatted as foll
  *   - _TargetProfiles_: [ <StructureDefinition.snapshot.element[i].type.code[0].taretProfile[?]> ]
  * - **Cardinality:** <StructureDefinition.snapshot.element[i].min>..<StructureDefinition.snapshot.element[i].max>
  * - **isModifier:** <StructureDefinition.snapshot.element[i].isModifier>
- * - **isModifierReason:** <StructureDefinition.snapshot.element[i].isModifier?>
+ * - **isModifierReason:** <StructureDefinition.snapshot.element[i].isModifierReason?>
  * - **isSummary:** <StructureDefinition.snapshot.element[i].isSummary>
  */
 ```
@@ -448,7 +448,7 @@ The `<StructureDefinition.snapshot.element[i].path>` will be reformatted as foll
  *    - _TargetProfiles_: [ <StructureDefinition.snapshot.element[i].type.code[0].taretProfile[?]> ]
  * - **Cardinality:** <StructureDefinition.snapshot.element[i].min>..<StructureDefinition.snapshot.element[i].max>
  * - **isModifier:** <StructureDefinition.snapshot.element[i].isModifier>
- * - **isModifierReason:** <StructureDefinition.snapshot.element[i].isModifier?>
+ * - **isModifierReason:** <StructureDefinition.snapshot.element[i].isModifierReason?>
  * - **isSummary:** <StructureDefinition.snapshot.element[i].isSummary>
  */
 ```

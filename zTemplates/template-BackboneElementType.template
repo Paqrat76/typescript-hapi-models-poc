@@ -8,7 +8,6 @@
  *
  */
 
-{
 
 //***** region BackboneElementType - Optional **************************************************************************
 
@@ -46,9 +45,13 @@
    * @returns this
    */
   public setXxxxFieldName(value: XxxxClass | undefined): this {
-    const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided element is not an instance of XxxxClass.`;
-    assertFhirType<XxxxClass>(value, XxxxClass, optErrMsg);
-    this.xxxxFieldName = value;
+    if (isDefined<XxxxClass | undefined>(value)) {
+      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided element is not an instance of XxxxClass.`;
+      assertFhirType<XxxxClass>(value, XxxxClass, optErrMsg);
+      this.xxxxFieldName = value;
+    } else {
+      this.xxxxFieldName = undefined;
+    }
     return this;
   }
 
@@ -75,16 +78,16 @@
 
 // =====================================================================
 // BackboneElementType 1..1
-// XxxxClass (xxxxFieldNameReq / XxxxFieldNameReq)
+// XxxxClass (xxxxFieldName / XxxxFieldName)
 // XxxxParentClass
 // =====================================================================
-  private xxxxFieldNameReq: XxxxClass | null;
+  private xxxxFieldName: XxxxClass | null;
 
-  constructor(xxxxFieldNameReq: XxxxClass | null) {
+  constructor(xxxxFieldName: XxxxClass | null) {
 
-    this.xxxxFieldNameReq = null;
-    if (isDefined<XxxxClass | null>(xxxxFieldNameReq)) {
-      this.setXxxxFieldNameReq(xxxxFieldNameReq);
+    this.xxxxFieldName = null;
+    if (isDefined<XxxxClass | null>(xxxxFieldName)) {
+      this.setXxxxFieldName(xxxxFieldName);
     }
 
   }
@@ -97,14 +100,14 @@
     // Add following near top of method ONLY IF it does not already exist
     const missingReqdProperties: string[] = [];
 
-    sourceField = 'XxxxParentClass.xxxxFieldNameReq';
+    sourceField = 'XxxxParentClass.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
     if (fieldName in classJsonObj) {
       const datatype: XxxxClass | undefined = parseXxxxClass(classJsonObj[fieldName], sourceField);
       if (datatype === undefined) {
         missingReqdProperties.push(sourceField);
       } else {
-        instance.setXxxxFieldNameReq(datatype);
+        instance.setXxxxFieldName(datatype);
       }
     } else {
       missingReqdProperties.push(sourceField);
@@ -120,32 +123,31 @@
   }
 
   /**
-   * @returns the `xxxxFieldNameReq` property value as a XxxxClass object
+   * @returns the `xxxxFieldName` property value as a XxxxClass object
    */
-  public getXxxxFieldNameReq(): XxxxClass | null {
-    return this.xxxxFieldNameReq;
+  public getXxxxFieldName(): XxxxClass | null {
+    return this.xxxxFieldName;
   }
 
   /**
-   * Assigns the provided XxxxClass object value to the `xxxxFieldNameReq` property.
+   * Assigns the provided XxxxClass object value to the `xxxxFieldName` property.
    *
-   * @param value - the `xxxxFieldNameReq` object value
+   * @param value - the `xxxxFieldName` object value
    * @returns this
    */
-  public setXxxxFieldNameReq(value: XxxxClass): this {
-    if (isDefined<XxxxClass>(value)) {
-      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldNameReq; Provided element is not an instance of XxxxClass.`;
-      assertFhirType<XxxxClass>(value, XxxxClass, optErrMsg);
-      this.xxxxFieldNameReq = value;
-    }
+  public setXxxxFieldName(value: XxxxClass): this {
+    assertIsDefined<XxxxClass>(value, `XxxxParentClass.xxxxFieldName is required`);
+    const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided element is not an instance of XxxxClass.`;
+    assertFhirType<XxxxClass>(value, XxxxClass, optErrMsg);
+    this.xxxxFieldName = value;
     return this;
   }
 
   /**
-   * @returns `true` if the `xxxxFieldNameReq` property exists and has a value; `false` otherwise
+   * @returns `true` if the `xxxxFieldName` property exists and has a value; `false` otherwise
    */
-  public hasXxxxFieldNameReq(): boolean {
-    return isDefined<XxxxClass | null>(this.xxxxFieldNameReq) && !this.xxxxFieldNameReq.isEmpty();
+  public hasXxxxFieldName(): boolean {
+    return isDefined<XxxxClass | null>(this.xxxxFieldName) && !this.xxxxFieldName.isEmpty();
   }
 
   // *** NOTE ***
@@ -156,11 +158,11 @@
     // Add following near top of method ONLY IF it does not already exist
     const missingReqdProperties: string[] = [];
 
-    if (this.hasXxxxFieldNameReq()) {
+    if (this.hasXxxxFieldName()) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      setFhirBackboneElementJson(this.getXxxxFieldNameReq()!, 'xxxxFieldNameReq', jsonObj);
+      setFhirBackboneElementJson(this.getXxxxFieldName()!, 'xxxxFieldName', jsonObj);
     } else {
-      missingReqdProperties.push(`XxxxParentClass.xxxxFieldNameReq`);
+      missingReqdProperties.push(`XxxxParentClass.xxxxFieldName`);
     }
 
     // *** NOTE ***
@@ -178,81 +180,85 @@
 
 // =====================================================================
 // BackboneElementType 0..*
-// XxxxClass[] (xxxxFieldNameArray / XxxxFieldNameArray)
+// XxxxClass[] (xxxxFieldName / XxxxFieldName)
 // XxxxParentClass
 // =====================================================================
-  private xxxxFieldNameArray?: XxxxClass[] | undefined;
+  private xxxxFieldName?: XxxxClass[] | undefined;
 
   // *** NOTE ***
   // Only copy the internal code block!
   public static parse(sourceJson: JSON.Object): XxxxClass | undefined {
 
-    sourceField = 'XxxxParentClass.xxxxFieldNameArray';
+    sourceField = 'XxxxParentClass.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
     if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
         const datatype: XxxxClass | undefined = parseXxxxClass(dataElementJson, `${sourceField}[${String(idx)}]`);
-        instance.addXxxxFieldNameArray(datatype);
+        instance.addXxxxFieldName(datatype);
       });
     }
 
   }
 
   /**
-   * @returns the `xxxxFieldNameArray` property value as a XxxxClass array
+   * @returns the `xxxxFieldName` property value as a XxxxClass array
    */
-  public getXxxxFieldNameArray(): XxxxClass[] {
-    return this.xxxxFieldNameArray ?? ([] as XxxxClass[]);
+  public getXxxxFieldName(): XxxxClass[] {
+    return this.xxxxFieldName ?? ([] as XxxxClass[]);
   }
 
   /**
-   * Assigns the provided XxxxClass array value to the `xxxxFieldNameArray` property.
+   * Assigns the provided XxxxClass array value to the `xxxxFieldName` property.
    *
-   * @param value - the `xxxxFieldNameArray` array value
+   * @param value - the `xxxxFieldName` array value
    * @returns this
    */
-  public setXxxxFieldNameArray(value: XxxxClass[] | undefined): this {
-    const optErrMsg = `Invalid XxxxParentClass.xxxxFieldNameArray; Provided value array has an element that is not an instance of XxxxClass.`;
-    assertFhirTypeList<XxxxClass>(value, XxxxClass, optErrMsg);
-    this.xxxxFieldNameArray = value;
-    return this;
-  }
-
-  /**
-   * Add the provided XxxxClass value to the `xxxxFieldNameArray` array property.
-   *
-   * @param value - the `xxxxFieldNameArray` value
-   * @returns this
-   */
-  public addXxxxFieldNameArray(value: XxxxClass | undefined): this {
-    if (isDefined<XxxxClass | undefined>(value)) {
-      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldNameArray; Provided element is not an instance of XxxxClass.`;
-      assertFhirType<XxxxClass>(value, XxxxClass, optErrMsg);
-      this.initXxxxFieldNameArray();
-      this.xxxxFieldNameArray?.push(value);
+  public setXxxxFieldName(value: XxxxClass[] | undefined): this {
+    if (isDefined<XxxxClass[] | undefined>(value)) {
+      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided value array has an element that is not an instance of XxxxClass.`;
+      assertFhirTypeList<XxxxClass>(value, XxxxClass, optErrMsg);
+      this.xxxxFieldName = value;
+    } else {
+      this.xxxxFieldName = undefined;
     }
     return this;
   }
 
   /**
-   * @returns `true` if the `xxxxFieldNameArray` property exists and has a value; `false` otherwise
+   * Add the provided XxxxClass value to the `xxxxFieldName` array property.
+   *
+   * @param value - the `xxxxFieldName` value
+   * @returns this
    */
-  public hasXxxxFieldNameArray(): boolean {
+  public addXxxxFieldName(value: XxxxClass | undefined): this {
+    if (isDefined<XxxxClass | undefined>(value)) {
+      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided element is not an instance of XxxxClass.`;
+      assertFhirType<XxxxClass>(value, XxxxClass, optErrMsg);
+      this.initXxxxFieldName();
+      this.xxxxFieldName?.push(value);
+    }
+    return this;
+  }
+
+  /**
+   * @returns `true` if the `xxxxFieldName` property exists and has a value; `false` otherwise
+   */
+  public hasXxxxFieldName(): boolean {
     return (
-      this.xxxxFieldNameArray !== undefined &&
-      this.xxxxFieldNameArray.length > 0 &&
-      this.xxxxFieldNameArray.some((item: XxxxClass) => !item.isEmpty())
+      this.xxxxFieldName !== undefined &&
+      this.xxxxFieldName.length > 0 &&
+      this.xxxxFieldName.some((item: XxxxClass) => !item.isEmpty())
     );
   }
 
   /**
-   * Initialize the `xxxxFieldNameArray` property
+   * Initialize the `xxxxFieldName` property
    */
-  private initXxxxFieldNameArray(): void {
-    if (this.xxxxFieldNameArray === undefined) {
-      this.xxxxFieldNameArray = [] as XxxxClass[];
+  private initXxxxFieldName(): void {
+    if (this.xxxxFieldName === undefined) {
+      this.xxxxFieldName = [] as XxxxClass[];
     }
   }
 
@@ -260,8 +266,8 @@
   // Only copy the "if" block!
   public override toJSON(): JSON.Value | undefined {
 
-    if (this.hasXxxxFieldNameArray()) {
-      setFhirBackboneElementListJson(this.getXxxxFieldNameArray(), 'xxxxFieldNameArray', jsonObj);
+    if (this.hasXxxxFieldName()) {
+      setFhirBackboneElementListJson(this.getXxxxFieldName(), 'xxxxFieldName', jsonObj);
     }
 
   }
@@ -272,16 +278,16 @@
 
 // =====================================================================
 // BackboneElementType 1..*
-// XxxxClass[] (xxxxFieldNameArrayReq / XxxxFieldNameArrayReq)
+// XxxxClass[] (xxxxFieldName / XxxxFieldName)
 // XxxxParentClass
 // =====================================================================
-  private xxxxFieldNameArrayReq: XxxxClass[] | null;
+  private xxxxFieldName: XxxxClass[] | null;
 
-  constructor(xxxxFieldNameArrayReq: XxxxClass[] | null) {
+  constructor(xxxxFieldName: XxxxClass[] | null) {
 
-    this.xxxxFieldNameArrayReq = null;
-    if (isDefined<XxxxClass[] | null>(xxxxFieldNameArrayReq)) {
-      this.setXxxxFieldNameArrayReq(xxxxFieldNameArrayReq);
+    this.xxxxFieldName = null;
+    if (isDefined<XxxxClass[] | null>(xxxxFieldName)) {
+      this.setXxxxFieldName(xxxxFieldName);
     }
   }
 
@@ -293,14 +299,14 @@
     // Add following near top of method ONLY IF it does not already exist
     const missingReqdProperties: string[] = [];
 
-    sourceField = 'XxxxParentClass.xxxxFieldNameArrayReq';
+    sourceField = 'XxxxParentClass.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
     if (fieldName in classJsonObj) {
       const datatype: XxxxClass | undefined = parseXxxxClass(classJsonObj[fieldName], sourceField);
       if (datatype === undefined) {
         missingReqdProperties.push(sourceField);
       } else {
-        instance.setXxxxFieldNameArrayReq(datatype);
+        instance.setXxxxFieldName(datatype);
       }
     } else {
       missingReqdProperties.push(sourceField);
@@ -317,60 +323,59 @@
 
 
   /**
-   * @returns the `xxxxFieldNameArrayReq` property value as a XxxxClass array
+   * @returns the `xxxxFieldName` property value as a XxxxClass array
    */
-  public getXxxxFieldNameArrayReq(): XxxxClass[] | null {
-    return this.xxxxFieldNameArrayReq;
+  public getXxxxFieldName(): XxxxClass[] | null {
+    return this.xxxxFieldName;
   }
 
   /**
-   * Assigns the provided XxxxClass array value to the `xxxxFieldNameArrayReq` property.
+   * Assigns the provided XxxxClass array value to the `xxxxFieldName` property.
    *
-   * @param value - the `xxxxFieldNameArrayReq` array value
+   * @param value - the `xxxxFieldName` array value
    * @returns this
    */
-  public setXxxxFieldNameArrayReq(value: XxxxClass[]): this {
-    if (isDefined<XxxxClass[]>(value)) {
-      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldNameArrayReq; Provided value array has an element that is not an instance of XxxxClass.`;
-      assertFhirTypeList<XxxxClass>(value, XxxxClass, optErrMsg);
-      this.xxxxFieldNameArrayReq = value;
-    }
+  public setXxxxFieldName(value: XxxxClass[]): this {
+    assertIsDefined<XxxxClass[]>(value, `XxxxParentClass.xxxxFieldName is required`);
+    const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided value array has an element that is not an instance of XxxxClass.`;
+    assertFhirTypeList<XxxxClass>(value, XxxxClass, optErrMsg);
+    this.xxxxFieldName = value;
     return this;
   }
 
   /**
-   * Add the provided XxxxClass value to the `xxxxFieldNameArrayReq` array property.
+   * Add the provided XxxxClass value to the `xxxxFieldName` array property.
    *
-   * @param value - the `xxxxFieldNameArrayReq` value
+   * @param value - the `xxxxFieldName` value
    * @returns this
    */
-  public addXxxxFieldNameArrayReq(value: XxxxClass | undefined): this {
+  public addXxxxFieldName(value: XxxxClass | undefined): this {
     if (isDefined<XxxxClass | undefined>(value)) {
-      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldNameArrayReq; Provided element is not an instance of XxxxClass.`;
+      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided element is not an instance of XxxxClass.`;
       assertFhirType<XxxxClass>(value, XxxxClass, optErrMsg);
-      this.initXxxxFieldNameArrayReq();
-      this.xxxxFieldNameArrayReq?.push(value);
+      this.initXxxxFieldName();
+      this.xxxxFieldName?.push(value);
     }
     return this;
   }
 
   /**
-   * @returns `true` if the `xxxxFieldNameArrayReq` property exists and has a value; `false` otherwise
+   * @returns `true` if the `xxxxFieldName` property exists and has a value; `false` otherwise
    */
-  public hasXxxxFieldNameArrayReq(): boolean {
+  public hasXxxxFieldName(): boolean {
     return (
-      isDefined<XxxxClass[] | null>(this.xxxxFieldNameArrayReq) &&
-      this.xxxxFieldNameArrayReq.length > 0 &&
-      this.xxxxFieldNameArrayReq.some((item: XxxxClass) => !item.isEmpty())
+      isDefined<XxxxClass[] | null>(this.xxxxFieldName) &&
+      this.xxxxFieldName.length > 0 &&
+      this.xxxxFieldName.some((item: XxxxClass) => !item.isEmpty())
     );
   }
 
   /**
-   * Initialize the `xxxxFieldNameArrayReq` property
+   * Initialize the `xxxxFieldName` property
    */
-  private initXxxxFieldNameArrayReq(): void {
-    if (!this.hasXxxxFieldNameArrayReq()) {
-      this.xxxxFieldNameArrayReq = [] as XxxxClass[];
+  private initXxxxFieldName(): void {
+    if (!this.hasXxxxFieldName()) {
+      this.xxxxFieldName = [] as XxxxClass[];
     }
   }
 
@@ -382,10 +387,10 @@
     // Add following near top of method ONLY IF it does not already exist
     const missingReqdProperties: string[] = [];
 
-    if (this.hasXxxxFieldNameArrayReq()) {
-      setFhirBackboneElementListJson(this.getXxxxFieldNameArrayReq(), 'xxxxFieldNameArrayReq', jsonObj);
+    if (this.hasXxxxFieldName()) {
+      setFhirBackboneElementListJson(this.getXxxxFieldName(), 'xxxxFieldName', jsonObj);
     } else {
-      missingReqdProperties.push(`XxxxParentClass.xxxxFieldNameArrayReq`);
+      missingReqdProperties.push(`XxxxParentClass.xxxxFieldName`);
     }
 
      // *** NOTE ***
@@ -398,5 +403,3 @@
   }
 
 //endregion
-
-}

@@ -177,9 +177,13 @@ export class Meta extends DataType implements IBase {
    * @returns this
    */
   public setVersionIdElement(element: IdType | undefined): this {
-    const optErrMsg = `Invalid Meta.versionId; Provided element is not an instance of IdType.`;
-    assertFhirType<IdType>(element, IdType, optErrMsg);
-    this.versionId = element;
+    if (isDefined<IdType | undefined>(element)) {
+      const optErrMsg = `Invalid Meta.versionId; Provided element is not an instance of IdType.`;
+      assertFhirType<IdType>(element, IdType, optErrMsg);
+      this.versionId = element;
+    } else {
+      this.versionId = undefined;
+    }
     return this;
   }
 
@@ -205,9 +209,12 @@ export class Meta extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setVersionId(value: fhirId | undefined): this {
-    const optErrMsg = `Invalid Meta.versionId (${String(value)})`;
-    this.versionId =
-      value === undefined ? undefined : new IdType(parseFhirPrimitiveData(value, fhirIdSchema, optErrMsg));
+    if (isDefined<fhirId | undefined>(value)) {
+      const optErrMsg = `Invalid Meta.versionId (${String(value)})`;
+      this.versionId = new IdType(parseFhirPrimitiveData(value, fhirIdSchema, optErrMsg));
+    } else {
+      this.versionId = undefined;
+    }
     return this;
   }
 
@@ -232,9 +239,13 @@ export class Meta extends DataType implements IBase {
    * @returns this
    */
   public setLastUpdatedElement(element: InstantType | undefined): this {
-    const optErrMsg = `Invalid Meta.lastUpdated; Provided element is not an instance of InstantType.`;
-    assertFhirType<InstantType>(element, InstantType, optErrMsg);
-    this.lastUpdated = element;
+    if (isDefined<InstantType | undefined>(element)) {
+      const optErrMsg = `Invalid Meta.lastUpdated; Provided element is not an instance of InstantType.`;
+      assertFhirType<InstantType>(element, InstantType, optErrMsg);
+      this.lastUpdated = element;
+    } else {
+      this.lastUpdated = undefined;
+    }
     return this;
   }
 
@@ -260,9 +271,12 @@ export class Meta extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setLastUpdated(value: fhirInstant | undefined): this {
-    const optErrMsg = `Invalid Meta.lastUpdated (${String(value)})`;
-    this.lastUpdated =
-      value === undefined ? undefined : new InstantType(parseFhirPrimitiveData(value, fhirInstantSchema, optErrMsg));
+    if (isDefined<fhirInstant | undefined>(value)) {
+      const optErrMsg = `Invalid Meta.lastUpdated (${String(value)})`;
+      this.lastUpdated = new InstantType(parseFhirPrimitiveData(value, fhirInstantSchema, optErrMsg));
+    } else {
+      this.lastUpdated = undefined;
+    }
     return this;
   }
 
@@ -287,9 +301,13 @@ export class Meta extends DataType implements IBase {
    * @returns this
    */
   public setSourceElement(element: UriType | undefined): this {
-    const optErrMsg = `Invalid Meta.source; Provided element is not an instance of UriType.`;
-    assertFhirType<UriType>(element, UriType, optErrMsg);
-    this.source = element;
+    if (isDefined<UriType | undefined>(element)) {
+      const optErrMsg = `Invalid Meta.source; Provided element is not an instance of UriType.`;
+      assertFhirType<UriType>(element, UriType, optErrMsg);
+      this.source = element;
+    } else {
+      this.source = undefined;
+    }
     return this;
   }
 
@@ -315,9 +333,12 @@ export class Meta extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setSource(value: fhirUri | undefined): this {
-    const optErrMsg = `Invalid Meta.source (${String(value)})`;
-    this.source =
-      value === undefined ? undefined : new UriType(parseFhirPrimitiveData(value, fhirUriSchema, optErrMsg));
+    if (isDefined<fhirUri | undefined>(value)) {
+      const optErrMsg = `Invalid Meta.source (${String(value)})`;
+      this.source = new UriType(parseFhirPrimitiveData(value, fhirUriSchema, optErrMsg));
+    } else {
+      this.source = undefined;
+    }
     return this;
   }
 
@@ -342,24 +363,28 @@ export class Meta extends DataType implements IBase {
    * @returns this
    */
   public setProfileElement(element: CanonicalType[] | undefined): this {
-    const optErrMsg = `Invalid Meta.profile; Provided element array has an element that is not an instance of CanonicalType.`;
-    assertFhirTypeList<CanonicalType>(element, CanonicalType, optErrMsg);
-    this.profile = element;
+    if (isDefined<CanonicalType[] | undefined>(element)) {
+      const optErrMsg = `Invalid Meta.profile; Provided element array has an element that is not an instance of CanonicalType.`;
+      assertFhirTypeList<CanonicalType>(element, CanonicalType, optErrMsg);
+      this.profile = element;
+    } else {
+      this.profile = undefined;
+    }
     return this;
   }
 
   /**
    * Add the provided PrimitiveType value to the `profile` array property.
    *
-   * @param value - the `profile` value
+   * @param element - the `profile` value
    * @returns this
    */
-  public addProfileElement(value: CanonicalType | undefined): this {
-    if (isDefined<CanonicalType | undefined>(value)) {
+  public addProfileElement(element: CanonicalType | undefined): this {
+    if (isDefined<CanonicalType | undefined>(element)) {
       const optErrMsg = `Invalid Meta.profile; Provided element is not an instance of CanonicalType.`;
-      assertFhirType<CanonicalType>(value, CanonicalType, optErrMsg);
+      assertFhirType<CanonicalType>(element, CanonicalType, optErrMsg);
       this.initProfile();
-      this.profile?.push(value);
+      this.profile?.push(element);
     }
     return this;
   }
@@ -399,7 +424,7 @@ export class Meta extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setProfile(value: fhirCanonical[] | undefined): this {
-    if (value !== undefined) {
+    if (isDefined<fhirCanonical[] | undefined>(value)) {
       const profileElements = [] as CanonicalType[];
       for (const profileValue of value) {
         const optErrMsg = `Invalid Meta.profile array item (${String(profileValue)})`;
@@ -458,9 +483,13 @@ export class Meta extends DataType implements IBase {
    * @returns this
    */
   public setSecurity(value: Coding[] | undefined): this {
-    const optErrMsg = `Invalid Meta.security; Provided value array has an element that is not an instance of Coding.`;
-    assertFhirTypeList<Coding>(value, Coding, optErrMsg);
-    this.security = value;
+    if (isDefined<Coding[] | undefined>(value)) {
+      const optErrMsg = `Invalid Meta.security; Provided value array has an element that is not an instance of Coding.`;
+      assertFhirTypeList<Coding>(value, Coding, optErrMsg);
+      this.security = value;
+    } else {
+      this.security = undefined;
+    }
     return this;
   }
 
@@ -512,9 +541,13 @@ export class Meta extends DataType implements IBase {
    * @returns this
    */
   public setTag(value: Coding[] | undefined): this {
-    const optErrMsg = `Invalid Meta.tag; Provided value array has an element that is not an instance of Coding.`;
-    assertFhirTypeList<Coding>(value, Coding, optErrMsg);
-    this.tag = value;
+    if (isDefined<Coding[] | undefined>(value)) {
+      const optErrMsg = `Invalid Meta.tag; Provided value array has an element that is not an instance of Coding.`;
+      assertFhirTypeList<Coding>(value, Coding, optErrMsg);
+      this.tag = value;
+    } else {
+      this.tag = undefined;
+    }
     return this;
   }
 
