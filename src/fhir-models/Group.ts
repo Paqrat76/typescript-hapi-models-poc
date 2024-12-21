@@ -79,7 +79,7 @@ import {
 import { parseContainedResources } from '@src/fhir-models/fhir-contained-resource-parser';
 import { assertFhirType, assertFhirTypeList, assertIsDefined, isDefined } from '@src/fhir-core/utility/type-guards';
 import { isEmpty } from '@src/fhir-core/utility/common-util';
-import { extractFieldName, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
+import { copyListValues, extractFieldName, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import { ChoiceDataTypes, ChoiceDataTypesMeta } from '@src/fhir-core/utility/decorators';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
@@ -1056,16 +1056,19 @@ export class Group extends DomainResource implements IBase {
    */
   public override copyValues(dest: Group): void {
     super.copyValues(dest);
-    dest.identifier = this.identifier;
-    dest.active = this.active;
-    dest.type = this.type;
-    dest.actual = this.actual;
-    dest.code = this.code;
-    dest.name = this.name;
-    dest.quantity = this.quantity;
-    dest.managingEntity = this.managingEntity;
-    dest.characteristic = this.characteristic;
-    dest.member = this.member;
+    const identifierList = copyListValues<Identifier>(this.identifier);
+    dest.identifier = identifierList.length === 0 ? undefined : identifierList;
+    dest.active = this.active?.copy();
+    dest.type = this.type ? this.type.copy() : null;
+    dest.actual = this.actual ? this.actual.copy() : null;
+    dest.code = this.code?.copy();
+    dest.name = this.name?.copy();
+    dest.quantity = this.quantity?.copy();
+    dest.managingEntity = this.managingEntity?.copy();
+    const characteristicList = copyListValues<GroupCharacteristicComponent>(this.characteristic);
+    dest.characteristic = characteristicList.length === 0 ? undefined : characteristicList;
+    const memberList = copyListValues<GroupMemberComponent>(this.member);
+    dest.member = memberList.length === 0 ? undefined : memberList;
   }
 
   /**
@@ -1614,10 +1617,10 @@ export class GroupCharacteristicComponent extends BackboneElement {
    */
   public override copyValues(dest: GroupCharacteristicComponent): void {
     super.copyValues(dest);
-    dest.code = this.code;
-    dest.value = this.value;
-    dest.exclude = this.exclude;
-    dest.period = this.period;
+    dest.code = this.code ? this.code.copy() : null;
+    dest.value = this.value ? this.value.copy() : null;
+    dest.exclude = this.exclude ? this.exclude.copy() : null;
+    dest.period = this.period?.copy();
   }
 
   /**
@@ -1950,9 +1953,9 @@ export class GroupMemberComponent extends BackboneElement {
    */
   public override copyValues(dest: GroupMemberComponent): void {
     super.copyValues(dest);
-    dest.entity = this.entity;
-    dest.period = this.period;
-    dest.inactive = this.inactive;
+    dest.entity = this.entity ? this.entity.copy() : null;
+    dest.period = this.period?.copy();
+    dest.inactive = this.inactive?.copy();
   }
 
   /**

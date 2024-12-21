@@ -53,7 +53,7 @@ import {
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { OPEN_DATA_TYPES } from '@src/fhir-core/data-types/FhirDataType';
 import { isEmpty, upperFirst } from '@src/fhir-core/utility/common-util';
-import { isElementEmpty, validateUrl } from '@src/fhir-core/utility/fhir-util';
+import { copyListValues, isElementEmpty, validateUrl } from '@src/fhir-core/utility/fhir-util';
 import { assertFhirType, assertFhirTypeList, assertIsDefined, isDefined } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
@@ -373,14 +373,8 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
    */
   protected override copyValues(dest: Element): void {
     dest.id = this.id ? String(this.id) : undefined;
-    if (this.extension !== undefined) {
-      dest.extension = [] as Extension[];
-      for (const extension of this.extension) {
-        dest.extension.push(extension.copy());
-      }
-    } else {
-      dest.extension = undefined;
-    }
+    const extensionList = copyListValues<Extension>(this.extension);
+    dest.extension = extensionList.length === 0 ? undefined : extensionList;
   }
 
   /**
@@ -561,12 +555,8 @@ export abstract class BackboneElement extends Element implements IBase, IBaseMod
    */
   protected override copyValues(dest: BackboneElement): void {
     super.copyValues(dest);
-    if (this.modifierExtension) {
-      dest.modifierExtension = [] as Extension[];
-      for (const modifierExtension of this.modifierExtension) {
-        dest.modifierExtension.push(modifierExtension.copy());
-      }
-    }
+    const modifierExtensionList = copyListValues<Extension>(this.modifierExtension);
+    dest.modifierExtension = modifierExtensionList.length === 0 ? undefined : modifierExtensionList;
   }
 
   /**
@@ -773,12 +763,8 @@ export abstract class BackboneType extends DataType implements IBase, IBaseModif
    */
   protected override copyValues(dest: BackboneType): void {
     super.copyValues(dest);
-    if (this.modifierExtension) {
-      dest.modifierExtension = [] as Extension[];
-      for (const modifierExtension of this.modifierExtension) {
-        dest.modifierExtension.push(modifierExtension.copy());
-      }
-    }
+    const modifierExtensionList = copyListValues<Extension>(this.modifierExtension);
+    dest.modifierExtension = modifierExtensionList.length === 0 ? undefined : modifierExtensionList;
   }
 
   /**

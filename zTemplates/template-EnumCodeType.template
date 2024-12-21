@@ -125,7 +125,7 @@
   public setXxxxFieldName(value: fhirCode | undefined): this {
     if (isDefined<fhirCode | undefined>(value)) {
       const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided value is not an instance of fhirCode.`;
-      this.xxxxFieldName = new EnumCodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg), this.xxxClassEnum);
+      this.xxxxFieldName = new EnumCodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg), this.xxxxClassEnum);
     } else {
       this.xxxxFieldName = undefined;
     }

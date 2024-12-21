@@ -310,6 +310,7 @@
       const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided element is not an instance of XxxxPrimitiveType.`;
       assertFhirType<XxxxPrimitiveType>(element, XxxxPrimitiveType, optErrMsg);
       this.initXxxxFieldName();
+      this.xxxxFieldName?.push(element);
     }
     return this;
   }

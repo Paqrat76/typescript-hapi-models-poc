@@ -362,6 +362,10 @@ TypeDoc provides extensive configuration, but in my case, I only needed to inclu
 
 **Therefore, I am using TypeDoc to generate project documentation!**
 
+> **WARNING for Code Generator:** We will need to check header descriptive content for relative links
+> (e.g., `[Location](location.html#)`) to the FHIR specification to change them to absolute links
+> (e.g., `[Location](https://hl7.org/fhir/location.html#)`).
+
 #### Class Header Template
 
 ```typescript
@@ -370,6 +374,8 @@ TypeDoc provides extensive configuration, but in my case, I only needed to inclu
  *
  * @remarks
  * <StructureDefinition.description>
+ *
+ * <StructureDefinition.purpose>
  *
  * **FHIR Specification**
  * - **Short:** <StructureDefinition.snapshot.element[0]?.short>

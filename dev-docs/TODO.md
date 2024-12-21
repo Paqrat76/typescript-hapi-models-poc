@@ -31,6 +31,10 @@
     - polymorphic field (`value[x]`);
     - nested references to parent BackboneElement (`item`)
   - etc. ...
+- Investigate pushing parsers into data models to put them in the data models as in the FHIR data models while
+  eliminating circular references:
+  - including primitive data type parsers in PrimitiveType or in individual primitive data models
+  - including static parse methods in complex data types
 - Consider throwing an Error from "get" methods rather than returning null for required data elements
 - Setup functional testing to verify implementation of HAPI FHIR features
   - Adding simple and complex and multiple extensions and modifierExtensions within DataTypes and Resources
@@ -40,6 +44,9 @@
 
 ## Possible Considerations (future roadmap)
 
+- Investigate approaches to implementing complex data type invariant "rules" (e.g., Period: "+ Rule: If present,
+  start SHALL have a lower value than end")
+- Investigate approaches to implementing resource invariant "rules"/"constraints"
 - Investigate serialization output option to only include FHIR "summary" fields
   - Ref: [Summary](https://hl7.org/fhir/r4/search.html#summary)
 - HAPI FHIR Features

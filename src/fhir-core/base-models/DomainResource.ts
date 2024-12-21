@@ -33,7 +33,7 @@ import {
   setFhirExtensionJson,
 } from '@src/fhir-core/base-models/core-fhir-models';
 import { fhirUri } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { isElementEmpty, validateUrl } from '@src/fhir-core/utility/fhir-util';
+import { copyListValues, isElementEmpty, validateUrl } from '@src/fhir-core/utility/fhir-util';
 import { assertFhirType, assertFhirTypeList, isDefined } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 
@@ -416,30 +416,12 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
   protected override copyValues(dest: DomainResource): void {
     super.copyValues(dest);
     dest.text = this.text?.copy();
-    if (this.contained == undefined) {
-      dest.contained = undefined;
-    } else {
-      dest.contained = [] as Resource[];
-      for (const contained of this.contained) {
-        dest.contained.push(contained.copy());
-      }
-    }
-    if (this.extension === undefined) {
-      dest.extension = undefined;
-    } else {
-      dest.extension = [] as Extension[];
-      for (const extension of this.extension) {
-        dest.extension.push(extension.copy());
-      }
-    }
-    if (this.modifierExtension == undefined) {
-      dest.modifierExtension = undefined;
-    } else {
-      dest.modifierExtension = [] as Extension[];
-      for (const modifierExtension of this.modifierExtension) {
-        dest.modifierExtension.push(modifierExtension.copy());
-      }
-    }
+    const containedList = copyListValues<Resource>(this.contained);
+    dest.contained = containedList.length === 0 ? undefined : containedList;
+    const extensionList = copyListValues<Extension>(this.extension);
+    dest.extension = extensionList.length === 0 ? undefined : extensionList;
+    const modifierExtensionList = copyListValues<Extension>(this.modifierExtension);
+    dest.modifierExtension = modifierExtensionList.length === 0 ? undefined : modifierExtensionList;
   }
 
   /**

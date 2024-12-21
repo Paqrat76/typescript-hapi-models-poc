@@ -44,7 +44,7 @@ import {
   fhirUriSchema,
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
+import { copyListValues, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import { assertFhirType, assertFhirTypeList, isDefined } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 
@@ -617,30 +617,12 @@ export class Meta extends DataType implements IBase {
     dest.versionId = this.versionId?.copy();
     dest.lastUpdated = this.lastUpdated?.copy();
     dest.source = this.source?.copy();
-    if (this.profile !== undefined) {
-      dest.profile = [] as CanonicalType[];
-      for (const profile of this.profile) {
-        dest.profile.push(profile.copy());
-      }
-    } else {
-      dest.profile = undefined;
-    }
-    if (this.security !== undefined) {
-      dest.security = [] as Coding[];
-      for (const security of this.security) {
-        dest.security.push(security.copy());
-      }
-    } else {
-      dest.security = undefined;
-    }
-    if (this.tag !== undefined) {
-      dest.tag = [] as Coding[];
-      for (const tag of this.tag) {
-        dest.tag.push(tag.copy());
-      }
-    } else {
-      dest.tag = undefined;
-    }
+    const profileList = copyListValues<CanonicalType>(this.profile);
+    dest.profile = profileList.length === 0 ? undefined : profileList;
+    const securityList = copyListValues<Coding>(this.security);
+    dest.security = securityList.length === 0 ? undefined : securityList;
+    const tagList = copyListValues<Coding>(this.tag);
+    dest.tag = tagList.length === 0 ? undefined : tagList;
   }
 
   /**

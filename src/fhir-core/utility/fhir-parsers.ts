@@ -65,9 +65,11 @@ import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { UrlType } from '@src/fhir-core/data-types/primitive/UrlType';
 import { UuidType } from '@src/fhir-core/data-types/primitive/UuidType';
 import { XhtmlType } from '@src/fhir-core/data-types/primitive/XhtmlType';
+import { Address } from '@src/fhir-core/data-types/complex/Address';
+import { Attachment } from '@src/fhir-core/data-types/complex/Attachment';
 import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
 import { Coding } from '@src/fhir-core/data-types/complex/Coding';
-//import { HumanName } from '@src/fhir-core/data-types/complex/HumanName';
+import { HumanName } from '@src/fhir-core/data-types/complex/HumanName';
 import { Identifier, Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
 import { Meta } from '@src/fhir-core/data-types/complex/Meta';
 import { Narrative } from '@src/fhir-core/data-types/complex/Narrative';
@@ -420,14 +422,18 @@ export function getValueXData(jsonObj: JSON.Object): DataType | undefined {
         case 'valueXhtmlType':
           return parseXhtmlType(dataValue, siblingDataValue);
 
+        case 'valueAddress':
+          return parseAddress(dataValue);
+        case 'valueAttachment':
+          return parseAttachment(dataValue);
         case 'valueCodeableConcept':
           return parseCodeableConcept(dataValue);
         case 'valueCoding':
           return parseCoding(dataValue);
         case 'valueContactPoint':
           return parseContactPoint(dataValue);
-        // case 'valueHumanName':
-        //   return parseHumanName(dataValue);
+        case 'valueHumanName':
+          return parseHumanName(dataValue);
         case 'valueIdentifier':
           return parseIdentifier(dataValue);
         case 'valueMeta':
@@ -1170,6 +1176,167 @@ export function parsePolymorphicDataType(
 }
 
 /**
+ * Parse the provided json into Address data model.
+ *
+ * @param json - JSON representing Address
+ * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to HumanName
+ * @returns Address data model or undefined
+ *
+ * @category Utilities: FHIR Parsers
+ */
+export function parseAddress(json: JSON.Value | undefined, sourceField?: string): Address | undefined {
+  if (!JSON.hasFhirData(json)) {
+    return undefined;
+  }
+
+  const source = isDefined<string | undefined>(sourceField) ? sourceField : 'Address';
+
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
+  const instance = new Address();
+
+  processElementJson(instance, datatypeJsonObj);
+
+  if ('use' in datatypeJsonObj) {
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'use', 'string');
+    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
+    instance.setUseElement(datatype);
+  }
+
+  if ('type' in datatypeJsonObj) {
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'type', 'string');
+    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
+    instance.setTypeElement(datatype);
+  }
+
+  if ('text' in datatypeJsonObj) {
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'text', 'string');
+    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
+    instance.setTextElement(datatype);
+  }
+
+  if ('line' in datatypeJsonObj) {
+    const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(datatypeJsonObj, source, 'line', 'string');
+    dataJsonArray.forEach((dataJson: PrimitiveTypeJson) => {
+      const datatype: StringType | undefined = parseStringType(dataJson.dtJson, dataJson.dtSiblingJson);
+      instance.addLineElement(datatype);
+    });
+  }
+
+  if ('city' in datatypeJsonObj) {
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'city', 'string');
+    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
+    instance.setCityElement(datatype);
+  }
+
+  if ('district' in datatypeJsonObj) {
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'district', 'string');
+    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
+    instance.setDistrictElement(datatype);
+  }
+
+  if ('state' in datatypeJsonObj) {
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'state', 'string');
+    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
+    instance.setStateElement(datatype);
+  }
+
+  if ('postalCode' in datatypeJsonObj) {
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'postalCode', 'string');
+    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
+    instance.setPostalCodeElement(datatype);
+  }
+
+  if ('country' in datatypeJsonObj) {
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'country', 'string');
+    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
+    instance.setCountryElement(datatype);
+  }
+
+  if ('period' in datatypeJsonObj) {
+    const datatype: Period | undefined = parsePeriod(datatypeJsonObj['period'], `${source}.period`);
+    instance.setPeriod(datatype);
+  }
+
+  assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
+  return instance;
+}
+
+/**
+ * Parse the provided json into Attachment data model.
+ *
+ * @param json - JSON representing Attachment
+ * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to HumanName
+ * @returns Attachment data model or undefined
+ *
+ * @category Utilities: FHIR Parsers
+ */
+export function parseAttachment(json: JSON.Value | undefined, sourceField?: string): Attachment | undefined {
+  if (!JSON.hasFhirData(json)) {
+    return undefined;
+  }
+
+  const source = isDefined<string | undefined>(sourceField) ? sourceField : 'Attachment';
+
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
+  const instance = new Attachment();
+
+  processElementJson(instance, datatypeJsonObj);
+
+  if ('contentType' in datatypeJsonObj) {
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'contentType', 'string');
+    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
+    instance.setContentTypeElement(datatype);
+  }
+
+  if ('language' in datatypeJsonObj) {
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'language', 'string');
+    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
+    instance.setLanguageElement(datatype);
+  }
+
+  if ('data' in datatypeJsonObj) {
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'data', 'string');
+    const datatype: Base64BinaryType | undefined = parseBase64BinaryType(dtJson, dtSiblingJson);
+    instance.setDataElement(datatype);
+  }
+
+  if ('url' in datatypeJsonObj) {
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'url', 'string');
+    const datatype: UrlType | undefined = parseUrlType(dtJson, dtSiblingJson);
+    instance.setUrlElement(datatype);
+  }
+
+  if ('size' in datatypeJsonObj) {
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'size', 'number');
+    const datatype: UnsignedIntType | undefined = parseUnsignedIntType(dtJson, dtSiblingJson);
+    instance.setSizeElement(datatype);
+  }
+
+  if ('hash' in datatypeJsonObj) {
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'hash', 'string');
+    const datatype: Base64BinaryType | undefined = parseBase64BinaryType(dtJson, dtSiblingJson);
+    instance.setHashElement(datatype);
+  }
+
+  if ('title' in datatypeJsonObj) {
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'title', 'string');
+    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
+    instance.setTitleElement(datatype);
+  }
+
+  if ('creation' in datatypeJsonObj) {
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'creation', 'string');
+    const datatype: DateTimeType | undefined = parseDateTimeType(dtJson, dtSiblingJson);
+    instance.setCreationElement(datatype);
+  }
+
+  assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
+  return instance;
+}
+
+/**
  * Parse the provided json into CodeableConcept data model.
  *
  * @param json - JSON representing CodeableConcept
@@ -1320,78 +1487,78 @@ export function parseContactPoint(json: JSON.Value | undefined, sourceField?: st
   return instance;
 }
 
-// /**
-//  * Parse the provided json into HumanName data model.
-//  *
-//  * @param json - JSON representing HumanName
-//  * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to HumanName
-//  * @returns HumanName data model or undefined
-//  *
-//  * @category Utilities: FHIR Parsers
-//  */
-// export function parseHumanName(json: JSON.Value | undefined, sourceField?: string): HumanName | undefined {
-//   if (!JSON.hasFhirData(json)) {
-//     return undefined;
-//   }
-//
-//   const source = isDefined<string | undefined>(sourceField) ? sourceField : 'HumanName';
-//
-//   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-//   const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
-//   const instance = new HumanName();
-//
-//   processElementJson(instance, datatypeJsonObj);
-//
-//   if ('use' in datatypeJsonObj) {
-//     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'use', 'string');
-//     const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
-//     instance.setUseElement(datatype);
-//   }
-//
-//   if ('text' in datatypeJsonObj) {
-//     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'text', 'string');
-//     const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
-//     instance.setTextElement(datatype);
-//   }
-//
-//   if ('family' in datatypeJsonObj) {
-//     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'family', 'string');
-//     const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
-//     instance.setFamilyElement(datatype);
-//   }
-//
-//   if ('given' in datatypeJsonObj) {
-//     const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(datatypeJsonObj, source, 'given', 'string');
-//     dataJsonArray.forEach((dataJson: PrimitiveTypeJson) => {
-//       const datatype: StringType | undefined = parseStringType(dataJson.dtJson, dataJson.dtSiblingJson);
-//       instance.addGivenElement(datatype);
-//     });
-//   }
-//
-//   if ('prefix' in datatypeJsonObj) {
-//     const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(datatypeJsonObj, source, 'prefix', 'string');
-//     dataJsonArray.forEach((dataJson: PrimitiveTypeJson) => {
-//       const datatype: StringType | undefined = parseStringType(dataJson.dtJson, dataJson.dtSiblingJson);
-//       instance.addPrefixElement(datatype);
-//     });
-//   }
-//
-//   if ('suffix' in datatypeJsonObj) {
-//     const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(datatypeJsonObj, source, 'suffix', 'string');
-//     dataJsonArray.forEach((dataJson: PrimitiveTypeJson) => {
-//       const datatype: StringType | undefined = parseStringType(dataJson.dtJson, dataJson.dtSiblingJson);
-//       instance.addSuffixElement(datatype);
-//     });
-//   }
-//
-//   if ('period' in datatypeJsonObj) {
-//     const datatype: Period | undefined = parsePeriod(datatypeJsonObj['period'], `${source}.period`);
-//     instance.setPeriod(datatype);
-//   }
-//
-//   assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
-//   return instance;
-// }
+/**
+ * Parse the provided json into HumanName data model.
+ *
+ * @param json - JSON representing HumanName
+ * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to HumanName
+ * @returns HumanName data model or undefined
+ *
+ * @category Utilities: FHIR Parsers
+ */
+export function parseHumanName(json: JSON.Value | undefined, sourceField?: string): HumanName | undefined {
+  if (!JSON.hasFhirData(json)) {
+    return undefined;
+  }
+
+  const source = isDefined<string | undefined>(sourceField) ? sourceField : 'HumanName';
+
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
+  const instance = new HumanName();
+
+  processElementJson(instance, datatypeJsonObj);
+
+  if ('use' in datatypeJsonObj) {
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'use', 'string');
+    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
+    instance.setUseElement(datatype);
+  }
+
+  if ('text' in datatypeJsonObj) {
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'text', 'string');
+    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
+    instance.setTextElement(datatype);
+  }
+
+  if ('family' in datatypeJsonObj) {
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'family', 'string');
+    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
+    instance.setFamilyElement(datatype);
+  }
+
+  if ('given' in datatypeJsonObj) {
+    const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(datatypeJsonObj, source, 'given', 'string');
+    dataJsonArray.forEach((dataJson: PrimitiveTypeJson) => {
+      const datatype: StringType | undefined = parseStringType(dataJson.dtJson, dataJson.dtSiblingJson);
+      instance.addGivenElement(datatype);
+    });
+  }
+
+  if ('prefix' in datatypeJsonObj) {
+    const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(datatypeJsonObj, source, 'prefix', 'string');
+    dataJsonArray.forEach((dataJson: PrimitiveTypeJson) => {
+      const datatype: StringType | undefined = parseStringType(dataJson.dtJson, dataJson.dtSiblingJson);
+      instance.addPrefixElement(datatype);
+    });
+  }
+
+  if ('suffix' in datatypeJsonObj) {
+    const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(datatypeJsonObj, source, 'suffix', 'string');
+    dataJsonArray.forEach((dataJson: PrimitiveTypeJson) => {
+      const datatype: StringType | undefined = parseStringType(dataJson.dtJson, dataJson.dtSiblingJson);
+      instance.addSuffixElement(datatype);
+    });
+  }
+
+  if ('period' in datatypeJsonObj) {
+    const datatype: Period | undefined = parsePeriod(datatypeJsonObj['period'], `${source}.period`);
+    instance.setPeriod(datatype);
+  }
+
+  assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
+  return instance;
+}
 
 /**
  * Parse the provided json into Identifier data model.

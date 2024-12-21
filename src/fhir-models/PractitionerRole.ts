@@ -78,7 +78,7 @@ import {
 import { parseContainedResources } from '@src/fhir-models/fhir-contained-resource-parser';
 import { assertFhirType, assertFhirTypeList, assertIsDefined, isDefined } from '@src/fhir-core/utility/type-guards';
 import { isEmpty } from '@src/fhir-core/utility/common-util';
-import { extractFieldName, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
+import { copyListValues, extractFieldName, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
 
@@ -1319,20 +1319,29 @@ export class PractitionerRole extends DomainResource implements IBase {
    */
   public override copyValues(dest: PractitionerRole): void {
     super.copyValues(dest);
-    dest.identifier = this.identifier;
-    dest.active = this.active;
-    dest.period = this.period;
-    dest.practitioner = this.practitioner;
-    dest.organization = this.organization;
-    dest.code = this.code;
-    dest.specialty = this.specialty;
-    dest.location = this.location;
-    dest.healthcareService = this.healthcareService;
-    dest.telecom = this.telecom;
-    dest.availableTime = this.availableTime;
-    dest.notAvailable = this.notAvailable;
-    dest.availabilityExceptions = this.availabilityExceptions;
-    dest.endpoint = this.endpoint;
+    const identifierList = copyListValues<Identifier>(this.identifier);
+    dest.identifier = identifierList.length === 0 ? undefined : identifierList;
+    dest.active = this.active?.copy();
+    dest.period = this.period?.copy();
+    dest.practitioner = this.practitioner?.copy();
+    dest.organization = this.organization?.copy();
+    const codeList = copyListValues<CodeableConcept>(this.code);
+    dest.code = codeList.length === 0 ? undefined : codeList;
+    const specialtyList = copyListValues<CodeableConcept>(this.specialty);
+    dest.specialty = specialtyList.length === 0 ? undefined : specialtyList;
+    const locationList = copyListValues<Reference>(this.location);
+    dest.location = locationList.length === 0 ? undefined : locationList;
+    const healthcareServiceList = copyListValues<Reference>(this.healthcareService);
+    dest.healthcareService = healthcareServiceList.length === 0 ? undefined : healthcareServiceList;
+    const telecomList = copyListValues<ContactPoint>(this.telecom);
+    dest.telecom = telecomList.length === 0 ? undefined : telecomList;
+    const availableTimeList = copyListValues<PractitionerRoleAvailableTimeComponent>(this.availableTime);
+    dest.availableTime = availableTimeList.length === 0 ? undefined : availableTimeList;
+    const notAvailableList = copyListValues<PractitionerRoleNotAvailableComponent>(this.notAvailable);
+    dest.notAvailable = notAvailableList.length === 0 ? undefined : notAvailableList;
+    dest.availabilityExceptions = this.availabilityExceptions?.copy();
+    const endpointList = copyListValues<Reference>(this.endpoint);
+    dest.endpoint = endpointList.length === 0 ? undefined : endpointList;
   }
 
   /**
@@ -1939,10 +1948,11 @@ export class PractitionerRoleAvailableTimeComponent extends BackboneElement {
    */
   public override copyValues(dest: PractitionerRoleAvailableTimeComponent): void {
     super.copyValues(dest);
-    dest.daysOfWeek = this.daysOfWeek;
-    dest.allDay = this.allDay;
-    dest.availableStartTime = this.availableStartTime;
-    dest.availableEndTime = this.availableEndTime;
+    const daysOfWeekList = copyListValues<EnumCodeType>(this.daysOfWeek);
+    dest.daysOfWeek = daysOfWeekList.length === 0 ? undefined : daysOfWeekList;
+    dest.allDay = this.allDay?.copy();
+    dest.availableStartTime = this.availableStartTime?.copy();
+    dest.availableEndTime = this.availableEndTime?.copy();
   }
 
   /**
@@ -2201,8 +2211,8 @@ export class PractitionerRoleNotAvailableComponent extends BackboneElement {
    */
   public override copyValues(dest: PractitionerRoleNotAvailableComponent): void {
     super.copyValues(dest);
-    dest.description = this.description;
-    dest.during = this.during;
+    dest.description = this.description ? this.description.copy() : null;
+    dest.during = this.during?.copy();
   }
 
   /**
