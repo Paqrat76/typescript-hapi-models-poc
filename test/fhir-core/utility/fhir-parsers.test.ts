@@ -53,10 +53,12 @@ import {
   parseUuidType,
   parseXhtmlType,
   parsePolymorphicDataType,
+  parseAddress,
+  parseAttachment,
   parseCodeableConcept,
   parseCoding,
   parseContactPoint,
-  //parseHumanName,
+  parseHumanName,
   parseIdentifier,
   parseMeta,
   parseNarrative,
@@ -89,10 +91,12 @@ import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { UrlType } from '@src/fhir-core/data-types/primitive/UrlType';
 import { UuidType } from '@src/fhir-core/data-types/primitive/UuidType';
 import { XhtmlType } from '@src/fhir-core/data-types/primitive/XhtmlType';
+import { Address } from '@src/fhir-core/data-types/complex/Address';
+import { Attachment } from '@src/fhir-core/data-types/complex/Attachment';
 import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
 import { Coding } from '@src/fhir-core/data-types/complex/Coding';
 import { ContactPoint } from '@src/fhir-core/data-types/complex/ContactPoint';
-//import { HumanName } from '@src/fhir-core/data-types/complex/HumanName';
+import { HumanName } from '@src/fhir-core/data-types/complex/HumanName';
 import { Identifier, Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
 import { Meta } from '@src/fhir-core/data-types/complex/Meta';
 import { Narrative } from '@src/fhir-core/data-types/complex/Narrative';
@@ -2052,6 +2056,172 @@ describe('fhir-parsers', () => {
       });
     });
 
+    describe('parseAddress', () => {
+      it('should return undefined for empty json', () => {
+        let testType = parseAddress({});
+        expect(testType).toBeUndefined();
+
+        testType = parseAddress(undefined);
+        expect(testType).toBeUndefined();
+
+        testType = parseAddress(null);
+        expect(testType).toBeUndefined();
+      });
+
+      it('should throw TypeError for invalid json type', () => {
+        const t = () => {
+          parseAddress('NOT AN OBJECT');
+        };
+        expect(t).toThrow(TypeError);
+        expect(t).toThrow(`Address JSON is not a JSON object.`);
+      });
+
+      it('should return Address for valid json', () => {
+        const VALID_JSON = {
+          id: 'id1234',
+          extension: [
+            {
+              url: 'testUrl1',
+              valueString: 'base extension string value 1',
+            },
+            {
+              url: 'testUrl2',
+              valueString: 'base extension string value 2',
+            },
+          ],
+          use: 'home',
+          type: 'both',
+          text: 'Text representation of the address',
+          _text: {
+            id: 'S-1357',
+            extension: [
+              {
+                url: 'simpleUrl',
+                valueString: 'simple extension string value',
+              },
+            ],
+          },
+          line: ['123 Main ST', 'APT 15A'],
+          city: 'Mytown',
+          district: 'Mycounty',
+          _district: {
+            extension: [
+              {
+                id: 'C-2468',
+                url: 'complexUrl',
+                extension: [
+                  {
+                    url: 'complexChildUrl1',
+                    valueString: 'complex child extension string value 1',
+                  },
+                  {
+                    url: 'complexChildUrl2',
+                    valueString: 'complex child extension string value 2',
+                  },
+                ],
+              },
+            ],
+          },
+          state: 'NH',
+          postalCode: '03051',
+          country: 'USA',
+          period: {
+            start: '2017-01-01T00:00:00.000Z',
+          },
+        };
+
+        const testType: Address | undefined = parseAddress(VALID_JSON);
+        expect(testType).toBeDefined();
+        expect(testType).toBeInstanceOf(Address);
+        expect(testType?.constructor.name).toStrictEqual('Address');
+        expect(testType?.fhirType()).toStrictEqual('Address');
+        expect(testType?.isEmpty()).toBe(false);
+        expect(testType?.isComplexDataType()).toBe(true);
+        expect(testType?.toJSON()).toEqual(VALID_JSON);
+      });
+    });
+
+    describe('parseAttachment', () => {
+      it('should return undefined for empty json', () => {
+        let testType = parseAttachment({});
+        expect(testType).toBeUndefined();
+
+        testType = parseAttachment(undefined);
+        expect(testType).toBeUndefined();
+
+        testType = parseAttachment(null);
+        expect(testType).toBeUndefined();
+      });
+
+      it('should throw TypeError for invalid json type', () => {
+        const t = () => {
+          parseAttachment('NOT AN OBJECT');
+        };
+        expect(t).toThrow(TypeError);
+        expect(t).toThrow(`Attachment JSON is not a JSON object.`);
+      });
+
+      it('should return Attachment for valid json', () => {
+        const VALID_JSON = {
+          id: 'id1234',
+          extension: [
+            {
+              url: 'testUrl1',
+              valueString: 'base extension string value 1',
+            },
+            {
+              url: 'testUrl2',
+              valueString: 'base extension string value 2',
+            },
+          ],
+          contentType: 'application/pdf',
+          language: 'en-US',
+          data: 'VGV4dCByZXByZXNlbnRhdGlvbiBvZiB0aGUgYWRkcmVzcw==',
+          _data: {
+            id: 'S-1357',
+            extension: [
+              {
+                url: 'simpleUrl',
+                valueString: 'simple extension string value',
+              },
+            ],
+          },
+          url: 'https://localhost:8080/content/12345',
+          size: 34,
+          hash: '0f60168295bc9d6b0535feaf0975a63532959834',
+          _hash: {
+            extension: [
+              {
+                id: 'C-2468',
+                url: 'complexUrl',
+                extension: [
+                  {
+                    url: 'complexChildUrl1',
+                    valueString: 'complex child extension string value 1',
+                  },
+                  {
+                    url: 'complexChildUrl2',
+                    valueString: 'complex child extension string value 2',
+                  },
+                ],
+              },
+            ],
+          },
+          title: 'Text representation of the address',
+          creation: '2017-01-01T00:00:00.000Z',
+        };
+
+        const testType: Attachment | undefined = parseAttachment(VALID_JSON);
+        expect(testType).toBeDefined();
+        expect(testType).toBeInstanceOf(Attachment);
+        expect(testType?.constructor.name).toStrictEqual('Attachment');
+        expect(testType?.fhirType()).toStrictEqual('Attachment');
+        expect(testType?.isEmpty()).toBe(false);
+        expect(testType?.isComplexDataType()).toBe(true);
+        expect(testType?.toJSON()).toEqual(VALID_JSON);
+      });
+    });
+
     describe('parseCodeableConcept', () => {
       it('should return undefined for empty json', () => {
         let testType = parseCodeableConcept({});
@@ -2298,87 +2468,87 @@ describe('fhir-parsers', () => {
       });
     });
 
-    // describe('parseHumanName', () => {
-    //   it('should return undefined for empty json', () => {
-    //     let testType = parseHumanName({});
-    //     expect(testType).toBeUndefined();
-    //
-    //     testType = parseHumanName(undefined);
-    //     expect(testType).toBeUndefined();
-    //
-    //     testType = parseHumanName(null);
-    //     expect(testType).toBeUndefined();
-    //   });
-    //
-    //   it('should throw TypeError for invalid json type', () => {
-    //     const t = () => {
-    //       parseHumanName('NOT AN OBJECT');
-    //     };
-    //     expect(t).toThrow(TypeError);
-    //     expect(t).toThrow(`HumanName JSON is not a JSON object.`);
-    //   });
-    //
-    //   it('should return HumanName for valid json', () => {
-    //     const VALID_JSON = {
-    //       id: 'id1234',
-    //       extension: [
-    //         {
-    //           url: 'testUrl1',
-    //           valueString: 'base extension string value 1',
-    //         },
-    //         {
-    //           url: 'testUrl2',
-    //           valueString: 'base extension string value 2',
-    //         },
-    //       ],
-    //       use: 'official',
-    //       text: 'Text representation of the full name',
-    //       _text: {
-    //         id: 'S-1357',
-    //         extension: [
-    //           {
-    //             url: 'simpleUrl',
-    //             valueString: 'simple extension string value',
-    //           },
-    //         ],
-    //       },
-    //       family: 'Family name',
-    //       _family: {
-    //         extension: [
-    //           {
-    //             id: 'C-2468',
-    //             url: 'complexUrl',
-    //             extension: [
-    //               {
-    //                 url: 'complexChildUrl1',
-    //                 valueString: 'complex child extension string value 1',
-    //               },
-    //               {
-    //                 url: 'complexChildUrl2',
-    //                 valueString: 'complex child extension string value 2',
-    //               },
-    //             ],
-    //           },
-    //         ],
-    //       },
-    //       given: ['Firstname', 'Middlename'],
-    //       prefix: ['Mr.'],
-    //       suffix: ['DDLM', 'PhD'],
-    //       period: {
-    //         start: '2017-01-01T00:00:00.000Z',
-    //       },
-    //     };
-    //
-    //     const testType: HumanName | undefined = parseHumanName(VALID_JSON);
-    //     expect(testType).toBeDefined();
-    //     expect(testType).toBeInstanceOf(HumanName);
-    //     expect(testType?.constructor.name).toStrictEqual('HumanName');
-    //     expect(testType?.fhirType()).toStrictEqual('HumanName');
-    //     expect(testType?.isEmpty()).toBe(false);
-    //     expect(testType?.isComplexDataType()).toBe(true);
-    //     expect(testType?.toJSON()).toEqual(VALID_JSON);
-    //   });
-    // });
+    describe('parseHumanName', () => {
+      it('should return undefined for empty json', () => {
+        let testType = parseHumanName({});
+        expect(testType).toBeUndefined();
+
+        testType = parseHumanName(undefined);
+        expect(testType).toBeUndefined();
+
+        testType = parseHumanName(null);
+        expect(testType).toBeUndefined();
+      });
+
+      it('should throw TypeError for invalid json type', () => {
+        const t = () => {
+          parseHumanName('NOT AN OBJECT');
+        };
+        expect(t).toThrow(TypeError);
+        expect(t).toThrow(`HumanName JSON is not a JSON object.`);
+      });
+
+      it('should return HumanName for valid json', () => {
+        const VALID_JSON = {
+          id: 'id1234',
+          extension: [
+            {
+              url: 'testUrl1',
+              valueString: 'base extension string value 1',
+            },
+            {
+              url: 'testUrl2',
+              valueString: 'base extension string value 2',
+            },
+          ],
+          use: 'official',
+          text: 'Text representation of the full name',
+          _text: {
+            id: 'S-1357',
+            extension: [
+              {
+                url: 'simpleUrl',
+                valueString: 'simple extension string value',
+              },
+            ],
+          },
+          family: 'Family name',
+          _family: {
+            extension: [
+              {
+                id: 'C-2468',
+                url: 'complexUrl',
+                extension: [
+                  {
+                    url: 'complexChildUrl1',
+                    valueString: 'complex child extension string value 1',
+                  },
+                  {
+                    url: 'complexChildUrl2',
+                    valueString: 'complex child extension string value 2',
+                  },
+                ],
+              },
+            ],
+          },
+          given: ['Firstname', 'Middlename'],
+          prefix: ['Mr.'],
+          suffix: ['DDLM', 'PhD'],
+          period: {
+            start: '2017-01-01T00:00:00.000Z',
+          },
+        };
+
+        const testType: HumanName | undefined = parseHumanName(VALID_JSON);
+        expect(testType).toBeDefined();
+        expect(testType).toBeInstanceOf(HumanName);
+        expect(testType?.constructor.name).toStrictEqual('HumanName');
+        expect(testType?.fhirType()).toStrictEqual('HumanName');
+        expect(testType?.isEmpty()).toBe(false);
+        expect(testType?.isComplexDataType()).toBe(true);
+        expect(testType?.toJSON()).toEqual(VALID_JSON);
+      });
+    });
 
     describe('parseIdentifier', () => {
       it('should return undefined for empty json', () => {

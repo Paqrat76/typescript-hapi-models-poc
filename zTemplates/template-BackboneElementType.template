@@ -14,7 +14,7 @@
 // =====================================================================
 // BackboneElementType 0..1
 // XxxxClass (xxxxFieldName / XxxxFieldName)
-// XxxxParentClass
+// XxxxParentClassElement (e.g., 'Group.characteristic')
 // =====================================================================
   private xxxxFieldName?: XxxxClass | undefined;
 
@@ -22,10 +22,10 @@
   // Only copy the internal code block!
   public static parse(sourceJson: JSON.Object): XxxxClass | undefined {
 
-    sourceField = 'XxxxParentClass.xxxxFieldName';
+    sourceField = 'XxxxParentClassElement.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
     if (fieldName in classJsonObj) {
-      const datatype: XxxxClass | undefined = parseXxxxClass(classJsonObj[fieldName], sourceField);
+      const datatype: XxxxClass | undefined = XxxxClass.parse(classJsonObj[fieldName]);
       instance.setXxxxFieldName(datatype);
     }
 
@@ -46,7 +46,7 @@
    */
   public setXxxxFieldName(value: XxxxClass | undefined): this {
     if (isDefined<XxxxClass | undefined>(value)) {
-      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided element is not an instance of XxxxClass.`;
+      const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided element is not an instance of XxxxClass.`;
       assertFhirType<XxxxClass>(value, XxxxClass, optErrMsg);
       this.xxxxFieldName = value;
     } else {
@@ -79,7 +79,7 @@
 // =====================================================================
 // BackboneElementType 1..1
 // XxxxClass (xxxxFieldName / XxxxFieldName)
-// XxxxParentClass
+// XxxxParentClassElement (e.g., 'Group.characteristic')
 // =====================================================================
   private xxxxFieldName: XxxxClass | null;
 
@@ -100,10 +100,10 @@
     // Add following near top of method ONLY IF it does not already exist
     const missingReqdProperties: string[] = [];
 
-    sourceField = 'XxxxParentClass.xxxxFieldName';
+    sourceField = 'XxxxParentClassElement.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
     if (fieldName in classJsonObj) {
-      const datatype: XxxxClass | undefined = parseXxxxClass(classJsonObj[fieldName], sourceField);
+      const datatype: XxxxClass | undefined = XxxxClass.parse(classJsonObj[fieldName]);
       if (datatype === undefined) {
         missingReqdProperties.push(sourceField);
       } else {
@@ -136,8 +136,8 @@
    * @returns this
    */
   public setXxxxFieldName(value: XxxxClass): this {
-    assertIsDefined<XxxxClass>(value, `XxxxParentClass.xxxxFieldName is required`);
-    const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided element is not an instance of XxxxClass.`;
+    assertIsDefined<XxxxClass>(value, `XxxxParentClassElement.xxxxFieldName is required`);
+    const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided element is not an instance of XxxxClass.`;
     assertFhirType<XxxxClass>(value, XxxxClass, optErrMsg);
     this.xxxxFieldName = value;
     return this;
@@ -162,7 +162,7 @@
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       setFhirBackboneElementJson(this.getXxxxFieldName()!, 'xxxxFieldName', jsonObj);
     } else {
-      missingReqdProperties.push(`XxxxParentClass.xxxxFieldName`);
+      missingReqdProperties.push(`XxxxParentClassElement.xxxxFieldName`);
     }
 
     // *** NOTE ***
@@ -181,7 +181,7 @@
 // =====================================================================
 // BackboneElementType 0..*
 // XxxxClass[] (xxxxFieldName / XxxxFieldName)
-// XxxxParentClass
+// XxxxParentClassElement (e.g., 'Group.characteristic')
 // =====================================================================
   private xxxxFieldName?: XxxxClass[] | undefined;
 
@@ -189,14 +189,14 @@
   // Only copy the internal code block!
   public static parse(sourceJson: JSON.Object): XxxxClass | undefined {
 
-    sourceField = 'XxxxParentClass.xxxxFieldName';
+    sourceField = 'XxxxParentClassElement.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
     if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
-      dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
-        const datatype: XxxxClass | undefined = parseXxxxClass(dataElementJson, `${sourceField}[${String(idx)}]`);
-        instance.addXxxxFieldName(datatype);
+      const componentJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
+      componentJsonArray.forEach((componentJson: JSON.Value) => {
+        const component: XxxxClass | undefined = XxxxClass.parse(componentJson);
+        instance.addXxxxFieldName(component);
       });
     }
 
@@ -217,7 +217,7 @@
    */
   public setXxxxFieldName(value: XxxxClass[] | undefined): this {
     if (isDefined<XxxxClass[] | undefined>(value)) {
-      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided value array has an element that is not an instance of XxxxClass.`;
+      const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided value array has an element that is not an instance of XxxxClass.`;
       assertFhirTypeList<XxxxClass>(value, XxxxClass, optErrMsg);
       this.xxxxFieldName = value;
     } else {
@@ -234,7 +234,7 @@
    */
   public addXxxxFieldName(value: XxxxClass | undefined): this {
     if (isDefined<XxxxClass | undefined>(value)) {
-      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided element is not an instance of XxxxClass.`;
+      const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided element is not an instance of XxxxClass.`;
       assertFhirType<XxxxClass>(value, XxxxClass, optErrMsg);
       this.initXxxxFieldName();
       this.xxxxFieldName?.push(value);
@@ -279,7 +279,7 @@
 // =====================================================================
 // BackboneElementType 1..*
 // XxxxClass[] (xxxxFieldName / XxxxFieldName)
-// XxxxParentClass
+// XxxxParentClassElement (e.g., 'Group.characteristic')
 // =====================================================================
   private xxxxFieldName: XxxxClass[] | null;
 
@@ -299,18 +299,24 @@
     // Add following near top of method ONLY IF it does not already exist
     const missingReqdProperties: string[] = [];
 
-    sourceField = 'XxxxParentClass.xxxxFieldName';
+
+    sourceField = 'XxxxParentClassElement.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
     if (fieldName in classJsonObj) {
-      const datatype: XxxxClass | undefined = parseXxxxClass(classJsonObj[fieldName], sourceField);
-      if (datatype === undefined) {
-        missingReqdProperties.push(sourceField);
-      } else {
-        instance.setXxxxFieldName(datatype);
-      }
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const componentJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
+      componentJsonArray.forEach((componentJson: JSON.Value) => {
+        const component: XxxxClass | undefined = XxxxClass.parse(componentJson);
+        if (datatype === undefined) {
+          missingReqdProperties.push(sourceField);
+        } else {
+          instance.setXxxxFieldName(datatype);
+        }
+      });
     } else {
       missingReqdProperties.push(sourceField);
     }
+
 
     // *** NOTE ***
     // Add following at bottom just above the `return instance;` ONLY IF it does not already exist
@@ -336,8 +342,8 @@
    * @returns this
    */
   public setXxxxFieldName(value: XxxxClass[]): this {
-    assertIsDefined<XxxxClass[]>(value, `XxxxParentClass.xxxxFieldName is required`);
-    const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided value array has an element that is not an instance of XxxxClass.`;
+    assertIsDefined<XxxxClass[]>(value, `XxxxParentClassElement.xxxxFieldName is required`);
+    const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided value array has an element that is not an instance of XxxxClass.`;
     assertFhirTypeList<XxxxClass>(value, XxxxClass, optErrMsg);
     this.xxxxFieldName = value;
     return this;
@@ -351,7 +357,7 @@
    */
   public addXxxxFieldName(value: XxxxClass | undefined): this {
     if (isDefined<XxxxClass | undefined>(value)) {
-      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided element is not an instance of XxxxClass.`;
+      const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided element is not an instance of XxxxClass.`;
       assertFhirType<XxxxClass>(value, XxxxClass, optErrMsg);
       this.initXxxxFieldName();
       this.xxxxFieldName?.push(value);
@@ -390,7 +396,7 @@
     if (this.hasXxxxFieldName()) {
       setFhirBackboneElementListJson(this.getXxxxFieldName(), 'xxxxFieldName', jsonObj);
     } else {
-      missingReqdProperties.push(`XxxxParentClass.xxxxFieldName`);
+      missingReqdProperties.push(`XxxxParentClassElement.xxxxFieldName`);
     }
 
      // *** NOTE ***

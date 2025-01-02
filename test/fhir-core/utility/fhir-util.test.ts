@@ -27,7 +27,8 @@ import { DateTimeType } from '@src/fhir-core/data-types/primitive/DateTimeType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { fhirUrl } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { extractFieldName, isElementEmpty, validateUrl } from '@src/fhir-core/utility/fhir-util';
+import { Period } from '@src/fhir-core/data-types/complex/Period';
+import { copyListValues, extractFieldName, isElementEmpty, validateUrl } from '@src/fhir-core/utility/fhir-util';
 import {
   CodeType,
   constructorCodeValueAsEnumCodeType,
@@ -166,6 +167,65 @@ describe('fhir-util', () => {
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(`Provided url is not a string`);
+    });
+  });
+
+  describe('extractFieldName', () => {
+    it('should return valid fieldName for standard source field name', () => {
+      expect(extractFieldName('Group.member.entity')).toStrictEqual('entity');
+    });
+
+    it('should return valid fieldName for polymorphic source field name', () => {
+      expect(extractFieldName('Group.characteristic.value[x]')).toStrictEqual('value');
+    });
+  });
+
+  describe('copyListValues', () => {
+    it('should return empty array for undefined/null source', () => {
+      const undefArray = copyListValues<StringType>(undefined);
+      expect(undefArray).toBeDefined();
+      expect(undefArray).toHaveLength(0);
+
+      const nullArray = copyListValues<Period>(null);
+      expect(nullArray).toBeDefined();
+      expect(nullArray).toHaveLength(0);
+    });
+
+    it('should return deep copy of provided PrimitiveType array', () => {
+      const testStringTypeArray: StringType[] = [new StringType('string1'), new StringType('string2')];
+      expect(testStringTypeArray).toBe(testStringTypeArray);
+      const copyStringTypeArray: StringType[] = copyListValues<StringType>(testStringTypeArray);
+      expect(copyStringTypeArray).toBe(copyStringTypeArray);
+
+      expect(copyStringTypeArray).toHaveLength(2);
+      expect(copyStringTypeArray).not.toBe(testStringTypeArray);
+      expect(copyStringTypeArray[0]).not.toBe(testStringTypeArray[0]);
+      expect(copyStringTypeArray[0]).toEqual(testStringTypeArray[0]);
+      expect(copyStringTypeArray[1]).not.toBe(testStringTypeArray[1]);
+      expect(copyStringTypeArray[1]).toEqual(testStringTypeArray[1]);
+    });
+
+    it('should return deep copy of provided Complex array', () => {
+      const VALID_START_DATETIME = `2017-01-01T00:00:00.000Z`;
+      const VALID_START_DATETIME_2 = `2017-01-01T00:15:00.000Z`;
+
+      const testPeriod1 = new Period();
+      testPeriod1.setStart(VALID_START_DATETIME);
+      const testPeriod2 = new Period();
+      testPeriod2.setStart(VALID_START_DATETIME_2);
+
+      const testPeriodArray: Period[] = [testPeriod1, testPeriod2];
+      expect(testPeriodArray).toBe(testPeriodArray);
+
+      const copyPeriodArray: Period[] = copyListValues<Period>(testPeriodArray);
+      expect(copyPeriodArray).toBe(copyPeriodArray);
+
+      expect(copyPeriodArray).toHaveLength(2);
+      expect(copyPeriodArray).not.toBe(testPeriodArray);
+      expect(copyPeriodArray[0]).not.toBe(testPeriodArray[0]);
+      expect(copyPeriodArray[0]).toEqual(testPeriodArray[0]);
+      expect(copyPeriodArray[1]).not.toBe(testPeriodArray[1]);
+      expect(copyPeriodArray[1]).toEqual(testPeriodArray[1]);
     });
   });
 
@@ -389,16 +449,6 @@ describe('fhir-util', () => {
       };
       expect(t).toThrow(InvalidCodeError);
       expect(t).toThrow(`Invalid ${property}; Errors: Provided code value is not an instance of CodeType`);
-    });
-  });
-
-  describe('extractFieldName', () => {
-    it('should return valid fieldName for standard source field name', () => {
-      expect(extractFieldName('Group.member.entity')).toStrictEqual('entity');
-    });
-
-    it('should return valid fieldName for polymorphic source field name', () => {
-      expect(extractFieldName('Group.characteristic.value[x]')).toStrictEqual('value');
     });
   });
 });

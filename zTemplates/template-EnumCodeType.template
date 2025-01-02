@@ -14,9 +14,9 @@
 // EnumCodeType 0..1
 // EnumCodeType: xxxxClassEnum / XxxxClassEnum
 // (xxxxFieldName / XxxxFieldName)
-// XxxxParentClass
+// XxxxParentClassElement (e.g., 'Group.characteristic')
 // =====================================================================
-  private readonly xxxClassEnum: XxxxClassEnum;
+  private readonly xxxxClassEnum: XxxxClassEnum;
 
   private xxxxFieldName?: EnumCodeType | undefined;
 
@@ -31,7 +31,7 @@
   // Only copy the internal code block!
   public static parse(sourceJson: JSON.Object): EnumCodeType | undefined {
 
-    sourceField = 'XxxxParentClass.xxxxFieldName';
+    sourceField = 'XxxxParentClassElement.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
     if (fieldName in classJsonObj) {
       const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, 'string');
@@ -56,7 +56,7 @@
    */
   public setXxxxFieldNameEnumType(enumType: EnumCodeType | undefined): this {
     if (isDefined<EnumCodeType | undefined>(enumType)) {
-      const errMsgPrefix = 'Invalid XxxxParentClass.xxxxFieldName';
+      const errMsgPrefix = 'Invalid XxxxParentClassElement.xxxxFieldName';
       assertEnumCodeType<XxxxClassEnum>(enumType, XxxxClassEnum, errMsgPrefix);
       this.xxxxFieldName = enumType;
     } else {
@@ -90,7 +90,7 @@
    */
   public setXxxxFieldNameElement(element: CodeType | undefined): this {
     if (isDefined<CodeType | undefined>(element)) {
-      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided element is not an instance of CodeType.`;
+      const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided element is not an instance of CodeType.`;
       assertFhirType<CodeType>(element, CodeType, optErrMsg);
       this.xxxxFieldName = new EnumCodeType(element, this.xxxxClassEnum);
     } else {
@@ -124,8 +124,8 @@
    */
   public setXxxxFieldName(value: fhirCode | undefined): this {
     if (isDefined<fhirCode | undefined>(value)) {
-      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided value is not an instance of fhirCode.`;
-      this.xxxxFieldName = new EnumCodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg), this.xxxClassEnum);
+      const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided value is not an instance of fhirCode.`;
+      this.xxxxFieldName = new EnumCodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg), this.xxxxClassEnum);
     } else {
       this.xxxxFieldName = undefined;
     }
@@ -158,9 +158,9 @@
 // EnumCodeType 1..1
 // EnumCodeType: xxxxClassEnum / XxxxClassEnum
 // (xxxxFieldName / XxxxFieldName)
-// XxxxParentClass
+// XxxxParentClassElement (e.g., 'Group.characteristic')
 // =====================================================================
-  private readonly xxxClassEnum: XxxxClassEnum;
+  private readonly xxxxClassEnum: XxxxClassEnum;
 
   private xxxxFieldName: EnumCodeType | null;
 
@@ -172,20 +172,20 @@
       xxxxFieldName,
       XxxxClassEnum,
       this.xxxxClassEnum,
-      'XxxxParentClass.xxxxFieldName',
+      'XxxxParentClassElement.xxxxFieldName',
     );
 
   }
 
   // *** NOTE ***
   // Only copy the internal code block!
-  public static parse(sourceJson: JSON.Object): XxxxParentClass | undefined {
+  public static parse(sourceJson: JSON.Object): EnumCodeType | undefined {
 
     // *** NOTE ***
     // Add following near top of method ONLY IF it does not already exist
     const missingReqdProperties: string[] = [];
 
-    sourceField = 'XxxxParentClass.xxxxFieldName';
+    sourceField = 'XxxxParentClassElement.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
     if (fieldName in classJsonObj) {
       const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, 'string');
@@ -222,8 +222,8 @@
    * @returns this
    */
   public setXxxxFieldNameEnumType(enumType: EnumCodeType): this {
-    assertIsDefined<EnumCodeType>(enumType, `XxxxParentClass.xxxxFieldName is required`);
-    const errMsgPrefix = `Invalid XxxxParentClass.xxxxFieldName`;
+    assertIsDefined<EnumCodeType>(enumType, `XxxxParentClassElement.xxxxFieldName is required`);
+    const errMsgPrefix = `Invalid XxxxParentClassElement.xxxxFieldName`;
     assertEnumCodeType<XxxxClassEnum>(enumType, XxxxClassEnum, errMsgPrefix);
     this.xxxxFieldName = enumType;
     return this;
@@ -253,8 +253,8 @@
    * @returns this
    */
   public setXxxxFieldNameElement(element: CodeType): this {
-    assertIsDefined<CodeType>(element, `XxxxParentClass.xxxxFieldName is required`);
-    const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided value is not an instance of CodeType.`;
+    assertIsDefined<CodeType>(element, `XxxxParentClassElement.xxxxFieldName is required`);
+    const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided value is not an instance of CodeType.`;
     assertFhirType<CodeType>(element, CodeType, optErrMsg);
     this.xxxxFieldName = new EnumCodeType(element, this.xxxxClassEnum);
     return this;
@@ -284,8 +284,8 @@
    * @returns this
    */
   public setXxxxFieldName(value: fhirCode): this {
-    assertIsDefined<fhirCode>(value, `XxxxParentClass.xxxxFieldName is required`);
-    const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName (${String(value)})`;
+    assertIsDefined<fhirCode>(value, `XxxxParentClassElement.xxxxFieldName is required`);
+    const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName (${String(value)})`;
     this.xxxxFieldName = new EnumCodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg), this.xxxxClassEnum);
     return this;
   }
@@ -309,7 +309,7 @@
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       setFhirPrimitiveJson<fhirCode>(this.getXxxxFieldNameElement()!, 'xxxxFieldName', jsonObj);
     } else {
-      missingReqdProperties.push(`XxxxParentClass.xxxxFieldName`);
+      missingReqdProperties.push(`XxxxParentClassElement.xxxxFieldName`);
     }
 
     // *** NOTE ***
@@ -329,9 +329,9 @@
 // EnumCodeType 0..*
 // EnumCodeType[]: xxxxClassEnum / XxxxClassEnum
 // (xxxxFieldName / XxxxFieldName)
-// XxxxParentClass
+// XxxxParentClassElement (e.g., 'Group.characteristic')
 // =====================================================================
-  private readonly xxxClassEnum: XxxxClassEnum;
+  private readonly xxxxClassEnum: XxxxClassEnum;
 
   private xxxxFieldName?: EnumCodeType[] | undefined;
 
@@ -346,7 +346,7 @@
   // Only copy the internal code block!
   public static parse(sourceJson: JSON.Object): EnumCodeType | undefined {
 
-    sourceField = 'XxxxParentClass.xxxxFieldName';
+    sourceField = 'XxxxParentClassElement.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
     if (fieldName in classJsonObj) {
       const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(
@@ -378,7 +378,7 @@
    */
   public setXxxxFieldNameEnumType(enumType: EnumCodeType[] | undefined): this {
     if (isDefined<EnumCodeType[] | undefined>(enumType)) {
-      const errMsgPrefix = `Invalid XxxxParentClass.xxxxFieldName`;
+      const errMsgPrefix = `Invalid XxxxParentClassElement.xxxxFieldName`;
       assertEnumCodeTypeList<XxxxClassEnum>(enumType, XxxxClassEnum, errMsgPrefix);
       this.xxxxFieldName = enumType;
     } else {
@@ -395,7 +395,7 @@
    */
   public addXxxxFieldNameEnumType(enumType: EnumCodeType | undefined): this {
     if (isDefined<EnumCodeType | undefined>(enumType)) {
-      const errMsgPrefix = `Invalid XxxxParentClass.xxxxFieldName)`;
+      const errMsgPrefix = `Invalid XxxxParentClassElement.xxxxFieldName)`;
       assertEnumCodeType<XxxxClassEnum>(enumType, XxxxClassEnum, errMsgPrefix);
       this.initXxxxFieldName();
       this.xxxxFieldName?.push(enumType);
@@ -428,7 +428,7 @@
    */
   public setXxxxFieldNameElement(element: CodeType[] | undefined): this {
     if (isDefined<CodeType[] | undefined>(element)) {
-      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided element array has an element that is not an instance of CodeType.`;
+      const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided element array has an element that is not an instance of CodeType.`;
       assertFhirTypeList<CodeType>(element, CodeType, optErrMsg);
       const enumCodeTypes = [] as EnumCodeType[];
       elements.forEach((type: CodeType) => {
@@ -449,7 +449,7 @@
    */
   public addXxxxFieldNameElement(element: CodeType | undefined): this {
     if (isDefined<CodeType | undefined>(element)) {
-      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided element is not an instance of CodeType.`;
+      const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided element is not an instance of CodeType.`;
       assertFhirType<CodeType>(element, CodeType, optErrMsg);
       this.initXxxxFieldName();
       this.xxxxFieldName?.push(new EnumCodeType(element, this.xxxxClassEnum));
@@ -488,7 +488,7 @@
   public setXxxxFieldName(value: fhirCode[] | undefined): this {
     if (isDefined<fhirCode[] | undefined>(value)) {
       const enumCodeTypes = [] as EnumCodeType[];
-      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided value is not an instance of fhirCode.`;
+      const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided value is not an instance of fhirCode.`;
       values.forEach((value: fhirCode) => {
         enumCodeTypes.push(new EnumCodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg), this.xxxxClassEnum));
       });
@@ -508,7 +508,7 @@
   public addXxxxFieldName(value: fhirCode | undefined): this {
     if (isDefined<fhirCode | undefined>(value)) {
       this.initXxxxFieldName();
-      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided value is not an instance of fhirCode.`;
+      const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided value is not an instance of fhirCode.`;
       this.xxxxFieldName?.push(new EnumCodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg), this.xxxxClassEnum));
     }
     return this;
@@ -548,11 +548,11 @@
 // EnumCodeType 1..*
 // EnumCodeType[]: xxxxClassEnum / XxxxClassEnum
 // (xxxxFieldName / XxxxFieldName)
-// XxxxParentClass
+// XxxxParentClassElement (e.g., 'Group.characteristic')
 // =====================================================================
   private xxxxFieldName: EnumCodeType[] | null;
 
-  private readonly xxxClassEnum: XxxxClassEnum;
+  private readonly xxxxClassEnum: XxxxClassEnum;
 
   constructor(xxxxFieldName: EnumCodeType[] | CodeType[] | fhirCode[] | null) {
 
@@ -562,7 +562,7 @@
       xxxxFieldName,
       XxxxClassEnum,
       this.xxxxClassEnum,
-      'XxxxParentClass.xxxxFieldName',
+      'XxxxParentClassElement.xxxxFieldName',
     );
 
   }

@@ -16,7 +16,7 @@ import { FhirCodeDefinition, IFhirCodeDefinition, IFhirCodeEnum } from '@src/fhi
  * This class is a "pseudo-enumeration" of code values having FHIR code properties.
  *
  * @category CodeSystems
- * @see [FHIR CodeSystem XxxxCS](https://hl7.org/fhir/R4/xxxx-code-system.html)
+ * @see [FHIR CodeSystem XxxxCS](http://hl7.org/fhir/xxxx-code-system)
  */
 export class XxxxEnum implements IFhirCodeEnum {
   public static readonly DUMMY = new FhirCodeDefinition(

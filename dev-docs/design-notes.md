@@ -67,7 +67,7 @@ GitHub: [hapifhir/org.hl7.fhir.core](https://github.com/hapifhir/org.hl7.fhir.co
 - NPM Trends: [ajv vs io-ts vs joi vs superstruct vs yup vs zod](https://npmtrends.com/ajv-vs-io-ts-vs-joi-vs-superstruct-vs-yup-vs-zod)
 - Head-to-Head: [io-ts vs Zod vs superstruct Analysis](https://moiva.io/?npm=io-ts+superstruct+zod)
 
-### \*\*\* Zod Library
+### Zod Library (Selected)
 
 - [zod](https://www.npmjs.com/package/zod)
   - Documentation [Zod](https://zod.dev/)
@@ -362,6 +362,31 @@ TypeDoc provides extensive configuration, but in my case, I only needed to inclu
 
 **Therefore, I am using TypeDoc to generate project documentation!**
 
+##### WARNINGS for Code Generator
+
+- We will need to check header descriptive content for relative links
+  (e.g., `[Location](location.html#)`) to the FHIR specification to change them to absolute links
+  (e.g., `[Location](https://hl7.org/fhir/location.html#)`).
+- We will need to check header descriptive content for whitespace characters (e.g., `\t`, `\n`, etc.) replacing
+  them with a `space`:
+
+  ```typescript
+  /**
+   * Replace line breaks (i.e., '\n' and '\r') with a single space (i.e., ' ').
+   * Replace with a space character rather than an empty string to prevent combining
+   * text where the only separating whitespace is '\n' or '\r' (observed in various
+   * StructureDefinition descriptions).
+   *
+   * @param str - source string value
+   * @returns new string value with each line break replaced with a space character
+   */
+  export const stripLineBreaks = (str: string | undefined | null): string => {
+    const tempValue = str || '';
+    const regex = /[\r\n]+/g;
+    return tempValue.replace(regex, ' ');
+  };
+  ```
+
 #### Class Header Template
 
 ```typescript
@@ -370,6 +395,8 @@ TypeDoc provides extensive configuration, but in my case, I only needed to inclu
  *
  * @remarks
  * <StructureDefinition.description>
+ *
+ * <StructureDefinition.purpose>
  *
  * **FHIR Specification**
  * - **Short:** <StructureDefinition.snapshot.element[0]?.short>
@@ -388,7 +415,7 @@ TypeDoc provides extensive configuration, but in my case, I only needed to inclu
 
 #### Component (BackboneElement) Class Header Template
 
-The `<StructureDefinition.snapshot.element[i].path>` will be reformatted as follows:
+The `<StructureDefinition.snapshot.element[i].path>` will be reformatted to `<ReformattedPathComponent>` as follows:
 
 - The `path` value will be PascalCase
 - The `.` separator will be removed
@@ -396,7 +423,7 @@ The `<StructureDefinition.snapshot.element[i].path>` will be reformatted as foll
 
 ```typescript
 /**
- * <StructureDefinition.snapshot.element[i].path>Component Subclass
+ * <ReformattedPathComponent> Subclass for `<StructureDefinition.snapshot.element[i].path>`
  *
  * @remarks
  * **FHIR Specification**

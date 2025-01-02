@@ -30,7 +30,7 @@ import {
   fhirStringSchema,
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
+import { copyListValues, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import { assertFhirType, assertFhirTypeList, isDefined } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 
@@ -238,14 +238,8 @@ export class CodeableConcept extends DataType implements IBase {
    */
   protected override copyValues(dest: CodeableConcept): void {
     super.copyValues(dest);
-    if (this.coding !== undefined) {
-      dest.coding = [] as Coding[];
-      for (const security of this.coding) {
-        dest.coding.push(security.copy());
-      }
-    } else {
-      dest.coding = undefined;
-    }
+    const codingList = copyListValues<Coding>(this.coding);
+    dest.coding = codingList.length === 0 ? undefined : codingList;
     dest.text = this.text?.copy();
   }
 

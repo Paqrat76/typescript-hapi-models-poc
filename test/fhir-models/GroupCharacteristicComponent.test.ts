@@ -124,7 +124,13 @@ describe('GroupCharacteristicComponent', () => {
       expect(testGroupCharacteristicComponent.constructor.name).toStrictEqual('GroupCharacteristicComponent');
       expect(testGroupCharacteristicComponent.fhirType()).toStrictEqual('Group.characteristic');
       expect(testGroupCharacteristicComponent.isEmpty()).toBe(true);
-      expect(testGroupCharacteristicComponent.toJSON()).toBeUndefined();
+      const t = () => {
+        testGroupCharacteristicComponent.toJSON();
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(
+        `The following required properties do not exist: Group.characteristic.code, Group.characteristic.value[x], Group.characteristic.exclude`,
+      );
 
       // inherited properties from BackboneElement
       expect(testGroupCharacteristicComponent.hasId()).toBe(false);

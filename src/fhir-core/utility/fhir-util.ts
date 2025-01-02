@@ -28,6 +28,7 @@
  */
 
 import { strict as assert } from 'node:assert';
+import { Base } from '@src/fhir-core/base-models/Base';
 import { IBase } from '@src/fhir-core/base-models/IBase';
 import { isEmpty, isNonBlank } from '@src/fhir-core/utility/common-util';
 import { fhirUriSchema } from '@src/fhir-core/data-types/primitive/primitive-types';
@@ -102,4 +103,25 @@ export function extractFieldName(sourceField: string): string {
     return fieldName.substring(0, posX);
   }
   return fieldName;
+}
+
+/**
+ * Return a deep copy of the source contents. Returns an empty array if source is undefined or null.
+ * The calling code can decide on how to interpret the empty array (e.g., undefined for an optional
+ * property or null for an uninitialized required property).
+ *
+ * @param source - source array to copy
+ * @returns copy of the source array or an empty array if source is undefined/null
+ *
+ * @category Utilities
+ */
+export function copyListValues<T extends Base>(source: T[] | undefined | null): T[] {
+  const target = [] as T[];
+  if (isDefined<T[] | undefined | null>(source)) {
+    for (const srcItem of source) {
+      const copyValue = srcItem.copy() as T;
+      target.push(copyValue);
+    }
+  }
+  return target;
 }

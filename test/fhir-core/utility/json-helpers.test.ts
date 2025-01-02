@@ -40,6 +40,7 @@ import {
   safeStringify,
   hasFhirData,
 } from '@src/fhir-core/utility/json-helpers';
+import { isEmpty as _isEmpty } from '@src/fhir-core/utility/common-util';
 import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
 import { IntegerType } from '@src/fhir-core/data-types/primitive/IntegerType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
@@ -63,7 +64,6 @@ import { fhirString } from '@src/fhir-core/data-types/primitive/primitive-types'
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { MockComplexDataType, MockFhirModel, MockTask, MockBackboneElement, MockBackboneType } from '../../test-utils';
-import { isEmpty as _isEmpty } from '../../../src';
 
 describe('json-helpers', () => {
   const PRIMITIVE_DATA_TYPE_BOOLEAN_TRUE: BooleanType = new BooleanType(true);
@@ -362,44 +362,61 @@ describe('json-helpers', () => {
     it('should set expected JSON values in setPolymorphicValueJson()', () => {
       let jsonObj = {} as Object;
       let expectedJson = {} as Object;
-      setPolymorphicValueJson(new StringType(), jsonObj);
+      setPolymorphicValueJson(new StringType(), 'value', jsonObj);
       expect(jsonObj).toEqual(expectedJson);
 
       jsonObj = {} as Object;
       expectedJson = { valueBoolean: true } as Object;
-      setPolymorphicValueJson(PRIMITIVE_DATA_TYPE_BOOLEAN_TRUE, jsonObj);
+      setPolymorphicValueJson(PRIMITIVE_DATA_TYPE_BOOLEAN_TRUE, 'value', jsonObj);
       expect(jsonObj).toEqual(expectedJson);
 
       jsonObj = {} as Object;
       expectedJson = { valueBoolean: false } as Object;
-      setPolymorphicValueJson(PRIMITIVE_DATA_TYPE_BOOLEAN_FALSE, jsonObj);
+      setPolymorphicValueJson(PRIMITIVE_DATA_TYPE_BOOLEAN_FALSE, 'value', jsonObj);
       expect(jsonObj).toEqual(expectedJson);
 
       jsonObj = {} as Object;
       expectedJson = { valueInteger: 1976 } as Object;
-      setPolymorphicValueJson(PRIMITIVE_DATA_TYPE_NUMBER, jsonObj);
+      setPolymorphicValueJson(PRIMITIVE_DATA_TYPE_NUMBER, 'value', jsonObj);
       expect(jsonObj).toEqual(expectedJson);
 
       jsonObj = {} as Object;
       expectedJson = { valueString: 'testString' } as Object;
-      setPolymorphicValueJson(PRIMITIVE_DATA_TYPE_STRING, jsonObj);
+      setPolymorphicValueJson(PRIMITIVE_DATA_TYPE_STRING, 'value', jsonObj);
       expect(jsonObj).toEqual(expectedJson);
 
       jsonObj = {} as Object;
       expectedJson = {} as Object;
-      setPolymorphicValueJson(new Period(), jsonObj);
+      setPolymorphicValueJson(new Period(), 'value', jsonObj);
       expect(jsonObj).toEqual(expectedJson);
 
       jsonObj = {} as Object;
       expectedJson = { valuePeriod: { start: '2017-03-15T08:00:00.000Z', end: '2017-03-15T17:00:00.000Z' } } as Object;
-      setPolymorphicValueJson(COMPLEX_DATA_TYPE, jsonObj);
+      setPolymorphicValueJson(COMPLEX_DATA_TYPE, 'value', jsonObj);
       expect(jsonObj).toEqual(expectedJson);
 
       // MockComplexDataType returns undefined for toJSON()
       jsonObj = {} as Object;
       expectedJson = {} as Object;
-      setPolymorphicValueJson(new MockComplexDataType('testValue'), jsonObj);
+      setPolymorphicValueJson(new MockComplexDataType('testValue'), 'value', jsonObj);
       expect(jsonObj).toStrictEqual(expectedJson);
+    });
+
+    it('should properly handle property names in setPolymorphicValueJson()', () => {
+      let jsonObj = {} as Object;
+      let expectedJson = { valueBoolean: true } as Object;
+      setPolymorphicValueJson(PRIMITIVE_DATA_TYPE_BOOLEAN_TRUE, 'value[x]', jsonObj);
+      expect(jsonObj).toEqual(expectedJson);
+
+      jsonObj = {} as Object;
+      expectedJson = { valueBoolean: false } as Object;
+      setPolymorphicValueJson(PRIMITIVE_DATA_TYPE_BOOLEAN_FALSE, 'value[X]', jsonObj);
+      expect(jsonObj).toEqual(expectedJson);
+
+      jsonObj = {} as Object;
+      expectedJson = { myPropString: 'testString' } as Object;
+      setPolymorphicValueJson(PRIMITIVE_DATA_TYPE_STRING, 'myProp', jsonObj);
+      expect(jsonObj).toEqual(expectedJson);
     });
 
     it('should throw AssertionErrors for invalid arguments for setPolymorphicValueJson', () => {
@@ -409,35 +426,35 @@ describe('json-helpers', () => {
 
       let t = () => {
         // @ts-expect-error: allow null for testing
-        setPolymorphicValueJson(null, jsonObj);
+        setPolymorphicValueJson(null, 'value', jsonObj);
       };
       expect(t).toThrow(AssertionError);
       expect(t).toThrow(`Provided value is undefined/null`);
 
       t = () => {
         // @ts-expect-error: allow undefined for testing
-        setPolymorphicValueJson(undefined, jsonObj);
+        setPolymorphicValueJson(undefined, 'value', jsonObj);
       };
       expect(t).toThrow(AssertionError);
       expect(t).toThrow(`Provided value is undefined/null`);
 
       t = () => {
         // @ts-expect-error: allow null for testing
-        setPolymorphicValueJson(testDataType, null);
+        setPolymorphicValueJson(testDataType, 'value', null);
       };
       expect(t).toThrow(AssertionError);
       expect(t).toThrow(`Provided jsonObj is undefined/null`);
 
       t = () => {
         // @ts-expect-error: allow undefined for testing
-        setPolymorphicValueJson(testDataType, undefined);
+        setPolymorphicValueJson(testDataType, 'value', undefined);
       };
       expect(t).toThrow(AssertionError);
       expect(t).toThrow(`Provided jsonObj is undefined/null`);
 
       t = () => {
         // @ts-expect-error: allow undefined for testing
-        setPolymorphicValueJson(testNonDataType, jsonObj);
+        setPolymorphicValueJson(testNonDataType, 'value', jsonObj);
       };
       expect(t).toThrow(InvalidTypeError);
       expect(t).toThrow(`Provided value is not an instance of DataType`);

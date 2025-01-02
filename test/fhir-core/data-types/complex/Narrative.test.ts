@@ -72,7 +72,11 @@ describe('Narrative', () => {
       expect(testNarrative.fhirType()).toStrictEqual('Narrative');
       expect(testNarrative.isEmpty()).toBe(true);
       expect(testNarrative.isComplexDataType()).toBe(true);
-      expect(testNarrative.toJSON()).toBeUndefined();
+      const t = () => {
+        testNarrative.toJSON();
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(`The following required properties do not exist: Narrative.status, Narrative.div`);
 
       // inherited properties from Element
       expect(testNarrative.hasId()).toBe(false);
@@ -136,7 +140,11 @@ describe('Narrative', () => {
       expect(testNarrative.fhirType()).toStrictEqual('Narrative');
       expect(testNarrative.isEmpty()).toBe(true);
       expect(testNarrative.isComplexDataType()).toBe(true);
-      expect(testNarrative.toJSON()).toBeUndefined();
+      const t = () => {
+        testNarrative.toJSON();
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(`The following required properties do not exist: Narrative.status, Narrative.div`);
 
       // inherited properties from Element
       expect(testNarrative.hasId()).toBe(false);

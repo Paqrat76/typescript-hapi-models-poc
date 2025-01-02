@@ -19,6 +19,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [0.14.0] - 2025-01-02
+
+### Added
+
+- FHIR utility copyListValues<T>(...) to simplify handling array types in the copyValues() Base class method overrides
+- Address complex type for Patient resource plus its parser and AddressTypeEnum and AddressUseEnum
+- Attachment complex type for Patient resource plus its parser
+- HumanName complex type for Patient resource plus its parser and NameUseEnum
+- Patient resource data model plus AdministrativeGenderEnum and LinkTypeEnum
+
+### Changed
+
+- Updated dependencies
+- Changed `toJSON()` methods to **not** return `undefined` when object that has required field(s) "isEmpty";
+  Instead, throws FhirError due to missing required field(s).
+
+### Fixed
+
+- `undefined` bug in FHIR models' copyValues()
+
+
 ## [0.13.0] - 24-12-18
 
 ### Changed
