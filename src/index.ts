@@ -87,5 +87,8 @@ export * from '@src/fhir-core/utility/json-helpers';
 export * from '@src/fhir-core/utility/type-guards';
 export * from '@src/fhir-models/fhir-contained-resource-parser';
 export * from '@src/fhir-models/Group';
+export * from '@src/fhir-models/Patient';
 export * from '@src/fhir-models/PractitionerRole';
+export * from '@src/fhir-models/code-systems/AdministrativeGenderEnum';
 export * from '@src/fhir-models/code-systems/GroupTypeEnum';
+export * from '@src/fhir-models/code-systems/LinkTypeEnum';

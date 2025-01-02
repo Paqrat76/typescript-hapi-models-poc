@@ -327,9 +327,10 @@ export class Narrative extends DataType implements IBase {
    * {@inheritDoc IBase.toJSON}
    */
   public override toJSON(): JSON.Value | undefined {
-    if (this.isEmpty()) {
-      return undefined;
-    }
+    // Required class properties exist (have a min cardinality > 0); therefore do not check for this.isEmpty()!
+    // if (this.isEmpty()) {
+    //   return undefined;
+    // }
 
     let jsonObj = super.toJSON() as JSON.Object | undefined;
     if (jsonObj === undefined) {

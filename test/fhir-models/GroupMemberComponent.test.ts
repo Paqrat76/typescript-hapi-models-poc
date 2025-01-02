@@ -126,7 +126,11 @@ describe('GroupMemberComponent', () => {
       expect(testGroupMemberComponent.constructor.name).toStrictEqual('GroupMemberComponent');
       expect(testGroupMemberComponent.fhirType()).toStrictEqual('Group.member');
       expect(testGroupMemberComponent.isEmpty()).toBe(true);
-      expect(testGroupMemberComponent.toJSON()).toBeUndefined();
+      const t = () => {
+        testGroupMemberComponent.toJSON();
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(`The following required properties do not exist: Group.member.entity`);
 
       // inherited properties from BackboneElement
       expect(testGroupMemberComponent.hasId()).toBe(false);

@@ -1134,7 +1134,7 @@ export class Extension extends Element implements IBase {
     // If present, the value[x] element SHALL have content (value attribute or other elements)
     if (this.hasValue()) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      setPolymorphicValueJson(this.getValue()!, jsonObj);
+      setPolymorphicValueJson(this.getValue()!, 'value', jsonObj);
     } else if (this.hasExtension()) {
       setFhirExtensionJson(this.getExtension(), jsonObj);
     }
@@ -1162,18 +1162,21 @@ export class Extension extends Element implements IBase {
  * Does nothing if the FHIR DataType's value is undefined.
  *
  * @param value - Polymorphic DataType value
+ * @param propName - the property name for the provided FHIR DataType
  * @param jsonObj - JSON.Object to which to add the transformed FHIR DataType
  * @throws AssertionError for invalid parameters
  *
  * @category Utilities: JSON
  */
-export function setPolymorphicValueJson(value: DataType, jsonObj: JSON.Object): void {
+export function setPolymorphicValueJson(value: DataType, propName: string, jsonObj: JSON.Object): void {
   assertIsDefined<DataType>(value, 'Provided value is undefined/null');
   assertIsDefined<JSON.Object>(jsonObj, 'Provided jsonObj is undefined/null');
   assertFhirDataType(value, 'Provided value is not an instance of DataType');
 
+  const xPos = propName.toLowerCase().indexOf('[x]');
+  const valuePrefix = propName.toLowerCase().endsWith('[x]') ? propName.substring(0, xPos) : propName;
   const fhirType = value.fhirType();
-  const valueKeyName = `value${upperFirst(fhirType)}`;
+  const valueKeyName = `${valuePrefix}${upperFirst(fhirType)}`;
 
   const json: JSON.Value | undefined = value.toJSON();
   if (json === null) {

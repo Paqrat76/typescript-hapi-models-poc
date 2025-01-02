@@ -138,7 +138,7 @@ export function parseExtension(json: JSON.Object | undefined): Extension | undef
     instance.setExtension(extensions);
   } else {
     // Extension might have one value[x]
-    const dataTypeValue: DataType | undefined = getValueXData(extensionJsonObj);
+    const dataTypeValue: DataType | undefined = getValueXData(extensionJsonObj, 'value');
     if (dataTypeValue !== undefined) {
       instance.setValue(dataTypeValue);
     }
@@ -364,62 +364,66 @@ export function processDomainResourceJson(instance: DomainResource, dataJson: JS
  * Return an instance of DataType for the `value[x]` if it exists.
  *
  * @param jsonObj - source JSON object
+ * @param fieldName - JSON field name (without '[x]' if polymorphic)
  * @returns the appropriate DataType instance or undefined
  *
  * @hidden
  */
-export function getValueXData(jsonObj: JSON.Object): DataType | undefined {
+export function getValueXData(jsonObj: JSON.Object, fieldName: string): DataType | undefined {
   assertIsDefined<JSON.Object>(jsonObj, `Provided jsonObj is undefined/null`);
-  const valueXKey = Object.keys(jsonObj).find((key) => OPEN_DATE_TYPE_KEY_NAMES.includes(key));
+  const valueXKey = Object.keys(jsonObj).find((key) =>
+    OPEN_DATE_TYPE_KEY_NAMES.includes(key.replace(fieldName, 'value')),
+  );
 
   if (valueXKey !== undefined && valueXKey in jsonObj) {
     const dataValue: JSON.Value | undefined = jsonObj[valueXKey];
     const siblingDataValue: JSON.Value | undefined = jsonObj[`_${valueXKey}`];
+    const switchKey = valueXKey.replace(fieldName, 'value');
 
     if (dataValue !== undefined) {
-      switch (valueXKey) {
+      switch (switchKey) {
         case 'valueBase64Binary':
           return parseBase64BinaryType(dataValue, siblingDataValue);
         case 'valueBoolean':
           return parseBooleanType(dataValue, siblingDataValue);
-        case 'valueCanonicalType':
+        case 'valueCanonical':
           return parseCanonicalType(dataValue, siblingDataValue);
-        case 'valueCodeType':
+        case 'valueCode':
           // NOTE - EnumCodeType is a subclass of CodeType and will always be serialized/parsed as a CodeType
           return parseCodeType(dataValue, siblingDataValue);
-        case 'valueDateTimeType':
+        case 'valueDateTime':
           return parseDateTimeType(dataValue, siblingDataValue);
-        case 'valueDateType':
+        case 'valueDate':
           return parseDateType(dataValue, siblingDataValue);
-        case 'valueDecimalType':
+        case 'valueDecimal':
           return parseDecimalType(dataValue, siblingDataValue);
-        case 'valueIdType':
+        case 'valueId':
           return parseIdType(dataValue, siblingDataValue);
-        case 'valueInstantType':
+        case 'valueInstant':
           return parseInstantType(dataValue, siblingDataValue);
-        case 'valueInteger64Type':
+        case 'valueInteger64':
           return parseInteger64Type(dataValue, siblingDataValue);
-        case 'valueIntegerType':
+        case 'valueInteger':
           return parseIntegerType(dataValue, siblingDataValue);
-        case 'valueMarkdownType':
+        case 'valueMarkdown':
           return parseMarkdownType(dataValue, siblingDataValue);
-        case 'valueOidType':
+        case 'valueOid':
           return parseOidType(dataValue, siblingDataValue);
-        case 'valuePositiveIntType':
+        case 'valuePositiveInt':
           return parsePositiveIntType(dataValue, siblingDataValue);
         case 'valueString':
           return parseStringType(dataValue, siblingDataValue);
-        case 'valueTimeType':
+        case 'valueTime':
           return parseTimeType(dataValue, siblingDataValue);
-        case 'valueUnsignedIntType':
+        case 'valueUnsignedInt':
           return parseUnsignedIntType(dataValue, siblingDataValue);
-        case 'valueUriType':
+        case 'valueUri':
           return parseUriType(dataValue, siblingDataValue);
-        case 'valueUrlType':
+        case 'valueUrl':
           return parseUrlType(dataValue, siblingDataValue);
-        case 'valueUuidType':
+        case 'valueUuid':
           return parseUuidType(dataValue, siblingDataValue);
-        case 'valueXhtmlType':
+        case 'valueXhtml':
           return parseXhtmlType(dataValue, siblingDataValue);
 
         case 'valueAddress':
@@ -1128,7 +1132,7 @@ export function parseXhtmlType(json: JSON.Value | undefined, siblingJson?: JSON.
  *
  * @param jsonObj - JSON representing the choice data type
  * @param sourceField - data source field (e.g. `<TypeName>.<TypeFieldName>`)
- * @param fieldName - JSON field name
+ * @param fieldName - JSON field name (without '[x]' if polymorphic)
  * @param metadata - ChoiceDataTypesMeta decorator metadata
  * @returns choice data type data model or undefined
  *
@@ -1159,7 +1163,7 @@ export function parsePolymorphicDataType(
   } else if (valueKeys[0] !== undefined && supportedFieldNames.includes(valueKeys[0])) {
     let instance: DataType | undefined = undefined;
     try {
-      instance = getValueXData(jsonObj);
+      instance = getValueXData(jsonObj, fieldName);
     } catch (err) {
       if (err instanceof TypeError) {
         throw new TypeError(`Failed to parse ${sourceField}: ${err.message}`, err);

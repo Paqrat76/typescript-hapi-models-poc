@@ -15,7 +15,7 @@
 // XxxxPrimitiveType / xxxxPrimitive / xxxxJsonType
 //   ex: BooleanType / fhirBoolean   / ( boolean | string | number )
 // (xxxxFieldName / XxxxFieldName)
-// XxxxParentClass
+// XxxxParentClassElement (e.g., 'Group.characteristic')
 // =====================================================================
   private xxxxFieldName?: XxxxPrimitiveType | undefined;
 
@@ -23,7 +23,7 @@
   // Only copy the internal code block!
   public static parse(sourceJson: JSON.Object): XxxxPrimitiveType | undefined {
 
-    sourceField = 'XxxxParentClass.xxxxFieldName';
+    sourceField = 'XxxxParentClassElement.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
     if (fieldName in classJsonObj) {
       const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, 'xxxxJsonType');
@@ -48,7 +48,7 @@
    */
   public setXxxxFieldNameElement(element: XxxxPrimitiveType | undefined): this {
     if (isDefined<XxxxPrimitiveType | undefined>(element)) {
-      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided element is not an instance of XxxxPrimitiveType.`;
+      const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided element is not an instance of XxxxPrimitiveType.`;
       assertFhirType<XxxxPrimitiveType>(element, XxxxPrimitiveType, optErrMsg);
       this.xxxxFieldName = element;
     } else {
@@ -80,7 +80,7 @@
    */
   public setXxxxFieldName(value: xxxxPrimitive | undefined): this {
     if (isDefined<xxxxPrimitive | undefined>(value)) {
-      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName (${String(value)})`;
+      const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName (${String(value)})`;
       this.xxxxFieldName = new XxxxPrimitiveType(parseFhirPrimitiveData(value, xxxxPrimitiveSchema, optErrMsg));
     } else {
       this.xxxxFieldName = undefined;
@@ -114,7 +114,7 @@
 // XxxxPrimitiveType / xxxxPrimitive / xxxxJsonType
 //   ex: BooleanType / fhirBoolean   / ( boolean | string | number )
 // (xxxxFieldName / XxxxFieldName)
-// XxxxParentClass
+// XxxxParentClassElement (e.g., 'Group.characteristic')
 // =====================================================================
   private xxxxFieldName: XxxxPrimitiveType | null;
 
@@ -139,7 +139,7 @@
     // Add following near top of method ONLY IF it does not already exist
     const missingReqdProperties: string[] = [];
 
-    sourceField = 'XxxxParentClass.xxxxFieldName';
+    sourceField = 'XxxxParentClassElement.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
     if (fieldName in classJsonObj) {
       const datatype: XxxxPrimitiveType | undefined = parseXxxxPrimitiveType(classJsonObj[fieldName], sourceField);
@@ -175,8 +175,8 @@
    * @returns this
    */
   public setXxxxFieldNameElement(element: XxxxPrimitiveType): this {
-    assertIsDefined<XxxxPrimitiveType>(element, `XxxxParentClass.xxxxFieldName is required`);
-    const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided value is not an instance of XxxxPrimitiveType.`;
+    assertIsDefined<XxxxPrimitiveType>(element, `XxxxParentClassElement.xxxxFieldName is required`);
+    const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided value is not an instance of XxxxPrimitiveType.`;
     assertFhirType<XxxxPrimitiveType>(element, XxxxPrimitiveType, optErrMsg);
     this.xxxxFieldName = element;
     return this;
@@ -208,8 +208,8 @@
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setXxxxFieldName(value: xxxxPrimitive): this {
-    assertIsDefined<xxxxPrimitive>(value, `XxxxParentClass.xxxxFieldName is required`);
-    const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName (${String(value)})`;
+    assertIsDefined<xxxxPrimitive>(value, `XxxxParentClassElement.xxxxFieldName is required`);
+    const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName (${String(value)})`;
     this.xxxxFieldName = new XxxxPrimitiveType(parseFhirPrimitiveData(value, xxxxPrimitiveSchema, optErrMsg));
     return this;
   }
@@ -233,7 +233,7 @@
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       setFhirPrimitiveJson<xxxxPrimitive>(this.getXxxxFieldNameElement()!, 'xxxxFieldName', jsonObj);
     } else {
-      missingReqdProperties.push(`XxxxParentClass.xxxxFieldName`);
+      missingReqdProperties.push(`XxxxParentClassElement.xxxxFieldName`);
     }
 
     // *** NOTE ***
@@ -254,7 +254,7 @@
 // XxxxPrimitiveType[] / xxxxPrimitive / xxxxJsonType
 //   ex: BooleanType[] / fhirBoolean   / ( boolean | string | number )
 // (xxxxFieldName / XxxxFieldName)
-// XxxxParentClass
+// XxxxParentClassElement (e.g., 'Group.characteristic')
 // =====================================================================
   private xxxxFieldName?: XxxxPrimitiveType[] | undefined;
 
@@ -262,7 +262,7 @@
   // Only copy the internal code block!
   public static parse(sourceJson: JSON.Object): XxxxPrimitiveType | undefined {
 
-    sourceField = 'XxxxParentClass.xxxxFieldName';
+    sourceField = 'XxxxParentClassElement.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
     if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -290,7 +290,7 @@
    */
   public setXxxxFieldNameElement(element: XxxxPrimitiveType[] | undefined): this {
     if (isDefined<XxxxPrimitiveType[] | undefined>(element)) {
-      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided value array has an element that is not an instance of XxxxPrimitiveType.`;
+      const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided value array has an element that is not an instance of XxxxPrimitiveType.`;
       assertFhirTypeList<XxxxPrimitiveType>(element, XxxxPrimitiveType, optErrMsg);
       this.xxxxFieldName = element;
     } else {
@@ -307,7 +307,7 @@
    */
   public addXxxxFieldNameElement(element: XxxxPrimitiveType | undefined): this {
     if (isDefined<XxxxPrimitiveType | undefined>(element)) {
-      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided element is not an instance of XxxxPrimitiveType.`;
+      const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided element is not an instance of XxxxPrimitiveType.`;
       assertFhirType<XxxxPrimitiveType>(element, XxxxPrimitiveType, optErrMsg);
       this.initXxxxFieldName();
       this.xxxxFieldName?.push(element);
@@ -353,7 +353,7 @@
     if (isDefined<xxxxPrimitive[] | undefined>(value)) {
       const xxxxFieldNameElements = [] as XxxxPrimitiveType[];
       for (const xxxxFieldNameValue of value) {
-        const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName array item (${String(xxxxFieldNameValue)})`;
+        const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName array item (${String(xxxxFieldNameValue)})`;
         const element = new XxxxPrimitiveType(parseFhirPrimitiveData(xxxxFieldNameValue, xxxxPrimitiveSchema, optErrMsg));
         xxxxFieldNameElements.push(element);
       }
@@ -372,7 +372,7 @@
    */
   public addXxxxFieldName(value: xxxxPrimitive | undefined): this {
     if (isDefined<xxxxPrimitive | undefined>(value)) {
-      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName array item (${String(value)})`;
+      const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName array item (${String(value)})`;
       const element = new XxxxPrimitiveType(parseFhirPrimitiveData(value, xxxxPrimitiveSchema, optErrMsg));
       this.addXxxxFieldNameElement(element);
     }
@@ -414,7 +414,7 @@
 // XxxxPrimitiveType[] / xxxxPrimitive / xxxxJsonType
 //   ex: BooleanType[] / fhirBoolean   / ( boolean | string | number )
 // (xxxxFieldName / XxxxFieldName)
-// XxxxParentClass
+// XxxxParentClassElement (e.g., 'Group.characteristic')
 // =====================================================================
   private xxxxFieldName: XxxxPrimitiveType[] | null;
 
@@ -434,7 +434,7 @@
     // Add following near top of method ONLY IF it does not already exist
     const missingReqdProperties: string[] = [];
 
-    sourceField = 'XxxxParentClass.xxxxFieldName';
+    sourceField = 'XxxxParentClassElement.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
     if (fieldName in classJsonObj) {
       const datatype: XxxxPrimitiveType | undefined = parseXxxxPrimitiveType(classJsonObj[fieldName], sourceField);
@@ -471,8 +471,8 @@
    * @returns this
    */
   public setXxxxFieldNameElement(element: XxxxPrimitiveType[]): this {
-    assertIsDefined<XxxxPrimitiveType[]>(element, `XxxxParentClass.xxxxFieldName is required`);
-    const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided value array has an element that is not an instance of XxxxPrimitiveType.`;
+    assertIsDefined<XxxxPrimitiveType[]>(element, `XxxxParentClassElement.xxxxFieldName is required`);
+    const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided value array has an element that is not an instance of XxxxPrimitiveType.`;
     assertFhirTypeList<XxxxPrimitiveType>(element, XxxxPrimitiveType, optErrMsg);
     this.xxxxFieldName = element;
     return this;
@@ -486,7 +486,7 @@
    */
   public addXxxxFieldNameElement(element: XxxxPrimitiveType | undefined): this {
     if (isDefined<XxxxPrimitiveType | undefined>(value)) {
-      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName; Provided element is not an instance of XxxxPrimitiveType.`;
+      const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided element is not an instance of XxxxPrimitiveType.`;
       assertFhirType<XxxxPrimitiveType>(element, XxxxPrimitiveType, optErrMsg);
       this.initXxxxFieldName();
       this.xxxxFieldName?.push(element);
@@ -529,10 +529,10 @@
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setXxxxFieldName(value: xxxxPrimitive[] | undefined): this {
-    assertIsDefined<xxxxPrimitive[]>(value, `XxxxParentClass.xxxxFieldName is required`);
+    assertIsDefined<xxxxPrimitive[]>(value, `XxxxParentClassElement.xxxxFieldName is required`);
     const xxxxFieldNameElements = [] as XxxxPrimitiveType[];
     for (const xxxxFieldNameValue of value) {
-      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName array item (${String(xxxxFieldNameValue)})`;
+      const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName array item (${String(xxxxFieldNameValue)})`;
       const element = new XxxxPrimitiveType(parseFhirPrimitiveData(xxxxFieldNameValue, xxxxPrimitiveSchema, optErrMsg));
       xxxxFieldNameElements.push(element);
     }
@@ -548,7 +548,7 @@
    */
   public addXxxxFieldName(value: xxxxPrimitive | undefined): this {
     if (isDefined<xxxxPrimitive | undefined>(value)) {
-      const optErrMsg = `Invalid XxxxParentClass.xxxxFieldName array item (${String(value)})`;
+      const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName array item (${String(value)})`;
       const element = new XxxxPrimitiveType(parseFhirPrimitiveData(value, xxxxPrimitiveSchema, optErrMsg));
       this.addXxxxFieldNameElement(element);
     }
@@ -582,7 +582,7 @@
     if (this.hasXxxxFieldNameElement()) {
       setFhirPrimitiveListJson(this.getXxxxFieldNameElement(), 'xxxxFieldName', jsonObj);
     } else {
-      missingReqdProperties.push(`XxxxParentClass.xxxxFieldName`);
+      missingReqdProperties.push(`XxxxParentClassElement.xxxxFieldName`);
     }
 
      // *** NOTE ***

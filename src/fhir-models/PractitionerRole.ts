@@ -669,7 +669,7 @@ export class PractitionerRole extends DomainResource implements IBase {
   /**
    * Assigns the provided Reference object value to the `practitioner` property.
    *
-   * @decorator `@ReferenceTargets(['Practitioner'])`
+   * @decorator `@ReferenceTargets('PractitionerRole.practitioner', ['Practitioner'])`
    *
    * @param value - the `practitioner` object value
    * @returns this
@@ -702,7 +702,7 @@ export class PractitionerRole extends DomainResource implements IBase {
   /**
    * Assigns the provided Reference object value to the `organization` property.
    *
-   * @decorator `@ReferenceTargets(['Organization'])`
+   * @decorator `@ReferenceTargets('PractitionerRole.practitioner', ['Organization'])`
    *
    * @param value - the `organization` object value
    * @returns this
@@ -853,6 +853,8 @@ export class PractitionerRole extends DomainResource implements IBase {
   /**
    * Assigns the provided Reference array value to the `location` property.
    *
+   * @decorator `@ReferenceTargets('PractitionerRole.location', ['Location'])`
+   *
    * @param value - the `location` array value
    * @returns this
    */
@@ -869,6 +871,8 @@ export class PractitionerRole extends DomainResource implements IBase {
 
   /**
    * Add the provided Reference value to the `location` array property.
+   *
+   * @decorator `@ReferenceTargets('PractitionerRole.location', ['Location'])`
    *
    * @param value - the `location` value
    * @returns this
@@ -913,6 +917,8 @@ export class PractitionerRole extends DomainResource implements IBase {
   /**
    * Assigns the provided Reference array value to the `healthcareService` property.
    *
+   * @decorator `@ReferenceTargets('PractitionerRole.healthcareService', ['HealthcareService']`)
+   *
    * @param value - the `healthcareService` array value
    * @returns this
    */
@@ -929,6 +935,8 @@ export class PractitionerRole extends DomainResource implements IBase {
 
   /**
    * Add the provided Reference value to the `healthcareService` array property.
+   *
+   * @decorator `@ReferenceTargets('PractitionerRole.healthcareService', ['HealthcareService'])`
    *
    * @param value - the `healthcareService` value
    * @returns this
@@ -1223,6 +1231,8 @@ export class PractitionerRole extends DomainResource implements IBase {
   /**
    * Assigns the provided Reference array value to the `endpoint` property.
    *
+   * @decorator `@ReferenceTargets('PractitionerRole.endpoint', ['Endpoint'])`
+   *
    * @param value - the `endpoint` array value
    * @returns this
    */
@@ -1239,6 +1249,8 @@ export class PractitionerRole extends DomainResource implements IBase {
 
   /**
    * Add the provided Reference value to the `endpoint` array property.
+   *
+   * @decorator `@ReferenceTargets('PractitionerRole.endpoint', ['Endpoint'])`
    *
    * @param value - the `endpoint` value
    * @returns this
@@ -1417,7 +1429,7 @@ export class PractitionerRole extends DomainResource implements IBase {
 }
 
 /**
- * PractitionerRoleAvailableTimeComponent Subclass
+ * PractitionerRoleAvailableTimeComponent Subclass for `PractitionerRole.availableTime`
  *
  * @remarks
  * **FHIR Specification**
@@ -1989,7 +2001,7 @@ export class PractitionerRoleAvailableTimeComponent extends BackboneElement {
 }
 
 /**
- * PractitionerRoleNotAvailableComponent Subclass
+ * PractitionerRoleNotAvailableComponent Subclass for `PractitionerRole.notAvailable`
  *
  * @remarks
  * **FHIR Specification**
@@ -2073,7 +2085,7 @@ export class PractitionerRoleNotAvailableComponent extends BackboneElement {
    * - **isModifier:** false
    * - **isSummary:** false
    */
-  private description!: StringType | null;
+  private description: StringType | null;
 
   /**
    * PractitionerRole.notAvailable.during Element
@@ -2219,9 +2231,10 @@ export class PractitionerRoleNotAvailableComponent extends BackboneElement {
    * {@inheritDoc IBase.toJSON}
    */
   public override toJSON(): JSON.Value | undefined {
-    if (this.isEmpty()) {
-      return undefined;
-    }
+    // Required class properties exist (have a min cardinality > 0); therefore do not check for this.isEmpty()!
+    // if (this.isEmpty()) {
+    //   return undefined;
+    // }
 
     let jsonObj = super.toJSON() as JSON.Object | undefined;
     if (jsonObj === undefined) {

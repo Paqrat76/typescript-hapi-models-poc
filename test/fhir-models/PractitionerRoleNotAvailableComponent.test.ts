@@ -76,7 +76,11 @@ describe('PractitionerRoleNotAvailableComponent', () => {
       );
       expect(testPractitionerRoleNotAvailableComponent.fhirType()).toStrictEqual('PractitionerRole.notAvailable');
       expect(testPractitionerRoleNotAvailableComponent.isEmpty()).toBe(true);
-      expect(testPractitionerRoleNotAvailableComponent.toJSON()).toBeUndefined();
+      const t = () => {
+        testPractitionerRoleNotAvailableComponent.toJSON();
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(`The following required properties do not exist: PractitionerRole.notAvailable.description`);
 
       // inherited properties from BackboneElement
       expect(testPractitionerRoleNotAvailableComponent.hasId()).toBe(false);

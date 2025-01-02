@@ -184,7 +184,11 @@ describe('Group', () => {
       expect(testGroup.fhirType()).toStrictEqual('Group');
       expect(testGroup.isResource()).toBe(true);
       expect(testGroup.isEmpty()).toBe(true);
-      expect(testGroup.toJSON()).toBeUndefined();
+      const t = () => {
+        testGroup.toJSON();
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(`The following required properties do not exist: Group.type, Group.actual`);
 
       // inherited properties from Resource/DomainResource
       expect(testGroup.hasIdElement()).toBe(false);
@@ -595,8 +599,11 @@ describe('Group', () => {
       const testGroup = new Group(null, null);
 
       testGroup.addIdentifier(VALID_IDENTIFIER_1);
+      testGroup.addIdentifier(VALID_IDENTIFIER_2);
+      testGroup.addIdentifier(UNDEFINED_VALUE);
       expect(testGroup.hasIdentifier()).toBe(true);
-      expect(testGroup.getIdentifier()).toEqual([VALID_IDENTIFIER_1]);
+      expect(testGroup.getIdentifier()).toHaveLength(2);
+      expect(testGroup.getIdentifier()).toEqual([VALID_IDENTIFIER_1, VALID_IDENTIFIER_2]);
 
       const groupCharacteristicComponent1 = new GroupCharacteristicComponent(
         VALID_CODEABLECONCEPT_1,
@@ -604,13 +611,25 @@ describe('Group', () => {
         VALID_BOOLEAN_TRUE,
       );
       testGroup.addCharacteristic(groupCharacteristicComponent1);
+      const groupCharacteristicComponent2 = new GroupCharacteristicComponent(
+        VALID_CODEABLECONCEPT_2,
+        new BooleanType(VALID_BOOLEAN_TRUE),
+        VALID_BOOLEAN_FALSE,
+      );
+      testGroup.addCharacteristic(groupCharacteristicComponent2);
+      testGroup.addCharacteristic(UNDEFINED_VALUE);
       expect(testGroup.hasCharacteristic()).toBe(true);
-      expect(testGroup.getCharacteristic()).toEqual([groupCharacteristicComponent1]);
+      expect(testGroup.getCharacteristic()).toHaveLength(2);
+      expect(testGroup.getCharacteristic()).toEqual([groupCharacteristicComponent1, groupCharacteristicComponent2]);
 
       const testGroupMemberComponent1 = new GroupMemberComponent(VALID_REFERENCE_VALUE_1);
       testGroup.addMember(testGroupMemberComponent1);
+      const testGroupMemberComponent2 = new GroupMemberComponent(VALID_REFERENCE_VALUE_2);
+      testGroup.addMember(testGroupMemberComponent2);
+      testGroup.addMember(UNDEFINED_VALUE);
       expect(testGroup.hasMember()).toBe(true);
-      expect(testGroup.getMember()).toEqual([testGroupMemberComponent1]);
+      expect(testGroup.getMember()).toHaveLength(2);
+      expect(testGroup.getMember()).toEqual([testGroupMemberComponent1, testGroupMemberComponent2]);
     });
 
     it('should be properly reset by modifying all properties with primitives', () => {

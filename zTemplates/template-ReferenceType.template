@@ -1,30 +1,31 @@
 /**
- * Templates for complex data models and classes based on the DataType
+ * Templates for data models and classes based on the Reference
  * Templates are provided for:
- * - ComplexType - Optional
- * - ComplexType - Required
- * - ComplexType Array - Optional
- * - ComplexType Array - Required
+ * - Reference Type - Optional
+ * - Reference Type - Required
+ * - Reference Type Array - Optional
+ * - Reference Type Array - Required
  *
  */
 
-//***** region ComplexType - Optional **********************************************************************************
+//***** region Reference Type - Optional **********************************************************************************
 
 // =====================================================================
-// ComplexType 0..1
-// XxxxClass (xxxxFieldName / XxxxFieldName)
+// Reference Type 0..1
+// Reference (xxxxFieldName / XxxxFieldName)
 // XxxxParentClassElement (e.g., 'Group.characteristic')
+// XxxxReferenceTypeList (e.g., ['Organization', 'Practitioner'])
 // =====================================================================
-  private xxxxFieldName?: XxxxClass | undefined;
+  private xxxxFieldName?: Reference | undefined;
 
   // *** NOTE ***
   // Only copy the internal code block!
-  public static parse(sourceJson: JSON.Object): XxxxClass | undefined {
+  public static parse(sourceJson: JSON.Object): Reference | undefined {
 
     sourceField = 'XxxxParentClassElement.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
     if (fieldName in classJsonObj) {
-      const datatype: XxxxClass | undefined = parseXxxxClass(classJsonObj[fieldName], sourceField);
+      const datatype: Reference | undefined = parseReference(classJsonObj[fieldName], sourceField);
       instance.setXxxxFieldName(datatype);
     }
 
@@ -33,20 +34,22 @@
   /**
    * @returns the `xxxxFieldName` property value as a XxxxFieldName object
    */
-  public getXxxxFieldName(): XxxxClass {
-    return this.xxxxFieldName ?? new XxxxClass();
+  public getXxxxFieldName(): Reference {
+    return this.xxxxFieldName ?? new Reference();
   }
 
   /**
    * Assigns the provided XxxxFieldName object value to the `xxxxFieldName` property.
    *
+   * @decorator `@ReferenceTargets('XxxxParentClassElement.xxxxFieldName', XxxxReferenceTypeList)`
+   *
    * @param value - the `xxxxFieldName` object value
    * @returns this
    */
-  public setXxxxFieldName(value: XxxxClass | undefined): this {
-    if (isDefined<XxxxClass | undefined>(value)) {
-      const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided element is not an instance of XxxxClass.`;
-      assertFhirType<XxxxClass>(value, XxxxClass, optErrMsg);
+  @ReferenceTargets('XxxxParentClassElement.xxxxFieldName', XxxxReferenceTypeList)
+  public setXxxxFieldName(value: Reference | undefined): this {
+    if (isDefined<Reference | undefined>(value)) {
+      // assertFhirType<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
       this.xxxxFieldName = value;
     } else {
       this.xxxxFieldName = undefined;
@@ -73,19 +76,20 @@
 
 //endregion
 
-//***** region ComplexType - Required **********************************************************************************
+//***** region Reference Type - Required **********************************************************************************
 
 // =====================================================================
-// ComplexType 1..1
-// XxxxClass (xxxxFieldName / XxxxFieldName)
+// Reference Type 1..1
+// Reference (xxxxFieldName / XxxxFieldName)
 // XxxxParentClassElement (e.g., 'Group.characteristic')
+// XxxxReferenceTypeList (e.g., ['Organization', 'Practitioner'])
 // =====================================================================
-  private xxxxFieldName: XxxxClass | null;
+  private xxxxFieldName: Reference | null;
 
-  constructor(xxxxFieldName: XxxxClass | null) {
+  constructor(xxxxFieldName: Reference | null) {
 
     this.xxxxFieldName = null;
-    if (isDefined<XxxxClass | null>(xxxxFieldName)) {
+    if (isDefined<Reference | null>(xxxxFieldName)) {
       this.setXxxxFieldName(xxxxFieldName);
     }
 
@@ -93,7 +97,7 @@
 
   // *** NOTE ***
   // Only copy the internal code block!
-  public static parse(sourceJson: JSON.Object): XxxxClass | undefined {
+  public static parse(sourceJson: JSON.Object): Reference | undefined {
 
     // *** NOTE ***
     // Add following near top of method ONLY IF it does not already exist
@@ -102,7 +106,7 @@
     sourceField = 'XxxxParentClassElement.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
     if (fieldName in classJsonObj) {
-      const datatype: XxxxClass | undefined = parseXxxxClass(classJsonObj[fieldName], sourceField);
+      const datatype: Reference | undefined = parseReference(classJsonObj[fieldName], sourceField);
       if (datatype === undefined) {
         missingReqdProperties.push(sourceField);
       } else {
@@ -122,22 +126,24 @@
   }
 
   /**
-   * @returns the `xxxxFieldName` property value as a XxxxClass object
+   * @returns the `xxxxFieldName` property value as a Reference object
    */
-  public getXxxxFieldName(): XxxxClass | null {
+  public getXxxxFieldName(): Reference | null {
     return this.xxxxFieldName;
   }
 
   /**
-   * Assigns the provided XxxxClass object value to the `xxxxFieldName` property.
+   * Assigns the provided XxxxFieldName object value to the `xxxxFieldName` property.
+   *
+   * @decorator `@ReferenceTargets('XxxxParentClassElement.xxxxFieldName', XxxxReferenceTypeList)`
    *
    * @param value - the `xxxxFieldName` object value
    * @returns this
    */
-  public setXxxxFieldName(value: XxxxClass): this {
-    assertIsDefined<XxxxClass>(value, `XxxxParentClassElement.xxxxFieldName is required`);
-    const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided element is not an instance of XxxxClass.`;
-    assertFhirType<XxxxClass>(value, XxxxClass, optErrMsg);
+  @ReferenceTargets('XxxxParentClassElement.xxxxFieldName', XxxxReferenceTypeList)
+  public setXxxxFieldName(value: Reference): this {
+    assertIsDefined<Reference>(value, `XxxxParentClassElement.xxxxFieldName is required`);
+    // assertFhirType<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
     this.xxxxFieldName = value;
     return this;
   }
@@ -146,7 +152,7 @@
    * @returns `true` if the `xxxxFieldName` property exists and has a value; `false` otherwise
    */
   public hasXxxxFieldName(): boolean {
-    return isDefined<XxxxClass | null>(this.xxxxFieldName) && !this.xxxxFieldName.isEmpty();
+    return isDefined<Reference | null>(this.xxxxFieldName) && !this.xxxxFieldName.isEmpty();
   }
 
   // *** NOTE ***
@@ -175,18 +181,19 @@
 
 //endregion
 
-//***** region ComplexType Array - Optional ****************************************************************************
+//***** region Reference Type Array - Optional ****************************************************************************
 
 // =====================================================================
-// ComplexType 0..*
-// XxxxClass[] (xxxxFieldName / XxxxFieldName)
+// Reference Type 0..*
+// Reference[] (xxxxFieldName / XxxxFieldName)
 // XxxxParentClassElement (e.g., 'Group.characteristic')
+// XxxxReferenceTypeList (e.g., ['Organization', 'Practitioner'])
 // =====================================================================
-  private xxxxFieldName?: XxxxClass[] | undefined;
+  private xxxxFieldName?: Reference[] | undefined;
 
   // *** NOTE ***
   // Only copy the internal code block!
-  public static parse(sourceJson: JSON.Object): XxxxClass | undefined {
+  public static parse(sourceJson: JSON.Object): Reference | undefined {
 
     sourceField = 'XxxxParentClassElement.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
@@ -194,7 +201,7 @@
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
-        const datatype: XxxxClass | undefined = parseXxxxClass(dataElementJson, `${sourceField}[${String(idx)}]`);
+        const datatype: Reference | undefined = parseReference(dataElementJson, `${sourceField}[${String(idx)}]`);
         instance.addXxxxFieldName(datatype);
       });
     }
@@ -202,22 +209,24 @@
   }
 
   /**
-   * @returns the `xxxxFieldName` property value as a XxxxClass array
+   * @returns the `xxxxFieldName` property value as a Reference array
    */
-  public getXxxxFieldName(): XxxxClass[] {
-    return this.xxxxFieldName ?? ([] as XxxxClass[]);
+  public getXxxxFieldName(): Reference[] {
+    return this.xxxxFieldName ?? ([] as Reference[]);
   }
 
   /**
-   * Assigns the provided XxxxClass array value to the `xxxxFieldName` property.
+   * Assigns the provided Reference array value to the `xxxxFieldName` property.
+   *
+   * @decorator `@ReferenceTargets('XxxxParentClassElement.xxxxFieldName', XxxxReferenceTypeList)`
    *
    * @param value - the `xxxxFieldName` array value
    * @returns this
    */
-  public setXxxxFieldName(value: XxxxClass[] | undefined): this {
-    if (isDefined<XxxxClass[] | undefined>(value)) {
-      const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided value array has an element that is not an instance of XxxxClass.`;
-      assertFhirTypeList<XxxxClass>(value, XxxxClass, optErrMsg);
+  @ReferenceTargets('XxxxParentClassElement.xxxxFieldName', XxxxReferenceTypeList)
+  public setXxxxFieldName(value: Reference[] | undefined): this {
+    if (isDefined<Reference[] | undefined>(value)) {
+      // assertFhirTypeList<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
       this.xxxxFieldName = value;
     } else {
       this.xxxxFieldName = undefined;
@@ -226,15 +235,17 @@
   }
 
   /**
-   * Add the provided XxxxClass value to the `xxxxFieldName` array property.
+   * Add the provided Reference value to the `xxxxFieldName` array property.
+   *
+   * @decorator `@ReferenceTargets('XxxxParentClassElement.xxxxFieldName', XxxxReferenceTypeList)`
    *
    * @param value - the `xxxxFieldName` value
    * @returns this
    */
-  public addXxxxFieldName(value: XxxxClass | undefined): this {
-    if (isDefined<XxxxClass | undefined>(value)) {
-      const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided element is not an instance of XxxxClass.`;
-      assertFhirType<XxxxClass>(value, XxxxClass, optErrMsg);
+  @ReferenceTargets('XxxxParentClassElement.xxxxFieldName', XxxxReferenceTypeList)
+  public addXxxxFieldName(value: Reference | undefined): this {
+    if (isDefined<Reference | undefined>(value)) {
+      // assertFhirType<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
       this.initXxxxFieldName();
       this.xxxxFieldName?.push(value);
     }
@@ -248,7 +259,7 @@
     return (
       this.xxxxFieldName !== undefined &&
       this.xxxxFieldName.length > 0 &&
-      this.xxxxFieldName.some((item: XxxxClass) => !item.isEmpty())
+      this.xxxxFieldName.some((item: Reference) => !item.isEmpty())
     );
   }
 
@@ -257,7 +268,7 @@
    */
   private initXxxxFieldName(): void {
     if (this.xxxxFieldName === undefined) {
-      this.xxxxFieldName = [] as XxxxClass[];
+      this.xxxxFieldName = [] as Reference[];
     }
   }
 
@@ -273,26 +284,27 @@
 
 //endregion
 
-//***** region ComplexType Array - Required ****************************************************************************
+//***** region Reference Type Array - Required ****************************************************************************
 
 // =====================================================================
-// ComplexType 1..*
-// XxxxClass[] (xxxxFieldName / XxxxFieldName)
+// Reference Type 1..*
+// Reference[] (xxxxFieldName / XxxxFieldName)
 // XxxxParentClassElement (e.g., 'Group.characteristic')
+// XxxxReferenceTypeList (e.g., ['Organization', 'Practitioner'])
 // =====================================================================
-  private xxxxFieldName: XxxxClass[] | null;
+  private xxxxFieldName: Reference[] | null;
 
-  constructor(xxxxFieldName: XxxxClass[] | null) {
+  constructor(xxxxFieldName: Reference[] | null) {
 
     this.xxxxFieldName = null;
-    if (isDefined<XxxxClass[] | null>(xxxxFieldName)) {
+    if (isDefined<Reference[] | null>(xxxxFieldName)) {
       this.setXxxxFieldName(xxxxFieldName);
     }
   }
 
   // *** NOTE ***
   // Only copy the internal code block!
-  public static parse(sourceJson: JSON.Object): XxxxClass | undefined {
+  public static parse(sourceJson: JSON.Object): Reference | undefined {
 
     // *** NOTE ***
     // Add following near top of method ONLY IF it does not already exist
@@ -301,7 +313,7 @@
     sourceField = 'XxxxParentClassElement.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
     if (fieldName in classJsonObj) {
-      const datatype: XxxxClass | undefined = parseXxxxClass(classJsonObj[fieldName], sourceField);
+      const datatype: Reference | undefined = parseReference(classJsonObj[fieldName], sourceField);
       if (datatype === undefined) {
         missingReqdProperties.push(sourceField);
       } else {
@@ -322,36 +334,40 @@
 
 
   /**
-   * @returns the `xxxxFieldName` property value as a XxxxClass array
+   * @returns the `xxxxFieldName` property value as a Reference array
    */
-  public getXxxxFieldName(): XxxxClass[] | null {
+  public getXxxxFieldName(): Reference[] | null {
     return this.xxxxFieldName;
   }
 
   /**
-   * Assigns the provided XxxxClass array value to the `xxxxFieldName` property.
+   * Assigns the provided Reference array value to the `xxxxFieldName` property.
+   *
+   * @decorator `@ReferenceTargets('XxxxParentClassElement.xxxxFieldName', XxxxReferenceTypeList)`
    *
    * @param value - the `xxxxFieldName` array value
    * @returns this
    */
-  public setXxxxFieldName(value: XxxxClass[]): this {
-    assertIsDefined<XxxxClass[]>(value, `XxxxParentClassElement.xxxxFieldName is required`);
-    const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided value array has an element that is not an instance of XxxxClass.`;
-    assertFhirTypeList<XxxxClass>(value, XxxxClass, optErrMsg);
+  @ReferenceTargets('XxxxParentClassElement.xxxxFieldName', XxxxReferenceTypeList)
+  public setXxxxFieldName(value: Reference[]): this {
+    assertIsDefined<Reference[]>(value, `XxxxParentClassElement.xxxxFieldName is required`);
+    // assertFhirTypeList<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
     this.xxxxFieldName = value;
     return this;
   }
 
   /**
-   * Add the provided XxxxClass value to the `xxxxFieldName` array property.
+   * Add the provided Reference value to the `xxxxFieldName` array property.
+   *
+   * @decorator `@ReferenceTargets('XxxxParentClassElement.xxxxFieldName', XxxxReferenceTypeList)`
    *
    * @param value - the `xxxxFieldName` value
    * @returns this
    */
-  public addXxxxFieldName(value: XxxxClass | undefined): this {
-    if (isDefined<XxxxClass | undefined>(value)) {
-      const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided element is not an instance of XxxxClass.`;
-      assertFhirType<XxxxClass>(value, XxxxClass, optErrMsg);
+  @ReferenceTargets('XxxxParentClassElement.xxxxFieldName', XxxxReferenceTypeList)
+  public addXxxxFieldName(value: Reference | undefined): this {
+    if (isDefined<Reference | undefined>(value)) {
+      // assertFhirType<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
       this.initXxxxFieldName();
       this.xxxxFieldName?.push(value);
     }
@@ -363,9 +379,9 @@
    */
   public hasXxxxFieldName(): boolean {
     return (
-      isDefined<XxxxClass[] | null>(this.xxxxFieldName) &&
+      isDefined<Reference[] | null>(this.xxxxFieldName) &&
       this.xxxxFieldName.length > 0 &&
-      this.xxxxFieldName.some((item: XxxxClass) => !item.isEmpty())
+      this.xxxxFieldName.some((item: Reference) => !item.isEmpty())
     );
   }
 
@@ -374,7 +390,7 @@
    */
   private initXxxxFieldName(): void {
     if (!this.hasXxxxFieldName()) {
-      this.xxxxFieldName = [] as XxxxClass[];
+      this.xxxxFieldName = [] as Reference[];
     }
   }
 

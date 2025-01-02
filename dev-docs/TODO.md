@@ -4,33 +4,24 @@
 
 - Add several more hand-crafted FHIR models to verify template examples for the FHIR data model code generator.
   Consider the following:
-  - [Patient](https://hl7.org/fhir/R4/patient.html)
-    - Most important FHIR resource!!
-    - Add following complex datatypes:
-      - HumanName
-      - Address
-      - Attachment
-  - [Organization](https://hl7.org/fhir/R4/organization.html)
-    - simple resource that is referenced by many other resources (`contained` example for other resources)
   - [Bundle](https://hl7.org/fhir/R4/bundle.html)
     - extends Resource rather than DomainResource
     - nested BackboneElements
-    - includes reference to another fields in resource (`link`)
+    - includes reference to other fields in resource (`link`)
   - [Parameters](https://hl7.org/fhir/R4/parameters.html)
     - extends Resource rather than DomainResource
     - contains single field of BackboneElement type
     - includes reference to same FHIR resource
     - includes "open" data type (`value[x]`)
-  - [OperationOutcome](https://hl7.org/fhir/R4/operationoutcome.html)
-    - contains single field of BackboneElement type
   - [Provenance](https://hl7.org/fhir/R4/provenance.html)
     - polymorphic field (`occurred[x]`);
-    - includes reference to another fields in resource (`agent`)
+    - includes reference to other fields in resource (`agent`)
   - [QuestionnaireResponse](https://hl7.org/fhir/R4/questionnaireresponse.html)
     - nested BackboneElements
     - polymorphic field (`value[x]`);
     - nested references to parent BackboneElement (`item`)
   - etc. ...
+- Determine whether to hand-craft all Complex data types or code generate all Complex data types
 - Investigate pushing parsers into data models to put them in the data models as in the FHIR data models while
   eliminating circular references:
   - including primitive data type parsers in PrimitiveType or in individual primitive data models

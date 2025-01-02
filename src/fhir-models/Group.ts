@@ -871,7 +871,7 @@ export class Group extends DomainResource implements IBase {
   /**
    * Assigns the provided Reference object value to the `managingEntity` property.
    *
-   * @decorator `@ReferenceTargets(['Organization', 'RelatedPerson', 'Practitioner', 'PractitionerRole'])`
+   * @decorator `@ReferenceTargets('Group.managingEntity', ['Organization', 'RelatedPerson', 'Practitioner', 'PractitionerRole'])`
    *
    * @param value - the `managingEntity` object value
    * @returns this
@@ -1075,9 +1075,11 @@ export class Group extends DomainResource implements IBase {
    * {@inheritDoc IBase.toJSON}
    */
   public override toJSON(): JSON.Value | undefined {
-    if (this.isEmpty()) {
-      return undefined;
-    }
+    // Required class properties exist (have a min cardinality > 0); therefore do not check for this.isEmpty()!
+    // if (this.isEmpty()) {
+    //   return undefined;
+    // }
+
     // Will always have, at least, the 'resourceType' property from Resource
     const jsonObj = super.toJSON() as JSON.Object;
 
@@ -1141,7 +1143,7 @@ export class Group extends DomainResource implements IBase {
 }
 
 /**
- * GroupCharacteristicComponent Subclass
+ * GroupCharacteristicComponent Subclass for `Group.characteristic`
  *
  * @remarks
  * **FHIR Specification**
@@ -1196,6 +1198,9 @@ export class GroupCharacteristicComponent extends BackboneElement {
     const instance = new GroupCharacteristicComponent(null, null, null);
     processBackboneElementJson(instance, backboneJsonObj);
 
+    // NOTE: Added IF and ONLY IF a choice data type is used
+    const classMetadata: DecoratorMetadataObject | null = GroupCharacteristicComponent[Symbol.metadata];
+
     const missingReqdProperties: string[] = [];
 
     let sourceField = 'Group.characteristic.code';
@@ -1214,15 +1219,19 @@ export class GroupCharacteristicComponent extends BackboneElement {
     // Handle polymorphic data type
     sourceField = 'Group.characteristic.value[x]';
     fieldName = extractFieldName(sourceField);
-    const classMetadata: DecoratorMetadataObject | null = GroupCharacteristicComponent[Symbol.metadata];
-    const datatype: DataType | undefined = parsePolymorphicDataType(
-      backboneJsonObj,
-      sourceField,
-      fieldName,
-      classMetadata,
-    );
-    if (datatype !== undefined) {
-      instance.setValue(datatype);
+    if (isDefined<DecoratorMetadataObject | null>(classMetadata)) {
+      const datatype: DataType | undefined = parsePolymorphicDataType(
+        backboneJsonObj,
+        sourceField,
+        fieldName,
+        classMetadata,
+      );
+      if (datatype !== undefined) {
+        instance.setValue(datatype);
+      } else {
+        // Report the missing required field
+        missingReqdProperties.push(sourceField);
+      }
     } else {
       // Report the missing required field
       missingReqdProperties.push(sourceField);
@@ -1275,6 +1284,8 @@ export class GroupCharacteristicComponent extends BackboneElement {
   /**
    * Group.characteristic.value[x] Element
    *
+   * @decorator `@ChoiceDataTypesMeta('Group.characteristic.value[x]', ['boolean', 'CodeableConcept', 'Quantity', 'Range', 'Reference'])`
+   *
    * @remarks
    * **FHIR Specification**
    * - **Short:** Value held by characteristic
@@ -1298,7 +1309,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
     'Range',
     'Reference',
   ])
-  private value!: DataType | null;
+  private value: DataType | null;
 
   /**
    * Group.characteristic.exclude Element
@@ -1368,7 +1379,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
   /**
    * Assigns the provided DataType object value to the `value` property.
    *
-   * @decorator `@ChoiceDataTypes(['boolean', 'CodeableConcept', 'Quantity', 'Range', 'Reference'])`
+   * @decorator `@ChoiceDataTypes('Group.characteristic.value[x]')`
    *
    * @param value - the `value` object value
    * @returns this
@@ -1627,9 +1638,10 @@ export class GroupCharacteristicComponent extends BackboneElement {
    * {@inheritDoc IBase.toJSON}
    */
   public override toJSON(): JSON.Value | undefined {
-    if (this.isEmpty()) {
-      return undefined;
-    }
+    // Required class properties exist (have a min cardinality > 0); therefore do not check for this.isEmpty()!
+    // if (this.isEmpty()) {
+    //   return undefined;
+    // }
 
     let jsonObj = super.toJSON() as JSON.Object | undefined;
     if (jsonObj === undefined) {
@@ -1647,7 +1659,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
 
     if (this.hasValue()) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      setPolymorphicValueJson(this.getValue()!, jsonObj);
+      setPolymorphicValueJson(this.getValue()!, 'value', jsonObj);
     } else {
       missingReqdProperties.push(`Group.characteristic.value[x]`);
     }
@@ -1673,7 +1685,7 @@ export class GroupCharacteristicComponent extends BackboneElement {
 }
 
 /**
- * GroupMemberComponent Subclass
+ * GroupMemberComponent Subclass for `Group.member`
  *
  * @remarks
  * **FHIR Specification**
@@ -1762,7 +1774,7 @@ export class GroupMemberComponent extends BackboneElement {
    * - **isModifier:** false
    * - **isSummary:** false
    */
-  private entity!: Reference | null;
+  private entity: Reference | null;
 
   /**
    * Group.member.period Element
@@ -1804,7 +1816,7 @@ export class GroupMemberComponent extends BackboneElement {
   /**
    * Assigns the provided Reference object value to the `entity` property.
    *
-   * @decorator `@ReferenceTargets(['Patient', 'Practitioner', 'PractitionerRole', 'Device', 'Medication', 'Substance', 'Group'])`
+   * @decorator `@ReferenceTargets('Group.member.entity', ['Patient', 'Practitioner', 'PractitionerRole', 'Device', 'Medication', 'Substance', 'Group'])`
    *
    * @param value - the `entity` object value
    * @returns this
@@ -1962,9 +1974,10 @@ export class GroupMemberComponent extends BackboneElement {
    * {@inheritDoc IBase.toJSON}
    */
   public override toJSON(): JSON.Value | undefined {
-    if (this.isEmpty()) {
-      return undefined;
-    }
+    // Required class properties exist (have a min cardinality > 0); therefore do not check for this.isEmpty()!
+    // if (this.isEmpty()) {
+    //   return undefined;
+    // }
 
     let jsonObj = super.toJSON() as JSON.Object | undefined;
     if (jsonObj === undefined) {
