@@ -2,24 +2,12 @@
 
 ## POC Feature Set
 
-- Add several more hand-crafted FHIR models to verify template examples for the FHIR data model code generator.
+- Add more hand-crafted FHIR models to verify template examples for the FHIR data model code generator.
   Consider the following:
   - [Bundle](https://hl7.org/fhir/R4/bundle.html)
     - extends Resource rather than DomainResource
-    - nested BackboneElements
-    - includes reference to other fields in resource (`link`)
-  - [Parameters](https://hl7.org/fhir/R4/parameters.html)
-    - extends Resource rather than DomainResource
-    - contains single field of BackboneElement type
-    - includes reference to same FHIR resource
-    - includes "open" data type (`value[x]`)
-  - [Provenance](https://hl7.org/fhir/R4/provenance.html)
-    - polymorphic field (`occurred[x]`);
-    - includes reference to other fields in resource (`agent`)
-  - [QuestionnaireResponse](https://hl7.org/fhir/R4/questionnaireresponse.html)
-    - nested BackboneElements
-    - polymorphic field (`value[x]`);
-    - nested references to parent BackboneElement (`item`)
+    - nested BackboneElement types
+    - includes `StructureDefinition.contentReference` to other fields in resource (`link`)
   - etc. ...
 - Determine whether to hand-craft all Complex data types or code generate all Complex data types
 - Investigate pushing parsers into data models to put them in the data models as in the FHIR data models while

@@ -471,8 +471,8 @@ The `<StructureDefinition.snapshot.element[i].path>` will be reformatted to `<Re
  * - **Comment:** <StructureDefinition.snapshot.element[i]?.comment>
  * - **Requirements:** <StructureDefinition.snapshot.element[i]?.requirements>
  * - **FHIR Types:**
- *  - `<StructureDefinition.snapshot.element[i].type.code[j]>`
- *    - _TargetProfiles_: [ <StructureDefinition.snapshot.element[i].type.code[0].taretProfile[?]> ]
+ *   - `<StructureDefinition.snapshot.element[i].type.code[j]>`
+ *     - _TargetProfiles_: [ <StructureDefinition.snapshot.element[i].type.code[0].taretProfile[?]> ]
  * - **Cardinality:** <StructureDefinition.snapshot.element[i].min>..<StructureDefinition.snapshot.element[i].max>
  * - **isModifier:** <StructureDefinition.snapshot.element[i].isModifier>
  * - **isModifierReason:** <StructureDefinition.snapshot.element[i].isModifierReason?>

@@ -19,6 +19,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [0.15.0] - 2025-01-20
+
+### Added
+
+- Signature complex data type with its parser function
+- Parameters data model
+- Function parseOpenDataType
+- Decorator OpenDataTypesMeta
+- template-OpenType.template
+
+### Changed
+
+- Updated dependencies
+- Renamed parseContainedResource() to parseInlineResource(); covers both contained resources and "raw" Resource data elements
+- Modified Jest coverageThreshold for functions to 90% because Jest does not count class methods having decorators
+
+
 ## [0.14.0] - 2025-01-02
 
 ### Added

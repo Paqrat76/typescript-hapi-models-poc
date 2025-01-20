@@ -26,60 +26,73 @@ import { DataType } from '@src/fhir-core/base-models/core-fhir-models';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { XhtmlType } from '@src/fhir-core/data-types/primitive/XhtmlType';
 import { OpenDataTypes } from '@src/fhir-core/base-models/core-fhir-models';
+import { getOpenDatatypeFields, OpenDataTypesMeta } from '@src/fhir-core/utility/decorators';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { MockResource, MockTask } from '../../test-utils';
 
-describe('OpenDataTypes', () => {
-  it('should throw AssertionError with invalid value DataType', () => {
-    const testValue = new MockResource();
-    const testMockTaskR1 = new MockTaskR1();
-    const t = () => {
+describe('decorators', () => {
+  describe('OpenDataTypesMeta', () => {
+    it('should return with valid decorator metadata', () => {
+      const openDatatypeFields: string[] = getOpenDatatypeFields(MockTaskR1[Symbol.metadata]);
+      expect(openDatatypeFields).toBeDefined();
+
+      const expected: string[] = ['MockTaskR1.value[x]'];
+      expect(openDatatypeFields).toEqual(expected);
+    });
+  });
+
+  describe('OpenDataTypes', () => {
+    it('should throw AssertionError with invalid value DataType', () => {
+      const testValue = new MockResource();
+      const testMockTaskR1 = new MockTaskR1();
+      const t = () => {
+        // @ts-expect-error: allow for testing
+        testMockTaskR1.setValue(testValue);
+      };
+      expect(t).toThrow(AssertionError);
+      expect(t).toThrow(
+        `OpenDataTypes decorator on setValue (MockTaskR1.value[x]) expects a single argument to be type of 'DataType | undefined | null'`,
+      );
+    });
+
+    it('should throw InvalidTypeError with unsupported value DataType', () => {
+      const testValue = new XhtmlType();
+      const testMockTaskR1 = new MockTaskR1();
+      const t = () => {
+        testMockTaskR1.setValue(testValue);
+      };
+      expect(t).toThrow(InvalidTypeError);
+      expect(t).toThrow(
+        `OpenDataTypes decorator on setValue (MockTaskR1.value[x]) expects the 'value' argument type (xhtml) to be a supported DataType`,
+      );
+    });
+
+    it('should return with valid value DataType', () => {
+      const testValue = new StringType('string value');
+      const testMockTaskR1 = new MockTaskR1();
+      testMockTaskR1.setValue(testValue);
+      expect(testMockTaskR1.getValue()).toStrictEqual(testValue);
+    });
+
+    it('should return with invalid method name', () => {
+      const testValue = new StringType('string value');
+      const testMockTaskR1 = new MockTaskR1();
+      testMockTaskR1.xxxValue(testValue);
+      expect(testMockTaskR1.getValue()).toStrictEqual(testValue);
+    });
+
+    it('should return with undefined method arg', () => {
+      const testMockTaskR1 = new MockTaskR1();
+      testMockTaskR1.setValue(undefined);
+      expect(testMockTaskR1.getValue()).toBeUndefined();
+    });
+
+    it('should return with null method arg', () => {
+      const testMockTaskR1 = new MockTaskR1();
       // @ts-expect-error: allow for testing
-      testMockTaskR1.setValue(testValue);
-    };
-    expect(t).toThrow(AssertionError);
-    expect(t).toThrow(
-      `OpenDataTypes decorator on setValue (MockTaskR1.value[x]) expects a single argument to be type of 'DataType | undefined | null'`,
-    );
-  });
-
-  it('should throw InvalidTypeError with unsupported value DataType', () => {
-    const testValue = new XhtmlType();
-    const testMockTaskR1 = new MockTaskR1();
-    const t = () => {
-      testMockTaskR1.setValue(testValue);
-    };
-    expect(t).toThrow(InvalidTypeError);
-    expect(t).toThrow(
-      `OpenDataTypes decorator on setValue (MockTaskR1.value[x]) expects the 'value' argument type (xhtml) to be a supported DataType`,
-    );
-  });
-
-  it('should return with valid value DataType', () => {
-    const testValue = new StringType('string value');
-    const testMockTaskR1 = new MockTaskR1();
-    testMockTaskR1.setValue(testValue);
-    expect(testMockTaskR1.getValue()).toStrictEqual(testValue);
-  });
-
-  it('should return with invalid method name', () => {
-    const testValue = new StringType('string value');
-    const testMockTaskR1 = new MockTaskR1();
-    testMockTaskR1.xxxValue(testValue);
-    expect(testMockTaskR1.getValue()).toStrictEqual(testValue);
-  });
-
-  it('should return with undefined method arg', () => {
-    const testMockTaskR1 = new MockTaskR1();
-    testMockTaskR1.setValue(undefined);
-    expect(testMockTaskR1.getValue()).toBeUndefined();
-  });
-
-  it('should return with null method arg', () => {
-    const testMockTaskR1 = new MockTaskR1();
-    // @ts-expect-error: allow for testing
-    testMockTaskR1.setValue(null);
-    expect(testMockTaskR1.getValue()).toBeNull();
+      testMockTaskR1.setValue(null);
+      expect(testMockTaskR1.getValue()).toBeNull();
+    });
   });
 });
 
@@ -89,6 +102,7 @@ export class MockTaskR1 extends MockTask {
     super();
   }
 
+  @OpenDataTypesMeta('MockTaskR1.value[x]')
   protected value?: DataType | undefined;
 
   @OpenDataTypes('MockTaskR1.value[x]')
@@ -96,6 +110,7 @@ export class MockTaskR1 extends MockTask {
     this.value = value;
     return this;
   }
+
   public getValue(): DataType | undefined {
     return this.value;
   }

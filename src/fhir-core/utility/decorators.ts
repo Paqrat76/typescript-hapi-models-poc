@@ -49,6 +49,11 @@ import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
  * @hidden
  */
 export const CHOICE_DATA_TYPES = 'ChoiceDatatypes';
+/**
+ * @category Utilities: Decorators
+ * @hidden
+ */
+export const OPEN_DATA_TYPE_FIELDS = 'OpenDatatypeFields';
 
 /**
  * Data elements captured in decorator metadata property `ChoiceDatatypes` by ChoiceDataTypesMeta decorator
@@ -69,6 +74,15 @@ export interface ChoiceDatatypeDef {
 export interface ChoiceDatatypeMetaObj {
   ChoiceDatatypes: ChoiceDatatypeDef[];
 }
+/**
+ * Decorator metadata captured by OpenDataTypesMeta decorator
+ *
+ * @category Utilities: Decorators
+ * @interface
+ */
+export interface OpenDatatypeMetaObj {
+  OpenDatatypeFields: string[];
+}
 
 /**
  * Helper that returns the metadata data elements captured by ChoiceDataTypesMeta decorator
@@ -84,6 +98,22 @@ export function getChoiceDatatypeDefs(metadata: DecoratorMetadataObject | null):
   const choiceDatatypeMetaObj = JSON.parse(JSON.stringify(metadata)) as ChoiceDatatypeMetaObj;
   assert(choiceDatatypeMetaObj.ChoiceDatatypes, 'metadata.ChoiceDatatypes does not exist');
   return choiceDatatypeMetaObj.ChoiceDatatypes;
+}
+
+/**
+ * Helper that returns the metadata data elements captured by OpenDataTypesMeta decorator
+ *
+ * @param metadata - OpenDataTypesMeta decorator metadata
+ * @returns the metadata data elements captured by OpenDataTypesMeta decorator
+ *
+ * @category Utilities: Decorators
+ */
+export function getOpenDatatypeFields(metadata: DecoratorMetadataObject | null): string[] {
+  assertIsDefined<DecoratorMetadataObject | null>(metadata, `Provided metadata is undefined/null`);
+  // JSON.parse(JSON.stringify(metadata))) removes "[Object: null prototype]" from the Decorator metadata object
+  const openDatatypeMetaObj = JSON.parse(JSON.stringify(metadata)) as OpenDatatypeMetaObj;
+  assert(openDatatypeMetaObj.OpenDatatypeFields, 'metadata.OpenDatatypeFields does not exist');
+  return openDatatypeMetaObj.OpenDatatypeFields;
 }
 
 /**
@@ -130,17 +160,17 @@ export function getChoiceDatatypeDefsForField(
  */
 export function ChoiceDataTypesMeta(sourceField: string, choiceDataTypes: FhirDataType[]) {
   return function (_target: unknown, context: ClassFieldDecoratorContext) {
-    const methodName = String(context.name);
+    const fieldName = String(context.name);
     if (choiceDataTypes.length > 0) {
       // Verify choiceDataTypes contain valid, non-duplicate values
       const choiceDataTypeSet = new Set(choiceDataTypes);
       assert(
         choiceDataTypes.length === choiceDataTypeSet.size,
-        `ChoiceDataTypesMeta decorator on ${methodName} (${sourceField}) contains duplicate choiceDataTypes`,
+        `ChoiceDataTypesMeta decorator on ${fieldName} (${sourceField}) contains duplicate choiceDataTypes`,
       );
       assert(
         choiceDataTypes.every((choiceDt) => DATA_TYPES.includes(choiceDt)),
-        `ChoiceDataTypesMeta decorator on ${methodName} (${sourceField}) contains invalid choiceDataTypes`,
+        `ChoiceDataTypesMeta decorator on ${fieldName} (${sourceField}) contains invalid choiceDataTypes`,
       );
     }
 
@@ -220,5 +250,26 @@ export function ChoiceDataTypes(sourceField: string) {
 
       return originalMethod.call(this, ...args);
     };
+  };
+}
+
+/**
+ * Factory function for OpenDataTypesMeta decorator for open data type fields
+ *
+ * @remarks
+ * This decorator collects the open data type field names and stores it in the decorator 'metadata' object
+ * in the `OpenDatatypeFields` property. This property is an array of `string` ({ fieldName; fieldNames })
+ * values having one array item for each open data type field.
+ *
+ * @param sourceField - source field name
+ * @returns OpenDataTypesMeta decorator
+ *
+ * @category Decorators
+ */
+export function OpenDataTypesMeta(sourceField: string) {
+  return function (_target: unknown, context: ClassFieldDecoratorContext) {
+    const openDatatypeFields = ((context.metadata[OPEN_DATA_TYPE_FIELDS] as string[] | undefined) ??= [] as string[]);
+
+    openDatatypeFields.push(sourceField);
   };
 }

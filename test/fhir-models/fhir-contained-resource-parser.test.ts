@@ -24,9 +24,9 @@
 import { AssertionError } from 'node:assert';
 import { parseContainedResources } from '@src/fhir-models/fhir-contained-resource-parser';
 import { Group } from '@src/fhir-models/Group';
-import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { PractitionerRole } from '@src/fhir-models/PractitionerRole';
 import { Identifier, Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
 describe('fhir-contained-resource-parser', () => {
   let testGroup: Group;
@@ -84,12 +84,6 @@ describe('fhir-contained-resource-parser', () => {
     };
     expect(t).toThrow(InvalidTypeError);
     expect(t).toThrow(`Invalid JSON 'resourceType' ('badResourceType') value.`);
-
-    t = () => {
-      parseContainedResources(testGroup, [{ resourceType: 'Patient' }], 'sourceField');
-    };
-    expect(t).toThrow(InvalidTypeError);
-    expect(t).toThrow(`Unexpected resource type Patient`);
   });
 
   it('should set valid "contained" entry', () => {

@@ -62,10 +62,12 @@ import {
   parseIdentifier,
   parseMeta,
   parseNarrative,
+  parseOpenDataType,
   parsePeriod,
   parseQuantity,
   parseRange,
   parseReference,
+  parseSignature,
   parseSimpleQuantity,
   PrimitiveTypeJson,
 } from '@src/fhir-core/utility/fhir-parsers';
@@ -103,6 +105,7 @@ import { Narrative } from '@src/fhir-core/data-types/complex/Narrative';
 import { Period } from '@src/fhir-core/data-types/complex/Period';
 import { Quantity } from '@src/fhir-core/data-types/complex/Quantity';
 import { Range } from '@src/fhir-core/data-types/complex/Range';
+import { Signature } from '@src/fhir-core/data-types/complex/Signature';
 import { SimpleQuantity } from '@src/fhir-core/data-types/complex/SimpleQuantity';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
@@ -2054,6 +2057,95 @@ describe('fhir-parsers', () => {
         testType = parsePolymorphicDataType(null, sourceField, fieldName, null);
         expect(testType).toBeUndefined();
       });
+
+      it('should throw AssertionError for missing arguments', () => {
+        const sourceField = 'sourceField';
+        const fieldName = 'fieldName';
+        const dummyMeta: DecoratorMetadataObject = { ChoiceDatatypes: { fieldName: ['id', 'string'] } };
+
+        let t = () => {
+          parsePolymorphicDataType({ bogusJson: true }, sourceField, fieldName, dummyMeta);
+        };
+        expect(t).not.toThrow(AssertionError);
+
+        t = () => {
+          // @ts-expect-error: allow for testing
+          parsePolymorphicDataType({ bogusJson: true }, undefined, fieldName, null);
+        };
+        expect(t).toThrow(AssertionError);
+        expect(t).toThrow(`The sourceField argument is undefined/null.`);
+
+        t = () => {
+          // @ts-expect-error: allow for testing
+          parsePolymorphicDataType({ bogusJson: true }, sourceField, undefined, null);
+        };
+        expect(t).toThrow(AssertionError);
+        expect(t).toThrow(`The fieldName argument is undefined/null.`);
+
+        t = () => {
+          // @ts-expect-error: allow for testing
+          parsePolymorphicDataType({ bogusJson: true }, sourceField, fieldName, undefined);
+        };
+        expect(t).toThrow(AssertionError);
+        expect(t).toThrow(`The metadata argument is undefined/null.`);
+
+        t = () => {
+          parsePolymorphicDataType({ bogusJson: true }, sourceField, fieldName, null);
+        };
+        expect(t).toThrow(AssertionError);
+        expect(t).toThrow(`The metadata argument is undefined/null.`);
+      });
+    });
+
+    describe('parseOpenDataType', () => {
+      const dummyMeta: DecoratorMetadataObject = { OpenDatatypeFields: ['fieldName'] };
+
+      it('should return undefined for empty json', () => {
+        const sourceField = 'sourceField';
+        const fieldName = 'fieldName';
+
+        let testType: DataType | undefined = parseOpenDataType({}, sourceField, fieldName, dummyMeta);
+        expect(testType).toBeUndefined();
+
+        // @ts-expect-error: allow for testing
+        testType = parseOpenDataType(undefined, sourceField, fieldName, dummyMeta);
+        expect(testType).toBeUndefined();
+
+        // @ts-expect-error: allow for testing
+        testType = parseOpenDataType(null, sourceField, fieldName, dummyMeta);
+        expect(testType).toBeUndefined();
+      });
+
+      it('should throw AssertionError for missing arguments', () => {
+        const jsonObj = { bogusJson: true };
+        const sourceField = 'sourceField';
+        const fieldName = 'fieldName';
+
+        let t = () => {
+          parseOpenDataType(jsonObj, sourceField, fieldName, dummyMeta);
+        };
+        expect(t).not.toThrow(AssertionError);
+
+        t = () => {
+          // @ts-expect-error: allow for testing
+          parseOpenDataType(jsonObj, undefined, fieldName, dummyMeta);
+        };
+        expect(t).toThrow(AssertionError);
+        expect(t).toThrow(`The sourceField argument is undefined/null.`);
+
+        t = () => {
+          // @ts-expect-error: allow for testing
+          parseOpenDataType(jsonObj, sourceField, undefined, dummyMeta);
+        };
+        expect(t).toThrow(AssertionError);
+        expect(t).toThrow(`The fieldName argument is undefined/null.`);
+
+        t = () => {
+          parseOpenDataType(jsonObj, sourceField, fieldName, null);
+        };
+        expect(t).toThrow(AssertionError);
+        expect(t).toThrow(`The metadata argument is undefined/null.`);
+      });
     });
 
     describe('parseAddress', () => {
@@ -3196,6 +3288,178 @@ describe('fhir-parsers', () => {
         expect(testType).toBeInstanceOf(Reference);
         expect(testType?.constructor.name).toStrictEqual('Reference');
         expect(testType?.fhirType()).toStrictEqual('Reference');
+        expect(testType?.isEmpty()).toBe(false);
+        expect(testType?.isComplexDataType()).toBe(true);
+        expect(testType?.toJSON()).toEqual(VALID_JSON);
+      });
+    });
+
+    describe('parseSignature', () => {
+      it('should return undefined for empty json', () => {
+        let testType = parseSignature({});
+        expect(testType).toBeUndefined();
+
+        testType = parseSignature(undefined);
+        expect(testType).toBeUndefined();
+
+        testType = parseSignature(null);
+        expect(testType).toBeUndefined();
+      });
+
+      it('should throw FhirError for missing required fields', () => {
+        const INVALID_JSON = { bogus: true };
+
+        const t = () => {
+          parseSignature(INVALID_JSON);
+        };
+        expect(t).toThrow(FhirError);
+        expect(t).toThrow(
+          `The following required properties must be included in the provided JSON: Signature.type, Signature.when, Signature.who`,
+        );
+      });
+
+      it('should throw FhirError for missing type', () => {
+        const INVALID_JSON = { when: '2024-02-07T13:28:00.000+04:00', who: { reference: 'Practitioner/13579' } };
+
+        const t = () => {
+          parseSignature(INVALID_JSON);
+        };
+        expect(t).toThrow(FhirError);
+        expect(t).toThrow(`The following required properties must be included in the provided JSON: Signature.type`);
+      });
+
+      it('should throw TypeError for invalid type', () => {
+        const INVALID_JSON = {
+          type: 'bogus type',
+          when: '2024-02-07T13:28:00.000+04:00',
+          who: { reference: 'Practitioner/13579' },
+        };
+
+        const t = () => {
+          parseSignature(INVALID_JSON);
+        };
+        expect(t).toThrow(TypeError);
+        expect(t).toThrow(`Signature.type is not a JSON array.`);
+      });
+
+      it('should throw FhirError for missing when', () => {
+        const INVALID_JSON = { type: [{ code: '1.2.840.10065.1.12.1.1' }], who: { reference: 'Practitioner/13579' } };
+
+        const t = () => {
+          parseSignature(INVALID_JSON);
+        };
+        expect(t).toThrow(FhirError);
+        expect(t).toThrow(`The following required properties must be included in the provided JSON: Signature.when`);
+      });
+
+      it('should throw PrimitiveTypeError for invalid when', () => {
+        const INVALID_JSON = {
+          type: [{ code: '1.2.840.10065.1.12.1.1' }],
+          when: 'bogus type',
+          who: { reference: 'Practitioner/13579' },
+        };
+
+        const t = () => {
+          parseSignature(INVALID_JSON);
+        };
+        expect(t).toThrow(PrimitiveTypeError);
+        expect(t).toThrow(`Invalid value for InstantType (bogus type)`);
+      });
+
+      it('should throw FhirError for missing who', () => {
+        const INVALID_JSON = { type: [{ code: '1.2.840.10065.1.12.1.1' }], when: '2024-02-07T13:28:00.000+04:00' };
+
+        const t = () => {
+          parseSignature(INVALID_JSON);
+        };
+        expect(t).toThrow(FhirError);
+        expect(t).toThrow(`The following required properties must be included in the provided JSON: Signature.who`);
+      });
+
+      it('should throw TypeError for invalid who', () => {
+        const INVALID_JSON = {
+          type: [{ code: '1.2.840.10065.1.12.1.1' }],
+          when: '2024-02-07T13:28:00.000+04:00',
+          who: 'Practitioner/13579',
+        };
+
+        const t = () => {
+          parseSignature(INVALID_JSON);
+        };
+        expect(t).toThrow(TypeError);
+        expect(t).toThrow(`Signature.who JSON is not a JSON object.`);
+      });
+
+      it('should throw TypeError for invalid json type', () => {
+        const t = () => {
+          parseSignature('NOT AN OBJECT');
+        };
+        expect(t).toThrow(TypeError);
+        expect(t).toThrow(`Signature JSON is not a JSON object.`);
+      });
+
+      it('should return Signature for valid json', () => {
+        const VALID_JSON = {
+          id: 'id1234',
+          extension: [
+            {
+              url: 'testUrl1',
+              valueString: 'base extension string value 1',
+            },
+            {
+              url: 'testUrl2',
+              valueString: 'base extension string value 2',
+            },
+          ],
+          type: [
+            {
+              system: 'urn:iso-astm:E1762-95:2013',
+              code: '1.2.840.10065.1.12.1.1',
+              display: "Author's Signature",
+            },
+          ],
+          when: '2024-02-07T13:28:00.000+04:00',
+          _when: {
+            id: 'S-1357',
+            extension: [
+              {
+                url: 'simpleUrl',
+                valueString: 'simple extension string value',
+              },
+            ],
+          },
+          who: {
+            reference: 'Practitioner/13579',
+          },
+          onBehalfOf: {
+            extension: [
+              {
+                id: 'C-2468',
+                url: 'complexUrl',
+                extension: [
+                  {
+                    url: 'complexChildUrl1',
+                    valueString: 'complex child extension string value 1',
+                  },
+                  {
+                    url: 'complexChildUrl2',
+                    valueString: 'complex child extension string value 2',
+                  },
+                ],
+              },
+            ],
+            reference: 'Organization/24680',
+          },
+          targetFormat: 'xml',
+          sigFormat: 'application/signature+xml',
+          data: 'VGhpcyBpcyBhbiBleGFtcGxlIG9mIGEgRkhJUiBTaWduYXR1cmUgZGF0YS4=',
+        };
+
+        const testType: Signature | undefined = parseSignature(VALID_JSON);
+        expect(testType).toBeDefined();
+        expect(testType).toBeInstanceOf(Signature);
+        expect(testType?.constructor.name).toStrictEqual('Signature');
+        expect(testType?.fhirType()).toStrictEqual('Signature');
         expect(testType?.isEmpty()).toBe(false);
         expect(testType?.isComplexDataType()).toBe(true);
         expect(testType?.toJSON()).toEqual(VALID_JSON);

@@ -98,6 +98,9 @@ export const UNDEFINED_VALUE = undefined;
  * Common constants used in validation testing
  */
 
+export const INVALID_CODE_VALUE = ' Invalid code ';
+export const INVALID_CODE_TYPE = new StringType(INVALID_CODE_VALUE);
+export const INVALID_BASE64BINARY = 'invalidBase64Binary';
 export const INVALID_NON_STRING_TYPE_VALUE = 'Invalid datatype';
 export const INVALID_NON_STRING_TYPE = new StringType(INVALID_NON_STRING_TYPE_VALUE);
 export const INVALID_STRING_TYPE_VALUE = 12345;
