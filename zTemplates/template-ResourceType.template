@@ -1,0 +1,81 @@
+/**
+ * Templates for data models and classes based on the Resource
+ * Templates are provided for:
+ * - Resource Type - Optional
+ * - Resource Type - Required
+ *
+ * NOTE:
+ *   While no specific rule exists in the FHIR specification, use of Resource as a data element data type
+ *   is limited to Bundle and Parameters. In these use cases, the data element is always a single, optional
+ *   value (0..1).
+ *   The exception to the above is the DomainResource.contained. It is always an option list (0..*).
+ */
+
+//***** region Resource Type - Optional **********************************************************************************
+
+// =====================================================================
+// Resource Type 0..1
+// Resource (xxxxFieldName / XxxxFieldName)
+// XxxxParentClassElement (e.g., 'Group.characteristic')
+// =====================================================================
+  private xxxxFieldName?: Resource | undefined;
+
+  // *** NOTE ***
+  // Only copy the internal code block!
+  public static parse(sourceJson: JSON.Object): Resource | undefined {
+
+    sourceField = 'XxxxParentClassElement.xxxxFieldName';
+    fieldName = extractFieldName(sourceField);
+    if (fieldName in classJsonObj) {
+      const datatype: Resource | undefined = parseInlineResource(classJsonObj[fieldName], sourceField);
+      instance.setXxxxFieldName(datatype);
+    }
+
+  }
+
+  /**
+   * @returns the `xxxxFieldName` property value as a XxxxFieldName object
+   */
+  public getXxxxFieldName(): Resource | undefined {
+    return this.xxxxFieldName;
+  }
+
+  /**
+   * Assigns the provided XxxxFieldName object value to the `xxxxFieldName` property.
+   *
+   * @decorator `@ResourceTargets('XxxxParentClassElement.xxxxFieldName', XxxxResourceTypeList)`
+   *
+   * @param value - the `xxxxFieldName` object value
+   * @returns this
+   */
+  @ResourceTargets('XxxxParentClassElement.xxxxFieldName', XxxxResourceTypeList)
+  public setXxxxFieldName(value: Resource | undefined): this {
+    if (isDefined<Resource | undefined>(value)) {
+      const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided element is not an instance of Resource.`;
+      assertFhirResourceType(value, optErrMsg);
+      this.resource = value;
+    } else {
+      this.resource = undefined;
+    }
+    return this;
+  }
+
+  /**
+   * @returns `true` if the `xxxxFieldName` property exists and has a value; `false` otherwise
+   */
+  public hasXxxxFieldName(): boolean {
+    return this.xxxxFieldName !== undefined && !this.xxxxFieldName.isEmpty();
+  }
+
+  // *** NOTE ***
+  // Only copy the "if" block!
+  public override toJSON(): JSON.Value | undefined {
+
+    if (this.hasXxxxFieldName()) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      setFhirResourceJson(this.getXxxxFieldName()!, 'xxxxFieldName', jsonObj);
+    }
+
+  }
+
+//endregion

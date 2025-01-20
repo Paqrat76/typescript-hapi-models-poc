@@ -1062,7 +1062,12 @@ export class Extension extends Element implements IBase {
    */
   @OpenDataTypes('Extension.value[x]')
   public setValue(value: DataType | undefined): this {
-    this.value = value;
+    if (isDefined<DataType | undefined>(value)) {
+      // assertFhirType<DataType>(value, DataType) unnecessary because @OpenDataTypes decorator ensures proper type/value
+      this.value = value;
+    } else {
+      this.value = undefined;
+    }
     return this;
   }
 
@@ -1512,6 +1517,9 @@ export function setFhirBackboneTypeListJson(bTypes: BackboneType[], propName: st
  * complex data type names. These values are available in each data type class as `instance.fhirType()`.
  * FhirOpenDataTypes are used in the following places: ElementDefinition, Extension, Parameters, Task,
  * and Transport (R5).
+ *
+ * @privateRemarks
+ * The OpenDataTypesMeta() decorator exists in fhir-core/utility/decorators.ts
  *
  * @param sourceField - source field name
  * @returns OpenDataTypes decorator

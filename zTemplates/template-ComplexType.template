@@ -387,7 +387,8 @@
     const missingReqdProperties: string[] = [];
 
     if (this.hasXxxxFieldName()) {
-      setFhirComplexListJson(this.getXxxxFieldName(), 'xxxxFieldName', jsonObj);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      setFhirComplexListJson(this.getXxxxFieldName()!, 'xxxxFieldName', jsonObj);
     } else {
       missingReqdProperties.push(`XxxxParentClassElement.xxxxFieldName`);
     }

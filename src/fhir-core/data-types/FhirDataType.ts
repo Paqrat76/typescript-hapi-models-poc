@@ -85,6 +85,7 @@ export const OPEN_DATA_TYPES = [
   // Metadata Types
   'Availability', // added in FHIR R5
   'ContactDetail',
+  'Contributor',
   'DataRequirement',
   'Expression',
   'ExtendedContactDetail', // added in FHIR R5

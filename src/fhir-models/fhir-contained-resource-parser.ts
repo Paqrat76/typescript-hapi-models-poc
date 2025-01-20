@@ -37,12 +37,14 @@ import { strict as assert } from 'node:assert';
 import { Resource } from '@src/fhir-core/base-models/Resource';
 import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
 import { isFhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
-import * as JSON from '@src/fhir-core/utility/json-helpers';
-import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { Group } from '@src/fhir-models/Group';
+import { Parameters } from '@src/fhir-models/Parameters';
+import { Patient } from '@src/fhir-models/Patient';
 import { PractitionerRole } from '@src/fhir-models/PractitionerRole';
 import { isDefined } from '@src/fhir-core/utility/type-guards';
 import { isEmpty } from '@src/fhir-core/utility/common-util';
+import * as JSON from '@src/fhir-core/utility/json-helpers';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
 // Ignore for coverage because all parse methods have their own tests
 /* istanbul ignore next */
@@ -62,23 +64,33 @@ function getFhirModelParseResults(resourceTypeValue: string, jsonObj: JSON.Objec
     case 'Group':
       parseResult = Group.parse(jsonObj);
       break;
+    case 'Parameters':
+      parseResult = Parameters.parse(jsonObj);
+      break;
+    case 'Patient':
+      parseResult = Patient.parse(jsonObj);
+      break;
     case 'PractitionerRole':
       parseResult = PractitionerRole.parse(jsonObj);
       break;
     default:
+      // TODO: Eventually return undefined rather that throw an error - throwing error during POC development
+      // return parseResult; // undefined
       throw new InvalidTypeError(`Unexpected resource type ${resourceTypeValue}`);
   }
   return parseResult;
 }
 
 /**
- * Obtains the parsed `contained` Resource for the provided json
+ * Obtains the appropriate parsed Resource for the provided json
  *
  * @param json - JSON value to be parsed
  * @param sourceField - Source of the provided json
  * @returns the parsed Resource or undefined
+ *
+ * @category Utilities: FHIR Parsers
  */
-function parseContainedResource(json: JSON.Value | undefined, sourceField: string): Resource | undefined {
+export function parseInlineResource(json: JSON.Value | undefined, sourceField: string): Resource | undefined {
   if (!isDefined<JSON.Value | undefined>(json) || (JSON.isJsonObject(json) && isEmpty(json))) {
     return undefined;
   }
@@ -118,7 +130,7 @@ export function parseContainedResources(
   assert.ok(sourceField, 'sourceField argument is required');
 
   containedJsonArray.forEach((containedJson: JSON.Value, idx) => {
-    const datatype: Resource | undefined = parseContainedResource(containedJson, `${sourceField}[${String(idx)}]`);
+    const datatype: Resource | undefined = parseInlineResource(containedJson, `${sourceField}[${String(idx)}]`);
     instance.addContained(datatype);
   });
 }

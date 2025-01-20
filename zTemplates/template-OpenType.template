@@ -1,60 +1,50 @@
 /**
- * Templates for choice (polymorphic) data models and classes based on the DataType
+ * Templates for open data models and classes based on the DataType
  * Templates are provided for:
- * - Choice Type - Optional
- * - Choice Type - Required
+ * - Open Type - Optional
+ * - Open Type - Required
  *
  * NOTE:
- *   Elements that have a choice of data type cannot repeat - they must have a maximum cardinality of 1.
- *   When constructing an instance of an element with a choice of types, the authoring system must create
+ *   Elements that have an open of data type cannot repeat - they must have a maximum cardinality of 1.
+ *   When constructing an instance of an element with an open type, the authoring system must create
  *   a single element with a data type chosen from among the list of permitted data types.
- *   To help with code generation, [a list of choice elements](https://hl7.org/fhir/R4/choice-elements.json) is published.
  *
- * @see [Choice of Data Types](https://hl7.org/fhir/R4/formats.html#choice)
+ * @see [Open Type Element](https://hl7.org/fhir/R4/datatypes.html#open)
  */
 
-//***** region Choice Type - Optional **********************************************************************************
+//***** region Open Type - Optional **********************************************************************************
 
 // =====================================================================
-// Choice Type 0..1
+// Open Type 0..1
 // DataType (xxxxFieldName / XxxxFieldName)
 // XxxxParentClassName / XxxxParentClassElement
 //   e.g., GroupCharacteristicComponent / 'Group.characteristic'
-// XxxxChoiceTypeList
-//   e.g., ['boolean', 'CodeableConcept']
 // =====================================================================
   /**
    * XxxxParentClassElement.xxxxFieldName[x] Element
    *
-   * @decorator `@ChoiceDataTypesMeta('XxxxParentClassElement.xxxxFieldName[x]', XxxxChoiceTypeList)`
+   * @decorator `@OpenDataTypesMeta('XxxxParentClassElement.xxxxFieldName[x]')`
    *
    * @remarks
    * **FHIR Specification**
    * ...
    */
-  @ChoiceDataTypesMeta('XxxxParentClassElement.xxxxFieldName[x]', XxxxChoiceTypeList)
+  @OpenDataTypesMeta('XxxxParentClassElement.xxxxFieldName[x]')
   private xxxxFieldName?: DataType | undefined;
 
   // *** NOTE ***
   // Only copy the internal code block!
   public static parse(sourceJson: JSON.Object): DataType | undefined {
 
-    // NOTE: Added IF and ONLY IF a choice data type is used
+    // NOTE: Added IF and ONLY IF an open data type is used
     const classMetadata: DecoratorMetadataObject | null = XxxxParentClassName[Symbol.metadata];
 
 
     sourceField = 'XxxxParentClassElement.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
     if (isDefined<DecoratorMetadataObject | null>(classMetadata)) {
-      const datatype: DataType | undefined = parsePolymorphicDataType(
-        classJsonObj,
-        sourceField,
-        fieldName,
-        classMetadata,
-      );
-      if (datatype !== undefined) {
-        instance.setXxxxFieldName(datatype);
-      }
+      const datatype: DataType | undefined = parseOpenDataType(backboneJsonObj, sourceField, fieldName, classMetadata);
+      instance.setXxxxFieldName(datatype);
     }
 
   }
@@ -69,15 +59,15 @@
   /**
    * Assigns the provided DataType object value to the `xxxxFieldName` property.
    *
-   * @decorator `@ChoiceDataTypes('XxxxParentClassElement.xxxxFieldName[x]')`
+   * @decorator `@OpenDataTypes('XxxxParentClassElement.xxxxFieldName[x]')`
    *
    * @param value - the `xxxxFieldName` object value
    * @returns this
    */
-  @ChoiceDataTypes('XxxxParentClassElement.xxxxFieldName[x]')
+  @OpenDataTypes('XxxxParentClassElement.xxxxFieldName[x]')
   public setXxxxFieldName(value: DataType | undefined): this {
     if (isDefined<DataType | undefined>(value)) {
-      // assertFhirType<DataType>(value, DataType) unnecessary because @ChoiceDataTypes decorator ensures proper type/value
+      // assertFhirType<DataType>(value, DataType) unnecessary because @OpenDataTypes decorator ensures proper type/value
       this.xxxxFieldName = value;
     } else {
       this.xxxxFieldName = undefined;
@@ -91,33 +81,6 @@
   public hasXxxxFieldName(): boolean {
     return this.xxxxFieldName !== undefined && !this.xxxxFieldName.isEmpty();
   }
-
-  // *** NOTE ***
-  // Next "get"/"has" methods are added for each choice data type - one pair of methods for each choice data type
-  // XxxxChoiceDataType (e.g., CodeableConcept, StringType, etc.)
-
-  /**
-   * @returns the `xxxxFieldName` property value as a XxxxChoiceDataType object
-   */
-  public getXxxxFieldNameXxxxChoiceDataType(): XxxxChoiceDataType | undefined {
-    if (!isDefined<DataType | undefined>(this.xxxxFieldName)) {
-      return undefined;
-    }
-    if (!(this.xxxxFieldName instanceof XxxxChoiceDataType)) {
-      throw new InvalidTypeError(
-        `DataType mismatch for XxxxParentClassElement.xxxxFieldName[x]: Expected XxxxChoiceDataType but encountered ${this.xxxxFieldName.fhirType()}`,
-      );
-    }
-    return this.xxxxFieldName;
-  }
-
-  /**
-   * @returns `true` if the `xxxxFieldName` property exists as a XxxxChoiceDataType and has a value; `false` otherwise
-   */
-  public hasXxxxFieldNameXxxxChoiceDataType(): boolean {
-    return this.hasXxxxFieldName() && this.xxxxFieldName instanceof XxxxChoiceDataType;
-  }
-
 
 
   // *** NOTE ***
@@ -133,26 +96,24 @@
 
 //endregion
 
-//***** region Choice Type - Required **********************************************************************************
+//***** region Open Type - Required **********************************************************************************
 
 // =====================================================================
-// Choice Type 1..1
+// Open Type 1..1
 // DataType (xxxxFieldName / XxxxFieldName)
 // XxxxParentClassName / XxxxParentClassElement
 //   e.g., GroupCharacteristicComponent / 'Group.characteristic'
-// XxxxChoiceTypeList
-//   e.g., ['boolean', 'CodeableConcept']
 // =====================================================================
   /**
    * XxxxParentClassElement.xxxxFieldName[x] Element
    *
-   * @decorator `@ChoiceDataTypesMeta('XxxxParentClassElement.xxxxFieldName[x]', XxxxChoiceTypeList)`
+   * @decorator `@OpenDataTypesMeta('XxxxParentClassElement.xxxxFieldName[x]')`
    *
    * @remarks
    * **FHIR Specification**
    * ...
    */
-  @ChoiceDataTypesMeta('XxxxParentClassElement.xxxxFieldName[x]', XxxxChoiceTypeList)
+  @OpenDataTypesMeta('XxxxParentClassElement.xxxxFieldName[x]')
   private xxxxFieldName: DataType | null;
 
   constructor(xxxxFieldName: DataType | null) {
@@ -168,7 +129,7 @@
   // Only copy the internal code block!
   public static parse(sourceJson: JSON.Object): DataType | undefined {
 
-    // NOTE: Added IF and ONLY IF a choice data type is used
+    // NOTE: Added IF and ONLY IF an open data type is used
     const classMetadata: DecoratorMetadataObject | null = XxxxParentClassName[Symbol.metadata];
 
     // *** NOTE ***
@@ -179,12 +140,7 @@
     sourceField = 'XxxxParentClassElement.xxxxFieldName[x]';
     fieldName = extractFieldName(sourceField);
     if (isDefined<DecoratorMetadataObject | null>(classMetadata)) {
-      const datatype: DataType | undefined = parsePolymorphicDataType(
-        classJsonObj,
-        sourceField,
-        fieldName,
-        classMetadata,
-      );
+      const datatype: DataType | undefined = parseOpenDataType(backboneJsonObj, sourceField, fieldName, classMetadata);
       if (datatype !== undefined) {
         instance.setXxxxFieldName(datatype);
       } else {
@@ -224,7 +180,7 @@
   @ChoiceDataTypes('XxxxParentClassElement.xxxxFieldName[x]')
   public setXxxxFieldName(value: DataType): this {
     assertIsDefined<DataType>(value, `XxxxParentClassElement.xxxxFieldName[x] is required`);
-    // assertFhirType<DataType>(value, DataType) unnecessary because @ChoiceDataTypes decorator ensures proper type/value
+    // assertFhirType<DataType>(value, DataType) unnecessary because @OpenDataTypes decorator ensures proper type/value
     this.xxxxFieldName = value;
     return this;
   }
@@ -235,34 +191,6 @@
   public hasXxxxFieldName(): boolean {
     return isDefined<DataType | null>(this.xxxxFieldName) && !this.xxxxFieldName.isEmpty();
   }
-
-
-  // *** NOTE ***
-  // Next "get"/"has" methods are added for each choice data type - one pair of methods for each choice data type
-  // XxxxChoiceDataType (e.g., CodeableConcept, StringType, etc.)
-
-  /**
-   * @returns the `xxxxFieldName` property value as a XxxxChoiceDataType object
-   */
-  public getXxxxFieldNameXxxxChoiceDataType(): XxxxChoiceDataType | null {
-    if (!isDefined<DataType | null>(this.xxxxFieldName)) {
-      return null;
-    }
-    if (!(this.xxxxFieldName instanceof XxxxChoiceDataType)) {
-      throw new InvalidTypeError(
-        `DataType mismatch for XxxxParentClassElement.xxxxFieldName[x]: Expected XxxxChoiceDataType but encountered ${this.xxxxFieldName.fhirType()}`,
-      );
-    }
-    return this.xxxxFieldName;
-  }
-
-  /**
-   * @returns `true` if the `xxxxFieldName` property exists as a XxxxChoiceDataType and has a value; `false` otherwise
-   */
-  public hasXxxxFieldNameXxxxChoiceDataType(): boolean {
-    return this.hasXxxxFieldName() && this.xxxxFieldName instanceof XxxxChoiceDataType;
-  }
-
 
 
   // *** NOTE ***

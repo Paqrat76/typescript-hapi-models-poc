@@ -42,7 +42,7 @@ import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { BackboneElement, DataType, Extension } from '@src/fhir-core/base-models/core-fhir-models';
 import { Resource } from '@src/fhir-core/base-models/Resource';
 import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
-import { FhirDataType, OPEN_DATE_TYPE_KEY_NAMES } from '@src/fhir-core/data-types/FhirDataType';
+import { FhirDataType, OPEN_DATA_TYPES, OPEN_DATE_TYPE_KEY_NAMES } from '@src/fhir-core/data-types/FhirDataType';
 import { Base64BinaryType } from '@src/fhir-core/data-types/primitive/Base64BinaryType';
 import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
 import { CanonicalType } from '@src/fhir-core/data-types/primitive/CanonicalType';
@@ -77,9 +77,10 @@ import { Period } from '@src/fhir-core/data-types/complex/Period';
 import { Quantity } from '@src/fhir-core/data-types/complex/Quantity';
 import { Range } from '@src/fhir-core/data-types/complex/Range';
 import { SimpleQuantity } from '@src/fhir-core/data-types/complex/SimpleQuantity';
+import { Signature } from '@src/fhir-core/data-types/complex/Signature';
 import { FhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
 import { isEmpty, upperFirst } from '@src/fhir-core/utility/common-util';
-import { getChoiceDatatypeDefsForField } from '@src/fhir-core/utility/decorators';
+import { getChoiceDatatypeDefsForField, getOpenDatatypeFields } from '@src/fhir-core/utility/decorators';
 import { assertIsDefined, assertIsString, isDefined } from '@src/fhir-core/utility/type-guards';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
@@ -164,6 +165,7 @@ export function parseExtension(json: JSON.Object | undefined): Extension | undef
  * @interface
  * @category Utilities: FHIR Parsers
  */
+
 export interface PrimitiveTypeJson {
   dtJson: JSON.Value | undefined;
   dtSiblingJson: JSON.Object | undefined;
@@ -452,6 +454,8 @@ export function getValueXData(jsonObj: JSON.Object, fieldName: string): DataType
           return parseRange(dataValue);
         case 'valueReference':
           return parseReference(dataValue);
+        case 'valueSignature':
+          return parseSignature(dataValue);
         case 'valueSimpleQuantity':
           return parseSimpleQuantity(dataValue);
 
@@ -1128,13 +1132,17 @@ export function parseXhtmlType(json: JSON.Value | undefined, siblingJson?: JSON.
 //region ComplexTypes
 
 /**
- * Parse the provided json into the appropriate data model for the choice data types.
+ * Parse the provided json into the appropriate data model instance for the choice data types.
  *
  * @param jsonObj - JSON representing the choice data type
  * @param sourceField - data source field (e.g. `<TypeName>.<TypeFieldName>`)
- * @param fieldName - JSON field name (without '[x]' if polymorphic)
+ * @param fieldName - JSON field name (without '[x]')
  * @param metadata - ChoiceDataTypesMeta decorator metadata
- * @returns choice data type data model or undefined
+ * @returns choice data type parsed instance or undefined
+ * @throws AssertionError for missing parameters
+ * @throws FhirError for invalid "value[x]" property
+ * @throws TypeError for failure parsing "value[x]"
+ * @throws Error for unexpected parsing error
  *
  * @category Utilities: FHIR Parsers
  */
@@ -1154,8 +1162,69 @@ export function parsePolymorphicDataType(
   const choiceDataTypes: FhirDataType[] = getChoiceDatatypeDefsForField(metadata, fieldName);
   const supportedFieldNames = choiceDataTypes.map((item) => `${fieldName}${upperFirst(item)}`);
 
-  // e.g., ['boolean', 'CodeableConcept', 'Quantity', 'Range', 'Reference']
+  return getParsedType(jsonObj, sourceField, fieldName, supportedFieldNames);
+}
+
+/**
+ * Parse the provided json into the appropriate data model instance for the open data types.
+ *
+ * @param jsonObj - JSON representing the open data type
+ * @param sourceField - data source field (e.g. `<TypeName>.<TypeFieldName>`)
+ * @param fieldName - JSON field name (without '[x]')
+ * @param metadata - OpenDataTypesMeta decorator metadata
+ * @returns open data type parsed instance or undefined
+ * @throws AssertionError for missing parameters
+ * @throws FhirError for invalid "value[x]" property
+ * @throws TypeError for failure parsing "value[x]"
+ * @throws Error for unexpected parsing error
+ *
+ * @category Utilities: FHIR Parsers
+ */
+export function parseOpenDataType(
+  jsonObj: JSON.Object,
+  sourceField: string,
+  fieldName: string,
+  metadata: DecoratorMetadataObject | null,
+): DataType | undefined {
+  if (!JSON.hasFhirData(jsonObj)) {
+    return undefined;
+  }
+  assertIsDefined<string>(sourceField, `The sourceField argument is undefined/null.`);
+  assertIsDefined<string>(fieldName, `The fieldName argument is undefined/null.`);
+  assertIsDefined<DecoratorMetadataObject | null>(metadata, `The metadata argument is undefined/null.`);
+
+  const openDatatypeFields: string[] = getOpenDatatypeFields(metadata);
+  if (openDatatypeFields.includes(sourceField)) {
+    const supportedFieldNames = OPEN_DATA_TYPES.map((item) => `${fieldName}${upperFirst(item)}`);
+    return getParsedType(jsonObj, sourceField, fieldName, supportedFieldNames);
+  }
+
+  return undefined;
+}
+
+/**
+ * Return the parsed instance from the provided json for the appropriate data type.
+ *
+ * @param jsonObj - JSON representing the open data type
+ * @param sourceField - data source field (e.g. `<TypeName>.<TypeFieldName>`)
+ * @param fieldName - JSON field name (without '[x]')
+ * @param supportedFieldNames - polymorphic or open data type field names
+ * @returns parsed instance or undefined
+ * @throws FhirError for invalid "value[x]" property
+ * @throws TypeError for failure parsing "value[x]"
+ * @throws Error for unexpected parsing error
+ *
+ * @category Utilities: FHIR Parsers
+ * @private
+ */
+function getParsedType(
+  jsonObj: JSON.Object,
+  sourceField: string,
+  fieldName: string,
+  supportedFieldNames: string[],
+): DataType | undefined {
   const valueKeys = Object.keys(jsonObj).filter((key) => key.startsWith(fieldName));
+
   if (fieldName in jsonObj) {
     throw new FhirError(INVALID_VALUEX_PROPERTY);
   } else if (valueKeys.length > 1) {
@@ -1168,11 +1237,9 @@ export function parsePolymorphicDataType(
       if (err instanceof TypeError) {
         throw new TypeError(`Failed to parse ${sourceField}: ${err.message}`, err);
       } else {
-        throw new Error(`Unexpected error parsing ${sourceField} from the provided JSON`);
+        const unexpectedErrorMsg = `Unexpected error parsing ${sourceField} from the provided JSON`;
+        throw new Error(unexpectedErrorMsg);
       }
-    }
-    if (instance === undefined) {
-      throw new Error(`Failed to parse ${sourceField} from the provided JSON`);
     }
     return instance;
   }
@@ -1921,6 +1988,99 @@ export function parseReference(json: JSON.Value | undefined, sourceField?: strin
     const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'display', 'string');
     const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
     instance.setDisplayElement(datatype);
+  }
+
+  assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
+  return instance;
+}
+
+/**
+ * Parse the provided json into Signature data model.
+ *
+ * @param json - JSON representing Signature
+ * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Signature
+ * @returns Signature data model or undefined
+ *
+ * @category Utilities: FHIR Parsers
+ */
+export function parseSignature(json: JSON.Value | undefined, sourceField?: string): Signature | undefined {
+  if (!JSON.hasFhirData(json)) {
+    return undefined;
+  }
+
+  const source = isDefined<string | undefined>(sourceField) ? sourceField : 'Signature';
+
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
+  const instance = new Signature(null, null, null);
+
+  processElementJson(instance, datatypeJsonObj);
+
+  const missingReqdProperties: string[] = [];
+
+  if ('type' in datatypeJsonObj) {
+    const dataElementJsonArray: JSON.Array = JSON.asArray(datatypeJsonObj['type'], `${source}.type`);
+    dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
+      const datatype: Coding | undefined = parseCoding(dataElementJson, `${source}.type[${String(idx)}]`);
+      if (datatype === undefined) {
+        missingReqdProperties.push(`${source}.type[${String(idx)}]`);
+      } else {
+        instance.addType(datatype);
+      }
+    });
+  } else {
+    missingReqdProperties.push(`${source}.type`);
+  }
+
+  if ('when' in datatypeJsonObj) {
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'when', 'string');
+    const datatype: InstantType | undefined = parseInstantType(dtJson, dtSiblingJson);
+    if (datatype === undefined) {
+      missingReqdProperties.push(`${source}.when`);
+    } else {
+      instance.setWhenElement(datatype);
+    }
+  } else {
+    missingReqdProperties.push(`${source}.when`);
+  }
+
+  if ('who' in datatypeJsonObj) {
+    const datatype: Reference | undefined = parseReference(datatypeJsonObj['who'], `${source}.who`);
+    if (datatype === undefined) {
+      missingReqdProperties.push(`${source}.who`);
+    } else {
+      instance.setWho(datatype);
+    }
+  } else {
+    missingReqdProperties.push(`${source}.who`);
+  }
+
+  if ('onBehalfOf' in datatypeJsonObj) {
+    const datatype: Reference | undefined = parseReference(datatypeJsonObj['onBehalfOf'], `${source}.onBehalfOf`);
+    instance.setOnBehalfOf(datatype);
+  }
+
+  if ('targetFormat' in datatypeJsonObj) {
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'targetFormat', 'string');
+    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
+    instance.setTargetFormatElement(datatype);
+  }
+
+  if ('sigFormat' in datatypeJsonObj) {
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'sigFormat', 'string');
+    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
+    instance.setSigFormatElement(datatype);
+  }
+
+  if ('data' in datatypeJsonObj) {
+    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'data', 'string');
+    const datatype: Base64BinaryType | undefined = parseBase64BinaryType(dtJson, dtSiblingJson);
+    instance.setDataElement(datatype);
+  }
+
+  if (missingReqdProperties.length > 0) {
+    const errMsg = `${REQUIRED_PROPERTIES_REQD_IN_JSON} ${missingReqdProperties.join(', ')}`;
+    throw new FhirError(errMsg);
   }
 
   assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);

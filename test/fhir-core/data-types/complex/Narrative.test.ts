@@ -549,7 +549,7 @@ describe('Narrative', () => {
       expect(testNarrative.hasExtension()).toBe(true);
       expect(testNarrative.getExtension()).toEqual([testExtension1, testExtension2]);
 
-      // Period properties
+      // Narrative properties
       expect(testNarrative.hasStatusEnumType()).toBe(true);
       expect(testNarrative.getStatusEnumType()).toEqual(new EnumCodeType(statusType, narrativeStatusEnum));
       expect(testNarrative.hasStatusElement()).toBe(true);

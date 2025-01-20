@@ -1226,14 +1226,12 @@ export class GroupCharacteristicComponent extends BackboneElement {
         fieldName,
         classMetadata,
       );
-      if (datatype !== undefined) {
-        instance.setValue(datatype);
-      } else {
-        // Report the missing required field
+      if (datatype === undefined) {
         missingReqdProperties.push(sourceField);
+      } else {
+        instance.setValue(datatype);
       }
     } else {
-      // Report the missing required field
       missingReqdProperties.push(sourceField);
     }
 
