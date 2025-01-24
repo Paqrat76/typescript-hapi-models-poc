@@ -357,7 +357,9 @@
       );
       dataJsonArray.forEach((dataJson: PrimitiveTypeJson) => {
         const datatype: CodeType | undefined = parseCodeType(dataJson.dtJson, dataJson.dtSiblingJson);
-        instance.addXxxxFieldNameElement(datatype);
+        if (datatype !== undefined) {
+          instance.addXxxxFieldNameElement(datatype);
+        }
       });
     }
 

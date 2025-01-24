@@ -131,6 +131,8 @@ export function parseContainedResources(
 
   containedJsonArray.forEach((containedJson: JSON.Value, idx) => {
     const datatype: Resource | undefined = parseInlineResource(containedJson, `${sourceField}[${String(idx)}]`);
-    instance.addContained(datatype);
+    if (datatype !== undefined) {
+      instance.addContained(datatype);
+    }
   });
 }

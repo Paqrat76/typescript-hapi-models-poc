@@ -166,7 +166,9 @@ export class Group extends DomainResource implements IBase {
       const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
         const datatype: Identifier | undefined = parseIdentifier(dataElementJson, `${sourceField}[${String(idx)}]`);
-        instance.addIdentifier(datatype);
+        if (datatype !== undefined) {
+          instance.addIdentifier(datatype);
+        }
       });
     }
 
@@ -243,7 +245,9 @@ export class Group extends DomainResource implements IBase {
       const componentJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       componentJsonArray.forEach((componentJson: JSON.Value) => {
         const component: GroupCharacteristicComponent | undefined = GroupCharacteristicComponent.parse(componentJson);
-        instance.addCharacteristic(component);
+        if (component !== undefined) {
+          instance.addCharacteristic(component);
+        }
       });
     }
 
@@ -254,7 +258,9 @@ export class Group extends DomainResource implements IBase {
       const componentJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       componentJsonArray.forEach((componentJson: JSON.Value) => {
         const component: GroupMemberComponent | undefined = GroupMemberComponent.parse(componentJson);
-        instance.addMember(component);
+        if (component !== undefined) {
+          instance.addMember(component);
+        }
       });
     }
 

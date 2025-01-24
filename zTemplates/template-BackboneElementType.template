@@ -25,7 +25,8 @@
     sourceField = 'XxxxParentClassElement.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
     if (fieldName in classJsonObj) {
-      const datatype: XxxxClass | undefined = XxxxClass.parse(classJsonObj[fieldName]);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const datatype: XxxxClass | undefined = XxxxClass.parse(classJsonObj[fieldName]!);
       instance.setXxxxFieldName(datatype);
     }
 
@@ -196,7 +197,9 @@
       const componentJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       componentJsonArray.forEach((componentJson: JSON.Value) => {
         const component: XxxxClass | undefined = XxxxClass.parse(componentJson);
-        instance.addXxxxFieldName(component);
+        if (component !== undefined) {
+          instance.addXxxxFieldName(component);
+        }
       });
     }
 
@@ -307,10 +310,10 @@
       const componentJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       componentJsonArray.forEach((componentJson: JSON.Value) => {
         const component: XxxxClass | undefined = XxxxClass.parse(componentJson);
-        if (datatype === undefined) {
+        if (component === undefined) {
           missingReqdProperties.push(sourceField);
         } else {
-          instance.setXxxxFieldName(datatype);
+          instance.addXxxxFieldName(component);
         }
       });
     } else {

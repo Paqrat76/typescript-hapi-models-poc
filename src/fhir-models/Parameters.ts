@@ -104,7 +104,9 @@ export class Parameters extends Resource implements IBase {
       const componentJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       componentJsonArray.forEach((componentJson: JSON.Value) => {
         const component: ParametersParameterComponent | undefined = ParametersParameterComponent.parse(componentJson);
-        instance.addParameter(component);
+        if (component !== undefined) {
+          instance.addParameter(component);
+        }
       });
     }
 
@@ -327,7 +329,9 @@ export class ParametersParameterComponent extends BackboneElement {
       const componentJsonArray: JSON.Array = JSON.asArray(backboneJsonObj[fieldName]!, sourceField);
       componentJsonArray.forEach((componentJson: JSON.Value) => {
         const component: ParametersParameterComponent | undefined = ParametersParameterComponent.parse(componentJson);
-        instance.addPart(component);
+        if (component !== undefined) {
+          instance.addPart(component);
+        }
       });
     }
 

@@ -154,7 +154,9 @@ export class Patient extends DomainResource implements IBase {
       const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
         const datatype: Identifier | undefined = parseIdentifier(dataElementJson, `${sourceField}[${String(idx)}]`);
-        instance.addIdentifier(datatype);
+        if (datatype !== undefined) {
+          instance.addIdentifier(datatype);
+        }
       });
     }
 
@@ -173,7 +175,9 @@ export class Patient extends DomainResource implements IBase {
       const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
         const datatype: HumanName | undefined = parseHumanName(dataElementJson, `${sourceField}[${String(idx)}]`);
-        instance.addName(datatype);
+        if (datatype !== undefined) {
+          instance.addName(datatype);
+        }
       });
     }
 
@@ -184,7 +188,9 @@ export class Patient extends DomainResource implements IBase {
       const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
         const datatype: ContactPoint | undefined = parseContactPoint(dataElementJson, `${sourceField}[${String(idx)}]`);
-        instance.addTelecom(datatype);
+        if (datatype !== undefined) {
+          instance.addTelecom(datatype);
+        }
       });
     }
 
@@ -213,9 +219,7 @@ export class Patient extends DomainResource implements IBase {
         fieldName,
         classMetadata,
       );
-      if (datatype !== undefined) {
-        instance.setDeceased(datatype);
-      }
+      instance.setDeceased(datatype);
     }
 
     sourceField = 'Patient.address';
@@ -225,7 +229,9 @@ export class Patient extends DomainResource implements IBase {
       const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
         const datatype: Address | undefined = parseAddress(dataElementJson, `${sourceField}[${String(idx)}]`);
-        instance.addAddress(datatype);
+        if (datatype !== undefined) {
+          instance.addAddress(datatype);
+        }
       });
     }
 
@@ -245,9 +251,7 @@ export class Patient extends DomainResource implements IBase {
         fieldName,
         classMetadata,
       );
-      if (datatype !== undefined) {
-        instance.setMultipleBirth(datatype);
-      }
+      instance.setMultipleBirth(datatype);
     }
 
     sourceField = 'Patient.photo';
@@ -257,7 +261,9 @@ export class Patient extends DomainResource implements IBase {
       const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
         const datatype: Attachment | undefined = parseAttachment(dataElementJson, `${sourceField}[${String(idx)}]`);
-        instance.addPhoto(datatype);
+        if (datatype !== undefined) {
+          instance.addPhoto(datatype);
+        }
       });
     }
 
@@ -268,7 +274,9 @@ export class Patient extends DomainResource implements IBase {
       const componentJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       componentJsonArray.forEach((componentJson: JSON.Value) => {
         const component: PatientContactComponent | undefined = PatientContactComponent.parse(componentJson);
-        instance.addContact(component);
+        if (component !== undefined) {
+          instance.addContact(component);
+        }
       });
     }
 
@@ -279,7 +287,9 @@ export class Patient extends DomainResource implements IBase {
       const componentJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       componentJsonArray.forEach((componentJson: JSON.Value) => {
         const component: PatientCommunicationComponent | undefined = PatientCommunicationComponent.parse(componentJson);
-        instance.addCommunication(component);
+        if (component !== undefined) {
+          instance.addCommunication(component);
+        }
       });
     }
 
@@ -290,7 +300,9 @@ export class Patient extends DomainResource implements IBase {
       const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
         const datatype: Reference | undefined = parseReference(dataElementJson, `${sourceField}[${String(idx)}]`);
-        instance.addGeneralPractitioner(datatype);
+        if (datatype !== undefined) {
+          instance.addGeneralPractitioner(datatype);
+        }
       });
     }
 
@@ -308,7 +320,9 @@ export class Patient extends DomainResource implements IBase {
       const componentJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       componentJsonArray.forEach((componentJson: JSON.Value) => {
         const component: PatientLinkComponent | undefined = PatientLinkComponent.parse(componentJson);
-        instance.addLink(component);
+        if (component !== undefined) {
+          instance.addLink(component);
+        }
       });
     }
 
@@ -1775,7 +1789,9 @@ export class PatientContactComponent extends BackboneElement {
           dataElementJson,
           `${sourceField}[${String(idx)}]`,
         );
-        instance.addRelationship(datatype);
+        if (datatype !== undefined) {
+          instance.addRelationship(datatype);
+        }
       });
     }
 
@@ -1793,7 +1809,9 @@ export class PatientContactComponent extends BackboneElement {
       const dataElementJsonArray: JSON.Array = JSON.asArray(backboneJsonObj[fieldName]!, sourceField);
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
         const datatype: ContactPoint | undefined = parseContactPoint(dataElementJson, `${sourceField}[${String(idx)}]`);
-        instance.addTelecom(datatype);
+        if (datatype !== undefined) {
+          instance.addTelecom(datatype);
+        }
       });
     }
 

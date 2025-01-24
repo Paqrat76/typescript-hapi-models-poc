@@ -157,7 +157,7 @@ export function parseExtension(json: JSON.Object | undefined): Extension | undef
  * PrimitiveTypeJson
  *
  * @privateRemarks
- * Single object containing the JSON for for both the primitive data value and its sibling data Element, if any.
+ * Single object containing the JSON for both the primitive data value and its sibling data Element, if any.
  *
  * @param dtJson - primitive data JSON
  * @param dtSiblingJson - primitive data's sibling Element JSON
@@ -165,7 +165,6 @@ export function parseExtension(json: JSON.Object | undefined): Extension | undef
  * @interface
  * @category Utilities: FHIR Parsers
  */
-
 export interface PrimitiveTypeJson {
   dtJson: JSON.Value | undefined;
   dtSiblingJson: JSON.Object | undefined;
@@ -344,7 +343,9 @@ export function processDomainResourceJson(instance: DomainResource, dataJson: JS
     const extensionArray = JSON.asArray(resourceObj['extension'], `${sourceResource}.extension`);
     extensionArray.forEach((extensionJson: JSON.Value) => {
       const datatype: Extension | undefined = parseExtension(extensionJson as JSON.Object);
-      instance.addExtension(datatype);
+      if (datatype !== undefined) {
+        instance.addExtension(datatype);
+      }
     });
   }
 
@@ -355,7 +356,9 @@ export function processDomainResourceJson(instance: DomainResource, dataJson: JS
     );
     modifierExtensionArray.forEach((extensionJson: JSON.Value) => {
       const datatype: Extension | undefined = parseExtension(extensionJson as JSON.Object);
-      instance.addModifierExtension(datatype);
+      if (datatype !== undefined) {
+        instance.addModifierExtension(datatype);
+      }
     });
   }
 }
@@ -1290,7 +1293,9 @@ export function parseAddress(json: JSON.Value | undefined, sourceField?: string)
     const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(datatypeJsonObj, source, 'line', 'string');
     dataJsonArray.forEach((dataJson: PrimitiveTypeJson) => {
       const datatype: StringType | undefined = parseStringType(dataJson.dtJson, dataJson.dtSiblingJson);
-      instance.addLineElement(datatype);
+      if (datatype !== undefined) {
+        instance.addLineElement(datatype);
+      }
     });
   }
 
@@ -1433,7 +1438,9 @@ export function parseCodeableConcept(json: JSON.Value | undefined, sourceField?:
     const dataElementJsonArray: JSON.Array = JSON.asArray(datatypeJsonObj['coding'], `${source}.coding`);
     dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
       const datatype: Coding | undefined = parseCoding(dataElementJson, `${source}.coding[${String(idx)}]`);
-      instance.addCoding(datatype);
+      if (datatype !== undefined) {
+        instance.addCoding(datatype);
+      }
     });
   }
 
@@ -1602,7 +1609,9 @@ export function parseHumanName(json: JSON.Value | undefined, sourceField?: strin
     const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(datatypeJsonObj, source, 'given', 'string');
     dataJsonArray.forEach((dataJson: PrimitiveTypeJson) => {
       const datatype: StringType | undefined = parseStringType(dataJson.dtJson, dataJson.dtSiblingJson);
-      instance.addGivenElement(datatype);
+      if (datatype !== undefined) {
+        instance.addGivenElement(datatype);
+      }
     });
   }
 
@@ -1610,7 +1619,9 @@ export function parseHumanName(json: JSON.Value | undefined, sourceField?: strin
     const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(datatypeJsonObj, source, 'prefix', 'string');
     dataJsonArray.forEach((dataJson: PrimitiveTypeJson) => {
       const datatype: StringType | undefined = parseStringType(dataJson.dtJson, dataJson.dtSiblingJson);
-      instance.addPrefixElement(datatype);
+      if (datatype !== undefined) {
+        instance.addPrefixElement(datatype);
+      }
     });
   }
 
@@ -1618,7 +1629,9 @@ export function parseHumanName(json: JSON.Value | undefined, sourceField?: strin
     const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(datatypeJsonObj, source, 'suffix', 'string');
     dataJsonArray.forEach((dataJson: PrimitiveTypeJson) => {
       const datatype: StringType | undefined = parseStringType(dataJson.dtJson, dataJson.dtSiblingJson);
-      instance.addSuffixElement(datatype);
+      if (datatype !== undefined) {
+        instance.addSuffixElement(datatype);
+      }
     });
   }
 
@@ -1734,7 +1747,9 @@ export function parseMeta(json: JSON.Value | undefined, sourceField?: string): M
     const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(datatypeJsonObj, source, 'profile', 'string');
     dataJsonArray.forEach((dataJson: PrimitiveTypeJson) => {
       const datatype: CanonicalType | undefined = parseCanonicalType(dataJson.dtJson, dataJson.dtSiblingJson);
-      instance.addProfileElement(datatype);
+      if (datatype !== undefined) {
+        instance.addProfileElement(datatype);
+      }
     });
   }
 
@@ -1742,7 +1757,9 @@ export function parseMeta(json: JSON.Value | undefined, sourceField?: string): M
     const dataElementJsonArray: JSON.Array = JSON.asArray(datatypeJsonObj['security'], `${source}.security`);
     dataElementJsonArray.forEach((dataElementJson: JSON.Value) => {
       const datatype: Coding | undefined = parseCoding(dataElementJson, `${source}.security.coding`);
-      instance.addSecurity(datatype);
+      if (datatype !== undefined) {
+        instance.addSecurity(datatype);
+      }
     });
   }
 
@@ -1750,7 +1767,9 @@ export function parseMeta(json: JSON.Value | undefined, sourceField?: string): M
     const dataElementJsonArray: JSON.Array = JSON.asArray(datatypeJsonObj['tag'], `${source}.tag`);
     dataElementJsonArray.forEach((dataElementJson: JSON.Value) => {
       const datatype: Coding | undefined = parseCoding(dataElementJson, `${source}.tag.coding`);
-      instance.addTag(datatype);
+      if (datatype !== undefined) {
+        instance.addTag(datatype);
+      }
     });
   }
 

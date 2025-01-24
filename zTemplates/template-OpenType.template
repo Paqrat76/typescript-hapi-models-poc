@@ -141,14 +141,12 @@
     fieldName = extractFieldName(sourceField);
     if (isDefined<DecoratorMetadataObject | null>(classMetadata)) {
       const datatype: DataType | undefined = parseOpenDataType(backboneJsonObj, sourceField, fieldName, classMetadata);
-      if (datatype !== undefined) {
-        instance.setXxxxFieldName(datatype);
-      } else {
-        // Report the missing required field
+      if (datatype === undefined) {
         missingReqdProperties.push(sourceField);
+      } else {
+        instance.setXxxxFieldName(datatype);
       }
     } else {
-      // Report the missing required field
       missingReqdProperties.push(sourceField);
     }
 

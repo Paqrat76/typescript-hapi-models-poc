@@ -19,6 +19,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [0.16.0] - 2025-01-24
+
+### Added
+
+- Bundle data model
+- BundleTypeEnum (http://hl7.org/fhir/bundle-type)
+- SearchEntryModeEnum (	http://hl7.org/fhir/search-entry-mode)
+- HTTPVerbEnum (http://hl7.org/fhir/http-verb)
+
+### Changed
+
+- Updated dependencies
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+- Inconsistent handling of list elements in parse methods in all "template" files and source code
+
+### Security
+
+
 ## [0.15.0] - 2025-01-20
 
 ### Added
