@@ -2,7 +2,6 @@
  * Templates for data models and classes based on the Resource
  * Templates are provided for:
  * - Resource Type - Optional
- * - Resource Type - Required
  *
  * NOTE:
  *   While no specific rule exists in the FHIR specification, use of Resource as a data element data type
@@ -43,19 +42,16 @@
   /**
    * Assigns the provided XxxxFieldName object value to the `xxxxFieldName` property.
    *
-   * @decorator `@ResourceTargets('XxxxParentClassElement.xxxxFieldName', XxxxResourceTypeList)`
-   *
    * @param value - the `xxxxFieldName` object value
    * @returns this
    */
-  @ResourceTargets('XxxxParentClassElement.xxxxFieldName', XxxxResourceTypeList)
   public setXxxxFieldName(value: Resource | undefined): this {
     if (isDefined<Resource | undefined>(value)) {
       const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided element is not an instance of Resource.`;
       assertFhirResourceType(value, optErrMsg);
-      this.resource = value;
+      this.xxxxFieldName = value;
     } else {
-      this.resource = undefined;
+      this.xxxxFieldName = undefined;
     }
     return this;
   }

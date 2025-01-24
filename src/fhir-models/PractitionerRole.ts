@@ -141,7 +141,9 @@ export class PractitionerRole extends DomainResource implements IBase {
       const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
         const datatype: Identifier | undefined = parseIdentifier(dataElementJson, `${sourceField}[${String(idx)}]`);
-        instance.addIdentifier(datatype);
+        if (datatype !== undefined) {
+          instance.addIdentifier(datatype);
+        }
       });
     }
 
@@ -184,7 +186,9 @@ export class PractitionerRole extends DomainResource implements IBase {
           dataElementJson,
           `${sourceField}[${String(idx)}]`,
         );
-        instance.addCode(datatype);
+        if (datatype !== undefined) {
+          instance.addCode(datatype);
+        }
       });
     }
 
@@ -198,7 +202,9 @@ export class PractitionerRole extends DomainResource implements IBase {
           dataElementJson,
           `${sourceField}[${String(idx)}]`,
         );
-        instance.addSpecialty(datatype);
+        if (datatype !== undefined) {
+          instance.addSpecialty(datatype);
+        }
       });
     }
 
@@ -209,7 +215,9 @@ export class PractitionerRole extends DomainResource implements IBase {
       const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
         const datatype: Reference | undefined = parseReference(dataElementJson, `${sourceField}[${String(idx)}]`);
-        instance.addLocation(datatype);
+        if (datatype !== undefined) {
+          instance.addLocation(datatype);
+        }
       });
     }
 
@@ -223,7 +231,9 @@ export class PractitionerRole extends DomainResource implements IBase {
       );
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
         const datatype: Reference | undefined = parseReference(dataElementJson, `${sourceField}[${String(idx)}]`);
-        instance.addHealthcareService(datatype);
+        if (datatype !== undefined) {
+          instance.addHealthcareService(datatype);
+        }
       });
     }
 
@@ -234,7 +244,9 @@ export class PractitionerRole extends DomainResource implements IBase {
       const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
         const datatype: ContactPoint | undefined = parseContactPoint(dataElementJson, `${sourceField}[${String(idx)}]`);
-        instance.addTelecom(datatype);
+        if (datatype !== undefined) {
+          instance.addTelecom(datatype);
+        }
       });
     }
 
@@ -249,7 +261,9 @@ export class PractitionerRole extends DomainResource implements IBase {
       componentJsonArray.forEach((componentJson: JSON.Value) => {
         const component: PractitionerRoleAvailableTimeComponent | undefined =
           PractitionerRoleAvailableTimeComponent.parse(componentJson);
-        instance.addAvailableTime(component);
+        if (component !== undefined) {
+          instance.addAvailableTime(component);
+        }
       });
     }
 
@@ -264,7 +278,9 @@ export class PractitionerRole extends DomainResource implements IBase {
       componentJsonArray.forEach((componentJson: JSON.Value) => {
         const component: PractitionerRoleNotAvailableComponent | undefined =
           PractitionerRoleNotAvailableComponent.parse(componentJson);
-        instance.addNotAvailable(component);
+        if (component !== undefined) {
+          instance.addNotAvailable(component);
+        }
       });
     }
 
@@ -283,7 +299,9 @@ export class PractitionerRole extends DomainResource implements IBase {
       const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
         const datatype: Reference | undefined = parseReference(dataElementJson, `${sourceField}[${String(idx)}]`);
-        instance.addEndpoint(datatype);
+        if (datatype !== undefined) {
+          instance.addEndpoint(datatype);
+        }
       });
     }
 
@@ -1472,7 +1490,9 @@ export class PractitionerRoleAvailableTimeComponent extends BackboneElement {
       );
       dataJsonArray.forEach((dataJson: PrimitiveTypeJson) => {
         const datatype: CodeType | undefined = parseCodeType(dataJson.dtJson, dataJson.dtSiblingJson);
-        instance.addDaysOfWeekElement(datatype);
+        if (datatype !== undefined) {
+          instance.addDaysOfWeekElement(datatype);
+        }
       });
     }
 

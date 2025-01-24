@@ -142,7 +142,8 @@
     sourceField = 'XxxxParentClassElement.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
     if (fieldName in classJsonObj) {
-      const datatype: XxxxPrimitiveType | undefined = parseXxxxPrimitiveType(classJsonObj[fieldName], sourceField);
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, 'xxxxJsonType');
+      const datatype: XxxxPrimitiveType | undefined = parseXxxxPrimitiveType(dtJson, dtSiblingJson);
       if (datatype === undefined) {
         missingReqdProperties.push(sourceField);
       } else {
@@ -265,11 +266,17 @@
     sourceField = 'XxxxParentClassElement.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
     if (fieldName in classJsonObj) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
-      dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
-        const datatype: XxxxPrimitiveType | undefined = parseXxxxPrimitiveType(dataElementJson, `${sourceField}[${String(idx)}]`);
-        instance.addXxxxFieldNameElement(datatype);
+      const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(
+        classJsonObj,
+        sourceField,
+        fieldName,
+        'xxxxJsonType',
+      );
+      dataJsonArray.forEach((dataJson: PrimitiveTypeJson) => {
+        const datatype: XxxxPrimitiveType | undefined = parseXxxxPrimitiveType(dataJson.dtJson, dataJson.dtSiblingJson);
+        if (datatype !== undefined) {
+          instance.addXxxxFieldNameElement(datatype);
+        }
       });
     }
 
@@ -437,12 +444,20 @@
     sourceField = 'XxxxParentClassElement.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
     if (fieldName in classJsonObj) {
-      const datatype: XxxxPrimitiveType | undefined = parseXxxxPrimitiveType(classJsonObj[fieldName], sourceField);
-      if (datatype === undefined) {
-        missingReqdProperties.push(sourceField);
-      } else {
-        instance.setXxxxFieldNameElement(datatype);
-      }
+      const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(
+        classJsonObj,
+        sourceField,
+        fieldName,
+        'xxxxJsonType',
+      );
+      dataJsonArray.forEach((dataJson: PrimitiveTypeJson, idx) => {
+        const datatype: XxxxPrimitiveType | undefined = parseXxxxPrimitiveType(dataJson.dtJson, dataJson.dtSiblingJson);
+        if (datatype === undefined) {
+          missingReqdProperties.push(`${sourceField}[${String(idx)}]`);
+        } else {
+          instance.addXxxxFieldNameElement(datatype);
+        }
+      });
     } else {
       missingReqdProperties.push(sourceField);
     }

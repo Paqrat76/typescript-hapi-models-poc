@@ -22,7 +22,7 @@ export class XxxxEnum implements IFhirCodeEnum {
   public static readonly DUMMY = new FhirCodeDefinition(
     'DUMMY',
     `dummy`,
-    `http://hl7.org/fhir/dummy-code-system`,
+    `http://hl7.org/fhir/xxxx-code-system`,
     `Dummy`,
     `Definition...`,
   );

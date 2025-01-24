@@ -2,24 +2,50 @@
 
 ## POC Feature Set
 
-- Add more hand-crafted FHIR models to verify template examples for the FHIR data model code generator.
-  Consider the following:
-  - [Bundle](https://hl7.org/fhir/R4/bundle.html)
-    - extends Resource rather than DomainResource
-    - nested BackboneElement types
-    - includes `StructureDefinition.contentReference` to other fields in resource (`link`)
-  - etc. ...
-- Determine whether to hand-craft all Complex data types or code generate all Complex data types
 - Investigate pushing parsers into data models to put them in the data models as in the FHIR data models while
   eliminating circular references:
   - including primitive data type parsers in PrimitiveType or in individual primitive data models
   - including static parse methods in complex data types
-- Consider throwing an Error from "get" methods rather than returning null for required data elements
-- Setup functional testing to verify implementation of HAPI FHIR features
-  - Adding simple and complex and multiple extensions and modifierExtensions within DataTypes and Resources
-  - [Working With Resources](https://hapifhir.io/hapi-fhir/docs/model/working_with_resources.html)
-  - [Resource References](https://hapifhir.io/hapi-fhir/docs/model/references.html)
-  - [Profiles and Extensions](https://hapifhir.io/hapi-fhir/docs/model/profiles_and_extensions.html)
+- Determine whether to hand-craft all Complex data types or code generate all Complex data types based on parser
+  investigation above
+
+## Comprehensive Data Model Testing
+
+Add hand-crafted test (mock) FHIR data models for comprehensive template testing.
+This primary test data model should support the following requirements:
+
+- Extends DomainResource
+- Nested BackboneElements
+- Shared BackboneElement (`StructureDefinition.contentReference`)
+- Fields to represent the following data element types
+  - BackboneElement type
+  - Choice data type (uses decorators)
+  - Complex data type
+  - EnumCodeType (required internal FHIR codes)
+  - Open data type (uses decorators)
+  - Primitive data type
+  - Reference data type (uses decorators)
+  - Resource data type
+- Fields to demonstrate the following characteristics for each of the above data element types
+  - Optional single field (0..1)
+  - Required single field (1..1)
+  - Optional list field (0..\*)
+  - Required list field (1..\*)
+  - copyValues() example for each of the four above characteristics
+  - All get/set/has methods for each single field as appropriate for the data type
+  - All get/set/has/add/init methods for each list field as appropriate for the data type
+- Fully defined `toJson()` method
+- Fully defined static `parse()` method
+- Uses actual FHIR complex and primitive types in src/fhir-core/datatypes
+- Uses hand-crafted test (mock) FHIR code systems (implements IFhirCodeEnum)
+- Uses a simple hand-crafted test (mock) FHIR data model to be used for testing `DomainResource.contained`
+
+Setup functional testing to verify implementation of HAPI FHIR features:
+
+- Adding simple and complex and multiple extensions and modifierExtensions within DataTypes and Resources
+- [Working With Resources](https://hapifhir.io/hapi-fhir/docs/model/working_with_resources.html)
+- [Resource References](https://hapifhir.io/hapi-fhir/docs/model/references.html)
+- [Profiles and Extensions](https://hapifhir.io/hapi-fhir/docs/model/profiles_and_extensions.html)
 
 ## Possible Considerations (future roadmap)
 
