@@ -43,7 +43,14 @@ import {
   fhirInstantSchema,
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { assertFhirType, assertFhirTypeList, assertIsDefined, isDefined } from '@src/fhir-core/utility/type-guards';
+import {
+  assertFhirType,
+  assertFhirTypeList,
+  assertIsDefined,
+  assertIsDefinedList,
+  isDefined,
+  isDefinedList,
+} from '@src/fhir-core/utility/type-guards';
 import { copyListValues, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { REQUIRED_PROPERTIES_DO_NOT_EXIST } from '@src/fhir-core/constants';
@@ -81,12 +88,12 @@ export class Signature extends DataType implements IBase {
     super();
 
     this.type = null;
-    if (isDefined<Coding[] | null>(type)) {
+    if (isDefinedList<Coding>(type)) {
       this.setType(type);
     }
 
     this.when = null;
-    if (isDefined<InstantType | fhirInstant | null>(when)) {
+    if (isDefined<InstantType | fhirInstant>(when)) {
       if (when instanceof PrimitiveType) {
         this.setWhenElement(when);
       } else {
@@ -95,7 +102,7 @@ export class Signature extends DataType implements IBase {
     }
 
     this.who = null;
-    if (isDefined<Reference | null>(who)) {
+    if (isDefined<Reference>(who)) {
       this.setWho(who);
     }
   }
@@ -221,7 +228,7 @@ export class Signature extends DataType implements IBase {
    * @returns this
    */
   public setType(value: Coding[]): this {
-    assertIsDefined<Coding[]>(value, `Signature.type is required`);
+    assertIsDefinedList<Coding>(value, `Signature.type is required`);
     const optErrMsg = `Invalid Signature.type; Provided value array has an element that is not an instance of Coding.`;
     assertFhirTypeList<Coding>(value, Coding, optErrMsg);
     this.type = value;
@@ -235,7 +242,7 @@ export class Signature extends DataType implements IBase {
    * @returns this
    */
   public addType(value: Coding | undefined): this {
-    if (isDefined<Coding | undefined>(value)) {
+    if (isDefined<Coding>(value)) {
       const optErrMsg = `Invalid Signature.type; Provided element is not an instance of Coding.`;
       assertFhirType<Coding>(value, Coding, optErrMsg);
       this.initType();
@@ -248,9 +255,7 @@ export class Signature extends DataType implements IBase {
    * @returns `true` if the `type` property exists and has a value; `false` otherwise
    */
   public hasType(): boolean {
-    return (
-      isDefined<Coding[] | null>(this.type) && this.type.length > 0 && this.type.some((item: Coding) => !item.isEmpty())
-    );
+    return isDefinedList<Coding>(this.type) && this.type.some((item: Coding) => !item.isEmpty());
   }
 
   /**
@@ -287,7 +292,7 @@ export class Signature extends DataType implements IBase {
    * @returns `true` if the `when` property exists and has a value; `false` otherwise
    */
   public hasWhenElement(): boolean {
-    return isDefined<InstantType | null>(this.when) && !this.when.isEmpty();
+    return isDefined<InstantType>(this.when) && !this.when.isEmpty();
   }
 
   /**
@@ -354,7 +359,7 @@ export class Signature extends DataType implements IBase {
    * @returns `true` if the `who` property exists and has a value; `false` otherwise
    */
   public hasWho(): boolean {
-    return isDefined<Reference | null>(this.who) && !this.who.isEmpty();
+    return isDefined<Reference>(this.who) && !this.who.isEmpty();
   }
 
   /**
@@ -379,7 +384,7 @@ export class Signature extends DataType implements IBase {
     'Organization',
   ])
   public setOnBehalfOf(value: Reference | undefined): this {
-    if (isDefined<Reference | undefined>(value)) {
+    if (isDefined<Reference>(value)) {
       // assertFhirType<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
       this.onBehalfOf = value;
     } else {
@@ -409,7 +414,7 @@ export class Signature extends DataType implements IBase {
    * @returns this
    */
   public setTargetFormatElement(element: CodeType | undefined): this {
-    if (isDefined<CodeType | undefined>(element)) {
+    if (isDefined<CodeType>(element)) {
       const optErrMsg = `Invalid Signature.targetFormat; Provided element is not an instance of CodeType.`;
       assertFhirType<CodeType>(element, CodeType, optErrMsg);
       this.targetFormat = element;
@@ -441,7 +446,7 @@ export class Signature extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setTargetFormat(value: fhirCode | undefined): this {
-    if (isDefined<fhirCode | undefined>(value)) {
+    if (isDefined<fhirCode>(value)) {
       const optErrMsg = `Invalid Signature.targetFormat (${String(value)})`;
       this.targetFormat = new CodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg));
     } else {
@@ -471,7 +476,7 @@ export class Signature extends DataType implements IBase {
    * @returns this
    */
   public setSigFormatElement(element: CodeType | undefined): this {
-    if (isDefined<CodeType | undefined>(element)) {
+    if (isDefined<CodeType>(element)) {
       const optErrMsg = `Invalid Signature.sigFormat; Provided element is not an instance of CodeType.`;
       assertFhirType<CodeType>(element, CodeType, optErrMsg);
       this.sigFormat = element;
@@ -503,7 +508,7 @@ export class Signature extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setSigFormat(value: fhirCode | undefined): this {
-    if (isDefined<fhirCode | undefined>(value)) {
+    if (isDefined<fhirCode>(value)) {
       const optErrMsg = `Invalid Signature.sigFormat (${String(value)})`;
       this.sigFormat = new CodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg));
     } else {
@@ -533,7 +538,7 @@ export class Signature extends DataType implements IBase {
    * @returns this
    */
   public setDataElement(element: Base64BinaryType | undefined): this {
-    if (isDefined<Base64BinaryType | undefined>(element)) {
+    if (isDefined<Base64BinaryType>(element)) {
       const optErrMsg = `Invalid Signature.data; Provided element is not an instance of Base64BinaryType.`;
       assertFhirType<Base64BinaryType>(element, Base64BinaryType, optErrMsg);
       this.data = element;
@@ -565,7 +570,7 @@ export class Signature extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setData(value: fhirBase64Binary | undefined): this {
-    if (isDefined<fhirBase64Binary | undefined>(value)) {
+    if (isDefined<fhirBase64Binary>(value)) {
       const optErrMsg = `Invalid Signature.data (${String(value)})`;
       this.data = new Base64BinaryType(parseFhirPrimitiveData(value, fhirBase64BinarySchema, optErrMsg));
     } else {

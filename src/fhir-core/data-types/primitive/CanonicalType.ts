@@ -82,7 +82,7 @@ export class CanonicalType extends PrimitiveType<fhirCanonical> {
   }
 
   private assignValue(value: fhirCanonical | undefined): void {
-    if (isDefined<fhirCanonical | undefined>(value)) {
+    if (isDefined<fhirCanonical>(value)) {
       super.setValue(parseFhirPrimitiveData(value, fhirCanonicalSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);

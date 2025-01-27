@@ -83,7 +83,7 @@ export class OidType extends PrimitiveType<fhirOid> {
   }
 
   private assignValue(value: fhirOid | undefined): void {
-    if (isDefined<fhirOid | undefined>(value)) {
+    if (isDefined<fhirOid>(value)) {
       super.setValue(parseFhirPrimitiveData(value, fhirOidSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);

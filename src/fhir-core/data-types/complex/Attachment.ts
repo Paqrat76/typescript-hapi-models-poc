@@ -213,7 +213,7 @@ export class Attachment extends DataType implements IBase {
    * @returns this
    */
   public setContentTypeElement(element: CodeType | undefined): this {
-    if (isDefined<CodeType | undefined>(element)) {
+    if (isDefined<CodeType>(element)) {
       const optErrMsg = `Invalid Attachment.contentType; Provided element is not an instance of CodeType.`;
       assertFhirType<CodeType>(element, CodeType, optErrMsg);
       this.contentType = element;
@@ -245,7 +245,7 @@ export class Attachment extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setContentType(value: fhirCode | undefined): this {
-    if (isDefined<fhirCode | undefined>(value)) {
+    if (isDefined<fhirCode>(value)) {
       const optErrMsg = `Invalid Attachment.contentType (${String(value)})`;
       this.contentType = new CodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg));
     } else {
@@ -275,7 +275,7 @@ export class Attachment extends DataType implements IBase {
    * @returns this
    */
   public setLanguageElement(element: CodeType | undefined): this {
-    if (isDefined<CodeType | undefined>(element)) {
+    if (isDefined<CodeType>(element)) {
       const optErrMsg = `Invalid Attachment.language; Provided element is not an instance of CodeType.`;
       assertFhirType<CodeType>(element, CodeType, optErrMsg);
       this.language = element;
@@ -307,7 +307,7 @@ export class Attachment extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setLanguage(value: fhirCode | undefined): this {
-    if (isDefined<fhirCode | undefined>(value)) {
+    if (isDefined<fhirCode>(value)) {
       const optErrMsg = `Invalid Attachment.language (${String(value)})`;
       this.language = new CodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg));
     } else {
@@ -337,7 +337,7 @@ export class Attachment extends DataType implements IBase {
    * @returns this
    */
   public setDataElement(element: Base64BinaryType | undefined): this {
-    if (isDefined<Base64BinaryType | undefined>(element)) {
+    if (isDefined<Base64BinaryType>(element)) {
       const optErrMsg = `Invalid Attachment.data; Provided element is not an instance of Base64BinaryType.`;
       assertFhirType<Base64BinaryType>(element, Base64BinaryType, optErrMsg);
       this.data = element;
@@ -369,7 +369,7 @@ export class Attachment extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setData(value: fhirBase64Binary | undefined): this {
-    if (isDefined<fhirBase64Binary | undefined>(value)) {
+    if (isDefined<fhirBase64Binary>(value)) {
       const optErrMsg = `Invalid Attachment.data (${String(value)})`;
       this.data = new Base64BinaryType(parseFhirPrimitiveData(value, fhirBase64BinarySchema, optErrMsg));
     } else {
@@ -399,7 +399,7 @@ export class Attachment extends DataType implements IBase {
    * @returns this
    */
   public setUrlElement(element: UrlType | undefined): this {
-    if (isDefined<UrlType | undefined>(element)) {
+    if (isDefined<UrlType>(element)) {
       const optErrMsg = `Invalid Attachment.url; Provided element is not an instance of UrlType.`;
       assertFhirType<UrlType>(element, UrlType, optErrMsg);
       this.url = element;
@@ -431,7 +431,7 @@ export class Attachment extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setUrl(value: fhirUrl | undefined): this {
-    if (isDefined<fhirUrl | undefined>(value)) {
+    if (isDefined<fhirUrl>(value)) {
       const optErrMsg = `Invalid Attachment.url (${String(value)})`;
       this.url = new UrlType(parseFhirPrimitiveData(value, fhirUrlSchema, optErrMsg));
     } else {
@@ -461,7 +461,7 @@ export class Attachment extends DataType implements IBase {
    * @returns this
    */
   public setSizeElement(element: UnsignedIntType | undefined): this {
-    if (isDefined<UnsignedIntType | undefined>(element)) {
+    if (isDefined<UnsignedIntType>(element)) {
       const optErrMsg = `Invalid Attachment.size; Provided element is not an instance of UnsignedIntType.`;
       assertFhirType<UnsignedIntType>(element, UnsignedIntType, optErrMsg);
       this.size = element;
@@ -493,7 +493,7 @@ export class Attachment extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setSize(value: fhirUnsignedInt | undefined): this {
-    if (isDefined<fhirUnsignedInt | undefined>(value)) {
+    if (isDefined<fhirUnsignedInt>(value)) {
       const optErrMsg = `Invalid Attachment.size (${String(value)})`;
       this.size = new UnsignedIntType(parseFhirPrimitiveData(value, fhirUnsignedIntSchema, optErrMsg));
     } else {
@@ -523,7 +523,7 @@ export class Attachment extends DataType implements IBase {
    * @returns this
    */
   public setHashElement(element: Base64BinaryType | undefined): this {
-    if (isDefined<Base64BinaryType | undefined>(element)) {
+    if (isDefined<Base64BinaryType>(element)) {
       const optErrMsg = `Invalid Attachment.hash; Provided element is not an instance of Base64BinaryType.`;
       assertFhirType<Base64BinaryType>(element, Base64BinaryType, optErrMsg);
       this.hash = element;
@@ -555,7 +555,7 @@ export class Attachment extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setHash(value: fhirBase64Binary | undefined): this {
-    if (isDefined<fhirBase64Binary | undefined>(value)) {
+    if (isDefined<fhirBase64Binary>(value)) {
       const optErrMsg = `Invalid Attachment.hash (${String(value)})`;
       this.hash = new Base64BinaryType(parseFhirPrimitiveData(value, fhirBase64BinarySchema, optErrMsg));
     } else {
@@ -585,7 +585,7 @@ export class Attachment extends DataType implements IBase {
    * @returns this
    */
   public setTitleElement(element: StringType | undefined): this {
-    if (isDefined<StringType | undefined>(element)) {
+    if (isDefined<StringType>(element)) {
       const optErrMsg = `Invalid Attachment.title; Provided element is not an instance of StringType.`;
       assertFhirType<StringType>(element, StringType, optErrMsg);
       this.title = element;
@@ -617,7 +617,7 @@ export class Attachment extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setTitle(value: fhirString | undefined): this {
-    if (isDefined<fhirString | undefined>(value)) {
+    if (isDefined<fhirString>(value)) {
       const optErrMsg = `Invalid Attachment.title (${String(value)})`;
       this.title = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
     } else {
@@ -647,7 +647,7 @@ export class Attachment extends DataType implements IBase {
    * @returns this
    */
   public setCreationElement(element: DateTimeType | undefined): this {
-    if (isDefined<DateTimeType | undefined>(element)) {
+    if (isDefined<DateTimeType>(element)) {
       const optErrMsg = `Invalid Attachment.creation; Provided element is not an instance of DateTimeType.`;
       assertFhirType<DateTimeType>(element, DateTimeType, optErrMsg);
       this.creation = element;
@@ -679,7 +679,7 @@ export class Attachment extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setCreation(value: fhirDateTime | undefined): this {
-    if (isDefined<fhirDateTime | undefined>(value)) {
+    if (isDefined<fhirDateTime>(value)) {
       const optErrMsg = `Invalid Attachment.creation (${String(value)})`;
       this.creation = new DateTimeType(parseFhirPrimitiveData(value, fhirDateTimeSchema, optErrMsg));
     } else {

@@ -159,7 +159,7 @@ export class Coding extends DataType implements IBase {
    * @returns this
    */
   public setSystemElement(element: UriType | undefined): this {
-    if (isDefined<UriType | undefined>(element)) {
+    if (isDefined<UriType>(element)) {
       const optErrMsg = `Invalid Coding.system; Provided element is not an instance of UriType.`;
       assertFhirType<UriType>(element, UriType, optErrMsg);
       this.system = element;
@@ -191,7 +191,7 @@ export class Coding extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setSystem(value: fhirUri | undefined): this {
-    if (isDefined<fhirUri | undefined>(value)) {
+    if (isDefined<fhirUri>(value)) {
       const optErrMsg = `Invalid Coding.system (${String(value)})`;
       this.system = new UriType(parseFhirPrimitiveData(value, fhirUriSchema, optErrMsg));
     } else {
@@ -221,7 +221,7 @@ export class Coding extends DataType implements IBase {
    * @returns this
    */
   public setVersionElement(element: StringType | undefined): this {
-    if (isDefined<StringType | undefined>(element)) {
+    if (isDefined<StringType>(element)) {
       const optErrMsg = `Invalid Coding.version; Provided element is not an instance of StringType.`;
       assertFhirType<StringType>(element, StringType, optErrMsg);
       this.version = element;
@@ -253,7 +253,7 @@ export class Coding extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setVersion(value: fhirString | undefined): this {
-    if (isDefined<fhirString | undefined>(value)) {
+    if (isDefined<fhirString>(value)) {
       const optErrMsg = `Invalid Coding.version (${String(value)})`;
       this.version = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
     } else {
@@ -283,7 +283,7 @@ export class Coding extends DataType implements IBase {
    * @returns this
    */
   public setCodeElement(element: CodeType | undefined): this {
-    if (isDefined<CodeType | undefined>(element)) {
+    if (isDefined<CodeType>(element)) {
       const optErrMsg = `Invalid Coding.code; Provided element is not an instance of CodeType.`;
       assertFhirType<CodeType>(element, CodeType, optErrMsg);
       this.code = element;
@@ -315,7 +315,7 @@ export class Coding extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setCode(value: fhirCode | undefined): this {
-    if (isDefined<fhirCode | undefined>(value)) {
+    if (isDefined<fhirCode>(value)) {
       const optErrMsg = `Invalid Coding.code (${String(value)})`;
       this.code = new CodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg));
     } else {
@@ -345,7 +345,7 @@ export class Coding extends DataType implements IBase {
    * @returns this
    */
   public setDisplayElement(element: StringType | undefined): this {
-    if (isDefined<StringType | undefined>(element)) {
+    if (isDefined<StringType>(element)) {
       const optErrMsg = `Invalid Coding.display; Provided element is not an instance of StringType.`;
       assertFhirType<StringType>(element, StringType, optErrMsg);
       this.display = element;
@@ -377,7 +377,7 @@ export class Coding extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setDisplay(value: fhirString | undefined): this {
-    if (isDefined<fhirString | undefined>(value)) {
+    if (isDefined<fhirString>(value)) {
       const optErrMsg = `Invalid Coding.display (${String(value)})`;
       this.display = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
     } else {
@@ -407,7 +407,7 @@ export class Coding extends DataType implements IBase {
    * @returns this
    */
   public setUserSelectedElement(element: BooleanType | undefined): this {
-    if (isDefined<BooleanType | undefined>(element)) {
+    if (isDefined<BooleanType>(element)) {
       const optErrMsg = `Invalid Coding.userSelected; Provided element is not an instance of BooleanType.`;
       assertFhirType<BooleanType>(element, BooleanType, optErrMsg);
       this.userSelected = element;
@@ -439,7 +439,7 @@ export class Coding extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setUserSelected(value: fhirBoolean | undefined): this {
-    if (isDefined<fhirBoolean | undefined>(value)) {
+    if (isDefined<fhirBoolean>(value)) {
       const optErrMsg = `Invalid Coding.userSelected (${String(value)}))`;
       this.userSelected = new BooleanType(parseFhirPrimitiveData(value, fhirBooleanSchema, optErrMsg));
     } else {

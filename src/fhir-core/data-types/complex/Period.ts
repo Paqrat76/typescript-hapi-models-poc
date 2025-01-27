@@ -106,7 +106,7 @@ export class Period extends DataType implements IBase {
    * @throws FhirError when Period.start > Period.end
    */
   public setStartElement(element: DateTimeType | undefined): this {
-    if (isDefined<DateTimeType | undefined>(element)) {
+    if (isDefined<DateTimeType>(element)) {
       const optErrMsg = `Invalid Period.start; Provided element is not an instance of DateTimeType.`;
       assertFhirType<DateTimeType>(element, DateTimeType, optErrMsg);
       this.start = element;
@@ -142,7 +142,7 @@ export class Period extends DataType implements IBase {
    * @throws FhirError when Period.start > Period.end
    */
   public setStart(value: fhirDateTime | undefined): this {
-    if (isDefined<fhirDateTime | undefined>(value)) {
+    if (isDefined<fhirDateTime>(value)) {
       const optErrMsg = `Invalid Period.start (${String(value)})`;
       this.start = new DateTimeType(parseFhirPrimitiveData(value, fhirDateTimeSchema, optErrMsg));
       if (!this.validateStartBeforeEnd()) {
@@ -176,7 +176,7 @@ export class Period extends DataType implements IBase {
    * @throws FhirError when Period.start > Period.end
    */
   public setEndElement(element: DateTimeType | undefined): this {
-    if (isDefined<DateTimeType | undefined>(element)) {
+    if (isDefined<DateTimeType>(element)) {
       const optErrMsg = `Invalid Period.end; Provided element is not an instance of DateTimeType.`;
       assertFhirType<DateTimeType>(element, DateTimeType, optErrMsg);
       this.end = element;
@@ -212,7 +212,7 @@ export class Period extends DataType implements IBase {
    * @throws FhirError when Period.start > Period.end
    */
   public setEnd(value: fhirDateTime | undefined): this {
-    if (isDefined<fhirDateTime | undefined>(value)) {
+    if (isDefined<fhirDateTime>(value)) {
       const optErrMsg = `Invalid Period.end (${String(value)})`;
       this.end = new DateTimeType(parseFhirPrimitiveData(value, fhirDateTimeSchema, optErrMsg));
       if (!this.validateStartBeforeEnd()) {

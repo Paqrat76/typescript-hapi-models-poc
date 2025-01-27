@@ -26,10 +26,12 @@ import {
   assertFhirType,
   assertFhirTypeList,
   assertIsDefined,
+  assertIsDefinedList,
   assertIsNumber,
   assertIsString,
   FhirTypeGuard,
   isDefined,
+  isDefinedList,
   isBoolean,
   isNumber,
   isString,
@@ -74,9 +76,7 @@ describe('type-guards', () => {
 
     describe('isDefined', () => {
       it('should return false', () => {
-        // @ts-expect-error: allow for testing
         expect(isDefined<string>(UNDEFINED_VALUE)).toBe(false);
-        // @ts-expect-error: allow for testing
         expect(isDefined<string>(NULL_VALUE)).toBe(false);
       });
 
@@ -127,6 +127,67 @@ describe('type-guards', () => {
         };
         expect(t).toThrow(AssertionError);
         expect(t).toThrow(`The provided value is null.`);
+      });
+    });
+  });
+
+  describe('isDefinedList/assertIsDefinedList', () => {
+    const UNDEFINED_VALUE = undefined;
+    const NULL_VALUE = null;
+
+    describe('isDefinedList', () => {
+      it('should return false', () => {
+        expect(isDefinedList<string>(UNDEFINED_VALUE)).toBe(false);
+        expect(isDefinedList<string>(NULL_VALUE)).toBe(false);
+        expect(isDefinedList<string>([])).toBe(false);
+        expect(isDefinedList<string>([] as string[])).toBe(false);
+        expect(isDefinedList<string | number>([] as number[])).toBe(false);
+        const arrayObj = new Array<string>();
+        expect(isDefinedList<string>(arrayObj)).toBe(false);
+      });
+
+      it('should return true', () => {
+        expect(isDefinedList<string>(['abc'])).toBe(true);
+        expect(isDefinedList<string>(['123', 'abc'])).toBe(true);
+        expect(isDefinedList<number>([123])).toBe(true);
+        expect(isDefinedList<number>([123, 456])).toBe(true);
+        expect(isDefinedList<object>([{ key: 'value' }])).toBe(true);
+        expect(isDefinedList<object>([{ key1: 'value1' }, { key2: 'value2' }])).toBe(true);
+        expect(isDefinedList<string | number>(['abc', 123])).toBe(true);
+      });
+    });
+
+    describe('assertIsDefinedList', () => {
+      it('should not throw AssertionError for defined array', () => {
+        const value = [123];
+        const t = () => {
+          assertIsDefinedList<number>(value);
+        };
+        expect(t).not.toThrow(AssertionError);
+      });
+
+      it('should throw AssertionError for undefined instance', () => {
+        const t = () => {
+          assertIsDefinedList(UNDEFINED_VALUE);
+        };
+        expect(t).toThrow(AssertionError);
+        expect(t).toThrow(`Array argument is not defined (i.e., undefined or null or an empty array.`);
+      });
+
+      it('should throw AssertionError for null instance', () => {
+        const t = () => {
+          assertIsDefinedList(NULL_VALUE);
+        };
+        expect(t).toThrow(AssertionError);
+        expect(t).toThrow(`Array argument is not defined (i.e., undefined or null or an empty array.`);
+      });
+
+      it('should throw AssertionError for null instance with override error message', () => {
+        const t = () => {
+          assertIsDefinedList(NULL_VALUE, 'The provided array is null.');
+        };
+        expect(t).toThrow(AssertionError);
+        expect(t).toThrow(`The provided array is null.`);
       });
     });
   });

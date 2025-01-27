@@ -54,7 +54,13 @@ import {
 import { OPEN_DATA_TYPES } from '@src/fhir-core/data-types/FhirDataType';
 import { isEmpty, upperFirst } from '@src/fhir-core/utility/common-util';
 import { copyListValues, isElementEmpty, validateUrl } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirType, assertFhirTypeList, assertIsDefined, isDefined } from '@src/fhir-core/utility/type-guards';
+import {
+  assertFhirType,
+  assertFhirTypeList,
+  assertIsDefined,
+  isDefined,
+  isDefinedList,
+} from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
@@ -306,7 +312,7 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
    * {@inheritDoc IBaseExtension.addExtension}
    */
   public addExtension(extension: Extension | undefined): this {
-    if (isDefined<Extension | undefined>(extension)) {
+    if (isDefined<Extension>(extension)) {
       const optErrMsg = `Invalid Element.extension; Provided extension is not an instance of Extension.`;
       assertFhirType<Extension>(extension, Extension, optErrMsg);
       this.initExtension();
@@ -342,11 +348,7 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
    * @returns `true` if the `extension` property array exists and has at least one element; false otherwise
    */
   private existsExtension(): boolean {
-    return (
-      this.extension !== undefined &&
-      this.extension.length > 0 &&
-      this.extension.some((item: Extension) => !item.isEmpty())
-    );
+    return isDefinedList<Extension>(this.extension) && this.extension.some((item: Extension) => !item.isEmpty());
   }
 
   /**
@@ -487,7 +489,7 @@ export abstract class BackboneElement extends Element implements IBase, IBaseMod
    * {@inheritDoc IBaseModifierExtension.addModifierExtension}
    */
   public addModifierExtension(extension: Extension | undefined): this {
-    if (isDefined<Extension | undefined>(extension)) {
+    if (isDefined<Extension>(extension)) {
       const optErrMsg = `Invalid BackboneElement.modifierExtension; Provided extension is not an instance of Extension.`;
       assertFhirType<Extension>(extension, Extension, optErrMsg);
       this.initModifierExtension();
@@ -695,7 +697,7 @@ export abstract class BackboneType extends DataType implements IBase, IBaseModif
    * {@inheritDoc IBaseModifierExtension.addModifierExtension}
    */
   public addModifierExtension(extension: Extension | undefined): this {
-    if (isDefined<Extension | undefined>(extension)) {
+    if (isDefined<Extension>(extension)) {
       const optErrMsg = `Invalid BackboneType.modifierExtension; Provided extension is not an instance of Extension.`;
       assertFhirType<Extension>(extension, Extension, optErrMsg);
       this.initModifierExtension();
@@ -1062,7 +1064,7 @@ export class Extension extends Element implements IBase {
    */
   @OpenDataTypes('Extension.value[x]')
   public setValue(value: DataType | undefined): this {
-    if (isDefined<DataType | undefined>(value)) {
+    if (isDefined<DataType>(value)) {
       // assertFhirType<DataType>(value, DataType) unnecessary because @OpenDataTypes decorator ensures proper type/value
       this.value = value;
     } else {

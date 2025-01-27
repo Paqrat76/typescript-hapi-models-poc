@@ -82,7 +82,7 @@ export class UnsignedIntType extends PrimitiveType<fhirUnsignedInt> {
   }
 
   private assignValue(value: fhirUnsignedInt | undefined): void {
-    if (isDefined<fhirUnsignedInt | undefined>(value)) {
+    if (isDefined<fhirUnsignedInt>(value)) {
       super.setValue(parseFhirPrimitiveData(value, fhirUnsignedIntSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);

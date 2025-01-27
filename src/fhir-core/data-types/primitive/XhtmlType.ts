@@ -22,7 +22,7 @@
  */
 
 import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
-import { isDefined } from '@src/fhir-core/utility/type-guards';
+import { isDefined, isDefinedList } from '@src/fhir-core/utility/type-guards';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
 import { fhirXhtml, fhirXhtmlSchema, parseFhirPrimitiveData } from './primitive-types';
 
@@ -104,7 +104,7 @@ export class XhtmlType extends PrimitiveType<fhirXhtml> {
   }
 
   private assignValue(value: fhirXhtml | undefined): void {
-    if (isDefined<fhirXhtml | undefined>(value)) {
+    if (isDefined<fhirXhtml>(value)) {
       super.setValue(parseFhirPrimitiveData(value, fhirXhtmlSchema, this.typeErrorMessage()));
     } else {
       super.setValue(undefined);
@@ -112,7 +112,7 @@ export class XhtmlType extends PrimitiveType<fhirXhtml> {
   }
 
   private assignExtension(extension: Extension[] | undefined): void {
-    if (isDefined<Extension[] | undefined>(extension)) {
+    if (isDefinedList<Extension>(extension)) {
       throw new FhirError(this.EXTENSION_ERROR);
     }
     super.setExtension(undefined);

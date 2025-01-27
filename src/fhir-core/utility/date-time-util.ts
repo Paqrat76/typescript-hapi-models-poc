@@ -89,12 +89,12 @@ export interface DateTimeOpts {
  * @see [Luxon DateTime.fromISO()](https://moment.github.io/luxon/api-docs/index.html#datetimefromiso)
  */
 export function getDateTimeObject(value: string | undefined, opts?: DateTimeOpts): DateTime | undefined {
-  if (!isDefined<string | undefined>(value)) {
+  if (!isDefined<string>(value)) {
     return undefined;
   }
 
   let dt;
-  if (isDefined<DateTimeOpts | undefined>(opts)) {
+  if (isDefined<DateTimeOpts>(opts)) {
     dt = DateTime.fromISO(value, opts);
   } else {
     dt = DateTime.fromISO(value);
@@ -121,7 +121,7 @@ export function getDateTimeObject(value: string | undefined, opts?: DateTimeOpts
  * @see [Luxon DateTime.fromISO()](https://moment.github.io/luxon/api-docs/index.html#datetimefromiso)
  */
 export function getDateTimeObjectAsUTC(value: string | undefined): DateTime | undefined {
-  if (!isDefined<string | undefined>(value)) {
+  if (!isDefined<string>(value)) {
     return undefined;
   }
 

@@ -41,7 +41,7 @@ import {
 import { Period } from '@src/fhir-core/data-types/complex/Period';
 // import { copyListValues, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import { copyListValues, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirType, assertFhirTypeList, isDefined } from '@src/fhir-core/utility/type-guards';
+import { assertFhirType, assertFhirTypeList, isDefined, isDefinedList } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
@@ -197,7 +197,7 @@ export class HumanName extends DataType implements IBase {
    * @returns this
    */
   public setUseEnumType(enumType: EnumCodeType | undefined): this {
-    if (isDefined<EnumCodeType | undefined>(enumType)) {
+    if (isDefined<EnumCodeType>(enumType)) {
       const errMsgPrefix = 'Invalid HumanName.use';
       assertEnumCodeType<NameUseEnum>(enumType, NameUseEnum, errMsgPrefix);
       this.use = enumType;
@@ -231,7 +231,7 @@ export class HumanName extends DataType implements IBase {
    * @returns this
    */
   public setUseElement(element: CodeType | undefined): this {
-    if (isDefined<CodeType | undefined>(element)) {
+    if (isDefined<CodeType>(element)) {
       const optErrMsg = `Invalid HumanName.use; Provided element is not an instance of CodeType.`;
       assertFhirType<CodeType>(element, CodeType, optErrMsg);
       this.use = new EnumCodeType(element, this.nameUseEnum);
@@ -265,7 +265,7 @@ export class HumanName extends DataType implements IBase {
    * @returns this
    */
   public setUse(value: fhirCode | undefined): this {
-    if (isDefined<fhirCode | undefined>(value)) {
+    if (isDefined<fhirCode>(value)) {
       const optErrMsg = `Invalid HumanName.use; Provided value is not an instance of fhirCode.`;
       this.use = new EnumCodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg), this.nameUseEnum);
     } else {
@@ -295,7 +295,7 @@ export class HumanName extends DataType implements IBase {
    * @returns this
    */
   public setTextElement(element: StringType | undefined): this {
-    if (isDefined<StringType | undefined>(element)) {
+    if (isDefined<StringType>(element)) {
       const optErrMsg = `Invalid HumanName.text; Provided value is not an instance of StringType.`;
       assertFhirType<StringType>(element, StringType, optErrMsg);
       this.text = element;
@@ -327,7 +327,7 @@ export class HumanName extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setText(value: fhirString | undefined): this {
-    if (isDefined<fhirString | undefined>(value)) {
+    if (isDefined<fhirString>(value)) {
       const optErrMsg = `Invalid HumanName.text (${String(value)})`;
       this.text = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
     } else {
@@ -357,7 +357,7 @@ export class HumanName extends DataType implements IBase {
    * @returns this
    */
   public setFamilyElement(element: StringType | undefined): this {
-    if (isDefined<StringType | undefined>(element)) {
+    if (isDefined<StringType>(element)) {
       const optErrMsg = `Invalid HumanName.family; Provided value is not an instance of StringType.`;
       assertFhirType<StringType>(element, StringType, optErrMsg);
       this.family = element;
@@ -389,7 +389,7 @@ export class HumanName extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setFamily(value: fhirString | undefined): this {
-    if (isDefined<fhirString | undefined>(value)) {
+    if (isDefined<fhirString>(value)) {
       const optErrMsg = `Invalid HumanName.family (${String(value)})`;
       this.family = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
     } else {
@@ -419,7 +419,7 @@ export class HumanName extends DataType implements IBase {
    * @returns this
    */
   public setGivenElement(element: StringType[] | undefined): this {
-    if (isDefined<StringType[] | undefined>(element)) {
+    if (isDefinedList<StringType>(element)) {
       const optErrMsg = `Invalid HumanName.given; Provided value array has an element that is not an instance of StringType.`;
       assertFhirTypeList<StringType>(element, StringType, optErrMsg);
       this.given = element;
@@ -436,7 +436,7 @@ export class HumanName extends DataType implements IBase {
    * @returns this
    */
   public addGivenElement(element: StringType | undefined): this {
-    if (isDefined<StringType | undefined>(element)) {
+    if (isDefined<StringType>(element)) {
       const optErrMsg = `Invalid HumanName.given; Provided element is not an instance of StringType.`;
       assertFhirType<StringType>(element, StringType, optErrMsg);
       this.initGiven();
@@ -449,7 +449,7 @@ export class HumanName extends DataType implements IBase {
    * @returns `true` if the `given` property exists and has a value; `false` otherwise
    */
   public hasGivenElement(): boolean {
-    return this.given !== undefined && this.given.length > 0 && this.given.some((item: StringType) => !item.isEmpty());
+    return isDefinedList<StringType>(this.given) && this.given.some((item: StringType) => !item.isEmpty());
   }
 
   /**
@@ -476,7 +476,7 @@ export class HumanName extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setGiven(value: fhirString[] | undefined): this {
-    if (isDefined<fhirString[] | undefined>(value)) {
+    if (isDefinedList<fhirString>(value)) {
       const givenElements = [] as StringType[];
       for (const givenValue of value) {
         const optErrMsg = `Invalid HumanName.given array item (${String(givenValue)})`;
@@ -497,7 +497,7 @@ export class HumanName extends DataType implements IBase {
    * @returns this
    */
   public addGiven(value: fhirString | undefined): this {
-    if (isDefined<fhirString | undefined>(value)) {
+    if (isDefined<fhirString>(value)) {
       const optErrMsg = `Invalid HumanName.given array item (${String(value)})`;
       const element = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
       this.addGivenElement(element);
@@ -535,7 +535,7 @@ export class HumanName extends DataType implements IBase {
    * @returns this
    */
   public setPrefixElement(element: StringType[] | undefined): this {
-    if (isDefined<StringType[] | undefined>(element)) {
+    if (isDefinedList<StringType>(element)) {
       const optErrMsg = `Invalid HumanName.prefix; Provided value array has an element that is not an instance of StringType.`;
       assertFhirTypeList<StringType>(element, StringType, optErrMsg);
       this.prefix = element;
@@ -552,7 +552,7 @@ export class HumanName extends DataType implements IBase {
    * @returns this
    */
   public addPrefixElement(element: StringType | undefined): this {
-    if (isDefined<StringType | undefined>(element)) {
+    if (isDefined<StringType>(element)) {
       const optErrMsg = `Invalid HumanName.prefix; Provided element is not an instance of StringType.`;
       assertFhirType<StringType>(element, StringType, optErrMsg);
       this.initPrefix();
@@ -565,9 +565,7 @@ export class HumanName extends DataType implements IBase {
    * @returns `true` if the `prefix` property exists and has a value; `false` otherwise
    */
   public hasPrefixElement(): boolean {
-    return (
-      this.prefix !== undefined && this.prefix.length > 0 && this.prefix.some((item: StringType) => !item.isEmpty())
-    );
+    return isDefinedList<StringType>(this.prefix) && this.prefix.some((item: StringType) => !item.isEmpty());
   }
 
   /**
@@ -594,7 +592,7 @@ export class HumanName extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setPrefix(value: fhirString[] | undefined): this {
-    if (isDefined<fhirString[] | undefined>(value)) {
+    if (isDefinedList<fhirString>(value)) {
       const prefixElements = [] as StringType[];
       for (const prefixValue of value) {
         const optErrMsg = `Invalid HumanName.prefix array item (${String(prefixValue)})`;
@@ -615,7 +613,7 @@ export class HumanName extends DataType implements IBase {
    * @returns this
    */
   public addPrefix(value: fhirString | undefined): this {
-    if (isDefined<fhirString | undefined>(value)) {
+    if (isDefined<fhirString>(value)) {
       const optErrMsg = `Invalid HumanName.prefix array item (${String(value)})`;
       const element = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
       this.addPrefixElement(element);
@@ -653,7 +651,7 @@ export class HumanName extends DataType implements IBase {
    * @returns this
    */
   public setSuffixElement(element: StringType[] | undefined): this {
-    if (isDefined<StringType[] | undefined>(element)) {
+    if (isDefinedList<StringType>(element)) {
       const optErrMsg = `Invalid HumanName.suffix; Provided value array has an element that is not an instance of StringType.`;
       assertFhirTypeList<StringType>(element, StringType, optErrMsg);
       this.suffix = element;
@@ -670,7 +668,7 @@ export class HumanName extends DataType implements IBase {
    * @returns this
    */
   public addSuffixElement(element: StringType | undefined): this {
-    if (isDefined<StringType | undefined>(element)) {
+    if (isDefined<StringType>(element)) {
       const optErrMsg = `Invalid HumanName.suffix; Provided element is not an instance of StringType.`;
       assertFhirType<StringType>(element, StringType, optErrMsg);
       this.initSuffix();
@@ -683,9 +681,7 @@ export class HumanName extends DataType implements IBase {
    * @returns `true` if the `suffix` property exists and has a value; `false` otherwise
    */
   public hasSuffixElement(): boolean {
-    return (
-      this.suffix !== undefined && this.suffix.length > 0 && this.suffix.some((item: StringType) => !item.isEmpty())
-    );
+    return isDefinedList<StringType>(this.suffix) && this.suffix.some((item: StringType) => !item.isEmpty());
   }
 
   /**
@@ -712,7 +708,7 @@ export class HumanName extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setSuffix(value: fhirString[] | undefined): this {
-    if (isDefined<fhirString[] | undefined>(value)) {
+    if (isDefinedList<fhirString>(value)) {
       const suffixElements = [] as StringType[];
       for (const suffixValue of value) {
         const optErrMsg = `Invalid HumanName.suffix array item (${String(suffixValue)})`;
@@ -733,7 +729,7 @@ export class HumanName extends DataType implements IBase {
    * @returns this
    */
   public addSuffix(value: fhirString | undefined): this {
-    if (isDefined<fhirString | undefined>(value)) {
+    if (isDefined<fhirString>(value)) {
       const optErrMsg = `Invalid HumanName.suffix array item (${String(value)})`;
       const element = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
       this.addSuffixElement(element);
@@ -771,7 +767,7 @@ export class HumanName extends DataType implements IBase {
    * @returns this
    */
   public setPeriod(value: Period | undefined): this {
-    if (isDefined<Period | undefined>(value)) {
+    if (isDefined<Period>(value)) {
       const optErrMsg = `Invalid HumanName.period; Provided element is not an instance of Period.`;
       assertFhirType<Period>(value, Period, optErrMsg);
       this.period = value;

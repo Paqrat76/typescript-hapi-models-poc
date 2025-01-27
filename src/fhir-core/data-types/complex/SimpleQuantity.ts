@@ -63,7 +63,7 @@ export class SimpleQuantity extends Quantity implements IBase {
    * @throws AsseretionError if any defined enumType is passed in
    */
   public override setComparatorEnumType(enumType: EnumCodeType | undefined): this {
-    assert(!isDefined<EnumCodeType | undefined>(enumType), `SimpleQuantity does not support the 'comparator' element.`);
+    assert(!isDefined<EnumCodeType>(enumType), `SimpleQuantity does not support the 'comparator' element.`);
     return this;
   }
 
@@ -75,7 +75,7 @@ export class SimpleQuantity extends Quantity implements IBase {
    * @throws AsseretionError if any defined element is passed in
    */
   public override setComparatorElement(element: CodeType | undefined): this {
-    assert(!isDefined<CodeType | undefined>(element), `SimpleQuantity does not support the 'comparator' element.`);
+    assert(!isDefined<CodeType>(element), `SimpleQuantity does not support the 'comparator' element.`);
     return this;
   }
 
@@ -87,7 +87,7 @@ export class SimpleQuantity extends Quantity implements IBase {
    * @throws AsseretionError if any defined value is passed in
    */
   public override setComparator(value: fhirCode | undefined): this {
-    assert(!isDefined<fhirCode | undefined>(value), `SimpleQuantity does not support the 'comparator' element.`);
+    assert(!isDefined<fhirCode>(value), `SimpleQuantity does not support the 'comparator' element.`);
     return this;
   }
 

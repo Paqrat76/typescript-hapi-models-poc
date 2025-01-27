@@ -83,7 +83,7 @@ export class IntegerType extends PrimitiveType<fhirInteger> {
   }
 
   private assignValue(value: fhirInteger | undefined): void {
-    if (isDefined<fhirInteger | undefined>(value)) {
+    if (isDefined<fhirInteger>(value)) {
       super.setValue(parseFhirPrimitiveData(value, fhirIntegerSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);

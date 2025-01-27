@@ -119,7 +119,7 @@ export class DateType extends PrimitiveType<fhirDate> implements DateTypeImpl {
   }
 
   private assignValue(value: fhirDate | undefined): void {
-    if (isDefined<fhirDate | undefined>(value)) {
+    if (isDefined<fhirDate>(value)) {
       super.setValue(parseFhirPrimitiveData(value, fhirDateSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);

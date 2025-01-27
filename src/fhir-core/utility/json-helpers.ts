@@ -315,7 +315,7 @@ export function safeStringify(value: Value): string {
  */
 export function hasFhirData(x: Value | undefined): boolean {
   return (
-    isDefined<Value | undefined>(x) &&
+    isDefined<Value>(x) &&
     !((isJsonObject(x) && isEmpty(x)) || (isJsonArray(x) && isEmpty(x)) || (isJsonString(x) && isEmpty(x)))
   );
 }

@@ -83,7 +83,7 @@ export class IdType extends PrimitiveType<fhirId> {
   }
 
   private assignValue(value: fhirId | undefined): void {
-    if (isDefined<fhirId | undefined>(value)) {
+    if (isDefined<fhirId>(value)) {
       super.setValue(parseFhirPrimitiveData(value, fhirIdSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);

@@ -83,7 +83,7 @@ export class MarkdownType extends PrimitiveType<fhirMarkdown> {
   }
 
   private assignValue(value: fhirMarkdown | undefined): void {
-    if (isDefined<fhirMarkdown | undefined>(value)) {
+    if (isDefined<fhirMarkdown>(value)) {
       super.setValue(parseFhirPrimitiveData(value, fhirMarkdownSchema, this.typeErrorMessage()));
     } else {
       super.setValue(undefined);

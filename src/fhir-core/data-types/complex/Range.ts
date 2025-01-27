@@ -98,7 +98,7 @@ export class Range extends DataType implements IBase {
    * @returns this
    */
   public setLow(value: SimpleQuantity | undefined): this {
-    if (isDefined<SimpleQuantity | undefined>(value)) {
+    if (isDefined<SimpleQuantity>(value)) {
       const optErrMsg = `Invalid Range.low; Provided value is not an instance of SimpleQuantity.`;
       assertFhirType<SimpleQuantity>(value, SimpleQuantity, optErrMsg);
       this.low = value;
@@ -129,7 +129,7 @@ export class Range extends DataType implements IBase {
    * @returns this
    */
   public setHigh(value: SimpleQuantity | undefined): this {
-    if (isDefined<SimpleQuantity | undefined>(value)) {
+    if (isDefined<SimpleQuantity>(value)) {
       const optErrMsg = `Invalid Range.high; Provided value is not an instance of SimpleQuantity.`;
       assertFhirType<SimpleQuantity>(value, SimpleQuantity, optErrMsg);
       this.high = value;

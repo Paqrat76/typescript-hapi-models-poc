@@ -56,7 +56,7 @@ import {
 import { setFhirComplexJson, setFhirPrimitiveJson } from '@src/fhir-core/base-models/core-fhir-models';
 import { isEmpty as _isEmpty } from '@src/fhir-core/utility/common-util';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirType, assertIsDefined } from '@src/fhir-core/utility/type-guards';
+import { assertFhirType, assertIsDefined, assertIsDefinedList } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
@@ -475,7 +475,7 @@ export function setFhirResourceJson(resource: Resource, propName: string, jsonOb
  * @category Utilities: JSON
  */
 export function setFhirResourceListJson(resources: Resource[], propName: string, jsonObj: JSON.Object): void {
-  assertIsDefined<Resource[]>(resources, 'Provided resources is undefined/null');
+  assertIsDefinedList<Resource>(resources, 'Provided resources is undefined/null');
   assertIsDefined<string>(propName, 'Provided propName is undefined/null');
   assert(!_isEmpty(propName), 'Provided propName is empty');
   assertIsDefined<JSON.Object>(jsonObj, 'Provided jsonObj is undefined/null');

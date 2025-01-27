@@ -499,7 +499,7 @@ export function getPrimitiveTypeJson(
   assertIsString(jsonType, `Provided jsonType is not a string`);
 
   let dtJson: JSON.Value | undefined = undefined;
-  if (isDefined<JSON.Value | undefined>(datatypeJsonObj[primitiveFieldName])) {
+  if (isDefined<JSON.Value>(datatypeJsonObj[primitiveFieldName])) {
     if (jsonType === 'boolean') {
       dtJson = JSON.asBoolean(datatypeJsonObj[primitiveFieldName], sourceField);
     } else if (jsonType === 'number') {
@@ -579,10 +579,7 @@ export function getPrimitiveTypeListJson(
   dataJsonArray.forEach((dataJson: JSON.Value, idx) => {
     const primitiveJsonObj = {} as JSON.Object;
     primitiveJsonObj[primitiveFieldName] = dataJson;
-    if (
-      isDefined<JSON.Array | undefined>(dataElementJsonArray) &&
-      isDefined<JSON.Value | undefined>(dataElementJsonArray[idx])
-    ) {
+    if (isDefined<JSON.Array>(dataElementJsonArray) && isDefined<JSON.Value>(dataElementJsonArray[idx])) {
       primitiveJsonObj[siblingFieldName] = dataElementJsonArray[idx];
     }
     const result: PrimitiveTypeJson = getPrimitiveTypeJson(primitiveJsonObj, sourceField, primitiveFieldName, jsonType);
@@ -1160,7 +1157,7 @@ export function parsePolymorphicDataType(
   }
   assertIsDefined<string>(sourceField, `The sourceField argument is undefined/null.`);
   assertIsDefined<string>(fieldName, `The fieldName argument is undefined/null.`);
-  assertIsDefined<DecoratorMetadataObject | null>(metadata, `The metadata argument is undefined/null.`);
+  assertIsDefined<DecoratorMetadataObject>(metadata, `The metadata argument is undefined/null.`);
 
   const choiceDataTypes: FhirDataType[] = getChoiceDatatypeDefsForField(metadata, fieldName);
   const supportedFieldNames = choiceDataTypes.map((item) => `${fieldName}${upperFirst(item)}`);
@@ -1194,7 +1191,7 @@ export function parseOpenDataType(
   }
   assertIsDefined<string>(sourceField, `The sourceField argument is undefined/null.`);
   assertIsDefined<string>(fieldName, `The fieldName argument is undefined/null.`);
-  assertIsDefined<DecoratorMetadataObject | null>(metadata, `The metadata argument is undefined/null.`);
+  assertIsDefined<DecoratorMetadataObject>(metadata, `The metadata argument is undefined/null.`);
 
   const openDatatypeFields: string[] = getOpenDatatypeFields(metadata);
   if (openDatatypeFields.includes(sourceField)) {
@@ -1263,7 +1260,7 @@ export function parseAddress(json: JSON.Value | undefined, sourceField?: string)
     return undefined;
   }
 
-  const source = isDefined<string | undefined>(sourceField) ? sourceField : 'Address';
+  const source = isDefined<string>(sourceField) ? sourceField : 'Address';
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
@@ -1352,7 +1349,7 @@ export function parseAttachment(json: JSON.Value | undefined, sourceField?: stri
     return undefined;
   }
 
-  const source = isDefined<string | undefined>(sourceField) ? sourceField : 'Attachment';
+  const source = isDefined<string>(sourceField) ? sourceField : 'Attachment';
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
@@ -1426,7 +1423,7 @@ export function parseCodeableConcept(json: JSON.Value | undefined, sourceField?:
     return undefined;
   }
 
-  const source = isDefined<string | undefined>(sourceField) ? sourceField : 'CodeableConcept';
+  const source = isDefined<string>(sourceField) ? sourceField : 'CodeableConcept';
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
@@ -1468,7 +1465,7 @@ export function parseCoding(json: JSON.Value | undefined, sourceField?: string):
     return undefined;
   }
 
-  const source = isDefined<string | undefined>(sourceField) ? sourceField : 'Coding';
+  const source = isDefined<string>(sourceField) ? sourceField : 'Coding';
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
@@ -1524,7 +1521,7 @@ export function parseContactPoint(json: JSON.Value | undefined, sourceField?: st
     return undefined;
   }
 
-  const source = isDefined<string | undefined>(sourceField) ? sourceField : 'ContactPoint';
+  const source = isDefined<string>(sourceField) ? sourceField : 'ContactPoint';
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
@@ -1579,7 +1576,7 @@ export function parseHumanName(json: JSON.Value | undefined, sourceField?: strin
     return undefined;
   }
 
-  const source = isDefined<string | undefined>(sourceField) ? sourceField : 'HumanName';
+  const source = isDefined<string>(sourceField) ? sourceField : 'HumanName';
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
@@ -1658,7 +1655,7 @@ export function parseIdentifier(json: JSON.Value | undefined, sourceField?: stri
     return undefined;
   }
 
-  const source = isDefined<string | undefined>(sourceField) ? sourceField : 'Identifier';
+  const source = isDefined<string>(sourceField) ? sourceField : 'Identifier';
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
@@ -1717,7 +1714,7 @@ export function parseMeta(json: JSON.Value | undefined, sourceField?: string): M
     return undefined;
   }
 
-  const source = isDefined<string | undefined>(sourceField) ? sourceField : 'Meta';
+  const source = isDefined<string>(sourceField) ? sourceField : 'Meta';
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
@@ -1791,7 +1788,7 @@ export function parseNarrative(json: JSON.Value | undefined, sourceField?: strin
     return undefined;
   }
 
-  const source = isDefined<string | undefined>(sourceField) ? sourceField : 'Narrative';
+  const source = isDefined<string>(sourceField) ? sourceField : 'Narrative';
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
@@ -1848,7 +1845,7 @@ export function parsePeriod(json: JSON.Value | undefined, sourceField?: string):
     return undefined;
   }
 
-  const source = isDefined<string | undefined>(sourceField) ? sourceField : 'Period';
+  const source = isDefined<string>(sourceField) ? sourceField : 'Period';
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
@@ -1886,7 +1883,7 @@ export function parseQuantity(json: JSON.Value | undefined, sourceField?: string
     return undefined;
   }
 
-  const source = isDefined<string | undefined>(sourceField) ? sourceField : 'Quantity';
+  const source = isDefined<string>(sourceField) ? sourceField : 'Quantity';
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
@@ -1942,7 +1939,7 @@ export function parseRange(json: JSON.Value | undefined, sourceField?: string): 
     return undefined;
   }
 
-  const source = isDefined<string | undefined>(sourceField) ? sourceField : 'Range';
+  const source = isDefined<string>(sourceField) ? sourceField : 'Range';
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
@@ -1978,7 +1975,7 @@ export function parseReference(json: JSON.Value | undefined, sourceField?: strin
     return undefined;
   }
 
-  const source = isDefined<string | undefined>(sourceField) ? sourceField : 'Reference';
+  const source = isDefined<string>(sourceField) ? sourceField : 'Reference';
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
@@ -2027,7 +2024,7 @@ export function parseSignature(json: JSON.Value | undefined, sourceField?: strin
     return undefined;
   }
 
-  const source = isDefined<string | undefined>(sourceField) ? sourceField : 'Signature';
+  const source = isDefined<string>(sourceField) ? sourceField : 'Signature';
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
@@ -2120,7 +2117,7 @@ export function parseSimpleQuantity(json: JSON.Value | undefined, sourceField?: 
     return undefined;
   }
 
-  const source = isDefined<string | undefined>(sourceField) ? sourceField : 'SimpleQuantity';
+  const source = isDefined<string>(sourceField) ? sourceField : 'SimpleQuantity';
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);

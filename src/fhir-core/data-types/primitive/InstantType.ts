@@ -106,7 +106,7 @@ export class InstantType extends PrimitiveType<fhirInstant> implements InstantTy
   }
 
   private assignValue(value: fhirInstant | undefined): void {
-    if (isDefined<fhirInstant | undefined>(value)) {
+    if (isDefined<fhirInstant>(value)) {
       super.setValue(parseFhirPrimitiveData(value, fhirInstantSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);

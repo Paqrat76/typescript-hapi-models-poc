@@ -83,7 +83,7 @@ export class UuidType extends PrimitiveType<fhirUuid> {
   }
 
   private assignValue(value: fhirUuid | undefined): void {
-    if (isDefined<fhirUuid | undefined>(value)) {
+    if (isDefined<fhirUuid>(value)) {
       super.setValue(parseFhirPrimitiveData(value, fhirUuidSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);

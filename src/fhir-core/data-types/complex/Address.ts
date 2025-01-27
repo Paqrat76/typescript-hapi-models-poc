@@ -43,7 +43,7 @@ import {
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { copyListValues, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirType, assertFhirTypeList, isDefined } from '@src/fhir-core/utility/type-guards';
+import { assertFhirType, assertFhirTypeList, isDefined, isDefinedList } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 
 /**
@@ -251,7 +251,7 @@ export class Address extends DataType implements IBase {
    * @returns this
    */
   public setUseEnumType(enumType: EnumCodeType | undefined): this {
-    if (isDefined<EnumCodeType | undefined>(enumType)) {
+    if (isDefined<EnumCodeType>(enumType)) {
       const errMsgPrefix = 'Invalid Address.use';
       assertEnumCodeType<AddressUseEnum>(enumType, AddressUseEnum, errMsgPrefix);
       this.use = enumType;
@@ -285,7 +285,7 @@ export class Address extends DataType implements IBase {
    * @returns this
    */
   public setUseElement(element: CodeType | undefined): this {
-    if (isDefined<CodeType | undefined>(element)) {
+    if (isDefined<CodeType>(element)) {
       const optErrMsg = `Invalid Address.use; Provided element is not an instance of CodeType.`;
       assertFhirType<CodeType>(element, CodeType, optErrMsg);
       this.use = new EnumCodeType(element, this.addressUseEnum);
@@ -319,7 +319,7 @@ export class Address extends DataType implements IBase {
    * @returns this
    */
   public setUse(value: fhirCode | undefined): this {
-    if (isDefined<fhirCode | undefined>(value)) {
+    if (isDefined<fhirCode>(value)) {
       const optErrMsg = `Invalid Address.use; Provided value is not an instance of fhirCode.`;
       this.use = new EnumCodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg), this.addressUseEnum);
     } else {
@@ -349,7 +349,7 @@ export class Address extends DataType implements IBase {
    * @returns this
    */
   public setTypeEnumType(enumType: EnumCodeType | undefined): this {
-    if (isDefined<EnumCodeType | undefined>(enumType)) {
+    if (isDefined<EnumCodeType>(enumType)) {
       const errMsgPrefix = 'Invalid Address.type';
       assertEnumCodeType<AddressTypeEnum>(enumType, AddressTypeEnum, errMsgPrefix);
       this.type = enumType;
@@ -383,7 +383,7 @@ export class Address extends DataType implements IBase {
    * @returns this
    */
   public setTypeElement(element: CodeType | undefined): this {
-    if (isDefined<CodeType | undefined>(element)) {
+    if (isDefined<CodeType>(element)) {
       const optErrMsg = `Invalid Address.type; Provided element is not an instance of CodeType.`;
       assertFhirType<CodeType>(element, CodeType, optErrMsg);
       this.type = new EnumCodeType(element, this.addressTypeEnum);
@@ -417,7 +417,7 @@ export class Address extends DataType implements IBase {
    * @returns this
    */
   public setType(value: fhirCode | undefined): this {
-    if (isDefined<fhirCode | undefined>(value)) {
+    if (isDefined<fhirCode>(value)) {
       const optErrMsg = `Invalid Address.type; Provided value is not an instance of fhirCode.`;
       this.type = new EnumCodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg), this.addressTypeEnum);
     } else {
@@ -447,7 +447,7 @@ export class Address extends DataType implements IBase {
    * @returns this
    */
   public setTextElement(element: StringType | undefined): this {
-    if (isDefined<StringType | undefined>(element)) {
+    if (isDefined<StringType>(element)) {
       const optErrMsg = `Invalid Address.text; Provided element is not an instance of StringType.`;
       assertFhirType<StringType>(element, StringType, optErrMsg);
       this.text = element;
@@ -479,7 +479,7 @@ export class Address extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setText(value: fhirString | undefined): this {
-    if (isDefined<fhirString | undefined>(value)) {
+    if (isDefined<fhirString>(value)) {
       const optErrMsg = `Invalid Address.text (${String(value)})`;
       this.text = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
     } else {
@@ -509,7 +509,7 @@ export class Address extends DataType implements IBase {
    * @returns this
    */
   public setLineElement(element: StringType[] | undefined): this {
-    if (isDefined<StringType[] | undefined>(element)) {
+    if (isDefinedList<StringType>(element)) {
       const optErrMsg = `Invalid Address.line; Provided value array has an element that is not an instance of StringType.`;
       assertFhirTypeList<StringType>(element, StringType, optErrMsg);
       this.line = element;
@@ -526,7 +526,7 @@ export class Address extends DataType implements IBase {
    * @returns this
    */
   public addLineElement(element: StringType | undefined): this {
-    if (isDefined<StringType | undefined>(element)) {
+    if (isDefined<StringType>(element)) {
       const optErrMsg = `Invalid Address.line; Provided element is not an instance of StringType.`;
       assertFhirType<StringType>(element, StringType, optErrMsg);
       this.initLine();
@@ -539,7 +539,7 @@ export class Address extends DataType implements IBase {
    * @returns `true` if the `line` property exists and has a value; `false` otherwise
    */
   public hasLineElement(): boolean {
-    return this.line !== undefined && this.line.length > 0 && this.line.some((item: StringType) => !item.isEmpty());
+    return isDefinedList<StringType>(this.line) && this.line.some((item: StringType) => !item.isEmpty());
   }
 
   /**
@@ -566,7 +566,7 @@ export class Address extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setLine(value: fhirString[] | undefined): this {
-    if (isDefined<fhirString[] | undefined>(value)) {
+    if (isDefinedList<fhirString>(value)) {
       const lineElements = [] as StringType[];
       for (const lineValue of value) {
         const optErrMsg = `Invalid Address.line array item (${String(lineValue)})`;
@@ -587,7 +587,7 @@ export class Address extends DataType implements IBase {
    * @returns this
    */
   public addLine(value: fhirString | undefined): this {
-    if (isDefined<fhirString | undefined>(value)) {
+    if (isDefined<fhirString>(value)) {
       const optErrMsg = `Invalid Address.line array item (${String(value)})`;
       const element = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
       this.addLineElement(element);
@@ -625,7 +625,7 @@ export class Address extends DataType implements IBase {
    * @returns this
    */
   public setCityElement(element: StringType | undefined): this {
-    if (isDefined<StringType | undefined>(element)) {
+    if (isDefined<StringType>(element)) {
       const optErrMsg = `Invalid Address.city; Provided element is not an instance of StringType.`;
       assertFhirType<StringType>(element, StringType, optErrMsg);
       this.city = element;
@@ -657,7 +657,7 @@ export class Address extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setCity(value: fhirString | undefined): this {
-    if (isDefined<fhirString | undefined>(value)) {
+    if (isDefined<fhirString>(value)) {
       const optErrMsg = `Invalid Address.city (${String(value)})`;
       this.city = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
     } else {
@@ -687,7 +687,7 @@ export class Address extends DataType implements IBase {
    * @returns this
    */
   public setDistrictElement(element: StringType | undefined): this {
-    if (isDefined<StringType | undefined>(element)) {
+    if (isDefined<StringType>(element)) {
       const optErrMsg = `Invalid Address.district; Provided element is not an instance of StringType.`;
       assertFhirType<StringType>(element, StringType, optErrMsg);
       this.district = element;
@@ -719,7 +719,7 @@ export class Address extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setDistrict(value: fhirString | undefined): this {
-    if (isDefined<fhirString | undefined>(value)) {
+    if (isDefined<fhirString>(value)) {
       const optErrMsg = `Invalid Address.district (${String(value)})`;
       this.district = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
     } else {
@@ -749,7 +749,7 @@ export class Address extends DataType implements IBase {
    * @returns this
    */
   public setStateElement(element: StringType | undefined): this {
-    if (isDefined<StringType | undefined>(element)) {
+    if (isDefined<StringType>(element)) {
       const optErrMsg = `Invalid Address.state; Provided element is not an instance of StringType.`;
       assertFhirType<StringType>(element, StringType, optErrMsg);
       this.state = element;
@@ -781,7 +781,7 @@ export class Address extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setState(value: fhirString | undefined): this {
-    if (isDefined<fhirString | undefined>(value)) {
+    if (isDefined<fhirString>(value)) {
       const optErrMsg = `Invalid Address.state (${String(value)})`;
       this.state = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
     } else {
@@ -811,7 +811,7 @@ export class Address extends DataType implements IBase {
    * @returns this
    */
   public setPostalCodeElement(element: StringType | undefined): this {
-    if (isDefined<StringType | undefined>(element)) {
+    if (isDefined<StringType>(element)) {
       const optErrMsg = `Invalid Address.postalCode; Provided element is not an instance of StringType.`;
       assertFhirType<StringType>(element, StringType, optErrMsg);
       this.postalCode = element;
@@ -843,7 +843,7 @@ export class Address extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setPostalCode(value: fhirString | undefined): this {
-    if (isDefined<fhirString | undefined>(value)) {
+    if (isDefined<fhirString>(value)) {
       const optErrMsg = `Invalid Address.postalCode (${String(value)})`;
       this.postalCode = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
     } else {
@@ -873,7 +873,7 @@ export class Address extends DataType implements IBase {
    * @returns this
    */
   public setCountryElement(element: StringType | undefined): this {
-    if (isDefined<StringType | undefined>(element)) {
+    if (isDefined<StringType>(element)) {
       const optErrMsg = `Invalid Address.country; Provided element is not an instance of StringType.`;
       assertFhirType<StringType>(element, StringType, optErrMsg);
       this.country = element;
@@ -905,7 +905,7 @@ export class Address extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setCountry(value: fhirString | undefined): this {
-    if (isDefined<fhirString | undefined>(value)) {
+    if (isDefined<fhirString>(value)) {
       const optErrMsg = `Invalid Address.country (${String(value)})`;
       this.country = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
     } else {
@@ -935,7 +935,7 @@ export class Address extends DataType implements IBase {
    * @returns this
    */
   public setPeriod(value: Period | undefined): this {
-    if (isDefined<Period | undefined>(value)) {
+    if (isDefined<Period>(value)) {
       const optErrMsg = `Invalid Address.period; Provided element is not an instance of Period.`;
       assertFhirType<Period>(value, Period, optErrMsg);
       this.period = value;

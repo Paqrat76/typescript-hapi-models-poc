@@ -83,7 +83,7 @@ export class UriType extends PrimitiveType<fhirUri> {
   }
 
   private assignValue(value: fhirUri | undefined): void {
-    if (isDefined<fhirUri | undefined>(value)) {
+    if (isDefined<fhirUri>(value)) {
       super.setValue(parseFhirPrimitiveData(value, fhirUriSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);

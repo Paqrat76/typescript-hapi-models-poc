@@ -168,7 +168,7 @@ export class Quantity extends DataType implements IBase {
    * @returns this
    */
   public setValueElement(element: DecimalType | undefined): this {
-    if (isDefined<DecimalType | undefined>(element)) {
+    if (isDefined<DecimalType>(element)) {
       const optErrMsg = `Invalid Quantity.value; Provided element is not an instance of DecimalType.`;
       assertFhirType<DecimalType>(element, DecimalType, optErrMsg);
       this.value = element;
@@ -200,7 +200,7 @@ export class Quantity extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setValue(value: fhirDecimal | undefined): this {
-    if (isDefined<fhirDecimal | undefined>(value)) {
+    if (isDefined<fhirDecimal>(value)) {
       const optErrMsg = `Invalid Quantity.value (${String(value)})`;
       this.value = new DecimalType(parseFhirPrimitiveData(value, fhirDecimalSchema, optErrMsg));
     } else {
@@ -230,7 +230,7 @@ export class Quantity extends DataType implements IBase {
    * @returns this
    */
   public setComparatorEnumType(enumType: EnumCodeType | undefined): this {
-    if (isDefined<EnumCodeType | undefined>(enumType)) {
+    if (isDefined<EnumCodeType>(enumType)) {
       const errMsgPrefix = 'Invalid Quantity.comparator';
       assertEnumCodeType<QuantityComparatorEnum>(enumType, QuantityComparatorEnum, errMsgPrefix);
       this.comparator = enumType;
@@ -266,7 +266,7 @@ export class Quantity extends DataType implements IBase {
    * @returns this
    */
   public setComparatorElement(element: CodeType | undefined): this {
-    if (isDefined<CodeType | undefined>(element)) {
+    if (isDefined<CodeType>(element)) {
       const optErrMsg = `Invalid Quantity.comparator; Provided element is not an instance of CodeType.`;
       assertFhirType<CodeType>(element, CodeType, optErrMsg);
       this.comparator = new EnumCodeType(element, this.quantityComparatorEnum);
@@ -300,7 +300,7 @@ export class Quantity extends DataType implements IBase {
    * @returns this
    */
   public setComparator(value: fhirCode | undefined): this {
-    if (isDefined<fhirCode | undefined>(value)) {
+    if (isDefined<fhirCode>(value)) {
       const optErrMsg = `Invalid Quantity.comparator; Provided value is not an instance of fhirCode.`;
       this.comparator = new EnumCodeType(
         parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg),
@@ -333,7 +333,7 @@ export class Quantity extends DataType implements IBase {
    * @returns this
    */
   public setUnitElement(element: StringType | undefined): this {
-    if (isDefined<StringType | undefined>(element)) {
+    if (isDefined<StringType>(element)) {
       const optErrMsg = `Invalid Quantity.unit; Provided element is not an instance of StringType.`;
       assertFhirType<StringType>(element, StringType, optErrMsg);
       this.unit = element;
@@ -365,7 +365,7 @@ export class Quantity extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setUnit(value: fhirString | undefined): this {
-    if (isDefined<fhirString | undefined>(value)) {
+    if (isDefined<fhirString>(value)) {
       const optErrMsg = `Invalid Quantity.unit (${String(value)})`;
       this.unit = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
     } else {
@@ -395,7 +395,7 @@ export class Quantity extends DataType implements IBase {
    * @returns this
    */
   public setSystemElement(element: UriType | undefined): this {
-    if (isDefined<UriType | undefined>(element)) {
+    if (isDefined<UriType>(element)) {
       const optErrMsg = `Invalid Quantity.system; Provided element is not an instance of UriType.`;
       assertFhirType<UriType>(element, UriType, optErrMsg);
       this.system = element;
@@ -427,7 +427,7 @@ export class Quantity extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setSystem(value: fhirUri | undefined): this {
-    if (isDefined<fhirUri | undefined>(value)) {
+    if (isDefined<fhirUri>(value)) {
       const optErrMsg = `Invalid Quantity.system (${String(value)})`;
       this.system = new UriType(parseFhirPrimitiveData(value, fhirUriSchema, optErrMsg));
     } else {
@@ -457,7 +457,7 @@ export class Quantity extends DataType implements IBase {
    * @returns this
    */
   public setCodeElement(element: CodeType | undefined): this {
-    if (isDefined<CodeType | undefined>(element)) {
+    if (isDefined<CodeType>(element)) {
       const optErrMsg = `Invalid Quantity.code; Provided element is not an instance of CodeType.`;
       assertFhirType<CodeType>(element, CodeType, optErrMsg);
       this.code = element;
@@ -489,7 +489,7 @@ export class Quantity extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setCode(value: fhirCode | undefined): this {
-    if (isDefined<fhirCode | undefined>(value)) {
+    if (isDefined<fhirCode>(value)) {
       const optErrMsg = `Invalid Quantity.code (${String(value)})`;
       this.code = new CodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg));
     } else {

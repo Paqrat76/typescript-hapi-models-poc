@@ -133,7 +133,7 @@ export class DateTimeType extends PrimitiveType<fhirDateTime> implements DateTim
   }
 
   private assignValue(value: fhirDateTime | undefined): void {
-    if (isDefined<fhirDateTime | undefined>(value)) {
+    if (isDefined<fhirDateTime>(value)) {
       super.setValue(parseFhirPrimitiveData(value, fhirDateTimeSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);

@@ -32,7 +32,7 @@ import { Base } from '@src/fhir-core/base-models/Base';
 import { IBase } from '@src/fhir-core/base-models/IBase';
 import { isEmpty, isNonBlank } from '@src/fhir-core/utility/common-util';
 import { fhirUriSchema } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { assertIsDefined, assertIsString, isDefined } from '@src/fhir-core/utility/type-guards';
+import { assertIsDefined, assertIsString, isDefined, isDefinedList } from '@src/fhir-core/utility/type-guards';
 
 /**
  * Determine if all the provided elements are empty
@@ -59,7 +59,7 @@ export function isElementEmpty(...elements: (IBase | IBase[] | undefined | null)
         }
       } else {
         // IBase or undefined
-        if (isDefined<IBase | IBase[] | undefined | null>(element) && !element.isEmpty()) {
+        if (isDefined<IBase | IBase[]>(element) && !element.isEmpty()) {
           return false;
         }
       }
@@ -117,7 +117,7 @@ export function extractFieldName(sourceField: string): string {
  */
 export function copyListValues<T extends Base>(source: T[] | undefined | null): T[] {
   const target = [] as T[];
-  if (isDefined<T[] | undefined | null>(source)) {
+  if (isDefinedList<T>(source)) {
     for (const srcItem of source) {
       const copyValue = srcItem.copy() as T;
       target.push(copyValue);

@@ -45,7 +45,7 @@ import {
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { copyListValues, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirType, assertFhirTypeList, isDefined } from '@src/fhir-core/utility/type-guards';
+import { assertFhirType, assertFhirTypeList, isDefined, isDefinedList } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
@@ -177,7 +177,7 @@ export class Meta extends DataType implements IBase {
    * @returns this
    */
   public setVersionIdElement(element: IdType | undefined): this {
-    if (isDefined<IdType | undefined>(element)) {
+    if (isDefined<IdType>(element)) {
       const optErrMsg = `Invalid Meta.versionId; Provided element is not an instance of IdType.`;
       assertFhirType<IdType>(element, IdType, optErrMsg);
       this.versionId = element;
@@ -209,7 +209,7 @@ export class Meta extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setVersionId(value: fhirId | undefined): this {
-    if (isDefined<fhirId | undefined>(value)) {
+    if (isDefined<fhirId>(value)) {
       const optErrMsg = `Invalid Meta.versionId (${String(value)})`;
       this.versionId = new IdType(parseFhirPrimitiveData(value, fhirIdSchema, optErrMsg));
     } else {
@@ -239,7 +239,7 @@ export class Meta extends DataType implements IBase {
    * @returns this
    */
   public setLastUpdatedElement(element: InstantType | undefined): this {
-    if (isDefined<InstantType | undefined>(element)) {
+    if (isDefined<InstantType>(element)) {
       const optErrMsg = `Invalid Meta.lastUpdated; Provided element is not an instance of InstantType.`;
       assertFhirType<InstantType>(element, InstantType, optErrMsg);
       this.lastUpdated = element;
@@ -271,7 +271,7 @@ export class Meta extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setLastUpdated(value: fhirInstant | undefined): this {
-    if (isDefined<fhirInstant | undefined>(value)) {
+    if (isDefined<fhirInstant>(value)) {
       const optErrMsg = `Invalid Meta.lastUpdated (${String(value)})`;
       this.lastUpdated = new InstantType(parseFhirPrimitiveData(value, fhirInstantSchema, optErrMsg));
     } else {
@@ -301,7 +301,7 @@ export class Meta extends DataType implements IBase {
    * @returns this
    */
   public setSourceElement(element: UriType | undefined): this {
-    if (isDefined<UriType | undefined>(element)) {
+    if (isDefined<UriType>(element)) {
       const optErrMsg = `Invalid Meta.source; Provided element is not an instance of UriType.`;
       assertFhirType<UriType>(element, UriType, optErrMsg);
       this.source = element;
@@ -333,7 +333,7 @@ export class Meta extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setSource(value: fhirUri | undefined): this {
-    if (isDefined<fhirUri | undefined>(value)) {
+    if (isDefined<fhirUri>(value)) {
       const optErrMsg = `Invalid Meta.source (${String(value)})`;
       this.source = new UriType(parseFhirPrimitiveData(value, fhirUriSchema, optErrMsg));
     } else {
@@ -363,7 +363,7 @@ export class Meta extends DataType implements IBase {
    * @returns this
    */
   public setProfileElement(element: CanonicalType[] | undefined): this {
-    if (isDefined<CanonicalType[] | undefined>(element)) {
+    if (isDefinedList<CanonicalType>(element)) {
       const optErrMsg = `Invalid Meta.profile; Provided element array has an element that is not an instance of CanonicalType.`;
       assertFhirTypeList<CanonicalType>(element, CanonicalType, optErrMsg);
       this.profile = element;
@@ -380,7 +380,7 @@ export class Meta extends DataType implements IBase {
    * @returns this
    */
   public addProfileElement(element: CanonicalType | undefined): this {
-    if (isDefined<CanonicalType | undefined>(element)) {
+    if (isDefined<CanonicalType>(element)) {
       const optErrMsg = `Invalid Meta.profile; Provided element is not an instance of CanonicalType.`;
       assertFhirType<CanonicalType>(element, CanonicalType, optErrMsg);
       this.initProfile();
@@ -393,11 +393,7 @@ export class Meta extends DataType implements IBase {
    * @returns `true` if the `profile` property exists and has a value; `false` otherwise
    */
   public hasProfileElement(): boolean {
-    return (
-      this.profile !== undefined &&
-      this.profile.length > 0 &&
-      this.profile.some((item: CanonicalType) => !item.isEmpty())
-    );
+    return isDefinedList<CanonicalType>(this.profile) && this.profile.some((item: CanonicalType) => !item.isEmpty());
   }
 
   /**
@@ -424,7 +420,7 @@ export class Meta extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setProfile(value: fhirCanonical[] | undefined): this {
-    if (isDefined<fhirCanonical[] | undefined>(value)) {
+    if (isDefinedList<fhirCanonical>(value)) {
       const profileElements = [] as CanonicalType[];
       for (const profileValue of value) {
         const optErrMsg = `Invalid Meta.profile array item (${String(profileValue)})`;
@@ -445,7 +441,7 @@ export class Meta extends DataType implements IBase {
    * @returns this
    */
   public addProfile(value: fhirCanonical | undefined): this {
-    if (isDefined<fhirCanonical | undefined>(value)) {
+    if (isDefined<fhirCanonical>(value)) {
       const optErrMsg = `Invalid Meta.profile array item (${String(value)})`;
       const element = new CanonicalType(parseFhirPrimitiveData(value, fhirCanonicalSchema, optErrMsg));
       this.addProfileElement(element);
@@ -483,7 +479,7 @@ export class Meta extends DataType implements IBase {
    * @returns this
    */
   public setSecurity(value: Coding[] | undefined): this {
-    if (isDefined<Coding[] | undefined>(value)) {
+    if (isDefinedList<Coding>(value)) {
       const optErrMsg = `Invalid Meta.security; Provided value array has an element that is not an instance of Coding.`;
       assertFhirTypeList<Coding>(value, Coding, optErrMsg);
       this.security = value;
@@ -500,7 +496,7 @@ export class Meta extends DataType implements IBase {
    * @returns this
    */
   public addSecurity(value: Coding | undefined): this {
-    if (isDefined<Coding | undefined>(value)) {
+    if (isDefined<Coding>(value)) {
       const optErrMsg = `Invalid Meta.security; Provided value is not an instance of CodeType.`;
       assertFhirType<Coding>(value, Coding, optErrMsg);
       this.initSecurity();
@@ -513,9 +509,7 @@ export class Meta extends DataType implements IBase {
    * @returns `true` if the `security` property exists and has a value; `false` otherwise
    */
   public hasSecurity(): boolean {
-    return (
-      this.security !== undefined && this.security.length > 0 && this.security.some((item: Coding) => !item.isEmpty())
-    );
+    return isDefinedList<Coding>(this.security) && this.security.some((item: Coding) => !item.isEmpty());
   }
 
   /**
@@ -541,7 +535,7 @@ export class Meta extends DataType implements IBase {
    * @returns this
    */
   public setTag(value: Coding[] | undefined): this {
-    if (isDefined<Coding[] | undefined>(value)) {
+    if (isDefinedList<Coding>(value)) {
       const optErrMsg = `Invalid Meta.tag; Provided value array has an element that is not an instance of Coding.`;
       assertFhirTypeList<Coding>(value, Coding, optErrMsg);
       this.tag = value;
@@ -558,7 +552,7 @@ export class Meta extends DataType implements IBase {
    * @returns this
    */
   public addTag(value: Coding | undefined): this {
-    if (isDefined<Coding | undefined>(value)) {
+    if (isDefined<Coding>(value)) {
       const optErrMsg = `Invalid Meta.tag; Provided value is not an instance of CodeType.`;
       assertFhirType<Coding>(value, Coding, optErrMsg);
       this.initTag();
@@ -571,7 +565,7 @@ export class Meta extends DataType implements IBase {
    * @returns `true` if the `tag` property exists and has a value; `false` otherwise
    */
   public hasTag(): boolean {
-    return this.tag !== undefined && this.tag.length > 0 && this.tag.some((item: Coding) => !item.isEmpty());
+    return isDefinedList<Coding>(this.tag) && this.tag.some((item: Coding) => !item.isEmpty());
   }
 
   /**
