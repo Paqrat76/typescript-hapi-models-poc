@@ -265,7 +265,7 @@ export class Address extends DataType implements IBase {
    * @returns `true` if the `use` property exists and has a value; `false` otherwise
    */
   public hasUseEnumType(): boolean {
-    return this.use !== undefined && !this.use.isEmpty() && this.use.fhirCodeEnumeration.length > 0;
+    return isDefined<EnumCodeType>(this.use) && !this.use.isEmpty() && this.use.fhirCodeEnumeration.length > 0;
   }
 
   /**
@@ -363,7 +363,7 @@ export class Address extends DataType implements IBase {
    * @returns `true` if the `type` property exists and has a value; `false` otherwise
    */
   public hasTypeEnumType(): boolean {
-    return this.type !== undefined && !this.type.isEmpty() && this.type.fhirCodeEnumeration.length > 0;
+    return isDefined<EnumCodeType>(this.type) && !this.type.isEmpty() && this.type.fhirCodeEnumeration.length > 0;
   }
 
   /**
@@ -461,7 +461,7 @@ export class Address extends DataType implements IBase {
    * @returns `true` if the `text` property exists and has a value; `false` otherwise
    */
   public hasTextElement(): boolean {
-    return this.text !== undefined && !this.text.isEmpty();
+    return isDefined<StringType>(this.text) && !this.text.isEmpty();
   }
 
   /**
@@ -639,7 +639,7 @@ export class Address extends DataType implements IBase {
    * @returns `true` if the `city` property exists and has a value; `false` otherwise
    */
   public hasCityElement(): boolean {
-    return this.city !== undefined && !this.city.isEmpty();
+    return isDefined<StringType>(this.city) && !this.city.isEmpty();
   }
 
   /**
@@ -701,7 +701,7 @@ export class Address extends DataType implements IBase {
    * @returns `true` if the `district` property exists and has a value; `false` otherwise
    */
   public hasDistrictElement(): boolean {
-    return this.district !== undefined && !this.district.isEmpty();
+    return isDefined<StringType>(this.district) && !this.district.isEmpty();
   }
 
   /**
@@ -763,7 +763,7 @@ export class Address extends DataType implements IBase {
    * @returns `true` if the `state` property exists and has a value; `false` otherwise
    */
   public hasStateElement(): boolean {
-    return this.state !== undefined && !this.state.isEmpty();
+    return isDefined<StringType>(this.state) && !this.state.isEmpty();
   }
 
   /**
@@ -825,7 +825,7 @@ export class Address extends DataType implements IBase {
    * @returns `true` if the `postalCode` property exists and has a value; `false` otherwise
    */
   public hasPostalCodeElement(): boolean {
-    return this.postalCode !== undefined && !this.postalCode.isEmpty();
+    return isDefined<StringType>(this.postalCode) && !this.postalCode.isEmpty();
   }
 
   /**
@@ -887,7 +887,7 @@ export class Address extends DataType implements IBase {
    * @returns `true` if the `country` property exists and has a value; `false` otherwise
    */
   public hasCountryElement(): boolean {
-    return this.country !== undefined && !this.country.isEmpty();
+    return isDefined<StringType>(this.country) && !this.country.isEmpty();
   }
 
   /**
@@ -949,7 +949,7 @@ export class Address extends DataType implements IBase {
    * @returns `true` if the `period` property exists and has a value; `false` otherwise
    */
   public hasPeriod(): boolean {
-    return this.period !== undefined && !this.period.isEmpty();
+    return isDefined<Period>(this.period) && !this.period.isEmpty();
   }
 
   /**

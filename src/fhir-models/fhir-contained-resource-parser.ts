@@ -91,7 +91,7 @@ function getFhirModelParseResults(resourceTypeValue: string, jsonObj: JSON.Objec
  * @category Utilities: FHIR Parsers
  */
 export function parseInlineResource(json: JSON.Value | undefined, sourceField: string): Resource | undefined {
-  if (!isDefined<JSON.Value | undefined>(json) || (JSON.isJsonObject(json) && isEmpty(json))) {
+  if (!isDefined<JSON.Value>(json) || (JSON.isJsonObject(json) && isEmpty(json))) {
     return undefined;
   }
   const jsonObj: JSON.Object = JSON.asObject(json, sourceField);

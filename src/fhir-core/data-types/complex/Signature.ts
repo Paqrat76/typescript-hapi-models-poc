@@ -397,7 +397,7 @@ export class Signature extends DataType implements IBase {
    * @returns `true` if the `onBehalfOf` property exists and has a value; `false` otherwise
    */
   public hasOnBehalfOf(): boolean {
-    return this.onBehalfOf !== undefined && !this.onBehalfOf.isEmpty();
+    return isDefined<Reference>(this.onBehalfOf) && !this.onBehalfOf.isEmpty();
   }
 
   /**
@@ -428,7 +428,7 @@ export class Signature extends DataType implements IBase {
    * @returns `true` if the `targetFormat` property exists and has a value; `false` otherwise
    */
   public hasTargetFormatElement(): boolean {
-    return this.targetFormat !== undefined && !this.targetFormat.isEmpty();
+    return isDefined<CodeType>(this.targetFormat) && !this.targetFormat.isEmpty();
   }
 
   /**
@@ -490,7 +490,7 @@ export class Signature extends DataType implements IBase {
    * @returns `true` if the `sigFormat` property exists and has a value; `false` otherwise
    */
   public hasSigFormatElement(): boolean {
-    return this.sigFormat !== undefined && !this.sigFormat.isEmpty();
+    return isDefined<CodeType>(this.sigFormat) && !this.sigFormat.isEmpty();
   }
 
   /**
@@ -552,7 +552,7 @@ export class Signature extends DataType implements IBase {
    * @returns `true` if the `data` property exists and has a value; `false` otherwise
    */
   public hasDataElement(): boolean {
-    return this.data !== undefined && !this.data.isEmpty();
+    return isDefined<Base64BinaryType>(this.data) && !this.data.isEmpty();
   }
 
   /**

@@ -191,7 +191,7 @@ export class Meta extends DataType implements IBase {
    * @returns `true` if the `versionId` property exists and has a value; `false` otherwise
    */
   public hasVersionIdElement(): boolean {
-    return this.versionId !== undefined && !this.versionId.isEmpty();
+    return isDefined<IdType>(this.versionId) && !this.versionId.isEmpty();
   }
 
   /**
@@ -253,7 +253,7 @@ export class Meta extends DataType implements IBase {
    * @returns `true` if the `lastUpdated` property exists and has a value; `false` otherwise
    */
   public hasLastUpdatedElement(): boolean {
-    return this.lastUpdated !== undefined && !this.lastUpdated.isEmpty();
+    return isDefined<InstantType>(this.lastUpdated) && !this.lastUpdated.isEmpty();
   }
 
   /**
@@ -315,7 +315,7 @@ export class Meta extends DataType implements IBase {
    * @returns `true` if the `source` property exists and has a value; `false` otherwise
    */
   public hasSourceElement(): boolean {
-    return this.source !== undefined && !this.source.isEmpty();
+    return isDefined<UriType>(this.source) && !this.source.isEmpty();
   }
 
   /**

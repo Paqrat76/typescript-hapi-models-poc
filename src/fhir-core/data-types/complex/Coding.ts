@@ -173,7 +173,7 @@ export class Coding extends DataType implements IBase {
    * @returns `true` if the `system` property exists and has a value; `false` otherwise
    */
   public hasSystemElement(): boolean {
-    return this.system !== undefined && !this.system.isEmpty();
+    return isDefined<UriType>(this.system) && !this.system.isEmpty();
   }
 
   /**
@@ -235,7 +235,7 @@ export class Coding extends DataType implements IBase {
    * @returns `true` if the `version` property exists and has a value; `false` otherwise
    */
   public hasVersionElement(): boolean {
-    return this.version !== undefined && !this.version.isEmpty();
+    return isDefined<StringType>(this.version) && !this.version.isEmpty();
   }
 
   /**
@@ -297,7 +297,7 @@ export class Coding extends DataType implements IBase {
    * @returns `true` if the `code` property exists and has a value; `false` otherwise
    */
   public hasCodeElement(): boolean {
-    return this.code !== undefined && !this.code.isEmpty();
+    return isDefined<CodeType>(this.code) && !this.code.isEmpty();
   }
 
   /**
@@ -359,7 +359,7 @@ export class Coding extends DataType implements IBase {
    * @returns `true` if the `display` property exists and has a value; `false` otherwise
    */
   public hasDisplayElement(): boolean {
-    return this.display !== undefined && !this.display.isEmpty();
+    return isDefined<StringType>(this.display) && !this.display.isEmpty();
   }
 
   /**
@@ -421,7 +421,7 @@ export class Coding extends DataType implements IBase {
    * @returns `true` if the `userSelected` property exists and has a value; `false` otherwise
    */
   public hasUserSelectedElement(): boolean {
-    return this.userSelected !== undefined && !this.userSelected.isEmpty();
+    return isDefined<BooleanType>(this.userSelected) && !this.userSelected.isEmpty();
   }
 
   /**

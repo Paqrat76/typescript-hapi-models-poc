@@ -170,7 +170,7 @@ export class Reference extends DataType implements IBase {
    * @returns `true` if the `reference` property exists and has a value; `false` otherwise
    */
   public hasReferenceElement(): boolean {
-    return this.reference !== undefined && !this.reference.isEmpty();
+    return isDefined<StringType>(this.reference) && !this.reference.isEmpty();
   }
 
   /**
@@ -232,7 +232,7 @@ export class Reference extends DataType implements IBase {
    * @returns `true` if the `type` property exists and has a value; `false` otherwise
    */
   public hasTypeElement(): boolean {
-    return this.type !== undefined && !this.type.isEmpty();
+    return isDefined<UriType>(this.type) && !this.type.isEmpty();
   }
 
   /**
@@ -294,7 +294,7 @@ export class Reference extends DataType implements IBase {
    * @returns `true` if the `identifier` property exists and has a value; `false` otherwise
    */
   public hasIdentifier(): boolean {
-    return this.identifier !== undefined && !this.identifier.isEmpty();
+    return isDefined<Identifier>(this.identifier) && !this.identifier.isEmpty();
   }
 
   /**
@@ -325,7 +325,7 @@ export class Reference extends DataType implements IBase {
    * @returns `true` if the `display` property exists and has a value; `false` otherwise
    */
   public hasDisplayElement(): boolean {
-    return this.display !== undefined && !this.display.isEmpty();
+    return isDefined<StringType>(this.display) && !this.display.isEmpty();
   }
 
   /**
@@ -578,7 +578,7 @@ export class Identifier extends DataType implements IBase {
    * @returns `true` if the `use` property exists and has a value; `false` otherwise
    */
   public hasUseElement(): boolean {
-    return this.use !== undefined && !this.use.isEmpty();
+    return isDefined<CodeType>(this.use) && !this.use.isEmpty();
   }
 
   /**
@@ -640,7 +640,7 @@ export class Identifier extends DataType implements IBase {
    * @returns `true` if the `type` property exists and has a value; `false` otherwise
    */
   public hasType(): boolean {
-    return this.type !== undefined && !this.type.isEmpty();
+    return isDefined<CodeableConcept>(this.type) && !this.type.isEmpty();
   }
 
   /**
@@ -671,7 +671,7 @@ export class Identifier extends DataType implements IBase {
    * @returns `true` if the `system` property exists and has a value; `false` otherwise
    */
   public hasSystemElement(): boolean {
-    return this.system !== undefined && !this.system.isEmpty();
+    return isDefined<UriType>(this.system) && !this.system.isEmpty();
   }
 
   /**
@@ -733,7 +733,7 @@ export class Identifier extends DataType implements IBase {
    * @returns `true` if the `value` property exists and has a value; `false` otherwise
    */
   public hasValueElement(): boolean {
-    return this.value !== undefined && !this.value.isEmpty();
+    return isDefined<StringType>(this.value) && !this.value.isEmpty();
   }
 
   /**
@@ -795,7 +795,7 @@ export class Identifier extends DataType implements IBase {
    * @returns `true` if the `period` property exists and has a value; `false` otherwise
    */
   public hasPeriod(): boolean {
-    return this.period !== undefined && !this.period.isEmpty();
+    return isDefined<Period>(this.period) && !this.period.isEmpty();
   }
 
   /**
@@ -828,7 +828,7 @@ export class Identifier extends DataType implements IBase {
    * @returns `true` if the `assigner` property exists and has a value; `false` otherwise
    */
   public hasAssigner(): boolean {
-    return this.assigner !== undefined && !this.assigner.isEmpty();
+    return isDefined<Reference>(this.assigner) && !this.assigner.isEmpty();
   }
 
   /**

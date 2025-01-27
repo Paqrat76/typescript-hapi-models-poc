@@ -211,7 +211,7 @@ export class HumanName extends DataType implements IBase {
    * @returns `true` if the `use` property exists and has a value; `false` otherwise
    */
   public hasUseEnumType(): boolean {
-    return this.use !== undefined && !this.use.isEmpty() && this.use.fhirCodeEnumeration.length > 0;
+    return isDefined<EnumCodeType>(this.use) && !this.use.isEmpty() && this.use.fhirCodeEnumeration.length > 0;
   }
 
   /**
@@ -309,7 +309,7 @@ export class HumanName extends DataType implements IBase {
    * @returns `true` if the `text` property exists and has a value; `false` otherwise
    */
   public hasTextElement(): boolean {
-    return this.text !== undefined && !this.text.isEmpty();
+    return isDefined<StringType>(this.text) && !this.text.isEmpty();
   }
 
   /**
@@ -371,7 +371,7 @@ export class HumanName extends DataType implements IBase {
    * @returns `true` if the `family` property exists and has a value; `false` otherwise
    */
   public hasFamilyElement(): boolean {
-    return this.family !== undefined && !this.family.isEmpty();
+    return isDefined<StringType>(this.family) && !this.family.isEmpty();
   }
 
   /**
@@ -781,7 +781,7 @@ export class HumanName extends DataType implements IBase {
    * @returns `true` if the `period` property exists and has a value; `false` otherwise
    */
   public hasPeriod(): boolean {
-    return this.period !== undefined && !this.period.isEmpty();
+    return isDefined<Period>(this.period) && !this.period.isEmpty();
   }
 
   /**

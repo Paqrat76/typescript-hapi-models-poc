@@ -185,7 +185,7 @@ export class ContactPoint extends DataType implements IBase {
    * @returns `true` if the `system` property exists and has a value; `false` otherwise
    */
   public hasSystemEnumType(): boolean {
-    return this.system !== undefined && !this.system.isEmpty() && this.system.fhirCodeEnumeration.length > 0;
+    return isDefined<EnumCodeType>(this.system) && !this.system.isEmpty() && this.system.fhirCodeEnumeration.length > 0;
   }
 
   /**
@@ -286,7 +286,7 @@ export class ContactPoint extends DataType implements IBase {
    * @returns `true` if the `value` property exists and has a value; `false` otherwise
    */
   public hasValueElement(): boolean {
-    return this.value !== undefined && !this.value.isEmpty();
+    return isDefined<StringType>(this.value) && !this.value.isEmpty();
   }
 
   /**
@@ -348,7 +348,7 @@ export class ContactPoint extends DataType implements IBase {
    * @returns `true` if the `use` property exists and has a value; `false` otherwise
    */
   public hasUseEnumType(): boolean {
-    return this.use !== undefined && !this.use.isEmpty() && this.use.fhirCodeEnumeration.length > 0;
+    return isDefined<EnumCodeType>(this.use) && !this.use.isEmpty() && this.use.fhirCodeEnumeration.length > 0;
   }
 
   /**
@@ -446,7 +446,7 @@ export class ContactPoint extends DataType implements IBase {
    * @returns `true` if the `rank` property exists and has a value; `false` otherwise
    */
   public hasRankElement(): boolean {
-    return this.rank !== undefined && !this.rank.isEmpty();
+    return isDefined<PositiveIntType>(this.rank) && !this.rank.isEmpty();
   }
 
   /**
@@ -508,7 +508,7 @@ export class ContactPoint extends DataType implements IBase {
    * @returns `true` if the `period` property exists and has a value; `false` otherwise
    */
   public hasPeriod(): boolean {
-    return this.period !== undefined && !this.period.isEmpty();
+    return isDefined<Period>(this.period) && !this.period.isEmpty();
   }
 
   /**

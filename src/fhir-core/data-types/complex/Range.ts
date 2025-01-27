@@ -112,7 +112,7 @@ export class Range extends DataType implements IBase {
    * @returns `true` if the `low` property exists and has a value; `false` otherwise
    */
   public hasLow(): boolean {
-    return this.low !== undefined && !this.low.isEmpty();
+    return isDefined<SimpleQuantity>(this.low) && !this.low.isEmpty();
   }
 
   /**
@@ -143,7 +143,7 @@ export class Range extends DataType implements IBase {
    * @returns `true` if the `high` property exists and has a value; `false` otherwise
    */
   public hasHigh(): boolean {
-    return this.high !== undefined && !this.high.isEmpty();
+    return isDefined<SimpleQuantity>(this.high) && !this.high.isEmpty();
   }
 
   /**

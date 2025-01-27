@@ -56,7 +56,7 @@ import {
 import { setFhirComplexJson, setFhirPrimitiveJson } from '@src/fhir-core/base-models/core-fhir-models';
 import { isEmpty as _isEmpty } from '@src/fhir-core/utility/common-util';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirType, assertIsDefined, assertIsDefinedList } from '@src/fhir-core/utility/type-guards';
+import { assertFhirType, assertIsDefined, assertIsDefinedList, isDefined } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
@@ -181,7 +181,7 @@ export abstract class Resource extends Base implements IBase {
    * @returns `true` if the `id` property exists and has a value; `false` otherwise
    */
   public hasIdElement(): boolean {
-    return this.id !== undefined && !this.id.isEmpty();
+    return isDefined<IdType>(this.id) && !this.id.isEmpty();
   }
 
   /**
@@ -237,7 +237,7 @@ export abstract class Resource extends Base implements IBase {
    * @returns `true` if the `meta` property exists and has a value; `false` otherwise
    */
   public hasMeta(): boolean {
-    return this.meta !== undefined && !this.meta.isEmpty();
+    return isDefined<Meta>(this.meta) && !this.meta.isEmpty();
   }
 
   /**
@@ -264,7 +264,7 @@ export abstract class Resource extends Base implements IBase {
    * @returns `true` if the `implicitRules` property exists and has a value; `false` otherwise
    */
   public hasImplicitRulesElement(): boolean {
-    return this.implicitRules !== undefined && !this.implicitRules.isEmpty();
+    return isDefined<UriType>(this.implicitRules) && !this.implicitRules.isEmpty();
   }
 
   /**
@@ -320,7 +320,7 @@ export abstract class Resource extends Base implements IBase {
    * @returns `true` if the `language` property exists and has a value; `false` otherwise
    */
   public hasLanguageElement(): boolean {
-    return this.language !== undefined && !this.language.isEmpty();
+    return isDefined<CodeType>(this.language) && !this.language.isEmpty();
   }
 
   /**

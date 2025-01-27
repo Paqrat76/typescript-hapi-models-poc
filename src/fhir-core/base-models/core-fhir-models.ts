@@ -58,6 +58,7 @@ import {
   assertFhirType,
   assertFhirTypeList,
   assertIsDefined,
+  assertIsDefinedList,
   isDefined,
   isDefinedList,
 } from '@src/fhir-core/utility/type-guards';
@@ -1077,7 +1078,7 @@ export class Extension extends Element implements IBase {
    * @returns `true` if the `value` property exists and has a value; `false` otherwise
    */
   public hasValue(): boolean {
-    return this.value !== undefined && !this.value.isEmpty();
+    return isDefined<DataType>(this.value) && !this.value.isEmpty();
   }
 
   /**
@@ -1210,7 +1211,7 @@ export function setPolymorphicValueJson(value: DataType, propName: string, jsonO
  * @category Utilities: JSON
  */
 export function setFhirExtensionJson(extensions: Extension[], jsonObj: JSON.Object, isModifierExtension = false): void {
-  assertIsDefined<Extension[]>(extensions, 'Provided extensions is undefined/null');
+  assertIsDefinedList<Extension>(extensions, 'Provided extensions is undefined/null/empty');
   assertIsDefined<JSON.Object>(jsonObj, 'Provided jsonObj is undefined/null');
 
   const jsonExtension = [] as JSON.Array;
@@ -1281,7 +1282,7 @@ export function setFhirPrimitiveListJson<T>(
   propName: string,
   jsonObj: JSON.Object,
 ): void {
-  assertIsDefined<PrimitiveType<T>[]>(ptElements, 'Provided ptElements is undefined/null');
+  assertIsDefinedList<PrimitiveType<T>>(ptElements, 'Provided ptElements is undefined/null/empty');
   assertIsDefined<string>(propName, 'Provided propName is undefined/null');
   assertIsDefined<JSON.Object>(jsonObj, 'Provided jsonObj is undefined/null');
   assert(!isEmpty(propName), 'Provided propName is empty');
@@ -1361,7 +1362,7 @@ export function setFhirComplexJson(cElement: DataType, propName: string, jsonObj
  * @category Utilities: JSON
  */
 export function setFhirComplexListJson(cElements: DataType[], propName: string, jsonObj: JSON.Object): void {
-  assertIsDefined<DataType[]>(cElements, 'Provided cElements is undefined/null');
+  assertIsDefinedList<DataType>(cElements, 'Provided cElements is undefined/null/empty');
   assertIsDefined<string>(propName, 'Provided propName is undefined/null');
   assertIsDefined<JSON.Object>(jsonObj, 'Provided jsonObj is undefined/null');
   assert(!isEmpty(propName), 'Provided propName is empty');
@@ -1422,7 +1423,7 @@ export function setFhirBackboneElementListJson(
   propName: string,
   jsonObj: JSON.Object,
 ): void {
-  assertIsDefined<BackboneElement[]>(bElements, 'Provided bElements is undefined/null');
+  assertIsDefinedList<BackboneElement>(bElements, 'Provided bElements is undefined/null');
   assertIsDefined<string>(propName, 'Provided propName is undefined/null');
   assertIsDefined<JSON.Object>(jsonObj, 'Provided jsonObj is undefined/null');
   assert(!isEmpty(propName), 'Provided propName is empty');
@@ -1479,7 +1480,7 @@ export function setFhirBackboneTypeJson(bType: BackboneType, propName: string, j
  * @category Utilities: JSON
  */
 export function setFhirBackboneTypeListJson(bTypes: BackboneType[], propName: string, jsonObj: JSON.Object): void {
-  assertIsDefined<BackboneType[]>(bTypes, 'Provided bTypes is undefined/null');
+  assertIsDefinedList<BackboneType>(bTypes, 'Provided bTypes is undefined/null');
   assertIsDefined<string>(propName, 'Provided propName is undefined/null');
   assertIsDefined<JSON.Object>(jsonObj, 'Provided jsonObj is undefined/null');
   assert(!isEmpty(propName), 'Provided propName is empty');

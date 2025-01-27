@@ -123,7 +123,7 @@ export class Period extends DataType implements IBase {
    * @returns `true` if the `start` property exists and has a value; `false` otherwise
    */
   public hasStartElement(): boolean {
-    return this.start !== undefined && !this.start.isEmpty();
+    return isDefined<DateTimeType>(this.start) && !this.start.isEmpty();
   }
 
   /**
@@ -193,7 +193,7 @@ export class Period extends DataType implements IBase {
    * @returns `true` if the `end` property exists and has a value; `false` otherwise
    */
   public hasEndElement(): boolean {
-    return this.end !== undefined && !this.end.isEmpty();
+    return isDefined<DateTimeType>(this.end) && !this.end.isEmpty();
   }
 
   /**

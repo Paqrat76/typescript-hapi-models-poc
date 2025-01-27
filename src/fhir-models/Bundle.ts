@@ -66,7 +66,13 @@ import { SearchEntryModeEnum } from '@src/fhir-models/code-systems/SearchEntryMo
 import { REQUIRED_PROPERTIES_DO_NOT_EXIST, REQUIRED_PROPERTIES_REQD_IN_JSON } from '@src/fhir-core/constants';
 import { isEmpty } from '@src/fhir-core/utility/common-util';
 import { copyListValues, extractFieldName, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirType, assertFhirTypeList, assertIsDefined, isDefined } from '@src/fhir-core/utility/type-guards';
+import {
+  assertFhirType,
+  assertFhirTypeList,
+  assertIsDefined,
+  isDefined,
+  isDefinedList,
+} from '@src/fhir-core/utility/type-guards';
 import {
   assertFhirResourceTypeJson,
   getPrimitiveTypeJson,
@@ -352,7 +358,7 @@ export class Bundle extends Resource implements IBase {
    * @returns this
    */
   public setIdentifier(value: Identifier | undefined): this {
-    if (isDefined<Identifier | undefined>(value)) {
+    if (isDefined<Identifier>(value)) {
       const optErrMsg = `Invalid Bundle.identifier; Provided element is not an instance of Identifier.`;
       assertFhirType<Identifier>(value, Identifier, optErrMsg);
       this.identifier = value;
@@ -366,7 +372,7 @@ export class Bundle extends Resource implements IBase {
    * @returns `true` if the `identifier` property exists and has a value; `false` otherwise
    */
   public hasIdentifier(): boolean {
-    return this.identifier !== undefined && !this.identifier.isEmpty();
+    return isDefined<Identifier>(this.identifier) && !this.identifier.isEmpty();
   }
 
   /**
@@ -394,9 +400,7 @@ export class Bundle extends Resource implements IBase {
    * @returns `true` if the `type` property exists and has a value; `false` otherwise
    */
   public hasTypeEnumType(): boolean {
-    return (
-      isDefined<EnumCodeType | null>(this.type) && !this.type.isEmpty() && this.type.fhirCodeEnumeration.length > 0
-    );
+    return isDefined<EnumCodeType>(this.type) && !this.type.isEmpty() && this.type.fhirCodeEnumeration.length > 0;
   }
 
   /**
@@ -474,7 +478,7 @@ export class Bundle extends Resource implements IBase {
    * @returns this
    */
   public setTimestampElement(element: InstantType | undefined): this {
-    if (isDefined<InstantType | undefined>(element)) {
+    if (isDefined<InstantType>(element)) {
       const optErrMsg = `Invalid Bundle.timestamp; Provided element is not an instance of InstantType.`;
       assertFhirType<InstantType>(element, InstantType, optErrMsg);
       this.timestamp = element;
@@ -488,7 +492,7 @@ export class Bundle extends Resource implements IBase {
    * @returns `true` if the `timestamp` property exists and has a value; `false` otherwise
    */
   public hasTimestampElement(): boolean {
-    return this.timestamp !== undefined && !this.timestamp.isEmpty();
+    return isDefined<InstantType>(this.timestamp) && !this.timestamp.isEmpty();
   }
 
   /**
@@ -506,7 +510,7 @@ export class Bundle extends Resource implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setTimestamp(value: fhirInstant | undefined): this {
-    if (isDefined<fhirInstant | undefined>(value)) {
+    if (isDefined<fhirInstant>(value)) {
       const optErrMsg = `Invalid Bundle.timestamp (${String(value)})`;
       this.timestamp = new InstantType(parseFhirPrimitiveData(value, fhirInstantSchema, optErrMsg));
     } else {
@@ -536,7 +540,7 @@ export class Bundle extends Resource implements IBase {
    * @returns this
    */
   public setTotalElement(element: UnsignedIntType | undefined): this {
-    if (isDefined<UnsignedIntType | undefined>(element)) {
+    if (isDefined<UnsignedIntType>(element)) {
       const optErrMsg = `Invalid Bundle.total; Provided element is not an instance of UnsignedIntType.`;
       assertFhirType<UnsignedIntType>(element, UnsignedIntType, optErrMsg);
       this.total = element;
@@ -550,7 +554,7 @@ export class Bundle extends Resource implements IBase {
    * @returns `true` if the `total` property exists and has a value; `false` otherwise
    */
   public hasTotalElement(): boolean {
-    return this.total !== undefined && !this.total.isEmpty();
+    return isDefined<UnsignedIntType>(this.total) && !this.total.isEmpty();
   }
 
   /**
@@ -568,7 +572,7 @@ export class Bundle extends Resource implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setTotal(value: fhirUnsignedInt | undefined): this {
-    if (isDefined<fhirUnsignedInt | undefined>(value)) {
+    if (isDefined<fhirUnsignedInt>(value)) {
       const optErrMsg = `Invalid Bundle.total (${String(value)})`;
       this.total = new UnsignedIntType(parseFhirPrimitiveData(value, fhirUnsignedIntSchema, optErrMsg));
     } else {
@@ -598,7 +602,7 @@ export class Bundle extends Resource implements IBase {
    * @returns this
    */
   public setLink(value: BundleLinkComponent[] | undefined): this {
-    if (isDefined<BundleLinkComponent[] | undefined>(value)) {
+    if (isDefinedList<BundleLinkComponent>(value)) {
       const optErrMsg = `Invalid Bundle.link; Provided value array has an element that is not an instance of BundleLinkComponent.`;
       assertFhirTypeList<BundleLinkComponent>(value, BundleLinkComponent, optErrMsg);
       this.link = value;
@@ -615,7 +619,7 @@ export class Bundle extends Resource implements IBase {
    * @returns this
    */
   public addLink(value: BundleLinkComponent | undefined): this {
-    if (isDefined<BundleLinkComponent | undefined>(value)) {
+    if (isDefined<BundleLinkComponent>(value)) {
       const optErrMsg = `Invalid Bundle.link; Provided element is not an instance of BundleLinkComponent.`;
       assertFhirType<BundleLinkComponent>(value, BundleLinkComponent, optErrMsg);
       this.initLink();
@@ -629,7 +633,7 @@ export class Bundle extends Resource implements IBase {
    */
   public hasLink(): boolean {
     return (
-      this.link !== undefined && this.link.length > 0 && this.link.some((item: BundleLinkComponent) => !item.isEmpty())
+      isDefinedList<BundleLinkComponent>(this.link) && this.link.some((item: BundleLinkComponent) => !item.isEmpty())
     );
   }
 
@@ -656,7 +660,7 @@ export class Bundle extends Resource implements IBase {
    * @returns this
    */
   public setEntry(value: BundleEntryComponent[] | undefined): this {
-    if (isDefined<BundleEntryComponent[] | undefined>(value)) {
+    if (isDefinedList<BundleEntryComponent>(value)) {
       const optErrMsg = `Invalid Bundle.entry; Provided value array has an element that is not an instance of BundleEntryComponent.`;
       assertFhirTypeList<BundleEntryComponent>(value, BundleEntryComponent, optErrMsg);
       this.entry = value;
@@ -673,7 +677,7 @@ export class Bundle extends Resource implements IBase {
    * @returns this
    */
   public addEntry(value: BundleEntryComponent | undefined): this {
-    if (isDefined<BundleEntryComponent | undefined>(value)) {
+    if (isDefined<BundleEntryComponent>(value)) {
       const optErrMsg = `Invalid Bundle.entry; Provided element is not an instance of BundleEntryComponent.`;
       assertFhirType<BundleEntryComponent>(value, BundleEntryComponent, optErrMsg);
       this.initEntry();
@@ -687,8 +691,7 @@ export class Bundle extends Resource implements IBase {
    */
   public hasEntry(): boolean {
     return (
-      this.entry !== undefined &&
-      this.entry.length > 0 &&
+      isDefinedList<BundleEntryComponent>(this.entry) &&
       this.entry.some((item: BundleEntryComponent) => !item.isEmpty())
     );
   }
@@ -716,7 +719,7 @@ export class Bundle extends Resource implements IBase {
    * @returns this
    */
   public setSignature(value: Signature | undefined): this {
-    if (isDefined<Signature | undefined>(value)) {
+    if (isDefined<Signature>(value)) {
       const optErrMsg = `Invalid Bundle.signature; Provided element is not an instance of Signature.`;
       assertFhirType<Signature>(value, Signature, optErrMsg);
       this.signature = value;
@@ -730,7 +733,7 @@ export class Bundle extends Resource implements IBase {
    * @returns `true` if the `signature` property exists and has a value; `false` otherwise
    */
   public hasSignature(): boolean {
-    return this.signature !== undefined && !this.signature.isEmpty();
+    return isDefined<Signature>(this.signature) && !this.signature.isEmpty();
   }
 
   /**
@@ -851,7 +854,7 @@ export class BundleLinkComponent extends BackboneElement {
     super();
 
     this.relation = null;
-    if (isDefined<StringType | fhirString | null>(relation)) {
+    if (isDefined<StringType | fhirString>(relation)) {
       if (relation instanceof PrimitiveType) {
         this.setRelationElement(relation);
       } else {
@@ -860,7 +863,7 @@ export class BundleLinkComponent extends BackboneElement {
     }
 
     this.url = null;
-    if (isDefined<UriType | fhirUri | null>(url)) {
+    if (isDefined<UriType | fhirUri>(url)) {
       if (url instanceof PrimitiveType) {
         this.setUrlElement(url);
       } else {
@@ -974,7 +977,7 @@ export class BundleLinkComponent extends BackboneElement {
    * @returns `true` if the `relation` property exists and has a value; `false` otherwise
    */
   public hasRelationElement(): boolean {
-    return isDefined<StringType | null>(this.relation) && !this.relation.isEmpty();
+    return isDefined<StringType>(this.relation) && !this.relation.isEmpty();
   }
 
   /**
@@ -1034,7 +1037,7 @@ export class BundleLinkComponent extends BackboneElement {
    * @returns `true` if the `url` property exists and has a value; `false` otherwise
    */
   public hasUrlElement(): boolean {
-    return isDefined<UriType | null>(this.url) && !this.url.isEmpty();
+    return isDefined<UriType>(this.url) && !this.url.isEmpty();
   }
 
   /**
@@ -1331,7 +1334,7 @@ export class BundleEntryComponent extends BackboneElement {
    * @returns this
    */
   public setLink(value: BundleLinkComponent[] | undefined): this {
-    if (isDefined<BundleLinkComponent[] | undefined>(value)) {
+    if (isDefinedList<BundleLinkComponent>(value)) {
       const optErrMsg = `Invalid Bundle.entry.link; Provided value array has an element that is not an instance of BundleLinkComponent.`;
       assertFhirTypeList<BundleLinkComponent>(value, BundleLinkComponent, optErrMsg);
       this.link = value;
@@ -1348,7 +1351,7 @@ export class BundleEntryComponent extends BackboneElement {
    * @returns this
    */
   public addLink(value: BundleLinkComponent | undefined): this {
-    if (isDefined<BundleLinkComponent | undefined>(value)) {
+    if (isDefined<BundleLinkComponent>(value)) {
       const optErrMsg = `Invalid Bundle.entry.link; Provided element is not an instance of BundleLinkComponent.`;
       assertFhirType<BundleLinkComponent>(value, BundleLinkComponent, optErrMsg);
       this.initLink();
@@ -1362,7 +1365,7 @@ export class BundleEntryComponent extends BackboneElement {
    */
   public hasLink(): boolean {
     return (
-      this.link !== undefined && this.link.length > 0 && this.link.some((item: BundleLinkComponent) => !item.isEmpty())
+      isDefinedList<BundleLinkComponent>(this.link) && this.link.some((item: BundleLinkComponent) => !item.isEmpty())
     );
   }
 
@@ -1389,7 +1392,7 @@ export class BundleEntryComponent extends BackboneElement {
    * @returns this
    */
   public setFullUrlElement(element: UriType | undefined): this {
-    if (isDefined<UriType | undefined>(element)) {
+    if (isDefined<UriType>(element)) {
       const optErrMsg = `Invalid Bundle.entry.fullUrl; Provided element is not an instance of UriType.`;
       assertFhirType<UriType>(element, UriType, optErrMsg);
       this.fullUrl = element;
@@ -1403,7 +1406,7 @@ export class BundleEntryComponent extends BackboneElement {
    * @returns `true` if the `fullUrl` property exists and has a value; `false` otherwise
    */
   public hasFullUrlElement(): boolean {
-    return this.fullUrl !== undefined && !this.fullUrl.isEmpty();
+    return isDefined<UriType>(this.fullUrl) && !this.fullUrl.isEmpty();
   }
 
   /**
@@ -1421,7 +1424,7 @@ export class BundleEntryComponent extends BackboneElement {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setFullUrl(value: fhirUri | undefined): this {
-    if (isDefined<fhirUri | undefined>(value)) {
+    if (isDefined<fhirUri>(value)) {
       const optErrMsg = `Invalid Bundle.entry.fullUrl (${String(value)})`;
       this.fullUrl = new UriType(parseFhirPrimitiveData(value, fhirUriSchema, optErrMsg));
     } else {
@@ -1451,7 +1454,7 @@ export class BundleEntryComponent extends BackboneElement {
    * @returns this
    */
   public setResource(value: Resource | undefined): this {
-    if (isDefined<Resource | undefined>(value)) {
+    if (isDefined<Resource>(value)) {
       const optErrMsg = `Invalid Bundle.entry.resource; Provided element is not an instance of Resource.`;
       assertFhirResourceType(value, optErrMsg);
       this.resource = value;
@@ -1465,7 +1468,7 @@ export class BundleEntryComponent extends BackboneElement {
    * @returns `true` if the `resource` property exists and has a value; `false` otherwise
    */
   public hasResource(): boolean {
-    return this.resource !== undefined && !this.resource.isEmpty();
+    return isDefined<Resource>(this.resource) && !this.resource.isEmpty();
   }
 
   /**
@@ -1482,7 +1485,7 @@ export class BundleEntryComponent extends BackboneElement {
    * @returns this
    */
   public setSearch(value: BundleEntrySearchComponent | undefined): this {
-    if (isDefined<BundleEntrySearchComponent | undefined>(value)) {
+    if (isDefined<BundleEntrySearchComponent>(value)) {
       const optErrMsg = `Invalid Bundle.entry.search; Provided element is not an instance of BundleEntrySearchComponent.`;
       assertFhirType<BundleEntrySearchComponent>(value, BundleEntrySearchComponent, optErrMsg);
       this.search = value;
@@ -1496,7 +1499,7 @@ export class BundleEntryComponent extends BackboneElement {
    * @returns `true` if the `search` property exists and has a value; `false` otherwise
    */
   public hasSearch(): boolean {
-    return this.search !== undefined && !this.search.isEmpty();
+    return isDefined<BundleEntrySearchComponent>(this.search) && !this.search.isEmpty();
   }
 
   /**
@@ -1513,7 +1516,7 @@ export class BundleEntryComponent extends BackboneElement {
    * @returns this
    */
   public setRequest(value: BundleEntryRequestComponent | undefined): this {
-    if (isDefined<BundleEntryRequestComponent | undefined>(value)) {
+    if (isDefined<BundleEntryRequestComponent>(value)) {
       const optErrMsg = `Invalid Bundle.entry.request; Provided element is not an instance of BundleEntryRequestComponent.`;
       assertFhirType<BundleEntryRequestComponent>(value, BundleEntryRequestComponent, optErrMsg);
       this.request = value;
@@ -1527,7 +1530,7 @@ export class BundleEntryComponent extends BackboneElement {
    * @returns `true` if the `request` property exists and has a value; `false` otherwise
    */
   public hasRequest(): boolean {
-    return this.request !== undefined && !this.request.isEmpty();
+    return isDefined<BundleEntryRequestComponent>(this.request) && !this.request.isEmpty();
   }
 
   /**
@@ -1544,7 +1547,7 @@ export class BundleEntryComponent extends BackboneElement {
    * @returns this
    */
   public setResponse(value: BundleEntryResponseComponent | undefined): this {
-    if (isDefined<BundleEntryResponseComponent | undefined>(value)) {
+    if (isDefined<BundleEntryResponseComponent>(value)) {
       const optErrMsg = `Invalid Bundle.entry.response; Provided element is not an instance of BundleEntryResponseComponent.`;
       assertFhirType<BundleEntryResponseComponent>(value, BundleEntryResponseComponent, optErrMsg);
       this.response = value;
@@ -1558,7 +1561,7 @@ export class BundleEntryComponent extends BackboneElement {
    * @returns `true` if the `response` property exists and has a value; `false` otherwise
    */
   public hasResponse(): boolean {
-    return this.response !== undefined && !this.response.isEmpty();
+    return isDefined<BundleEntryResponseComponent>(this.response) && !this.response.isEmpty();
   }
 
   /**
@@ -1745,7 +1748,7 @@ export class BundleEntrySearchComponent extends BackboneElement {
    * @returns this
    */
   public setModeEnumType(enumType: EnumCodeType | undefined): this {
-    if (isDefined<EnumCodeType | undefined>(enumType)) {
+    if (isDefined<EnumCodeType>(enumType)) {
       const errMsgPrefix = 'Invalid Bundle.entry.search.mode';
       assertEnumCodeType<SearchEntryModeEnum>(enumType, SearchEntryModeEnum, errMsgPrefix);
       this.mode = enumType;
@@ -1779,7 +1782,7 @@ export class BundleEntrySearchComponent extends BackboneElement {
    * @returns this
    */
   public setModeElement(element: CodeType | undefined): this {
-    if (isDefined<CodeType | undefined>(element)) {
+    if (isDefined<CodeType>(element)) {
       const optErrMsg = `Invalid Bundle.entry.search.mode; Provided element is not an instance of CodeType.`;
       assertFhirType<CodeType>(element, CodeType, optErrMsg);
       this.mode = new EnumCodeType(element, this.searchEntryModeEnum);
@@ -1813,7 +1816,7 @@ export class BundleEntrySearchComponent extends BackboneElement {
    * @returns this
    */
   public setMode(value: fhirCode | undefined): this {
-    if (isDefined<fhirCode | undefined>(value)) {
+    if (isDefined<fhirCode>(value)) {
       const optErrMsg = `Invalid Bundle.entry.search.mode; Provided value is not an instance of fhirCode.`;
       this.mode = new EnumCodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg), this.searchEntryModeEnum);
     } else {
@@ -1843,7 +1846,7 @@ export class BundleEntrySearchComponent extends BackboneElement {
    * @returns this
    */
   public setScoreElement(element: DecimalType | undefined): this {
-    if (isDefined<DecimalType | undefined>(element)) {
+    if (isDefined<DecimalType>(element)) {
       const optErrMsg = `Invalid Bundle.entry.search.score; Provided element is not an instance of DecimalType.`;
       assertFhirType<DecimalType>(element, DecimalType, optErrMsg);
       this.score = element;
@@ -1875,7 +1878,7 @@ export class BundleEntrySearchComponent extends BackboneElement {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setScore(value: fhirDecimal | undefined): this {
-    if (isDefined<fhirDecimal | undefined>(value)) {
+    if (isDefined<fhirDecimal>(value)) {
       const optErrMsg = `Invalid Bundle.entry.search.score (${String(value)})`;
       this.score = new DecimalType(parseFhirPrimitiveData(value, fhirDecimalSchema, optErrMsg));
     } else {
@@ -1978,7 +1981,7 @@ export class BundleEntryRequestComponent extends BackboneElement {
     );
 
     this.url = null;
-    if (isDefined<UriType | fhirUri | null>(url)) {
+    if (isDefined<UriType | fhirUri>(url)) {
       if (url instanceof PrimitiveType) {
         this.setUrlElement(url);
       } else {
@@ -2188,11 +2191,7 @@ export class BundleEntryRequestComponent extends BackboneElement {
    * @returns `true` if the `method` property exists and has a value; `false` otherwise
    */
   public hasMethodEnumType(): boolean {
-    return (
-      isDefined<EnumCodeType | null>(this.method) &&
-      !this.method.isEmpty() &&
-      this.method.fhirCodeEnumeration.length > 0
-    );
+    return isDefined<EnumCodeType>(this.method) && !this.method.isEmpty() && this.method.fhirCodeEnumeration.length > 0;
   }
 
   /**
@@ -2281,7 +2280,7 @@ export class BundleEntryRequestComponent extends BackboneElement {
    * @returns `true` if the `url` property exists and has a value; `false` otherwise
    */
   public hasUrlElement(): boolean {
-    return isDefined<UriType | null>(this.url) && !this.url.isEmpty();
+    return isDefined<UriType>(this.url) && !this.url.isEmpty();
   }
 
   /**
@@ -2330,7 +2329,7 @@ export class BundleEntryRequestComponent extends BackboneElement {
    * @returns this
    */
   public setIfNoneMatchElement(element: StringType | undefined): this {
-    if (isDefined<StringType | undefined>(element)) {
+    if (isDefined<StringType>(element)) {
       const optErrMsg = `Invalid Bundle.entry.request.ifNoneMatch; Provided element is not an instance of StringType.`;
       assertFhirType<StringType>(element, StringType, optErrMsg);
       this.ifNoneMatch = element;
@@ -2362,7 +2361,7 @@ export class BundleEntryRequestComponent extends BackboneElement {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setIfNoneMatch(value: fhirString | undefined): this {
-    if (isDefined<fhirString | undefined>(value)) {
+    if (isDefined<fhirString>(value)) {
       const optErrMsg = `Invalid Bundle.entry.request.ifNoneMatch (${String(value)})`;
       this.ifNoneMatch = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
     } else {
@@ -2392,7 +2391,7 @@ export class BundleEntryRequestComponent extends BackboneElement {
    * @returns this
    */
   public setIfModifiedSinceElement(element: InstantType | undefined): this {
-    if (isDefined<InstantType | undefined>(element)) {
+    if (isDefined<InstantType>(element)) {
       const optErrMsg = `Invalid Bundle.entry.request.ifModifiedSince; Provided element is not an instance of InstantType.`;
       assertFhirType<InstantType>(element, InstantType, optErrMsg);
       this.ifModifiedSince = element;
@@ -2424,7 +2423,7 @@ export class BundleEntryRequestComponent extends BackboneElement {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setIfModifiedSince(value: fhirInstant | undefined): this {
-    if (isDefined<fhirInstant | undefined>(value)) {
+    if (isDefined<fhirInstant>(value)) {
       const optErrMsg = `Invalid Bundle.entry.request.ifModifiedSince (${String(value)})`;
       this.ifModifiedSince = new InstantType(parseFhirPrimitiveData(value, fhirInstantSchema, optErrMsg));
     } else {
@@ -2454,7 +2453,7 @@ export class BundleEntryRequestComponent extends BackboneElement {
    * @returns this
    */
   public setIfMatchElement(element: StringType | undefined): this {
-    if (isDefined<StringType | undefined>(element)) {
+    if (isDefined<StringType>(element)) {
       const optErrMsg = `Invalid Bundle.entry.request.ifMatch; Provided element is not an instance of StringType.`;
       assertFhirType<StringType>(element, StringType, optErrMsg);
       this.ifMatch = element;
@@ -2486,7 +2485,7 @@ export class BundleEntryRequestComponent extends BackboneElement {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setIfMatch(value: fhirString | undefined): this {
-    if (isDefined<fhirString | undefined>(value)) {
+    if (isDefined<fhirString>(value)) {
       const optErrMsg = `Invalid Bundle.entry.request.ifMatch (${String(value)})`;
       this.ifMatch = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
     } else {
@@ -2516,7 +2515,7 @@ export class BundleEntryRequestComponent extends BackboneElement {
    * @returns this
    */
   public setIfNoneExistElement(element: StringType | undefined): this {
-    if (isDefined<StringType | undefined>(element)) {
+    if (isDefined<StringType>(element)) {
       const optErrMsg = `Invalid Bundle.entry.request.ifNoneExist; Provided element is not an instance of StringType.`;
       assertFhirType<StringType>(element, StringType, optErrMsg);
       this.ifNoneExist = element;
@@ -2548,7 +2547,7 @@ export class BundleEntryRequestComponent extends BackboneElement {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setIfNoneExist(value: fhirString | undefined): this {
-    if (isDefined<fhirString | undefined>(value)) {
+    if (isDefined<fhirString>(value)) {
       const optErrMsg = `Invalid Bundle.entry.request.ifNoneExist (${String(value)})`;
       this.ifNoneExist = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
     } else {
@@ -2677,7 +2676,7 @@ export class BundleEntryResponseComponent extends BackboneElement {
     super();
 
     this.status = null;
-    if (isDefined<StringType | fhirString | null>(status)) {
+    if (isDefined<StringType | fhirString>(status)) {
       if (status instanceof PrimitiveType) {
         this.setStatusElement(status);
       } else {
@@ -2853,7 +2852,7 @@ export class BundleEntryResponseComponent extends BackboneElement {
    * @returns `true` if the `status` property exists and has a value; `false` otherwise
    */
   public hasStatusElement(): boolean {
-    return isDefined<StringType | null>(this.status) && !this.status.isEmpty();
+    return isDefined<StringType>(this.status) && !this.status.isEmpty();
   }
 
   /**
@@ -2902,7 +2901,7 @@ export class BundleEntryResponseComponent extends BackboneElement {
    * @returns this
    */
   public setLocationElement(element: UriType | undefined): this {
-    if (isDefined<UriType | undefined>(element)) {
+    if (isDefined<UriType>(element)) {
       const optErrMsg = `Invalid Bundle.entry.response.location; Provided element is not an instance of UriType.`;
       assertFhirType<UriType>(element, UriType, optErrMsg);
       this.location = element;
@@ -2934,7 +2933,7 @@ export class BundleEntryResponseComponent extends BackboneElement {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setLocation(value: fhirUri | undefined): this {
-    if (isDefined<fhirUri | undefined>(value)) {
+    if (isDefined<fhirUri>(value)) {
       const optErrMsg = `Invalid Bundle.entry.response.location (${String(value)})`;
       this.location = new UriType(parseFhirPrimitiveData(value, fhirUriSchema, optErrMsg));
     } else {
@@ -2964,7 +2963,7 @@ export class BundleEntryResponseComponent extends BackboneElement {
    * @returns this
    */
   public setEtagElement(element: StringType | undefined): this {
-    if (isDefined<StringType | undefined>(element)) {
+    if (isDefined<StringType>(element)) {
       const optErrMsg = `Invalid Bundle.entry.response.etag; Provided element is not an instance of StringType.`;
       assertFhirType<StringType>(element, StringType, optErrMsg);
       this.etag = element;
@@ -2996,7 +2995,7 @@ export class BundleEntryResponseComponent extends BackboneElement {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setEtag(value: fhirString | undefined): this {
-    if (isDefined<fhirString | undefined>(value)) {
+    if (isDefined<fhirString>(value)) {
       const optErrMsg = `Invalid Bundle.entry.response.etag (${String(value)})`;
       this.etag = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
     } else {
@@ -3026,7 +3025,7 @@ export class BundleEntryResponseComponent extends BackboneElement {
    * @returns this
    */
   public setLastModifiedElement(element: InstantType | undefined): this {
-    if (isDefined<InstantType | undefined>(element)) {
+    if (isDefined<InstantType>(element)) {
       const optErrMsg = `Invalid Bundle.entry.response.lastModified; Provided element is not an instance of InstantType.`;
       assertFhirType<InstantType>(element, InstantType, optErrMsg);
       this.lastModified = element;
@@ -3058,7 +3057,7 @@ export class BundleEntryResponseComponent extends BackboneElement {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setLastModified(value: fhirInstant | undefined): this {
-    if (isDefined<fhirInstant | undefined>(value)) {
+    if (isDefined<fhirInstant>(value)) {
       const optErrMsg = `Invalid Bundle.entry.response.lastModified (${String(value)})`;
       this.lastModified = new InstantType(parseFhirPrimitiveData(value, fhirInstantSchema, optErrMsg));
     } else {
@@ -3088,7 +3087,7 @@ export class BundleEntryResponseComponent extends BackboneElement {
    * @returns this
    */
   public setOutcome(value: Resource | undefined): this {
-    if (isDefined<Resource | undefined>(value)) {
+    if (isDefined<Resource>(value)) {
       const optErrMsg = `Invalid Bundle.entry.response.outcome; Provided element is not an instance of Resource.`;
       assertFhirResourceType(value, optErrMsg);
       this.outcome = value;

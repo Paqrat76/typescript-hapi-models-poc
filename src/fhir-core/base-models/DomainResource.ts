@@ -147,7 +147,7 @@ export abstract class DomainResource extends Resource implements IBase, IBaseExt
    * @returns `true` if the `text` property exists and has a value; `false` otherwise
    */
   public hasText(): boolean {
-    return this.text !== undefined && !this.text.isEmpty();
+    return isDefined<Narrative>(this.text) && !this.text.isEmpty();
   }
 
   /**

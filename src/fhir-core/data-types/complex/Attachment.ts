@@ -227,7 +227,7 @@ export class Attachment extends DataType implements IBase {
    * @returns `true` if the `contentType` property exists and has a value; `false` otherwise
    */
   public hasContentTypeElement(): boolean {
-    return this.contentType !== undefined && !this.contentType.isEmpty();
+    return isDefined<CodeType>(this.contentType) && !this.contentType.isEmpty();
   }
 
   /**
@@ -289,7 +289,7 @@ export class Attachment extends DataType implements IBase {
    * @returns `true` if the `language` property exists and has a value; `false` otherwise
    */
   public hasLanguageElement(): boolean {
-    return this.language !== undefined && !this.language.isEmpty();
+    return isDefined<CodeType>(this.language) && !this.language.isEmpty();
   }
 
   /**
@@ -351,7 +351,7 @@ export class Attachment extends DataType implements IBase {
    * @returns `true` if the `data` property exists and has a value; `false` otherwise
    */
   public hasDataElement(): boolean {
-    return this.data !== undefined && !this.data.isEmpty();
+    return isDefined<Base64BinaryType>(this.data) && !this.data.isEmpty();
   }
 
   /**
@@ -413,7 +413,7 @@ export class Attachment extends DataType implements IBase {
    * @returns `true` if the `url` property exists and has a value; `false` otherwise
    */
   public hasUrlElement(): boolean {
-    return this.url !== undefined && !this.url.isEmpty();
+    return isDefined<UrlType>(this.url) && !this.url.isEmpty();
   }
 
   /**
@@ -475,7 +475,7 @@ export class Attachment extends DataType implements IBase {
    * @returns `true` if the `size` property exists and has a value; `false` otherwise
    */
   public hasSizeElement(): boolean {
-    return this.size !== undefined && !this.size.isEmpty();
+    return isDefined<UnsignedIntType>(this.size) && !this.size.isEmpty();
   }
 
   /**
@@ -537,7 +537,7 @@ export class Attachment extends DataType implements IBase {
    * @returns `true` if the `hash` property exists and has a value; `false` otherwise
    */
   public hasHashElement(): boolean {
-    return this.hash !== undefined && !this.hash.isEmpty();
+    return isDefined<Base64BinaryType>(this.hash) && !this.hash.isEmpty();
   }
 
   /**
@@ -599,7 +599,7 @@ export class Attachment extends DataType implements IBase {
    * @returns `true` if the `title` property exists and has a value; `false` otherwise
    */
   public hasTitleElement(): boolean {
-    return this.title !== undefined && !this.title.isEmpty();
+    return isDefined<StringType>(this.title) && !this.title.isEmpty();
   }
 
   /**
@@ -661,7 +661,7 @@ export class Attachment extends DataType implements IBase {
    * @returns `true` if the `creation` property exists and has a value; `false` otherwise
    */
   public hasCreationElement(): boolean {
-    return this.creation !== undefined && !this.creation.isEmpty();
+    return isDefined<DateTimeType>(this.creation) && !this.creation.isEmpty();
   }
 
   /**

@@ -182,7 +182,7 @@ export class Quantity extends DataType implements IBase {
    * @returns `true` if the `value` property exists and has a value; `false` otherwise
    */
   public hasValueElement(): boolean {
-    return this.value !== undefined && !this.value.isEmpty();
+    return isDefined<DecimalType>(this.value) && !this.value.isEmpty();
   }
 
   /**
@@ -245,7 +245,9 @@ export class Quantity extends DataType implements IBase {
    */
   public hasComparatorEnumType(): boolean {
     return (
-      this.comparator !== undefined && !this.comparator.isEmpty() && this.comparator.fhirCodeEnumeration.length > 0
+      isDefined<EnumCodeType>(this.comparator) &&
+      !this.comparator.isEmpty() &&
+      this.comparator.fhirCodeEnumeration.length > 0
     );
   }
 
@@ -347,7 +349,7 @@ export class Quantity extends DataType implements IBase {
    * @returns `true` if the `unit` property exists and has a value; `false` otherwise
    */
   public hasUnitElement(): boolean {
-    return this.unit !== undefined && !this.unit.isEmpty();
+    return isDefined<StringType>(this.unit) && !this.unit.isEmpty();
   }
 
   /**
@@ -409,7 +411,7 @@ export class Quantity extends DataType implements IBase {
    * @returns `true` if the `system` property exists and has a value; `false` otherwise
    */
   public hasSystemElement(): boolean {
-    return this.system !== undefined && !this.system.isEmpty();
+    return isDefined<UriType>(this.system) && !this.system.isEmpty();
   }
 
   /**
@@ -471,7 +473,7 @@ export class Quantity extends DataType implements IBase {
    * @returns `true` if the `code` property exists and has a value; `false` otherwise
    */
   public hasCodeElement(): boolean {
-    return this.code !== undefined && !this.code.isEmpty();
+    return isDefined<CodeType>(this.code) && !this.code.isEmpty();
   }
 
   /**

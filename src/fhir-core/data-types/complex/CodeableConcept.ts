@@ -176,7 +176,7 @@ export class CodeableConcept extends DataType implements IBase {
    * @returns `true` if the `text` property exists and has a value; `false` otherwise
    */
   public hasTextElement(): boolean {
-    return this.text !== undefined && !this.text.isEmpty();
+    return isDefined<StringType>(this.text) && !this.text.isEmpty();
   }
 
   /**
