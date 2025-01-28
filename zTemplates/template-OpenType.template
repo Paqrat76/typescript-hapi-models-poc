@@ -40,9 +40,9 @@
     const classMetadata: DecoratorMetadataObject | null = XxxxParentClassName[Symbol.metadata];
 
 
-    sourceField = 'XxxxParentClassElement.xxxxFieldName';
+    sourceField = 'XxxxParentClassElement.xxxxFieldName[x]';
     fieldName = extractFieldName(sourceField);
-    if (isDefined<DecoratorMetadataObject | null>(classMetadata)) {
+    if (isDefined<DecoratorMetadataObject>(classMetadata)) {
       const datatype: DataType | undefined = parseOpenDataType(backboneJsonObj, sourceField, fieldName, classMetadata);
       instance.setXxxxFieldName(datatype);
     }
@@ -50,7 +50,7 @@
   }
 
   /**
-   * @returns the `xxxxFieldName` property value as a DataType object
+   * @returns the `xxxxFieldName` property value as a DataType object if defined; else undefined
    */
   public getXxxxFieldName(): DataType | undefined {
     return this.xxxxFieldName;
@@ -66,7 +66,7 @@
    */
   @OpenDataTypes('XxxxParentClassElement.xxxxFieldName[x]')
   public setXxxxFieldName(value: DataType | undefined): this {
-    if (isDefined<DataType | undefined>(value)) {
+    if (isDefined<DataType>(value)) {
       // assertFhirType<DataType>(value, DataType) unnecessary because @OpenDataTypes decorator ensures proper type/value
       this.xxxxFieldName = value;
     } else {
@@ -79,7 +79,7 @@
    * @returns `true` if the `xxxxFieldName` property exists and has a value; `false` otherwise
    */
   public hasXxxxFieldName(): boolean {
-    return this.xxxxFieldName !== undefined && !this.xxxxFieldName.isEmpty();
+    return isDefined<DataType>(this.xxxxFieldName) && !this.xxxxFieldName.isEmpty();
   }
 
 
@@ -119,7 +119,7 @@
   constructor(xxxxFieldName: DataType | null) {
 
     this.xxxxFieldName = null;
-    if (isDefined<DataType | null>(xxxxFieldName)) {
+    if (isDefined<DataType>(xxxxFieldName)) {
       this.setXxxxFieldName(xxxxFieldName);
     }
 
@@ -139,8 +139,8 @@
 
     sourceField = 'XxxxParentClassElement.xxxxFieldName[x]';
     fieldName = extractFieldName(sourceField);
-    if (isDefined<DecoratorMetadataObject | null>(classMetadata)) {
-      const datatype: DataType | undefined = parseOpenDataType(backboneJsonObj, sourceField, fieldName, classMetadata);
+    if (isDefined<DecoratorMetadataObject>(classMetadata)) {
+      const datatype: DataType | undefined = parseOpenDataType(classJsonObj, sourceField, fieldName, classMetadata);
       if (datatype === undefined) {
         missingReqdProperties.push(sourceField);
       } else {
@@ -161,7 +161,7 @@
   }
 
   /**
-   * @returns the `xxxxFieldName` property value as a DataType object
+   * @returns the `xxxxFieldName` property value as a DataType object; else null
    */
   public getXxxxFieldName(): DataType | null {
     return this.xxxxFieldName;
@@ -170,12 +170,12 @@
   /**
    * Assigns the provided DataType object value to the `xxxxFieldName` property.
    *
-   * @decorator `@ChoiceDataTypes('XxxxParentClassElement.xxxxFieldName[x]')`
+   * @decorator `@OpenDataTypes('XxxxParentClassElement.xxxxFieldName[x]')`
    *
    * @param value - the `xxxxFieldName` object value
    * @returns this
    */
-  @ChoiceDataTypes('XxxxParentClassElement.xxxxFieldName[x]')
+  @OpenDataTypes('XxxxParentClassElement.xxxxFieldName[x]')
   public setXxxxFieldName(value: DataType): this {
     assertIsDefined<DataType>(value, `XxxxParentClassElement.xxxxFieldName[x] is required`);
     // assertFhirType<DataType>(value, DataType) unnecessary because @OpenDataTypes decorator ensures proper type/value
@@ -187,7 +187,7 @@
    * @returns `true` if the `xxxxFieldName` property exists and has a value; `false` otherwise
    */
   public hasXxxxFieldName(): boolean {
-    return isDefined<DataType | null>(this.xxxxFieldName) && !this.xxxxFieldName.isEmpty();
+    return isDefined<DataType>(this.xxxxFieldName) && !this.xxxxFieldName.isEmpty();
   }
 
 
@@ -201,7 +201,7 @@
 
     if (this.hasXxxxFieldName()) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      setPolymorphicValueJson(this.getXxxxFieldName()!, jsonObj);
+      setPolymorphicValueJson(this.getXxxxFieldName()!, 'xxxxFieldName', jsonObj);
     } else {
       missingReqdProperties.push(`XxxxParentClassElement.xxxxFieldName[x]`);
     }

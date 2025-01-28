@@ -42,7 +42,7 @@
   }
 
   /**
-   * @returns the `xxxxFieldName` property value as a EnumCodeType
+   * @returns the `xxxxFieldName` property value as a EnumCodeType if defined; else undefined
    */
   public getXxxxFieldNameEnumType(): EnumCodeType | undefined {
     return this.xxxxFieldName;
@@ -55,7 +55,7 @@
    * @returns this
    */
   public setXxxxFieldNameEnumType(enumType: EnumCodeType | undefined): this {
-    if (isDefined<EnumCodeType | undefined>(enumType)) {
+    if (isDefined<EnumCodeType>(enumType)) {
       const errMsgPrefix = 'Invalid XxxxParentClassElement.xxxxFieldName';
       assertEnumCodeType<XxxxClassEnum>(enumType, XxxxClassEnum, errMsgPrefix);
       this.xxxxFieldName = enumType;
@@ -69,11 +69,11 @@
    * @returns `true` if the `xxxxFieldName` property exists and has a value; `false` otherwise
    */
   public hasXxxxFieldNameEnumType(): boolean {
-    return this.xxxxFieldName !== undefined && !this.xxxxFieldName.isEmpty() && this.xxxxFieldName.fhirCodeEnumeration.length > 0;
+    return isDefined<EnumCodeType>(this.xxxxFieldName) && !this.xxxxFieldName.isEmpty() && this.xxxxFieldName.fhirCodeEnumeration.length > 0;
   }
 
   /**
-   * @returns the `xxxxFieldName` property value as a PrimitiveType
+   * @returns the `xxxxFieldName` property value as a CodeType if defined; else undefined
    */
   public getXxxxFieldNameElement(): CodeType | undefined {
     if (this.xxxxFieldName === undefined) {
@@ -89,7 +89,7 @@
    * @returns this
    */
   public setXxxxFieldNameElement(element: CodeType | undefined): this {
-    if (isDefined<CodeType | undefined>(element)) {
+    if (isDefined<CodeType>(element)) {
       const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided element is not an instance of CodeType.`;
       assertFhirType<CodeType>(element, CodeType, optErrMsg);
       this.xxxxFieldName = new EnumCodeType(element, this.xxxxClassEnum);
@@ -107,7 +107,7 @@
   }
 
   /**
-   * @returns the `xxxxFieldName` property value as a primitive value
+   * @returns the `xxxxFieldName` property value as a fhirCode if defined; else undefined
    */
   public getXxxxFieldName(): fhirCode | undefined {
     if (this.xxxxFieldName === undefined) {
@@ -123,7 +123,7 @@
    * @returns this
    */
   public setXxxxFieldName(value: fhirCode | undefined): this {
-    if (isDefined<fhirCode | undefined>(value)) {
+    if (isDefined<fhirCode>(value)) {
       const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided value is not an instance of fhirCode.`;
       this.xxxxFieldName = new EnumCodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg), this.xxxxClassEnum);
     } else {
@@ -209,7 +209,7 @@
   }
 
   /**
-   * @returns the `xxxxFieldName` property value as a EnumCodeType
+   * @returns the `xxxxFieldName` property value as a EnumCodeType if defined; else null
    */
   public getXxxxFieldNameEnumType(): EnumCodeType | null {
     return this.xxxxFieldName;
@@ -233,11 +233,11 @@
    * @returns `true` if the `xxxxFieldName` property exists and has a value; `false` otherwise
    */
   public hasXxxxFieldNameEnumType(): boolean {
-    return isDefined<EnumCodeType | null>(this.xxxxFieldName) && !this.xxxxFieldName.isEmpty() && this.xxxxFieldName.fhirCodeEnumeration.length > 0;
+    return isDefined<EnumCodeType>(this.xxxxFieldName) && !this.xxxxFieldName.isEmpty() && this.xxxxFieldName.fhirCodeEnumeration.length > 0;
   }
 
   /**
-   * @returns the `xxxxFieldName` property value as a PrimitiveType
+   * @returns the `xxxxFieldName` property value as a CodeType if defined; else null
    */
   public getXxxxFieldNameElement(): CodeType | null {
     if (this.xxxxFieldName === null) {
@@ -268,7 +268,7 @@
   }
 
   /**
-   * @returns the `xxxxFieldName` property value as a primitive value
+   * @returns the `xxxxFieldName` property value as a fhirCode if defined; else null
    */
   public getXxxxFieldName(): fhirCode | null {
     if (this.xxxxFieldName === null) {
@@ -379,7 +379,7 @@
    * @returns this
    */
   public setXxxxFieldNameEnumType(enumType: EnumCodeType[] | undefined): this {
-    if (isDefined<EnumCodeType[] | undefined>(enumType)) {
+    if (isDefinedList<EnumCodeTyped>(enumType)) {
       const errMsgPrefix = `Invalid XxxxParentClassElement.xxxxFieldName`;
       assertEnumCodeTypeList<XxxxClassEnum>(enumType, XxxxClassEnum, errMsgPrefix);
       this.xxxxFieldName = enumType;
@@ -396,7 +396,7 @@
    * @returns this
    */
   public addXxxxFieldNameEnumType(enumType: EnumCodeType | undefined): this {
-    if (isDefined<EnumCodeType | undefined>(enumType)) {
+    if (isDefined<EnumCodeType>(enumType)) {
       const errMsgPrefix = `Invalid XxxxParentClassElement.xxxxFieldName)`;
       assertEnumCodeType<XxxxClassEnum>(enumType, XxxxClassEnum, errMsgPrefix);
       this.initXxxxFieldName();
@@ -409,11 +409,11 @@
    * @returns `true` if the `xxxxFieldName` property exists and has a value; `false` otherwise
    */
   public hasXxxxFieldNameEnumType(): boolean {
-    return this.xxxxFieldName !== undefined && this.xxxxFieldName.length > 0 && this.xxxxFieldName.some((item: EnumCodeType) => !item.isEmpty()) && this.xxxxFieldName.every((item: EnumCodeType) => item.fhirCodeEnumeration.length > 0);
+    return isDefinedList<EnumCodeType>(this.xxxxFieldName) && this.xxxxFieldName.some((item: EnumCodeType) => !item.isEmpty()) && this.xxxxFieldName.every((item: EnumCodeType) => item.fhirCodeEnumeration.length > 0);
   }
 
   /**
-   * @returns the `xxxxFieldName` property value as a PrimitiveType array
+   * @returns the `xxxxFieldName` property value as a CodeType array
    */
   public getXxxxFieldNameElement(): CodeType[] {
     if (this.xxxxFieldName === undefined) {
@@ -429,11 +429,11 @@
    * @returns this
    */
   public setXxxxFieldNameElement(element: CodeType[] | undefined): this {
-    if (isDefined<CodeType[] | undefined>(element)) {
+    if (isDefinedList<CodeType>(element)) {
       const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided element array has an element that is not an instance of CodeType.`;
       assertFhirTypeList<CodeType>(element, CodeType, optErrMsg);
       const enumCodeTypes = [] as EnumCodeType[];
-      elements.forEach((type: CodeType) => {
+      element.forEach((type: CodeType) => {
         enumCodeTypes.push(new EnumCodeType(type, this.xxxxClassEnum));
       });
       this.xxxxFieldName = enumCodeTypes;
@@ -450,7 +450,7 @@
    * @returns this
    */
   public addXxxxFieldNameElement(element: CodeType | undefined): this {
-    if (isDefined<CodeType | undefined>(element)) {
+    if (isDefined<CodeType>(element)) {
       const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided element is not an instance of CodeType.`;
       assertFhirType<CodeType>(element, CodeType, optErrMsg);
       this.initXxxxFieldName();
@@ -467,7 +467,7 @@
   }
 
   /**
-   * @returns the `xxxxFieldName` property value as a primitive value array
+   * @returns the `xxxxFieldName` property value as a fhirCode array
    */
   public getXxxxFieldName(): fhirCode[] {
     if (this.xxxxFieldName === undefined) {
@@ -488,11 +488,11 @@
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setXxxxFieldName(value: fhirCode[] | undefined): this {
-    if (isDefined<fhirCode[] | undefined>(value)) {
+    if (isDefinedList<fhirCode>(value)) {
       const enumCodeTypes = [] as EnumCodeType[];
       const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided value is not an instance of fhirCode.`;
-      values.forEach((value: fhirCode) => {
-        enumCodeTypes.push(new EnumCodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg), this.xxxxClassEnum));
+      value.forEach((val: fhirCode) => {
+        enumCodeTypes.push(new EnumCodeType(parseFhirPrimitiveData(val, fhirCodeSchema, optErrMsg), this.xxxxClassEnum));
       });
       this.xxxxFieldName = enumCodeTypes;
     } else {
@@ -508,7 +508,7 @@
    * @returns this
    */
   public addXxxxFieldName(value: fhirCode | undefined): this {
-    if (isDefined<fhirCode | undefined>(value)) {
+    if (isDefined<fhirCode>(value)) {
       this.initXxxxFieldName();
       const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided value is not an instance of fhirCode.`;
       this.xxxxFieldName?.push(new EnumCodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg), this.xxxxClassEnum));
@@ -527,7 +527,7 @@
    * Initialize the xxxxFieldName property
    */
   private initXxxxFieldName(): void {
-    if (this.xxxxFieldName === undefined) {
+    if (!this.hasXxxxFieldNameEnumType()) {
       this.xxxxFieldName = [] as EnumCodeType[];
     }
   }
@@ -552,9 +552,9 @@
 // (xxxxFieldName / XxxxFieldName)
 // XxxxParentClassElement (e.g., 'Group.characteristic')
 // =====================================================================
-  private xxxxFieldName: EnumCodeType[] | null;
-
   private readonly xxxxClassEnum: XxxxClassEnum;
+
+  private xxxxFieldName: EnumCodeType[] | null;
 
   constructor(xxxxFieldName: EnumCodeType[] | CodeType[] | fhirCode[] | null) {
 
@@ -569,6 +569,208 @@
 
   }
 
-  // TODO: Fill out if/when needed
+  // *** NOTE ***
+  // Only copy the internal code block!
+  public static parse(sourceJson: JSON.Object): EnumCodeType | undefined {
+
+    // *** NOTE ***
+    // Add following near top of method ONLY IF it does not already exist
+    const missingReqdProperties: string[] = [];
+
+    sourceField = 'XxxxParentClassElement.xxxxFieldName';
+    fieldName = extractFieldName(sourceField);
+    if (fieldName in classJsonObj) {
+      const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(
+        classJsonObj,
+        sourceField,
+        fieldName,
+        'string',
+      );
+      dataJsonArray.forEach((dataJson: PrimitiveTypeJson) => {
+        const datatype: CodeType | undefined = parseCodeType(dataJson.dtJson, dataJson.dtSiblingJson);
+        if (datatype === undefined) {
+          missingReqdProperties.push(`${sourceField}[${String(idx)}]`);
+        } else {
+          instance.addXxxxFieldNameElement(datatype);
+        }
+      });
+    }
+
+    // *** NOTE ***
+    // Add following at bottom just above the `return instance;` ONLY IF it does not already exist
+    if (missingReqdProperties.length > 0) {
+      const errMsg = `${REQUIRED_PROPERTIES_REQD_IN_JSON} ${missingReqdProperties.join(', ')}`;
+      throw new FhirError(errMsg);
+    }
+
+  }
+
+  /**
+   * @returns the `xxxxFieldName` property value as a EnumCodeType array
+   */
+  public getXxxxFieldNameEnumType(): EnumCodeType[] {
+    return this.xxxxFieldName ?? ([] as EnumCodeType[]);
+  }
+
+  /**
+   * Assigns the provided EnumCodeType array value to the `xxxxFieldName` property.
+   *
+   * @param enumType - the `xxxxFieldName` array value
+   * @returns this
+   */
+  public setXxxxFieldNameEnumType(enumType: EnumCodeType[]): this {
+    assertIsDefinedList<EnumCodeType>(enumType, `XxxxParentClassElement.xxxxFieldName is required`);
+    const errMsgPrefix = `Invalid XxxxParentClassElement.xxxxFieldName`;
+    assertEnumCodeTypeList<XxxxClassEnum>(enumType, XxxxClassEnum, errMsgPrefix);
+    this.xxxxFieldName = enumType;
+    return this;
+  }
+
+  /**
+   * Add the provided EnumCodeType value to the `xxxxFieldName` array property.
+   *
+   * @param enumType - the `xxxxFieldName` value
+   * @returns this
+   */
+  public addXxxxFieldNameEnumType(enumType: EnumCodeType | undefined): this {
+    if (isDefined<EnumCodeType>(enumType)) {
+      const errMsgPrefix = `Invalid XxxxParentClassElement.xxxxFieldName)`;
+      assertEnumCodeType<XxxxClassEnum>(enumType, XxxxClassEnum, errMsgPrefix);
+      this.initXxxxFieldName();
+      this.xxxxFieldName?.push(enumType);
+    }
+    return this;
+  }
+
+  /**
+   * @returns `true` if the `xxxxFieldName` property exists and has a value; `false` otherwise
+   */
+  public hasXxxxFieldNameEnumType(): boolean {
+    return isDefinedList<EnumCodeType>(this.xxxxFieldName) && this.xxxxFieldName.some((item: EnumCodeType) => !item.isEmpty()) && this.xxxxFieldName.every((item: EnumCodeType) => item.fhirCodeEnumeration.length > 0);
+  }
+
+  /**
+   * @returns the `xxxxFieldName` property value as a CodeType array
+   */
+  public getXxxxFieldNameElement(): CodeType[] {
+    if (this.xxxxFieldName === null) {
+      return [] as CodeType[];
+    }
+    return this.xxxxFieldName as CodeType[];
+  }
+
+  /**
+   * Assigns the provided PrimitiveType array value to the `xxxxFieldName` property.
+   *
+   * @param element - the `xxxxFieldName` array value
+   * @returns this
+   */
+  public setXxxxFieldNameElement(element: CodeType[] | undefined): this {
+    assertIsDefinedList<CodeType>(element, `XxxxParentClassElement.xxxxFieldName is required`);
+    const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided element array has an element that is not an instance of CodeType.`;
+    assertFhirTypeList<CodeType>(element, CodeType, optErrMsg);
+    const enumCodeTypes = [] as EnumCodeType[];
+    element.forEach((type: CodeType) => {
+      enumCodeTypes.push(new EnumCodeType(type, this.xxxxClassEnum));
+    });
+    this.xxxxFieldName = enumCodeTypes;
+    return this;
+  }
+
+  /**
+   * Add the provided PrimitiveType value to the `xxxxFieldName` array property.
+   *
+   * @param element - the `xxxxFieldName` value
+   * @returns this
+   */
+  public addXxxxFieldNameElement(element: CodeType | undefined): this {
+    if (isDefined<CodeType>(element)) {
+      const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided element is not an instance of CodeType.`;
+      assertFhirType<CodeType>(element, CodeType, optErrMsg);
+      this.initXxxxFieldName();
+      this.xxxxFieldName?.push(new EnumCodeType(element, this.xxxxClassEnum));
+    }
+    return this;
+  }
+
+  /**
+   * @returns `true` if the `xxxxFieldName` property exists and has a value; `false` otherwise
+   */
+  public hasXxxxFieldNameElement(): boolean {
+    return this.hasXxxxFieldNameEnumType();
+  }
+
+  /**
+   * @returns the `xxxxFieldName` property value as a fhirCode array
+   */
+  public getXxxxFieldName(): fhirCode[] {
+    if (this.xxxxFieldName === null) {
+      return [] as fhirCode[];
+    }
+    const values = [] as fhirCode[];
+    for (const item of this.xxxxFieldName) {
+      values.push(item.fhirCode.code);
+    }
+    return values;
+  }
+
+  /**
+   * Assigns the provided primitive value array to the `xxxxFieldName` property.
+   *
+   * @param value - the `xxxxFieldName` value array
+   * @returns this
+   * @throws PrimitiveTypeError for invalid primitive types
+   */
+  public setXxxxFieldName(value: fhirCode[] | undefined): this {
+    assertIsDefinedList<fhirCode>(value, `XxxxParentClassElement.xxxxFieldName is required`);
+    const enumCodeTypes = [] as EnumCodeType[];
+    const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided value is not an instance of fhirCode.`;
+    value.forEach((val: fhirCode) => {
+      enumCodeTypes.push(new EnumCodeType(parseFhirPrimitiveData(val, fhirCodeSchema, optErrMsg), this.xxxxClassEnum));
+    });
+    this.xxxxFieldName = enumCodeTypes;
+    return this;
+  }
+
+  /**
+   * Add the provided primitive value to the `xxxxFieldName` array property.
+   *
+   * @param value - the `xxxxFieldName` value
+   * @returns this
+   */
+  public addXxxxFieldName(value: fhirCode | undefined): this {
+    if (isDefined<fhirCode>(value)) {
+      this.initXxxxFieldName();
+      const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided value is not an instance of fhirCode.`;
+      this.xxxxFieldName?.push(new EnumCodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg), this.xxxxClassEnum));
+    }
+    return this;
+  }
+
+  /**
+   * @returns `true` if the `xxxxFieldName` property exists and has a value; `false` otherwise
+   */
+  public hasXxxxFieldName(): boolean {
+    return this.hasXxxxFieldNameEnumType();
+  }
+
+  /**
+   * Initialize the xxxxFieldName property
+   */
+  private initXxxxFieldName(): void {
+    if (!this.hasXxxxFieldNameEnumType()) {
+      this.xxxxFieldName = [] as EnumCodeType[];
+    }
+  }
+
+  // *** NOTE ***
+  // Only copy the "if" block!
+  public override toJSON(): JSON.Value | undefined {
+
+    if (this.hasXxxxFieldNameElement()) {
+      setFhirPrimitiveListJson<fhirCode>(this.getXxxxFieldNameElement(), 'xxxxFieldName', jsonObj);
+    }
+
+  }
 
 //endregion
