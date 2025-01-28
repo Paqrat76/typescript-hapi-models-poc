@@ -472,6 +472,10 @@ describe('json-helpers', () => {
       };
 
       let jsonObj = {} as Object;
+      setFhirExtensionJson([], jsonObj);
+      expect(jsonObj).toEqual(jsonObj);
+
+      jsonObj = {} as Object;
       setFhirExtensionJson([testExtension1], jsonObj);
       expect(jsonObj).toEqual(expected1);
 
@@ -497,12 +501,6 @@ describe('json-helpers', () => {
       };
       expect(t).toThrow(AssertionError);
       expect(t).toThrow(`Provided extensions is undefined/null`);
-
-      t = () => {
-        setFhirExtensionJson([], jsonObj);
-      };
-      expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided extensions is undefined/null/empty`);
 
       t = () => {
         // @ts-expect-error: allow null for testing
@@ -630,6 +628,11 @@ describe('json-helpers', () => {
 
       let jsonObj = {} as Object;
       let expectedJson = {} as Object;
+      setFhirPrimitiveListJson([], propName, jsonObj);
+      expect(jsonObj).toEqual(expectedJson);
+
+      jsonObj = {} as Object;
+      expectedJson = {} as Object;
       setFhirPrimitiveListJson([new StringType()], propName, jsonObj);
       expect(jsonObj).toEqual(expectedJson);
 
@@ -706,12 +709,6 @@ describe('json-helpers', () => {
       };
       expect(t).toThrow(AssertionError);
       expect(t).toThrow(`Provided ptElements is undefined/null`);
-
-      t = () => {
-        setFhirPrimitiveListJson([], propName, jsonObj);
-      };
-      expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided ptElements is undefined/null/empty`);
 
       t = () => {
         // @ts-expect-error: allow null for testing
@@ -861,6 +858,11 @@ describe('json-helpers', () => {
 
       let jsonObj = {} as Object;
       let expectedJson = {} as Object;
+      setFhirComplexListJson([], propName, jsonObj);
+      expect(jsonObj).toEqual(expectedJson);
+
+      jsonObj = {} as Object;
+      expectedJson = {} as Object;
       setFhirComplexListJson([new Period()], propName, jsonObj);
       expect(jsonObj).toEqual(expectedJson);
 
@@ -944,12 +946,6 @@ describe('json-helpers', () => {
       };
       expect(t).toThrow(AssertionError);
       expect(t).toThrow(`Provided cElements is undefined/null`);
-
-      t = () => {
-        setFhirComplexListJson([], propName, jsonObj);
-      };
-      expect(t).toThrow(AssertionError);
-      expect(t).toThrow(`Provided cElements is undefined/null/empty`);
 
       t = () => {
         // @ts-expect-error: allow null for testing
@@ -1100,6 +1096,11 @@ describe('json-helpers', () => {
 
       let jsonObj = {} as Object;
       let expectedJson = {} as Object;
+      setFhirBackboneElementListJson([], propName, jsonObj);
+      expect(jsonObj).toEqual(expectedJson);
+
+      jsonObj = {} as Object;
+      expectedJson = {} as Object;
       setFhirBackboneElementListJson([new MockBackboneElement()], propName, jsonObj);
       expect(jsonObj).toEqual(expectedJson);
 
@@ -1306,6 +1307,11 @@ describe('json-helpers', () => {
 
       let jsonObj = {} as Object;
       let expectedJson = {} as Object;
+      setFhirBackboneTypeListJson([], propName, jsonObj);
+      expect(jsonObj).toEqual(expectedJson);
+
+      jsonObj = {} as Object;
+      expectedJson = {} as Object;
       setFhirBackboneTypeListJson([new MockBackboneType()], propName, jsonObj);
       expect(jsonObj).toEqual(expectedJson);
 
@@ -1547,6 +1553,11 @@ describe('json-helpers', () => {
 
       let jsonObj = {} as Object;
       let expectedJson = {} as Object;
+      setFhirResourceListJson([], propName, jsonObj);
+      expect(jsonObj).toEqual(expectedJson);
+
+      jsonObj = {} as Object;
+      expectedJson = {} as Object;
       setFhirResourceListJson([mockTask], propName, jsonObj);
       expect(jsonObj).toEqual(expectedJson);
 

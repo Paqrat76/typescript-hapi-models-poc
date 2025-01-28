@@ -58,7 +58,6 @@ import {
   assertFhirType,
   assertFhirTypeList,
   assertIsDefined,
-  assertIsDefinedList,
   isDefined,
   isDefinedList,
 } from '@src/fhir-core/utility/type-guards';
@@ -1203,7 +1202,7 @@ export function setPolymorphicValueJson(value: DataType, propName: string, jsonO
  * Transforms the provided FHIR Extensions to their JSON representations and adds them to the provided JSON.Object.
  * Does nothing if the individual FHIR Extensions are undefined.
  *
- * @param extensions - FHIR Extensions to be transformed
+ * @param extensions - FHIR Extensions to be transformed (can be empty array)
  * @param jsonObj - JSON.Object to which to add the transformed Extensions
  * @param isModifierExtension - optional boolean (default: `false`); sets JSON object key name to `modifierExtension` if true; otherwise `extension`
  * @throws AssertionError for invalid parameters
@@ -1211,7 +1210,7 @@ export function setPolymorphicValueJson(value: DataType, propName: string, jsonO
  * @category Utilities: JSON
  */
 export function setFhirExtensionJson(extensions: Extension[], jsonObj: JSON.Object, isModifierExtension = false): void {
-  assertIsDefinedList<Extension>(extensions, 'Provided extensions is undefined/null/empty');
+  assertIsDefined<Extension[]>(extensions, 'Provided extensions is undefined/null');
   assertIsDefined<JSON.Object>(jsonObj, 'Provided jsonObj is undefined/null');
 
   const jsonExtension = [] as JSON.Array;
@@ -1269,7 +1268,7 @@ export function setFhirPrimitiveJson<T>(ptElement: PrimitiveType<T>, propName: s
  * JSON.Object. Does nothing if the FHIR primitive DataType's value is undefined.
  *
  * @typeParam T - the FHIR primitive type
- * @param ptElements - array of FHIR primitive DataTypes to transform
+ * @param ptElements - array of FHIR primitive DataTypes to transform (can be empty array)
  * @param propName - the property name for the provided FHIR complex DataTypes
  * @param jsonObj - JSON.Object to which to add the transformed FHIR complex DataTypes
  * @throws AssertionError for invalid parameters
@@ -1282,7 +1281,7 @@ export function setFhirPrimitiveListJson<T>(
   propName: string,
   jsonObj: JSON.Object,
 ): void {
-  assertIsDefinedList<PrimitiveType<T>>(ptElements, 'Provided ptElements is undefined/null/empty');
+  assertIsDefined<PrimitiveType<T>[]>(ptElements, 'Provided ptElements is undefined/null');
   assertIsDefined<string>(propName, 'Provided propName is undefined/null');
   assertIsDefined<JSON.Object>(jsonObj, 'Provided jsonObj is undefined/null');
   assert(!isEmpty(propName), 'Provided propName is empty');
@@ -1354,7 +1353,7 @@ export function setFhirComplexJson(cElement: DataType, propName: string, jsonObj
  * Transforms the provided array of FHIR complex DataType to their JSON representation and adds it to the provided
  * JSON.Object. Does nothing if the FHIR complex DataType's value is undefined.
  *
- * @param cElements - array of FHIR complex DataTypes to transform
+ * @param cElements - array of FHIR complex DataTypes to transform (can be empty array)
  * @param propName - the property name for the provided FHIR complex DataTypes
  * @param jsonObj - JSON.Object to which to add the transformed FHIR complex DataTypes
  * @throws AssertionError for invalid parameters
@@ -1362,7 +1361,7 @@ export function setFhirComplexJson(cElement: DataType, propName: string, jsonObj
  * @category Utilities: JSON
  */
 export function setFhirComplexListJson(cElements: DataType[], propName: string, jsonObj: JSON.Object): void {
-  assertIsDefinedList<DataType>(cElements, 'Provided cElements is undefined/null/empty');
+  assertIsDefined<DataType[]>(cElements, 'Provided cElements is undefined/null');
   assertIsDefined<string>(propName, 'Provided propName is undefined/null');
   assertIsDefined<JSON.Object>(jsonObj, 'Provided jsonObj is undefined/null');
   assert(!isEmpty(propName), 'Provided propName is empty');
@@ -1411,7 +1410,7 @@ export function setFhirBackboneElementJson(bElement: BackboneElement, propName: 
  * Transforms the provided array of FHIR BackboneElement to their JSON representation and adds it to the provided
  * JSON.Object. Does nothing if the FHIR BackboneElement's value is undefined.
  *
- * @param bElements - array of FHIR BackboneElements to transform
+ * @param bElements - array of FHIR BackboneElements to transform (can be empty array)
  * @param propName - the property name for the provided FHIR BackboneElements
  * @param jsonObj - JSON.Object to which to add the transformed FHIR BackboneElements
  * @throws AssertionError for invalid parameters
@@ -1423,7 +1422,7 @@ export function setFhirBackboneElementListJson(
   propName: string,
   jsonObj: JSON.Object,
 ): void {
-  assertIsDefinedList<BackboneElement>(bElements, 'Provided bElements is undefined/null');
+  assertIsDefined<BackboneElement[]>(bElements, 'Provided bElements is undefined/null');
   assertIsDefined<string>(propName, 'Provided propName is undefined/null');
   assertIsDefined<JSON.Object>(jsonObj, 'Provided jsonObj is undefined/null');
   assert(!isEmpty(propName), 'Provided propName is empty');
@@ -1472,7 +1471,7 @@ export function setFhirBackboneTypeJson(bType: BackboneType, propName: string, j
  * Transforms the provided array of FHIR BackboneType to their JSON representation and adds it to the provided
  * JSON.Object. Does nothing if the FHIR BackboneType's value is undefined.
  *
- * @param bTypes - array of FHIR BackboneType to transform
+ * @param bTypes - array of FHIR BackboneType to transform (can be empty array)
  * @param propName - the property name for the provided FHIR BackboneTypes
  * @param jsonObj - JSON.Object to which to add the transformed FHIR BackboneTypes
  * @throws AssertionError for invalid parameters
@@ -1480,7 +1479,7 @@ export function setFhirBackboneTypeJson(bType: BackboneType, propName: string, j
  * @category Utilities: JSON
  */
 export function setFhirBackboneTypeListJson(bTypes: BackboneType[], propName: string, jsonObj: JSON.Object): void {
-  assertIsDefinedList<BackboneType>(bTypes, 'Provided bTypes is undefined/null');
+  assertIsDefined<BackboneType[]>(bTypes, 'Provided bTypes is undefined/null');
   assertIsDefined<string>(propName, 'Provided propName is undefined/null');
   assertIsDefined<JSON.Object>(jsonObj, 'Provided jsonObj is undefined/null');
   assert(!isEmpty(propName), 'Provided propName is empty');

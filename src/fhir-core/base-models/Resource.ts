@@ -56,7 +56,7 @@ import {
 import { setFhirComplexJson, setFhirPrimitiveJson } from '@src/fhir-core/base-models/core-fhir-models';
 import { isEmpty as _isEmpty } from '@src/fhir-core/utility/common-util';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirType, assertIsDefined, assertIsDefinedList, isDefined } from '@src/fhir-core/utility/type-guards';
+import { assertFhirType, assertIsDefined, isDefined } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
@@ -467,7 +467,7 @@ export function setFhirResourceJson(resource: Resource, propName: string, jsonOb
  * Transforms the provided array of FHIR Resource to their JSON representation and adds it to the provided
  * JSON.Object. Does nothing if the FHIR Resource's value is undefined.
  *
- * @param resources - array of FHIR Resources to transform
+ * @param resources - array of FHIR Resources to transform (can be empty array)
  * @param propName - the property name for the provided FHIR complex DataTypes
  * @param jsonObj - JSON.Object to which to add the transformed FHIR complex DataTypes
  * @throws AssertionError for invalid parameters
@@ -475,7 +475,7 @@ export function setFhirResourceJson(resource: Resource, propName: string, jsonOb
  * @category Utilities: JSON
  */
 export function setFhirResourceListJson(resources: Resource[], propName: string, jsonObj: JSON.Object): void {
-  assertIsDefinedList<Resource>(resources, 'Provided resources is undefined/null');
+  assertIsDefined<Resource[]>(resources, 'Provided resources is undefined/null');
   assertIsDefined<string>(propName, 'Provided propName is undefined/null');
   assert(!_isEmpty(propName), 'Provided propName is empty');
   assertIsDefined<JSON.Object>(jsonObj, 'Provided jsonObj is undefined/null');
