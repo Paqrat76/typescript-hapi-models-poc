@@ -61,7 +61,7 @@ export class BundleTypeEnum implements IFhirCodeEnum {
   );
   public static readonly TRANSACTION_RESPONSE = new FhirCodeDefinition(
     'TRANSACTION_RESPONSE',
-    `transaction-response `,
+    `transaction-response`,
     `http://hl7.org/fhir/bundle-type`,
     `Transaction Response`,
     `The bundle is a transaction response. Because the response is a transaction response, the transaction has succeeded, and all responses are error free.`,
@@ -75,7 +75,7 @@ export class BundleTypeEnum implements IFhirCodeEnum {
   );
   public static readonly BATCH_RESPONSE = new FhirCodeDefinition(
     'BATCH_RESPONSE',
-    `batch-response `,
+    `batch-response`,
     `http://hl7.org/fhir/bundle-type`,
     `Batch Response`,
     `The bundle is a batch response. Note that as a batch, some responses may indicate failure and others success.`,

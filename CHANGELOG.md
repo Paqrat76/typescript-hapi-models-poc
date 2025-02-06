@@ -19,6 +19,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [0.17.0] - 2025-02-06
+
+### Added
+
+- Added default `static parse()` in Resource; Override in all FHIR resource data models
+- Added comprehensive data model testing for templated code
+- Added missing IdentifierUseEnum; Fixed Identifier to properly use IdentifierUseEnum
+
+### Changed
+
+- Updated dependencies
+- Refactored usage for isDefined()/assertIsDefined() and added isDefinedList()/assertIsDefinedList()
+- Validated/refactored the *.template files to inform eventual creation of code generator templates
+
+### Fixed
+
+- Invalid code values in BundleTypeEnum
+- Bug in setPolymorphicValueJson() for PrimitiveType
+- Various bugs in template code as defined in the template files
+
+
 ## [0.16.0] - 2025-01-24
 
 ### Added

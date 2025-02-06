@@ -85,7 +85,7 @@ export class Narrative extends DataType implements IBase {
     );
 
     this.div = null;
-    if (isDefined<XhtmlType | fhirXhtml | null>(div)) {
+    if (isDefined<XhtmlType | fhirXhtml>(div)) {
       if (div instanceof PrimitiveType) {
         this.setDivElement(div);
       } else {
@@ -155,11 +155,7 @@ export class Narrative extends DataType implements IBase {
    * @returns `true` if the `status` property exists and has a value; `false` otherwise
    */
   public hasStatusEnumType(): boolean {
-    return (
-      isDefined<EnumCodeType | null>(this.status) &&
-      !this.status.isEmpty() &&
-      this.status.fhirCodeEnumeration.length > 0
-    );
+    return isDefined<EnumCodeType>(this.status) && !this.status.isEmpty() && this.status.fhirCodeEnumeration.length > 0;
   }
 
   /**
@@ -248,7 +244,7 @@ export class Narrative extends DataType implements IBase {
    * @returns `true` if the `div` property exists and has a value; `false` otherwise
    */
   public hasDivElement(): boolean {
-    return isDefined<XhtmlType | null>(this.div) && !this.div.isEmpty();
+    return isDefined<XhtmlType>(this.div) && !this.div.isEmpty();
   }
 
   /**

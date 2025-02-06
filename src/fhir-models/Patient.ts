@@ -83,7 +83,13 @@ import {
   processBackboneElementJson,
   processDomainResourceJson,
 } from '@src/fhir-core/utility/fhir-parsers';
-import { assertFhirType, assertFhirTypeList, assertIsDefined, isDefined } from '@src/fhir-core/utility/type-guards';
+import {
+  assertFhirType,
+  assertFhirTypeList,
+  assertIsDefined,
+  isDefined,
+  isDefinedList,
+} from '@src/fhir-core/utility/type-guards';
 import { parseContainedResources } from '@src/fhir-models/fhir-contained-resource-parser';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
@@ -123,7 +129,7 @@ export class Patient extends DomainResource implements IBase {
    * @param sourceJson - JSON representing FHIR `Patient`
    * @returns Patient data model or undefined for `Patient`
    */
-  public static parse(sourceJson: JSON.Object): Patient | undefined {
+  public static override parse(sourceJson: JSON.Object): Patient | undefined {
     if (!isDefined<JSON.Object>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
@@ -134,6 +140,8 @@ export class Patient extends DomainResource implements IBase {
 
     // NOTE: Added IF and ONLY IF a choice data type is used
     const classMetadata: DecoratorMetadataObject | null = Patient[Symbol.metadata];
+    const errorMessage = `DecoratorMetadataObject does not exist for Patient`;
+    assertIsDefined<DecoratorMetadataObject>(classMetadata, errorMessage);
 
     // NOTE: "contained" is handled in Resource-based FHIR model rather than in processDomainResourceJson above
     //       to minimize circular references!
@@ -212,15 +220,13 @@ export class Patient extends DomainResource implements IBase {
 
     sourceField = 'Patient.deceased[x]';
     fieldName = extractFieldName(sourceField);
-    if (isDefined<DecoratorMetadataObject | null>(classMetadata)) {
-      const datatype: DataType | undefined = parsePolymorphicDataType(
-        classJsonObj,
-        sourceField,
-        fieldName,
-        classMetadata,
-      );
-      instance.setDeceased(datatype);
-    }
+    const deceased: DataType | undefined = parsePolymorphicDataType(
+      classJsonObj,
+      sourceField,
+      fieldName,
+      classMetadata,
+    );
+    instance.setDeceased(deceased);
 
     sourceField = 'Patient.address';
     fieldName = extractFieldName(sourceField);
@@ -244,15 +250,13 @@ export class Patient extends DomainResource implements IBase {
 
     sourceField = 'Patient.multipleBirth[x]';
     fieldName = extractFieldName(sourceField);
-    if (isDefined<DecoratorMetadataObject | null>(classMetadata)) {
-      const datatype: DataType | undefined = parsePolymorphicDataType(
-        classJsonObj,
-        sourceField,
-        fieldName,
-        classMetadata,
-      );
-      instance.setMultipleBirth(datatype);
-    }
+    const multipleBirth: DataType | undefined = parsePolymorphicDataType(
+      classJsonObj,
+      sourceField,
+      fieldName,
+      classMetadata,
+    );
+    instance.setMultipleBirth(multipleBirth);
 
     sourceField = 'Patient.photo';
     fieldName = extractFieldName(sourceField);
@@ -625,7 +629,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns this
    */
   public setIdentifier(value: Identifier[] | undefined): this {
-    if (isDefined<Identifier[] | undefined>(value)) {
+    if (isDefinedList<Identifier>(value)) {
       const optErrMsg = `Invalid Patient.identifier; Provided value array has an element that is not an instance of Identifier.`;
       assertFhirTypeList<Identifier>(value, Identifier, optErrMsg);
       this.identifier = value;
@@ -642,7 +646,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns this
    */
   public addIdentifier(value: Identifier | undefined): this {
-    if (isDefined<Identifier | undefined>(value)) {
+    if (isDefined<Identifier>(value)) {
       const optErrMsg = `Invalid Patient.identifier; Provided element is not an instance of Identifier.`;
       assertFhirType<Identifier>(value, Identifier, optErrMsg);
       this.initIdentifier();
@@ -655,11 +659,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns `true` if the `identifier` property exists and has a value; `false` otherwise
    */
   public hasIdentifier(): boolean {
-    return (
-      this.identifier !== undefined &&
-      this.identifier.length > 0 &&
-      this.identifier.some((item: Identifier) => !item.isEmpty())
-    );
+    return isDefinedList<Identifier>(this.identifier) && this.identifier.some((item: Identifier) => !item.isEmpty());
   }
 
   /**
@@ -685,7 +685,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns this
    */
   public setActiveElement(element: BooleanType | undefined): this {
-    if (isDefined<BooleanType | undefined>(element)) {
+    if (isDefined<BooleanType>(element)) {
       const optErrMsg = `Invalid Patient.active; Provided element is not an instance of BooleanType.`;
       assertFhirType<BooleanType>(element, BooleanType, optErrMsg);
       this.active = element;
@@ -699,7 +699,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns `true` if the `active` property exists and has a value; `false` otherwise
    */
   public hasActiveElement(): boolean {
-    return this.active !== undefined && !this.active.isEmpty();
+    return isDefined<BooleanType>(this.active) && !this.active.isEmpty();
   }
 
   /**
@@ -717,7 +717,7 @@ export class Patient extends DomainResource implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setActive(value: fhirBoolean | undefined): this {
-    if (isDefined<fhirBoolean | undefined>(value)) {
+    if (isDefined<fhirBoolean>(value)) {
       const optErrMsg = `Invalid Patient.active (${String(value)})`;
       this.active = new BooleanType(parseFhirPrimitiveData(value, fhirBooleanSchema, optErrMsg));
     } else {
@@ -747,7 +747,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns this
    */
   public setName(value: HumanName[] | undefined): this {
-    if (isDefined<HumanName[] | undefined>(value)) {
+    if (isDefinedList<HumanName>(value)) {
       const optErrMsg = `Invalid Patient.name; Provided value array has an element that is not an instance of HumanName.`;
       assertFhirTypeList<HumanName>(value, HumanName, optErrMsg);
       this.name = value;
@@ -764,7 +764,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns this
    */
   public addName(value: HumanName | undefined): this {
-    if (isDefined<HumanName | undefined>(value)) {
+    if (isDefined<HumanName>(value)) {
       const optErrMsg = `Invalid Patient.name; Provided element is not an instance of HumanName.`;
       assertFhirType<HumanName>(value, HumanName, optErrMsg);
       this.initName();
@@ -777,7 +777,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns `true` if the `name` property exists and has a value; `false` otherwise
    */
   public hasName(): boolean {
-    return this.name !== undefined && this.name.length > 0 && this.name.some((item: HumanName) => !item.isEmpty());
+    return isDefinedList<HumanName>(this.name) && this.name.some((item: HumanName) => !item.isEmpty());
   }
 
   /**
@@ -803,7 +803,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns this
    */
   public setTelecom(value: ContactPoint[] | undefined): this {
-    if (isDefined<ContactPoint[] | undefined>(value)) {
+    if (isDefinedList<ContactPoint>(value)) {
       const optErrMsg = `Invalid Patient.telecom; Provided value array has an element that is not an instance of ContactPoint.`;
       assertFhirTypeList<ContactPoint>(value, ContactPoint, optErrMsg);
       this.telecom = value;
@@ -820,7 +820,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns this
    */
   public addTelecom(value: ContactPoint | undefined): this {
-    if (isDefined<ContactPoint | undefined>(value)) {
+    if (isDefined<ContactPoint>(value)) {
       const optErrMsg = `Invalid Patient.telecom; Provided element is not an instance of ContactPoint.`;
       assertFhirType<ContactPoint>(value, ContactPoint, optErrMsg);
       this.initTelecom();
@@ -833,11 +833,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns `true` if the `telecom` property exists and has a value; `false` otherwise
    */
   public hasTelecom(): boolean {
-    return (
-      this.telecom !== undefined &&
-      this.telecom.length > 0 &&
-      this.telecom.some((item: ContactPoint) => !item.isEmpty())
-    );
+    return isDefinedList<ContactPoint>(this.telecom) && this.telecom.some((item: ContactPoint) => !item.isEmpty());
   }
 
   /**
@@ -863,7 +859,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns this
    */
   public setGenderEnumType(enumType: EnumCodeType | undefined): this {
-    if (isDefined<EnumCodeType | undefined>(enumType)) {
+    if (isDefined<EnumCodeType>(enumType)) {
       const errMsgPrefix = 'Invalid Patient.gender';
       assertEnumCodeType<AdministrativeGenderEnum>(enumType, AdministrativeGenderEnum, errMsgPrefix);
       this.gender = enumType;
@@ -877,7 +873,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns `true` if the `gender` property exists and has a value; `false` otherwise
    */
   public hasGenderEnumType(): boolean {
-    return this.gender !== undefined && !this.gender.isEmpty() && this.gender.fhirCodeEnumeration.length > 0;
+    return isDefined<EnumCodeType>(this.gender) && !this.gender.isEmpty() && this.gender.fhirCodeEnumeration.length > 0;
   }
 
   /**
@@ -897,7 +893,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns this
    */
   public setGenderElement(element: CodeType | undefined): this {
-    if (isDefined<CodeType | undefined>(element)) {
+    if (isDefined<CodeType>(element)) {
       const optErrMsg = `Invalid Patient.gender; Provided element is not an instance of CodeType.`;
       assertFhirType<CodeType>(element, CodeType, optErrMsg);
       this.gender = new EnumCodeType(element, this.administrativeGenderEnum);
@@ -931,7 +927,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns this
    */
   public setGender(value: fhirCode | undefined): this {
-    if (isDefined<fhirCode | undefined>(value)) {
+    if (isDefined<fhirCode>(value)) {
       const optErrMsg = `Invalid Patient.gender; Provided value is not an instance of fhirCode.`;
       this.gender = new EnumCodeType(
         parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg),
@@ -964,7 +960,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns this
    */
   public setBirthDateElement(element: DateType | undefined): this {
-    if (isDefined<DateType | undefined>(element)) {
+    if (isDefined<DateType>(element)) {
       const optErrMsg = `Invalid Patient.birthDate; Provided element is not an instance of DateType.`;
       assertFhirType<DateType>(element, DateType, optErrMsg);
       this.birthDate = element;
@@ -978,7 +974,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns `true` if the `birthDate` property exists and has a value; `false` otherwise
    */
   public hasBirthDateElement(): boolean {
-    return this.birthDate !== undefined && !this.birthDate.isEmpty();
+    return isDefined<DateType>(this.birthDate) && !this.birthDate.isEmpty();
   }
 
   /**
@@ -996,7 +992,7 @@ export class Patient extends DomainResource implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setBirthDate(value: fhirDate | undefined): this {
-    if (isDefined<fhirDate | undefined>(value)) {
+    if (isDefined<fhirDate>(value)) {
       const optErrMsg = `Invalid Patient.birthDate (${String(value)})`;
       this.birthDate = new DateType(parseFhirPrimitiveData(value, fhirDateSchema, optErrMsg));
     } else {
@@ -1029,7 +1025,7 @@ export class Patient extends DomainResource implements IBase {
    */
   @ChoiceDataTypes('Patient.deceased[x]')
   public setDeceased(value: DataType | undefined): this {
-    if (isDefined<DataType | undefined>(value)) {
+    if (isDefined<DataType>(value)) {
       // assertFhirType<DataType>(value, DataType) unnecessary because @ChoiceDataTypes decorator ensures proper type/value
       this.deceased = value;
     } else {
@@ -1042,14 +1038,14 @@ export class Patient extends DomainResource implements IBase {
    * @returns `true` if the `deceased` property exists and has a value; `false` otherwise
    */
   public hasDeceased(): boolean {
-    return this.deceased !== undefined && !this.deceased.isEmpty();
+    return isDefined<DataType>(this.deceased) && !this.deceased.isEmpty();
   }
 
   /**
    * @returns the `deceased` property value as a BooleanType object
    */
   public getDeceasedBooleanType(): BooleanType | undefined {
-    if (!isDefined<DataType | undefined>(this.deceased)) {
+    if (!isDefined<DataType>(this.deceased)) {
       return undefined;
     }
     if (!(this.deceased instanceof BooleanType)) {
@@ -1071,7 +1067,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns the `deceased` property value as a DateTimeType object
    */
   public getDeceasedDateTimeType(): DateTimeType | undefined {
-    if (!isDefined<DataType | undefined>(this.deceased)) {
+    if (!isDefined<DataType>(this.deceased)) {
       return undefined;
     }
     if (!(this.deceased instanceof DateTimeType)) {
@@ -1103,7 +1099,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns this
    */
   public setAddress(value: Address[] | undefined): this {
-    if (isDefined<Address[] | undefined>(value)) {
+    if (isDefinedList<Address>(value)) {
       const optErrMsg = `Invalid Patient.address; Provided value array has an element that is not an instance of Address.`;
       assertFhirTypeList<Address>(value, Address, optErrMsg);
       this.address = value;
@@ -1120,7 +1116,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns this
    */
   public addAddress(value: Address | undefined): this {
-    if (isDefined<Address | undefined>(value)) {
+    if (isDefined<Address>(value)) {
       const optErrMsg = `Invalid Patient.address; Provided element is not an instance of Address.`;
       assertFhirType<Address>(value, Address, optErrMsg);
       this.initAddress();
@@ -1133,9 +1129,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns `true` if the `address` property exists and has a value; `false` otherwise
    */
   public hasAddress(): boolean {
-    return (
-      this.address !== undefined && this.address.length > 0 && this.address.some((item: Address) => !item.isEmpty())
-    );
+    return isDefinedList<Address>(this.address) && this.address.some((item: Address) => !item.isEmpty());
   }
 
   /**
@@ -1161,7 +1155,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns this
    */
   public setMaritalStatus(value: CodeableConcept | undefined): this {
-    if (isDefined<CodeableConcept | undefined>(value)) {
+    if (isDefined<CodeableConcept>(value)) {
       const optErrMsg = `Invalid Patient.maritalStatus; Provided element is not an instance of CodeableConcept.`;
       assertFhirType<CodeableConcept>(value, CodeableConcept, optErrMsg);
       this.maritalStatus = value;
@@ -1175,7 +1169,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns `true` if the `maritalStatus` property exists and has a value; `false` otherwise
    */
   public hasMaritalStatus(): boolean {
-    return this.maritalStatus !== undefined && !this.maritalStatus.isEmpty();
+    return isDefined<CodeableConcept>(this.maritalStatus) && !this.maritalStatus.isEmpty();
   }
 
   /**
@@ -1195,7 +1189,7 @@ export class Patient extends DomainResource implements IBase {
    */
   @ChoiceDataTypes('Patient.multipleBirth[x]')
   public setMultipleBirth(value: DataType | undefined): this {
-    if (isDefined<DataType | undefined>(value)) {
+    if (isDefined<DataType>(value)) {
       // assertFhirType<DataType>(value, DataType) unnecessary because @ChoiceDataTypes decorator ensures proper type/value
       this.multipleBirth = value;
     } else {
@@ -1208,14 +1202,14 @@ export class Patient extends DomainResource implements IBase {
    * @returns `true` if the `multipleBirth` property exists and has a value; `false` otherwise
    */
   public hasMultipleBirth(): boolean {
-    return this.multipleBirth !== undefined && !this.multipleBirth.isEmpty();
+    return isDefined<DataType>(this.multipleBirth) && !this.multipleBirth.isEmpty();
   }
 
   /**
    * @returns the `multipleBirth` property value as a BooleanType object
    */
   public getMultipleBirthBooleanType(): BooleanType | undefined {
-    if (!isDefined<DataType | undefined>(this.multipleBirth)) {
+    if (!isDefined<DataType>(this.multipleBirth)) {
       return undefined;
     }
     if (!(this.multipleBirth instanceof BooleanType)) {
@@ -1237,7 +1231,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns the `multipleBirth` property value as a IntegerType object
    */
   public getMultipleBirthIntegerType(): IntegerType | undefined {
-    if (!isDefined<DataType | undefined>(this.multipleBirth)) {
+    if (!isDefined<DataType>(this.multipleBirth)) {
       return undefined;
     }
     if (!(this.multipleBirth instanceof IntegerType)) {
@@ -1269,7 +1263,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns this
    */
   public setPhoto(value: Attachment[] | undefined): this {
-    if (isDefined<Attachment[] | undefined>(value)) {
+    if (isDefinedList<Attachment>(value)) {
       const optErrMsg = `Invalid Patient.photo; Provided value array has an element that is not an instance of Attachment.`;
       assertFhirTypeList<Attachment>(value, Attachment, optErrMsg);
       this.photo = value;
@@ -1286,7 +1280,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns this
    */
   public addPhoto(value: Attachment | undefined): this {
-    if (isDefined<Attachment | undefined>(value)) {
+    if (isDefined<Attachment>(value)) {
       const optErrMsg = `Invalid Patient.photo; Provided element is not an instance of Attachment.`;
       assertFhirType<Attachment>(value, Attachment, optErrMsg);
       this.initPhoto();
@@ -1299,7 +1293,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns `true` if the `photo` property exists and has a value; `false` otherwise
    */
   public hasPhoto(): boolean {
-    return this.photo !== undefined && this.photo.length > 0 && this.photo.some((item: Attachment) => !item.isEmpty());
+    return isDefinedList<Attachment>(this.photo) && this.photo.some((item: Attachment) => !item.isEmpty());
   }
 
   /**
@@ -1325,7 +1319,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns this
    */
   public setContact(value: PatientContactComponent[] | undefined): this {
-    if (isDefined<PatientContactComponent[] | undefined>(value)) {
+    if (isDefinedList<PatientContactComponent>(value)) {
       const optErrMsg = `Invalid Patient.contact; Provided value array has an element that is not an instance of PatientContactComponent.`;
       assertFhirTypeList<PatientContactComponent>(value, PatientContactComponent, optErrMsg);
       this.contact = value;
@@ -1342,7 +1336,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns this
    */
   public addContact(value: PatientContactComponent | undefined): this {
-    if (isDefined<PatientContactComponent | undefined>(value)) {
+    if (isDefined<PatientContactComponent>(value)) {
       const optErrMsg = `Invalid Patient.contact; Provided element is not an instance of PatientContactComponent.`;
       assertFhirType<PatientContactComponent>(value, PatientContactComponent, optErrMsg);
       this.initContact();
@@ -1356,8 +1350,7 @@ export class Patient extends DomainResource implements IBase {
    */
   public hasContact(): boolean {
     return (
-      this.contact !== undefined &&
-      this.contact.length > 0 &&
+      isDefinedList<PatientContactComponent>(this.contact) &&
       this.contact.some((item: PatientContactComponent) => !item.isEmpty())
     );
   }
@@ -1385,7 +1378,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns this
    */
   public setCommunication(value: PatientCommunicationComponent[] | undefined): this {
-    if (isDefined<PatientCommunicationComponent[] | undefined>(value)) {
+    if (isDefinedList<PatientCommunicationComponent>(value)) {
       const optErrMsg = `Invalid Patient.communication; Provided value array has an element that is not an instance of PatientCommunicationComponent.`;
       assertFhirTypeList<PatientCommunicationComponent>(value, PatientCommunicationComponent, optErrMsg);
       this.communication = value;
@@ -1402,7 +1395,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns this
    */
   public addCommunication(value: PatientCommunicationComponent | undefined): this {
-    if (isDefined<PatientCommunicationComponent | undefined>(value)) {
+    if (isDefined<PatientCommunicationComponent>(value)) {
       const optErrMsg = `Invalid Patient.communication; Provided element is not an instance of PatientCommunicationComponent.`;
       assertFhirType<PatientCommunicationComponent>(value, PatientCommunicationComponent, optErrMsg);
       this.initCommunication();
@@ -1416,8 +1409,7 @@ export class Patient extends DomainResource implements IBase {
    */
   public hasCommunication(): boolean {
     return (
-      this.communication !== undefined &&
-      this.communication.length > 0 &&
+      isDefinedList<PatientCommunicationComponent>(this.communication) &&
       this.communication.some((item: PatientCommunicationComponent) => !item.isEmpty())
     );
   }
@@ -1448,7 +1440,7 @@ export class Patient extends DomainResource implements IBase {
    */
   @ReferenceTargets('Patient.generalPractitioner', ['Organization', 'Practitioner', 'PractitionerRole'])
   public setGeneralPractitioner(value: Reference[] | undefined): this {
-    if (isDefined<Reference[] | undefined>(value)) {
+    if (isDefinedList<Reference>(value)) {
       // assertFhirTypeList<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
       this.generalPractitioner = value;
     } else {
@@ -1467,7 +1459,7 @@ export class Patient extends DomainResource implements IBase {
    */
   @ReferenceTargets('Patient.generalPractitioner', ['Organization', 'Practitioner', 'PractitionerRole'])
   public addGeneralPractitioner(value: Reference | undefined): this {
-    if (isDefined<Reference | undefined>(value)) {
+    if (isDefined<Reference>(value)) {
       // assertFhirType<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
       this.initGeneralPractitioner();
       this.generalPractitioner?.push(value);
@@ -1480,8 +1472,7 @@ export class Patient extends DomainResource implements IBase {
    */
   public hasGeneralPractitioner(): boolean {
     return (
-      this.generalPractitioner !== undefined &&
-      this.generalPractitioner.length > 0 &&
+      isDefinedList<Reference>(this.generalPractitioner) &&
       this.generalPractitioner.some((item: Reference) => !item.isEmpty())
     );
   }
@@ -1512,7 +1503,7 @@ export class Patient extends DomainResource implements IBase {
    */
   @ReferenceTargets('Patient.managingOrganization', ['Organization'])
   public setManagingOrganization(value: Reference | undefined): this {
-    if (isDefined<Reference | undefined>(value)) {
+    if (isDefined<Reference>(value)) {
       // assertFhirType<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
       this.managingOrganization = value;
     } else {
@@ -1525,7 +1516,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns `true` if the `managingOrganization` property exists and has a value; `false` otherwise
    */
   public hasManagingOrganization(): boolean {
-    return this.managingOrganization !== undefined && !this.managingOrganization.isEmpty();
+    return isDefined<Reference>(this.managingOrganization) && !this.managingOrganization.isEmpty();
   }
 
   /**
@@ -1542,7 +1533,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns this
    */
   public setLink(value: PatientLinkComponent[] | undefined): this {
-    if (isDefined<PatientLinkComponent[] | undefined>(value)) {
+    if (isDefinedList<PatientLinkComponent>(value)) {
       const optErrMsg = `Invalid Patient.link; Provided value array has an element that is not an instance of PatientLinkComponent.`;
       assertFhirTypeList<PatientLinkComponent>(value, PatientLinkComponent, optErrMsg);
       this.link = value;
@@ -1559,7 +1550,7 @@ export class Patient extends DomainResource implements IBase {
    * @returns this
    */
   public addLink(value: PatientLinkComponent | undefined): this {
-    if (isDefined<PatientLinkComponent | undefined>(value)) {
+    if (isDefined<PatientLinkComponent>(value)) {
       const optErrMsg = `Invalid Patient.link; Provided element is not an instance of PatientLinkComponent.`;
       assertFhirType<PatientLinkComponent>(value, PatientLinkComponent, optErrMsg);
       this.initLink();
@@ -1573,7 +1564,7 @@ export class Patient extends DomainResource implements IBase {
    */
   public hasLink(): boolean {
     return (
-      this.link !== undefined && this.link.length > 0 && this.link.some((item: PatientLinkComponent) => !item.isEmpty())
+      isDefinedList<PatientLinkComponent>(this.link) && this.link.some((item: PatientLinkComponent) => !item.isEmpty())
     );
   }
 
@@ -1974,7 +1965,7 @@ export class PatientContactComponent extends BackboneElement {
    * @returns this
    */
   public setRelationship(value: CodeableConcept[] | undefined): this {
-    if (isDefined<CodeableConcept[] | undefined>(value)) {
+    if (isDefinedList<CodeableConcept>(value)) {
       const optErrMsg = `Invalid Patient.contact.relationship; Provided value array has an element that is not an instance of CodeableConcept.`;
       assertFhirTypeList<CodeableConcept>(value, CodeableConcept, optErrMsg);
       this.relationship = value;
@@ -1991,7 +1982,7 @@ export class PatientContactComponent extends BackboneElement {
    * @returns this
    */
   public addRelationship(value: CodeableConcept | undefined): this {
-    if (isDefined<CodeableConcept | undefined>(value)) {
+    if (isDefined<CodeableConcept>(value)) {
       const optErrMsg = `Invalid Patient.contact.relationship; Provided element is not an instance of CodeableConcept.`;
       assertFhirType<CodeableConcept>(value, CodeableConcept, optErrMsg);
       this.initRelationship();
@@ -2005,8 +1996,7 @@ export class PatientContactComponent extends BackboneElement {
    */
   public hasRelationship(): boolean {
     return (
-      this.relationship !== undefined &&
-      this.relationship.length > 0 &&
+      isDefinedList<CodeableConcept>(this.relationship) &&
       this.relationship.some((item: CodeableConcept) => !item.isEmpty())
     );
   }
@@ -2034,7 +2024,7 @@ export class PatientContactComponent extends BackboneElement {
    * @returns this
    */
   public setName(value: HumanName | undefined): this {
-    if (isDefined<HumanName | undefined>(value)) {
+    if (isDefined<HumanName>(value)) {
       const optErrMsg = `Invalid Patient.contact.name; Provided element is not an instance of HumanName.`;
       assertFhirType<HumanName>(value, HumanName, optErrMsg);
       this.name = value;
@@ -2048,7 +2038,7 @@ export class PatientContactComponent extends BackboneElement {
    * @returns `true` if the `name` property exists and has a value; `false` otherwise
    */
   public hasName(): boolean {
-    return this.name !== undefined && !this.name.isEmpty();
+    return isDefined<HumanName>(this.name) && !this.name.isEmpty();
   }
 
   /**
@@ -2065,7 +2055,7 @@ export class PatientContactComponent extends BackboneElement {
    * @returns this
    */
   public setTelecom(value: ContactPoint[] | undefined): this {
-    if (isDefined<ContactPoint[] | undefined>(value)) {
+    if (isDefinedList<ContactPoint>(value)) {
       const optErrMsg = `Invalid Patient.contact.telecom; Provided value array has an element that is not an instance of ContactPoint.`;
       assertFhirTypeList<ContactPoint>(value, ContactPoint, optErrMsg);
       this.telecom = value;
@@ -2082,7 +2072,7 @@ export class PatientContactComponent extends BackboneElement {
    * @returns this
    */
   public addTelecom(value: ContactPoint | undefined): this {
-    if (isDefined<ContactPoint | undefined>(value)) {
+    if (isDefined<ContactPoint>(value)) {
       const optErrMsg = `Invalid Patient.contact.telecom; Provided element is not an instance of ContactPoint.`;
       assertFhirType<ContactPoint>(value, ContactPoint, optErrMsg);
       this.initTelecom();
@@ -2095,11 +2085,7 @@ export class PatientContactComponent extends BackboneElement {
    * @returns `true` if the `telecom` property exists and has a value; `false` otherwise
    */
   public hasTelecom(): boolean {
-    return (
-      this.telecom !== undefined &&
-      this.telecom.length > 0 &&
-      this.telecom.some((item: ContactPoint) => !item.isEmpty())
-    );
+    return isDefinedList<ContactPoint>(this.telecom) && this.telecom.some((item: ContactPoint) => !item.isEmpty());
   }
 
   /**
@@ -2125,7 +2111,7 @@ export class PatientContactComponent extends BackboneElement {
    * @returns this
    */
   public setAddress(value: Address | undefined): this {
-    if (isDefined<Address | undefined>(value)) {
+    if (isDefined<Address>(value)) {
       const optErrMsg = `Invalid Patient.contact.address; Provided element is not an instance of Address.`;
       assertFhirType<Address>(value, Address, optErrMsg);
       this.address = value;
@@ -2139,7 +2125,7 @@ export class PatientContactComponent extends BackboneElement {
    * @returns `true` if the `address` property exists and has a value; `false` otherwise
    */
   public hasAddress(): boolean {
-    return this.address !== undefined && !this.address.isEmpty();
+    return isDefined<Address>(this.address) && !this.address.isEmpty();
   }
 
   /**
@@ -2156,7 +2142,7 @@ export class PatientContactComponent extends BackboneElement {
    * @returns this
    */
   public setGenderEnumType(enumType: EnumCodeType | undefined): this {
-    if (isDefined<EnumCodeType | undefined>(enumType)) {
+    if (isDefined<EnumCodeType>(enumType)) {
       const errMsgPrefix = 'Invalid Patient.contact.gender';
       assertEnumCodeType<AdministrativeGenderEnum>(enumType, AdministrativeGenderEnum, errMsgPrefix);
       this.gender = enumType;
@@ -2170,7 +2156,7 @@ export class PatientContactComponent extends BackboneElement {
    * @returns `true` if the `gender` property exists and has a value; `false` otherwise
    */
   public hasGenderEnumType(): boolean {
-    return this.gender !== undefined && !this.gender.isEmpty() && this.gender.fhirCodeEnumeration.length > 0;
+    return isDefined<EnumCodeType>(this.gender) && !this.gender.isEmpty() && this.gender.fhirCodeEnumeration.length > 0;
   }
 
   /**
@@ -2190,7 +2176,7 @@ export class PatientContactComponent extends BackboneElement {
    * @returns this
    */
   public setGenderElement(element: CodeType | undefined): this {
-    if (isDefined<CodeType | undefined>(element)) {
+    if (isDefined<CodeType>(element)) {
       const optErrMsg = `Invalid Patient.contact.gender; Provided element is not an instance of CodeType.`;
       assertFhirType<CodeType>(element, CodeType, optErrMsg);
       this.gender = new EnumCodeType(element, this.administrativeGenderEnum);
@@ -2224,7 +2210,7 @@ export class PatientContactComponent extends BackboneElement {
    * @returns this
    */
   public setGender(value: fhirCode | undefined): this {
-    if (isDefined<fhirCode | undefined>(value)) {
+    if (isDefined<fhirCode>(value)) {
       const optErrMsg = `Invalid Patient.contact.gender; Provided value is not an instance of fhirCode.`;
       this.gender = new EnumCodeType(
         parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg),
@@ -2260,7 +2246,7 @@ export class PatientContactComponent extends BackboneElement {
    */
   @ReferenceTargets('Patient.contact.organization', ['Organization'])
   public setOrganization(value: Reference | undefined): this {
-    if (isDefined<Reference | undefined>(value)) {
+    if (isDefined<Reference>(value)) {
       // assertFhirType<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
       this.organization = value;
     } else {
@@ -2273,7 +2259,7 @@ export class PatientContactComponent extends BackboneElement {
    * @returns `true` if the `organization` property exists and has a value; `false` otherwise
    */
   public hasOrganization(): boolean {
-    return this.organization !== undefined && !this.organization.isEmpty();
+    return isDefined<Reference>(this.organization) && !this.organization.isEmpty();
   }
 
   /**
@@ -2290,7 +2276,7 @@ export class PatientContactComponent extends BackboneElement {
    * @returns this
    */
   public setPeriod(value: Period | undefined): this {
-    if (isDefined<Period | undefined>(value)) {
+    if (isDefined<Period>(value)) {
       const optErrMsg = `Invalid Patient.contact.period; Provided element is not an instance of Period.`;
       assertFhirType<Period>(value, Period, optErrMsg);
       this.period = value;
@@ -2304,7 +2290,7 @@ export class PatientContactComponent extends BackboneElement {
    * @returns `true` if the `period` property exists and has a value; `false` otherwise
    */
   public hasPeriod(): boolean {
-    return this.period !== undefined && !this.period.isEmpty();
+    return isDefined<Period>(this.period) && !this.period.isEmpty();
   }
 
   /**
@@ -2424,7 +2410,7 @@ export class PatientCommunicationComponent extends BackboneElement {
     super();
 
     this.language = null;
-    if (isDefined<CodeableConcept | null>(language)) {
+    if (isDefined<CodeableConcept>(language)) {
       this.setLanguage(language);
     }
   }
@@ -2531,7 +2517,7 @@ export class PatientCommunicationComponent extends BackboneElement {
    * @returns `true` if the `language` property exists and has a value; `false` otherwise
    */
   public hasLanguage(): boolean {
-    return isDefined<CodeableConcept | null>(this.language) && !this.language.isEmpty();
+    return isDefined<CodeableConcept>(this.language) && !this.language.isEmpty();
   }
 
   /**
@@ -2548,7 +2534,7 @@ export class PatientCommunicationComponent extends BackboneElement {
    * @returns this
    */
   public setPreferredElement(element: BooleanType | undefined): this {
-    if (isDefined<BooleanType | undefined>(element)) {
+    if (isDefined<BooleanType>(element)) {
       const optErrMsg = `Invalid Patient.communication.preferred; Provided element is not an instance of BooleanType.`;
       assertFhirType<BooleanType>(element, BooleanType, optErrMsg);
       this.preferred = element;
@@ -2562,7 +2548,7 @@ export class PatientCommunicationComponent extends BackboneElement {
    * @returns `true` if the `preferred` property exists and has a value; `false` otherwise
    */
   public hasPreferredElement(): boolean {
-    return this.preferred !== undefined && !this.preferred.isEmpty();
+    return isDefined<BooleanType>(this.preferred) && !this.preferred.isEmpty();
   }
 
   /**
@@ -2580,7 +2566,7 @@ export class PatientCommunicationComponent extends BackboneElement {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setPreferred(value: fhirBoolean | undefined): this {
-    if (isDefined<fhirBoolean | undefined>(value)) {
+    if (isDefined<fhirBoolean>(value)) {
       const optErrMsg = `Invalid Patient.communication.preferred (${String(value)})`;
       this.preferred = new BooleanType(parseFhirPrimitiveData(value, fhirBooleanSchema, optErrMsg));
     } else {
@@ -2686,7 +2672,7 @@ export class PatientLinkComponent extends BackboneElement {
     super();
 
     this.other = null;
-    if (isDefined<Reference | null>(other)) {
+    if (isDefined<Reference>(other)) {
       this.setOther(other);
     }
 
@@ -2815,7 +2801,7 @@ export class PatientLinkComponent extends BackboneElement {
    * @returns `true` if the `other` property exists and has a value; `false` otherwise
    */
   public hasOther(): boolean {
-    return isDefined<Reference | null>(this.other) && !this.other.isEmpty();
+    return isDefined<Reference>(this.other) && !this.other.isEmpty();
   }
 
   /**
@@ -2843,9 +2829,7 @@ export class PatientLinkComponent extends BackboneElement {
    * @returns `true` if the `type` property exists and has a value; `false` otherwise
    */
   public hasTypeEnumType(): boolean {
-    return (
-      isDefined<EnumCodeType | null>(this.type) && !this.type.isEmpty() && this.type.fhirCodeEnumeration.length > 0
-    );
+    return isDefined<EnumCodeType>(this.type) && !this.type.isEmpty() && this.type.fhirCodeEnumeration.length > 0;
   }
 
   /**

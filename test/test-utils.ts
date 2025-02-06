@@ -21,18 +21,18 @@
  *
  */
 
-import { FHIR_MAX_STRING_LENGTH, fhirCode, fhirString } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { Base } from '@src/fhir-core/base-models/Base';
-import { Resource } from '@src/fhir-core/base-models/Resource';
-import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
-import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
-import { IntegerType } from '@src/fhir-core/data-types/primitive/IntegerType';
-import { Meta } from '@src/fhir-core/data-types/complex/Meta';
-import { Narrative } from '@src/fhir-core/data-types/complex/Narrative';
-import { Period } from '@src/fhir-core/data-types/complex/Period';
-import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
-import { FhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
-import { FhirCodeDefinition, IFhirCodeDefinition, IFhirCodeEnum } from '@src/fhir-core/base-models/core-fhir-codes';
+import { FHIR_MAX_STRING_LENGTH, fhirCode, fhirString } from '../src/fhir-core/data-types/primitive/primitive-types';
+import { Base } from '../src/fhir-core/base-models/Base';
+import { Resource } from '../src/fhir-core/base-models/Resource';
+import { DomainResource } from '../src/fhir-core/base-models/DomainResource';
+import { IdType } from '../src/fhir-core/data-types/primitive/IdType';
+import { IntegerType } from '../src/fhir-core/data-types/primitive/IntegerType';
+import { Meta } from '../src/fhir-core/data-types/complex/Meta';
+import { Narrative } from '../src/fhir-core/data-types/complex/Narrative';
+import { Period } from '../src/fhir-core/data-types/complex/Period';
+import { StringType } from '../src/fhir-core/data-types/primitive/StringType';
+import { FhirResourceType } from '../src/fhir-core/base-models/FhirResourceType';
+import { FhirCodeDefinition, IFhirCodeDefinition, IFhirCodeEnum } from '../src/fhir-core/base-models/core-fhir-codes';
 import {
   BackboneElement,
   BackboneType,
@@ -41,17 +41,17 @@ import {
   Extension,
   setFhirComplexJson,
   setFhirPrimitiveJson,
-} from '@src/fhir-core/base-models/core-fhir-models';
-import { isEmpty as _isEmpty } from '@src/fhir-core/utility/common-util';
-import * as JSON from '@src/fhir-core/utility/json-helpers';
-import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
+} from '../src/fhir-core/base-models/core-fhir-models';
+import { isEmpty as _isEmpty } from '../src/fhir-core/utility/common-util';
+import * as JSON from '../src/fhir-core/utility/json-helpers';
+import { InvalidCodeError } from '../src/fhir-core/errors/InvalidCodeError';
 
 export {
   FHIR_MIN_INTEGER,
   FHIR_MAX_INTEGER,
   FHIR_MIN_INTEGER64,
   FHIR_MAX_INTEGER64,
-} from '@src/fhir-core/data-types/primitive/primitive-types';
+} from '../src/fhir-core/data-types/primitive/primitive-types';
 
 /**
  * Property values used in FHIR resource data model testing for Resource and DomainResource
@@ -89,6 +89,7 @@ export const VALID_MODIFIER_EXTENSION_2 = new Extension(
 /**
  * Property values used for datatype testing for Element.id and Element.extension
  */
+
 export const DATATYPE_ID = 'DT-1357';
 export const DATATYPE_EXTENSION = new Extension('datatypeUrl', new StringType('datatype extension string value'));
 

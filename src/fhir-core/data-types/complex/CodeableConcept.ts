@@ -31,7 +31,7 @@ import {
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { copyListValues, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirType, assertFhirTypeList, isDefined } from '@src/fhir-core/utility/type-guards';
+import { assertFhirType, assertFhirTypeList, isDefined, isDefinedList } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
@@ -106,7 +106,7 @@ export class CodeableConcept extends DataType implements IBase {
    * @returns this
    */
   public setCoding(value: Coding[] | undefined): this {
-    if (isDefined<Coding[] | undefined>(value)) {
+    if (isDefinedList<Coding>(value)) {
       const optErrMsg = `Invalid CodeableConcept.coding; Provided value array has an element that is not an instance of Coding.`;
       assertFhirTypeList<Coding>(value, Coding, optErrMsg);
       this.coding = value;
@@ -123,7 +123,7 @@ export class CodeableConcept extends DataType implements IBase {
    * @returns this
    */
   public addCoding(value: Coding | undefined): this {
-    if (isDefined<Coding | undefined>(value)) {
+    if (isDefined<Coding>(value)) {
       const optErrMsg = `Invalid CodeableConcept.coding; Provided value is not an instance of Coding.`;
       assertFhirType<Coding>(value, Coding, optErrMsg);
       this.initCoding();
@@ -136,7 +136,7 @@ export class CodeableConcept extends DataType implements IBase {
    * @returns `true` if the `coding` property exists and has a value; `false` otherwise
    */
   public hasCoding(): boolean {
-    return this.coding !== undefined && this.coding.length > 0 && this.coding.some((item: Coding) => !item.isEmpty());
+    return isDefinedList<Coding>(this.coding) && this.coding.some((item: Coding) => !item.isEmpty());
   }
 
   /**
@@ -162,7 +162,7 @@ export class CodeableConcept extends DataType implements IBase {
    * @returns this
    */
   public setTextElement(element: StringType | undefined): this {
-    if (isDefined<StringType | undefined>(element)) {
+    if (isDefined<StringType>(element)) {
       const optErrMsg = `Invalid CodeableConcept.text; Provided element is not an instance of StringType.`;
       assertFhirType<StringType>(element, StringType, optErrMsg);
       this.text = element;
@@ -176,7 +176,7 @@ export class CodeableConcept extends DataType implements IBase {
    * @returns `true` if the `text` property exists and has a value; `false` otherwise
    */
   public hasTextElement(): boolean {
-    return this.text !== undefined && !this.text.isEmpty();
+    return isDefined<StringType>(this.text) && !this.text.isEmpty();
   }
 
   /**
@@ -194,7 +194,7 @@ export class CodeableConcept extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setText(value: fhirString | undefined): this {
-    if (isDefined<fhirString | undefined>(value)) {
+    if (isDefined<fhirString>(value)) {
       const optErrMsg = `Invalid CodeableConcept.text (invalid value provided)`;
       this.text = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
     } else {

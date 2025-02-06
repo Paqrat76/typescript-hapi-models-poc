@@ -171,7 +171,7 @@ export class ContactPoint extends DataType implements IBase {
    * @returns this
    */
   public setSystemEnumType(enumType: EnumCodeType | undefined): this {
-    if (isDefined<EnumCodeType | undefined>(enumType)) {
+    if (isDefined<EnumCodeType>(enumType)) {
       const errMsgPrefix = 'ContactPoint.system';
       assertEnumCodeType<ContactPointSystemEnum>(enumType, ContactPointSystemEnum, errMsgPrefix);
       this.system = enumType;
@@ -185,7 +185,7 @@ export class ContactPoint extends DataType implements IBase {
    * @returns `true` if the `system` property exists and has a value; `false` otherwise
    */
   public hasSystemEnumType(): boolean {
-    return this.system !== undefined && !this.system.isEmpty() && this.system.fhirCodeEnumeration.length > 0;
+    return isDefined<EnumCodeType>(this.system) && !this.system.isEmpty() && this.system.fhirCodeEnumeration.length > 0;
   }
 
   /**
@@ -205,7 +205,7 @@ export class ContactPoint extends DataType implements IBase {
    * @returns this
    */
   public setSystemElement(element: CodeType | undefined): this {
-    if (isDefined<CodeType | undefined>(element)) {
+    if (isDefined<CodeType>(element)) {
       const optErrMsg = `Invalid ContactPoint.system; Provided element is not an instance of CodeType.`;
       assertFhirType<CodeType>(element, CodeType, optErrMsg);
       this.system = new EnumCodeType(element, this.contactPointSystemEnum);
@@ -239,7 +239,7 @@ export class ContactPoint extends DataType implements IBase {
    * @returns this
    */
   public setSystem(value: fhirCode | undefined): this {
-    if (isDefined<fhirCode | undefined>(value)) {
+    if (isDefined<fhirCode>(value)) {
       const optErrMsg = `Invalid ContactPoint.system; Provided value is not an instance of fhirCode.`;
       this.system = new EnumCodeType(
         parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg),
@@ -272,7 +272,7 @@ export class ContactPoint extends DataType implements IBase {
    * @returns this
    */
   public setValueElement(element: StringType | undefined): this {
-    if (isDefined<StringType | undefined>(element)) {
+    if (isDefined<StringType>(element)) {
       const optErrMsg = `Invalid ContactPoint.value; Provided element is not an instance of StringType.`;
       assertFhirType<StringType>(element, StringType, optErrMsg);
       this.value = element;
@@ -286,7 +286,7 @@ export class ContactPoint extends DataType implements IBase {
    * @returns `true` if the `value` property exists and has a value; `false` otherwise
    */
   public hasValueElement(): boolean {
-    return this.value !== undefined && !this.value.isEmpty();
+    return isDefined<StringType>(this.value) && !this.value.isEmpty();
   }
 
   /**
@@ -304,7 +304,7 @@ export class ContactPoint extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setValue(value: fhirString | undefined): this {
-    if (isDefined<fhirString | undefined>(value)) {
+    if (isDefined<fhirString>(value)) {
       const optErrMsg = `Invalid ContactPoint.value`;
       this.value = new StringType(parseFhirPrimitiveData(value, fhirStringSchema, optErrMsg));
     } else {
@@ -334,7 +334,7 @@ export class ContactPoint extends DataType implements IBase {
    * @returns this
    */
   public setUseEnumType(enumType: EnumCodeType | undefined): this {
-    if (isDefined<EnumCodeType | undefined>(enumType)) {
+    if (isDefined<EnumCodeType>(enumType)) {
       const errMsgPrefix = 'ContactPoint.use';
       assertEnumCodeType<ContactPointUseEnum>(enumType, ContactPointUseEnum, errMsgPrefix);
       this.use = enumType;
@@ -348,7 +348,7 @@ export class ContactPoint extends DataType implements IBase {
    * @returns `true` if the `use` property exists and has a value; `false` otherwise
    */
   public hasUseEnumType(): boolean {
-    return this.use !== undefined && !this.use.isEmpty() && this.use.fhirCodeEnumeration.length > 0;
+    return isDefined<EnumCodeType>(this.use) && !this.use.isEmpty() && this.use.fhirCodeEnumeration.length > 0;
   }
 
   /**
@@ -368,7 +368,7 @@ export class ContactPoint extends DataType implements IBase {
    * @returns this
    */
   public setUseElement(element: CodeType | undefined): this {
-    if (isDefined<CodeType | undefined>(element)) {
+    if (isDefined<CodeType>(element)) {
       const optErrMsg = `Invalid ContactPoint.use; Provided element is not an instance of CodeType.`;
       assertFhirType<CodeType>(element, CodeType, optErrMsg);
       this.use = new EnumCodeType(element, this.contactPointUseEnum);
@@ -402,7 +402,7 @@ export class ContactPoint extends DataType implements IBase {
    * @returns this
    */
   public setUse(value: fhirCode | undefined): this {
-    if (isDefined<fhirCode | undefined>(value)) {
+    if (isDefined<fhirCode>(value)) {
       const optErrMsg = `Invalid ContactPoint.use; Provided value is not an instance of fhirCode.`;
       this.use = new EnumCodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg), this.contactPointUseEnum);
     } else {
@@ -432,7 +432,7 @@ export class ContactPoint extends DataType implements IBase {
    * @returns this
    */
   public setRankElement(element: PositiveIntType | undefined): this {
-    if (isDefined<PositiveIntType | undefined>(element)) {
+    if (isDefined<PositiveIntType>(element)) {
       const optErrMsg = `Invalid ContactPoint.rank; Provided element is not an instance of PositiveIntType.`;
       assertFhirType<PositiveIntType>(element, PositiveIntType, optErrMsg);
       this.rank = element;
@@ -446,7 +446,7 @@ export class ContactPoint extends DataType implements IBase {
    * @returns `true` if the `rank` property exists and has a value; `false` otherwise
    */
   public hasRankElement(): boolean {
-    return this.rank !== undefined && !this.rank.isEmpty();
+    return isDefined<PositiveIntType>(this.rank) && !this.rank.isEmpty();
   }
 
   /**
@@ -464,7 +464,7 @@ export class ContactPoint extends DataType implements IBase {
    * @throws PrimitiveTypeError for invalid primitive types
    */
   public setRank(value: fhirPositiveInt | undefined): this {
-    if (isDefined<fhirPositiveInt | undefined>(value)) {
+    if (isDefined<fhirPositiveInt>(value)) {
       const optErrMsg = `Invalid ContactPoint.rank (${String(value)})`;
       this.rank = new PositiveIntType(parseFhirPrimitiveData(value, fhirPositiveIntSchema, optErrMsg));
     } else {
@@ -494,7 +494,7 @@ export class ContactPoint extends DataType implements IBase {
    * @returns this
    */
   public setPeriod(value: Period | undefined): this {
-    if (isDefined<Period | undefined>(value)) {
+    if (isDefined<Period>(value)) {
       const optErrMsg = `Invalid ContactPoint.period; Provided element is not an instance of Period.`;
       assertFhirType<Period>(value, Period, optErrMsg);
       this.period = value;
@@ -508,7 +508,7 @@ export class ContactPoint extends DataType implements IBase {
    * @returns `true` if the `period` property exists and has a value; `false` otherwise
    */
   public hasPeriod(): boolean {
-    return this.period !== undefined && !this.period.isEmpty();
+    return isDefined<Period>(this.period) && !this.period.isEmpty();
   }
 
   /**

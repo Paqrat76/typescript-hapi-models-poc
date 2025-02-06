@@ -104,7 +104,7 @@ export class BooleanType extends PrimitiveType<fhirBoolean> {
   }
 
   private assignValue(value: fhirBoolean | undefined): void {
-    if (isDefined<fhirBoolean | undefined>(value)) {
+    if (isDefined<fhirBoolean>(value)) {
       this.boolValue = parseFhirPrimitiveData(value, fhirBooleanSchema, this.typeErrorMessage(value));
     } else {
       this.boolValue = undefined;

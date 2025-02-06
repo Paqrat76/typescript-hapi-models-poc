@@ -82,7 +82,7 @@ export class UrlType extends PrimitiveType<fhirUrl> {
   }
 
   private assignValue(value: fhirUrl | undefined): void {
-    if (isDefined<fhirUrl | undefined>(value)) {
+    if (isDefined<fhirUrl>(value)) {
       super.setValue(parseFhirPrimitiveData(value, fhirUrlSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);

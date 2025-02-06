@@ -83,7 +83,7 @@ export class StringType extends PrimitiveType<fhirString> {
   }
 
   private assignValue(value: fhirString | undefined): void {
-    if (isDefined<fhirString | undefined>(value)) {
+    if (isDefined<fhirString>(value)) {
       super.setValue(parseFhirPrimitiveData(value, fhirStringSchema, this.typeErrorMessage()));
     } else {
       super.setValue(undefined);

@@ -83,7 +83,7 @@ export class DecimalType extends PrimitiveType<fhirDecimal> {
   }
 
   private assignValue(value: fhirDecimal | undefined): void {
-    if (isDefined<fhirDecimal | undefined>(value)) {
+    if (isDefined<fhirDecimal>(value)) {
       super.setValue(parseFhirPrimitiveData(value, fhirDecimalSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);

@@ -93,7 +93,7 @@ export interface OpenDatatypeMetaObj {
  * @category Utilities: Decorators
  */
 export function getChoiceDatatypeDefs(metadata: DecoratorMetadataObject | null): ChoiceDatatypeDef[] {
-  assertIsDefined<DecoratorMetadataObject | null>(metadata, `Provided metadata is undefined/null`);
+  assertIsDefined<DecoratorMetadataObject>(metadata, `Provided metadata is undefined/null`);
   // JSON.parse(JSON.stringify(metadata))) removes "[Object: null prototype]" from the Decorator metadata object
   const choiceDatatypeMetaObj = JSON.parse(JSON.stringify(metadata)) as ChoiceDatatypeMetaObj;
   assert(choiceDatatypeMetaObj.ChoiceDatatypes, 'metadata.ChoiceDatatypes does not exist');
@@ -109,7 +109,7 @@ export function getChoiceDatatypeDefs(metadata: DecoratorMetadataObject | null):
  * @category Utilities: Decorators
  */
 export function getOpenDatatypeFields(metadata: DecoratorMetadataObject | null): string[] {
-  assertIsDefined<DecoratorMetadataObject | null>(metadata, `Provided metadata is undefined/null`);
+  assertIsDefined<DecoratorMetadataObject>(metadata, `Provided metadata is undefined/null`);
   // JSON.parse(JSON.stringify(metadata))) removes "[Object: null prototype]" from the Decorator metadata object
   const openDatatypeMetaObj = JSON.parse(JSON.stringify(metadata)) as OpenDatatypeMetaObj;
   assert(openDatatypeMetaObj.OpenDatatypeFields, 'metadata.OpenDatatypeFields does not exist');
@@ -129,7 +129,7 @@ export function getChoiceDatatypeDefsForField(
   metadata: DecoratorMetadataObject | null,
   fieldName: string,
 ): FhirDataType[] {
-  assertIsDefined<DecoratorMetadataObject | null>(metadata, `Provided metadata is undefined/null`);
+  assertIsDefined<DecoratorMetadataObject>(metadata, `Provided metadata is undefined/null`);
   assertIsDefined<string>(fieldName, `Provided fieldName is undefined/null`);
   assertIsString(fieldName, `Provided fieldName is not a string`);
 

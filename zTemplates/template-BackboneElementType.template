@@ -20,7 +20,7 @@
 
   // *** NOTE ***
   // Only copy the internal code block!
-  public static parse(sourceJson: JSON.Object): XxxxClass | undefined {
+  public static parse(sourceJson: JSON.Value): XxxxClass | undefined {
 
     sourceField = 'XxxxParentClassElement.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
@@ -33,7 +33,7 @@
   }
 
   /**
-   * @returns the `xxxxFieldName` property value as a XxxxFieldName object
+   * @returns the `xxxxFieldName` property value as a XxxxClass object if defined; else an empty XxxxClass object
    */
   public getXxxxFieldName(): XxxxClass {
     return this.xxxxFieldName ?? new XxxxClass();
@@ -46,7 +46,7 @@
    * @returns this
    */
   public setXxxxFieldName(value: XxxxClass | undefined): this {
-    if (isDefined<XxxxClass | undefined>(value)) {
+    if (isDefined<XxxxClass>(value)) {
       const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided element is not an instance of XxxxClass.`;
       assertFhirType<XxxxClass>(value, XxxxClass, optErrMsg);
       this.xxxxFieldName = value;
@@ -60,7 +60,7 @@
    * @returns `true` if the `xxxxFieldName` property exists and has a value; `false` otherwise
    */
   public hasXxxxFieldName(): boolean {
-    return this.xxxxFieldName !== undefined && !this.xxxxFieldName.isEmpty();
+    return isDefined<XxxxClass>(this.xxxxFieldName) && !this.xxxxFieldName.isEmpty();
   }
 
   // *** NOTE ***
@@ -87,7 +87,7 @@
   constructor(xxxxFieldName: XxxxClass | null) {
 
     this.xxxxFieldName = null;
-    if (isDefined<XxxxClass | null>(xxxxFieldName)) {
+    if (isDefined<XxxxClass>(xxxxFieldName)) {
       this.setXxxxFieldName(xxxxFieldName);
     }
 
@@ -95,7 +95,7 @@
 
   // *** NOTE ***
   // Only copy the internal code block!
-  public static parse(sourceJson: JSON.Object): XxxxClass | undefined {
+  public static parse(sourceJson: JSON.Value): XxxxClass | undefined {
 
     // *** NOTE ***
     // Add following near top of method ONLY IF it does not already exist
@@ -104,7 +104,8 @@
     sourceField = 'XxxxParentClassElement.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
     if (fieldName in classJsonObj) {
-      const datatype: XxxxClass | undefined = XxxxClass.parse(classJsonObj[fieldName]);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const datatype: XxxxClass | undefined = XxxxClass.parse(classJsonObj[fieldName]!);
       if (datatype === undefined) {
         missingReqdProperties.push(sourceField);
       } else {
@@ -124,7 +125,7 @@
   }
 
   /**
-   * @returns the `xxxxFieldName` property value as a XxxxClass object
+   * @returns the `xxxxFieldName` property value as a XxxxClass object if defined; else null
    */
   public getXxxxFieldName(): XxxxClass | null {
     return this.xxxxFieldName;
@@ -148,7 +149,7 @@
    * @returns `true` if the `xxxxFieldName` property exists and has a value; `false` otherwise
    */
   public hasXxxxFieldName(): boolean {
-    return isDefined<XxxxClass | null>(this.xxxxFieldName) && !this.xxxxFieldName.isEmpty();
+    return isDefined<XxxxClass>(this.xxxxFieldName) && !this.xxxxFieldName.isEmpty();
   }
 
   // *** NOTE ***
@@ -188,7 +189,7 @@
 
   // *** NOTE ***
   // Only copy the internal code block!
-  public static parse(sourceJson: JSON.Object): XxxxClass | undefined {
+  public static parse(sourceJson: JSON.Value): XxxxClass | undefined {
 
     sourceField = 'XxxxParentClassElement.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
@@ -219,7 +220,7 @@
    * @returns this
    */
   public setXxxxFieldName(value: XxxxClass[] | undefined): this {
-    if (isDefined<XxxxClass[] | undefined>(value)) {
+    if (isDefinedList<XxxxClass>(value)) {
       const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided value array has an element that is not an instance of XxxxClass.`;
       assertFhirTypeList<XxxxClass>(value, XxxxClass, optErrMsg);
       this.xxxxFieldName = value;
@@ -236,7 +237,7 @@
    * @returns this
    */
   public addXxxxFieldName(value: XxxxClass | undefined): this {
-    if (isDefined<XxxxClass | undefined>(value)) {
+    if (isDefined<XxxxClass>(value)) {
       const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided element is not an instance of XxxxClass.`;
       assertFhirType<XxxxClass>(value, XxxxClass, optErrMsg);
       this.initXxxxFieldName();
@@ -249,18 +250,14 @@
    * @returns `true` if the `xxxxFieldName` property exists and has a value; `false` otherwise
    */
   public hasXxxxFieldName(): boolean {
-    return (
-      this.xxxxFieldName !== undefined &&
-      this.xxxxFieldName.length > 0 &&
-      this.xxxxFieldName.some((item: XxxxClass) => !item.isEmpty())
-    );
+    return isDefinedList<XxxxClass>(this.xxxxFieldName) && this.xxxxFieldName.some((item: XxxxClass) => !item.isEmpty());
   }
 
   /**
    * Initialize the `xxxxFieldName` property
    */
   private initXxxxFieldName(): void {
-    if (this.xxxxFieldName === undefined) {
+    if (!this.hasXxxxFieldName()) {
       this.xxxxFieldName = [] as XxxxClass[];
     }
   }
@@ -289,19 +286,18 @@
   constructor(xxxxFieldName: XxxxClass[] | null) {
 
     this.xxxxFieldName = null;
-    if (isDefined<XxxxClass[] | null>(xxxxFieldName)) {
+    if (isDefinedList<XxxxClass>(xxxxFieldName)) {
       this.setXxxxFieldName(xxxxFieldName);
     }
   }
 
   // *** NOTE ***
   // Only copy the internal code block!
-  public static parse(sourceJson: JSON.Object): XxxxClass | undefined {
+  public static parse(sourceJson: JSON.Value): XxxxClass | undefined {
 
     // *** NOTE ***
     // Add following near top of method ONLY IF it does not already exist
     const missingReqdProperties: string[] = [];
-
 
     sourceField = 'XxxxParentClassElement.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
@@ -320,7 +316,6 @@
       missingReqdProperties.push(sourceField);
     }
 
-
     // *** NOTE ***
     // Add following at bottom just above the `return instance;` ONLY IF it does not already exist
     if (missingReqdProperties.length > 0) {
@@ -334,8 +329,8 @@
   /**
    * @returns the `xxxxFieldName` property value as a XxxxClass array
    */
-  public getXxxxFieldName(): XxxxClass[] | null {
-    return this.xxxxFieldName;
+  public getXxxxFieldName(): XxxxClass[] {
+    return this.xxxxFieldName ?? ([] as XxxxClass[]);
   }
 
   /**
@@ -345,7 +340,7 @@
    * @returns this
    */
   public setXxxxFieldName(value: XxxxClass[]): this {
-    assertIsDefined<XxxxClass[]>(value, `XxxxParentClassElement.xxxxFieldName is required`);
+    assertIsDefinedList<XxxxClass>(value, `XxxxParentClassElement.xxxxFieldName is required`);
     const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided value array has an element that is not an instance of XxxxClass.`;
     assertFhirTypeList<XxxxClass>(value, XxxxClass, optErrMsg);
     this.xxxxFieldName = value;
@@ -359,7 +354,7 @@
    * @returns this
    */
   public addXxxxFieldName(value: XxxxClass | undefined): this {
-    if (isDefined<XxxxClass | undefined>(value)) {
+    if (isDefined<XxxxClass>(value)) {
       const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided element is not an instance of XxxxClass.`;
       assertFhirType<XxxxClass>(value, XxxxClass, optErrMsg);
       this.initXxxxFieldName();
@@ -372,11 +367,7 @@
    * @returns `true` if the `xxxxFieldName` property exists and has a value; `false` otherwise
    */
   public hasXxxxFieldName(): boolean {
-    return (
-      isDefined<XxxxClass[] | null>(this.xxxxFieldName) &&
-      this.xxxxFieldName.length > 0 &&
-      this.xxxxFieldName.some((item: XxxxClass) => !item.isEmpty())
-    );
+    return isDefinedList<XxxxClass>(this.xxxxFieldName) && this.xxxxFieldName.some((item: XxxxClass) => !item.isEmpty());
   }
 
   /**

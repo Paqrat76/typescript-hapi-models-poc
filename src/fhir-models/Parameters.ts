@@ -42,7 +42,13 @@ import {
 import { REQUIRED_PROPERTIES_DO_NOT_EXIST, REQUIRED_PROPERTIES_REQD_IN_JSON } from '@src/fhir-core/constants';
 import { copyListValues, extractFieldName, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import { OpenDataTypesMeta } from '@src/fhir-core/utility/decorators';
-import { assertFhirType, assertFhirTypeList, assertIsDefined, isDefined } from '@src/fhir-core/utility/type-guards';
+import {
+  assertFhirType,
+  assertFhirTypeList,
+  assertIsDefined,
+  isDefined,
+  isDefinedList,
+} from '@src/fhir-core/utility/type-guards';
 import { parseInlineResource } from '@src/fhir-models/fhir-contained-resource-parser';
 import {
   assertFhirResourceTypeJson,
@@ -88,7 +94,7 @@ export class Parameters extends Resource implements IBase {
    * @param sourceJson - JSON representing FHIR `Parameters`
    * @returns Parameters data model or undefined for `Parameters`
    */
-  public static parse(sourceJson: JSON.Object): Parameters | undefined {
+  public static override parse(sourceJson: JSON.Object): Parameters | undefined {
     if (!isDefined<JSON.Object>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
@@ -148,7 +154,7 @@ export class Parameters extends Resource implements IBase {
    * @returns this
    */
   public setParameter(value: ParametersParameterComponent[] | undefined): this {
-    if (isDefined<ParametersParameterComponent[] | undefined>(value)) {
+    if (isDefinedList<ParametersParameterComponent>(value)) {
       const optErrMsg = `Invalid Parameters.parameter; Provided value array has an element that is not an instance of ParametersParameterComponent.`;
       assertFhirTypeList<ParametersParameterComponent>(value, ParametersParameterComponent, optErrMsg);
       this.parameter = value;
@@ -165,7 +171,7 @@ export class Parameters extends Resource implements IBase {
    * @returns this
    */
   public addParameter(value: ParametersParameterComponent | undefined): this {
-    if (isDefined<ParametersParameterComponent | undefined>(value)) {
+    if (isDefined<ParametersParameterComponent>(value)) {
       const optErrMsg = `Invalid Parameters.parameter; Provided element is not an instance of ParametersParameterComponent.`;
       assertFhirType<ParametersParameterComponent>(value, ParametersParameterComponent, optErrMsg);
       this.initParameter();
@@ -179,8 +185,7 @@ export class Parameters extends Resource implements IBase {
    */
   public hasParameter(): boolean {
     return (
-      this.parameter !== undefined &&
-      this.parameter.length > 0 &&
+      isDefinedList<ParametersParameterComponent>(this.parameter) &&
       this.parameter.some((item: ParametersParameterComponent) => !item.isEmpty())
     );
   }
@@ -266,7 +271,7 @@ export class ParametersParameterComponent extends BackboneElement {
     super();
 
     this.name = null;
-    if (isDefined<StringType | fhirString | null>(name)) {
+    if (isDefined<StringType | fhirString>(name)) {
       if (name instanceof PrimitiveType) {
         this.setNameElement(name);
       } else {
@@ -291,6 +296,8 @@ export class ParametersParameterComponent extends BackboneElement {
 
     // NOTE: Added IF and ONLY IF an open data type is used
     const classMetadata: DecoratorMetadataObject | null = ParametersParameterComponent[Symbol.metadata];
+    const errorMessage = `DecoratorMetadataObject does not exist for ParametersParameterComponent`;
+    assertIsDefined<DecoratorMetadataObject>(classMetadata, errorMessage);
 
     const missingReqdProperties: string[] = [];
 
@@ -310,10 +317,8 @@ export class ParametersParameterComponent extends BackboneElement {
 
     sourceField = 'Parameters.parameter.value[x]';
     fieldName = extractFieldName(sourceField);
-    if (isDefined<DecoratorMetadataObject | null>(classMetadata)) {
-      const datatype: DataType | undefined = parseOpenDataType(backboneJsonObj, sourceField, fieldName, classMetadata);
-      instance.setValue(datatype);
-    }
+    const value: DataType | undefined = parseOpenDataType(backboneJsonObj, sourceField, fieldName, classMetadata);
+    instance.setValue(value);
 
     sourceField = 'Parameters.parameter.resource';
     fieldName = extractFieldName(sourceField);
@@ -430,7 +435,7 @@ export class ParametersParameterComponent extends BackboneElement {
    * @returns `true` if the `name` property exists and has a value; `false` otherwise
    */
   public hasNameElement(): boolean {
-    return isDefined<StringType | null>(this.name) && !this.name.isEmpty();
+    return isDefined<StringType>(this.name) && !this.name.isEmpty();
   }
 
   /**
@@ -482,7 +487,7 @@ export class ParametersParameterComponent extends BackboneElement {
    */
   @OpenDataTypes('Parameters.parameter.value[x]')
   public setValue(value: DataType | undefined): this {
-    if (isDefined<DataType | undefined>(value)) {
+    if (isDefined<DataType>(value)) {
       // assertFhirType<DataType>(value, DataType) unnecessary because @OpenDataTypes decorator ensures proper type/value
       this.value = value;
     } else {
@@ -495,7 +500,7 @@ export class ParametersParameterComponent extends BackboneElement {
    * @returns `true` if the `value` property exists and has a value; `false` otherwise
    */
   public hasValue(): boolean {
-    return this.value !== undefined && !this.value.isEmpty();
+    return isDefined<DataType>(this.value) && !this.value.isEmpty();
   }
 
   /**
@@ -512,7 +517,7 @@ export class ParametersParameterComponent extends BackboneElement {
    * @returns this
    */
   public setResource(value: Resource | undefined): this {
-    if (isDefined<Resource | undefined>(value)) {
+    if (isDefined<Resource>(value)) {
       const optErrMsg = `Invalid Parameters.parameter.resource; Provided element is not an instance of Resource.`;
       assertFhirResourceType(value, optErrMsg);
       this.resource = value;
@@ -526,7 +531,7 @@ export class ParametersParameterComponent extends BackboneElement {
    * @returns `true` if the `resource` property exists and has a value; `false` otherwise
    */
   public hasResource(): boolean {
-    return this.resource !== undefined && !this.resource.isEmpty();
+    return isDefined<Resource>(this.resource) && !this.resource.isEmpty();
   }
 
   /**
@@ -543,7 +548,7 @@ export class ParametersParameterComponent extends BackboneElement {
    * @returns this
    */
   public setPart(value: ParametersParameterComponent[] | undefined): this {
-    if (isDefined<ParametersParameterComponent[] | undefined>(value)) {
+    if (isDefinedList<ParametersParameterComponent>(value)) {
       const optErrMsg = `Invalid Parameters.parameter.part; Provided value array has an element that is not an instance of ParametersParameterComponent.`;
       assertFhirTypeList<ParametersParameterComponent>(value, ParametersParameterComponent, optErrMsg);
       this.part = value;
@@ -560,7 +565,7 @@ export class ParametersParameterComponent extends BackboneElement {
    * @returns this
    */
   public addPart(value: ParametersParameterComponent | undefined): this {
-    if (isDefined<ParametersParameterComponent | undefined>(value)) {
+    if (isDefined<ParametersParameterComponent>(value)) {
       const optErrMsg = `Invalid Parameters.parameter.part; Provided element is not an instance of ParametersParameterComponent.`;
       assertFhirType<ParametersParameterComponent>(value, ParametersParameterComponent, optErrMsg);
       this.initPart();
@@ -574,8 +579,7 @@ export class ParametersParameterComponent extends BackboneElement {
    */
   public hasPart(): boolean {
     return (
-      this.part !== undefined &&
-      this.part.length > 0 &&
+      isDefinedList<ParametersParameterComponent>(this.part) &&
       this.part.some((item: ParametersParameterComponent) => !item.isEmpty())
     );
   }
@@ -584,7 +588,7 @@ export class ParametersParameterComponent extends BackboneElement {
    * Initialize the `part` property
    */
   private initPart(): void {
-    if (this.part === undefined) {
+    if (!this.hasPart()) {
       this.part = [] as ParametersParameterComponent[];
     }
   }

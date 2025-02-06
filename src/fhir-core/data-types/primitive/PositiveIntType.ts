@@ -82,7 +82,7 @@ export class PositiveIntType extends PrimitiveType<fhirPositiveInt> {
   }
 
   private assignValue(value: fhirPositiveInt | undefined): void {
-    if (isDefined<fhirPositiveInt | undefined>(value)) {
+    if (isDefined<fhirPositiveInt>(value)) {
       super.setValue(parseFhirPrimitiveData(value, fhirPositiveIntSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);

@@ -83,7 +83,7 @@ export class Base64BinaryType extends PrimitiveType<fhirBase64Binary> {
   }
 
   private assignValue(value: fhirBase64Binary | undefined): void {
-    if (isDefined<fhirBase64Binary | undefined>(value)) {
+    if (isDefined<fhirBase64Binary>(value)) {
       super.setValue(parseFhirPrimitiveData(value, fhirBase64BinarySchema, this.typeErrorMessage()));
     } else {
       super.setValue(undefined);

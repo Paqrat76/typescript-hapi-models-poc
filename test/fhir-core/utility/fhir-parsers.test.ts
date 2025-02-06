@@ -2675,7 +2675,7 @@ describe('fhir-parsers', () => {
               valueString: 'base extension string value 2',
             },
           ],
-          use: 'testCodeType',
+          use: 'official',
           type: {
             extension: [
               {
@@ -3267,7 +3267,7 @@ describe('fhir-parsers', () => {
             ],
           },
           identifier: {
-            use: 'validCode',
+            use: 'official',
             type: {
               text: 'This is valid string',
             },

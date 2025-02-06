@@ -23,7 +23,7 @@
 
 import { IFhirCodeDefinition, IFhirCodeEnum } from '@src/fhir-core/base-models/core-fhir-codes';
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
-import { Class, isDefined } from '@src/fhir-core/utility/type-guards';
+import { Class, isDefined, isDefinedList } from '@src/fhir-core/utility/type-guards';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
@@ -98,7 +98,7 @@ export class CodeType extends PrimitiveType<fhirCode> {
   }
 
   private assignValue(value: fhirCode | undefined): void {
-    if (isDefined<fhirCode | undefined>(value)) {
+    if (isDefined<fhirCode>(value)) {
       super.setValue(parseFhirPrimitiveData(value, fhirCodeSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);
@@ -206,7 +206,7 @@ export function assertEnumCodeType<T>(
   enumCodeType: Class<T>,
   errorMessagePrefix?: string,
 ): asserts type is T {
-  if (type === undefined || type === null) {
+  if (!isDefined(type)) {
     return;
   }
   const prefix = errorMessagePrefix ? `${errorMessagePrefix}; ` : '';
@@ -237,7 +237,7 @@ export function assertEnumCodeTypeList<T>(
   enumCodeType: Class<T>,
   errorMessagePrefix?: string,
 ): asserts types is [T] {
-  if (types === undefined || types === null || types.length === 0) {
+  if (!isDefinedList(types)) {
     return;
   }
   const prefix = errorMessagePrefix ? `${errorMessagePrefix}; ` : '';
@@ -286,7 +286,7 @@ export function constructorCodeValueAsEnumCodeType<T>(
     codeValue = code;
   } else {
     try {
-      if (isDefined<EnumCodeType | CodeType | fhirCode | null>(code)) {
+      if (isDefined<EnumCodeType | CodeType | fhirCode>(code)) {
         codeValue = new EnumCodeType(code, typeEnum);
       }
     } catch (err) {
@@ -329,8 +329,7 @@ export function constructorCodeValueAsEnumCodeTypeList<T>(
   typeEnum: IFhirCodeEnum,
   property: string,
 ): EnumCodeType[] | null {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (codes === undefined || codes === null || codes.length === 0) {
+  if (!isDefinedList<EnumCodeType | CodeType | fhirCode>(codes)) {
     return null;
   }
 

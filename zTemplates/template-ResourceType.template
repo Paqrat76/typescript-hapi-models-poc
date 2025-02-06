@@ -1,5 +1,5 @@
 /**
- * Templates for data models and classes based on the Resource
+ * Templates for data models and classes based on the Resource data type
  * Templates are provided for:
  * - Resource Type - Optional
  *
@@ -7,7 +7,7 @@
  *   While no specific rule exists in the FHIR specification, use of Resource as a data element data type
  *   is limited to Bundle and Parameters. In these use cases, the data element is always a single, optional
  *   value (0..1).
- *   The exception to the above is the DomainResource.contained. It is always an option list (0..*).
+ *   The exception to the above is the DomainResource.contained. It is always an optional list (0..*).
  */
 
 //***** region Resource Type - Optional **********************************************************************************
@@ -33,7 +33,7 @@
   }
 
   /**
-   * @returns the `xxxxFieldName` property value as a XxxxFieldName object
+   * @returns the `xxxxFieldName` property value as a XxxxFieldName object if defined; else undefined
    */
   public getXxxxFieldName(): Resource | undefined {
     return this.xxxxFieldName;
@@ -46,7 +46,7 @@
    * @returns this
    */
   public setXxxxFieldName(value: Resource | undefined): this {
-    if (isDefined<Resource | undefined>(value)) {
+    if (isDefined<Resource>(value)) {
       const optErrMsg = `Invalid XxxxParentClassElement.xxxxFieldName; Provided element is not an instance of Resource.`;
       assertFhirResourceType(value, optErrMsg);
       this.xxxxFieldName = value;
@@ -60,7 +60,7 @@
    * @returns `true` if the `xxxxFieldName` property exists and has a value; `false` otherwise
    */
   public hasXxxxFieldName(): boolean {
-    return this.xxxxFieldName !== undefined && !this.xxxxFieldName.isEmpty();
+    return isDefined<Resource>(this.xxxxFieldName) && !this.xxxxFieldName.isEmpty();
   }
 
   // *** NOTE ***

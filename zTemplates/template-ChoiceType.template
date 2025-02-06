@@ -21,7 +21,7 @@
 // XxxxParentClassName / XxxxParentClassElement
 //   e.g., GroupCharacteristicComponent / 'Group.characteristic'
 // XxxxChoiceTypeList
-//   e.g., ['boolean', 'CodeableConcept']
+//   e.g., ['boolean', 'integer', 'CodeableConcept']
 // =====================================================================
   /**
    * XxxxParentClassElement.xxxxFieldName[x] Element
@@ -41,24 +41,24 @@
 
     // NOTE: Added IF and ONLY IF a choice data type is used
     const classMetadata: DecoratorMetadataObject | null = XxxxParentClassName[Symbol.metadata];
+    const errorMessage = `DecoratorMetadataObject does not exist for XxxxParentClassName`;
+    assertIsDefined<DecoratorMetadataObject>(classMetadata, errorMessage);
 
 
-    sourceField = 'XxxxParentClassElement.xxxxFieldName';
+    sourceField = 'XxxxParentClassElement.xxxxFieldName[x]';
     fieldName = extractFieldName(sourceField);
-    if (isDefined<DecoratorMetadataObject | null>(classMetadata)) {
-      const datatype: DataType | undefined = parsePolymorphicDataType(
-        classJsonObj,
-        sourceField,
-        fieldName,
-        classMetadata,
-      );
-      instance.setXxxxFieldName(datatype);
-    }
+    const xxxxFieldName: DataType | undefined = parsePolymorphicDataType(
+      classJsonObj,
+      sourceField,
+      fieldName,
+      classMetadata,
+    );
+    instance.setXxxxFieldName(xxxxFieldName);
 
   }
 
   /**
-   * @returns the `xxxxFieldName` property value as a DataType object
+   * @returns the `xxxxFieldName` property value as a DataType object if defined; else undefined
    */
   public getXxxxFieldName(): DataType | undefined {
     return this.xxxxFieldName;
@@ -74,7 +74,7 @@
    */
   @ChoiceDataTypes('XxxxParentClassElement.xxxxFieldName[x]')
   public setXxxxFieldName(value: DataType | undefined): this {
-    if (isDefined<DataType | undefined>(value)) {
+    if (isDefined<DataType>(value)) {
       // assertFhirType<DataType>(value, DataType) unnecessary because @ChoiceDataTypes decorator ensures proper type/value
       this.xxxxFieldName = value;
     } else {
@@ -87,7 +87,7 @@
    * @returns `true` if the `xxxxFieldName` property exists and has a value; `false` otherwise
    */
   public hasXxxxFieldName(): boolean {
-    return this.xxxxFieldName !== undefined && !this.xxxxFieldName.isEmpty();
+    return isDefined<DataType>(this.xxxxFieldName) && !this.xxxxFieldName.isEmpty();
   }
 
   // *** NOTE ***
@@ -95,7 +95,7 @@
   // XxxxChoiceDataType (e.g., CodeableConcept, StringType, etc.)
 
   /**
-   * @returns the `xxxxFieldName` property value as a XxxxChoiceDataType object
+   * @returns the `xxxxFieldName` property value as a XxxxChoiceDataType object if defined; else undefined
    */
   public getXxxxFieldNameXxxxChoiceDataType(): XxxxChoiceDataType | undefined {
     if (!isDefined<DataType | undefined>(this.xxxxFieldName)) {
@@ -139,7 +139,7 @@
 // XxxxParentClassName / XxxxParentClassElement
 //   e.g., GroupCharacteristicComponent / 'Group.characteristic'
 // XxxxChoiceTypeList
-//   e.g., ['boolean', 'CodeableConcept']
+//   e.g., ['boolean', 'integer', 'CodeableConcept']
 // =====================================================================
   /**
    * XxxxParentClassElement.xxxxFieldName[x] Element
@@ -156,7 +156,7 @@
   constructor(xxxxFieldName: DataType | null) {
 
     this.xxxxFieldName = null;
-    if (isDefined<DataType | null>(xxxxFieldName)) {
+    if (isDefined<DataType>(xxxxFieldName)) {
       this.setXxxxFieldName(xxxxFieldName);
     }
 
@@ -168,6 +168,8 @@
 
     // NOTE: Added IF and ONLY IF a choice data type is used
     const classMetadata: DecoratorMetadataObject | null = XxxxParentClassName[Symbol.metadata];
+    const errorMessage = `DecoratorMetadataObject does not exist for XxxxParentClassName`;
+    assertIsDefined<DecoratorMetadataObject>(classMetadata, errorMessage);
 
     // *** NOTE ***
     // Add following near top of method ONLY IF it does not already exist
@@ -176,20 +178,16 @@
 
     sourceField = 'XxxxParentClassElement.xxxxFieldName[x]';
     fieldName = extractFieldName(sourceField);
-    if (isDefined<DecoratorMetadataObject | null>(classMetadata)) {
-      const datatype: DataType | undefined = parsePolymorphicDataType(
-        classJsonObj,
-        sourceField,
-        fieldName,
-        classMetadata,
-      );
-      if (datatype === undefined) {
-        missingReqdProperties.push(sourceField);
-      } else {
-        instance.setXxxxFieldName(datatype);
-      }
-    } else {
+    const xxxxFieldName: DataType | undefined = parsePolymorphicDataType(
+      classJsonObj,
+      sourceField,
+      fieldName,
+      classMetadata,
+    );
+    if (xxxxFieldName === undefined) {
       missingReqdProperties.push(sourceField);
+    } else {
+      instance.setXxxxFieldName(xxxxFieldName);
     }
 
 
@@ -203,7 +201,7 @@
   }
 
   /**
-   * @returns the `xxxxFieldName` property value as a DataType object
+   * @returns the `xxxxFieldName` property value as a DataType object; else null
    */
   public getXxxxFieldName(): DataType | null {
     return this.xxxxFieldName;
@@ -229,7 +227,7 @@
    * @returns `true` if the `xxxxFieldName` property exists and has a value; `false` otherwise
    */
   public hasXxxxFieldName(): boolean {
-    return isDefined<DataType | null>(this.xxxxFieldName) && !this.xxxxFieldName.isEmpty();
+    return isDefined<DataType>(this.xxxxFieldName) && !this.xxxxFieldName.isEmpty();
   }
 
 
@@ -238,10 +236,10 @@
   // XxxxChoiceDataType (e.g., CodeableConcept, StringType, etc.)
 
   /**
-   * @returns the `xxxxFieldName` property value as a XxxxChoiceDataType object
+   * @returns the `xxxxFieldName` property value as a XxxxChoiceDataType object if defined; else null
    */
   public getXxxxFieldNameXxxxChoiceDataType(): XxxxChoiceDataType | null {
-    if (!isDefined<DataType | null>(this.xxxxFieldName)) {
+    if (!isDefined<DataType>(this.xxxxFieldName)) {
       return null;
     }
     if (!(this.xxxxFieldName instanceof XxxxChoiceDataType)) {
@@ -271,7 +269,7 @@
 
     if (this.hasXxxxFieldName()) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      setPolymorphicValueJson(this.getXxxxFieldName()!, jsonObj);
+      setPolymorphicValueJson(this.getXxxxFieldName()!, 'xxxxFieldName', jsonObj);
     } else {
       missingReqdProperties.push(`XxxxParentClassElement.xxxxFieldName[x]`);
     }

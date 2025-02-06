@@ -1,5 +1,5 @@
 /**
- * Templates for data models and classes based on the Reference
+ * Templates for data models and classes based on the Reference data type
  * Templates are provided for:
  * - Reference Type - Optional
  * - Reference Type - Required
@@ -32,7 +32,7 @@
   }
 
   /**
-   * @returns the `xxxxFieldName` property value as a XxxxFieldName object
+   * @returns the `xxxxFieldName` property value as a Reference object; else an empty Reference object
    */
   public getXxxxFieldName(): Reference {
     return this.xxxxFieldName ?? new Reference();
@@ -48,7 +48,7 @@
    */
   @ReferenceTargets('XxxxParentClassElement.xxxxFieldName', XxxxReferenceTypeList)
   public setXxxxFieldName(value: Reference | undefined): this {
-    if (isDefined<Reference | undefined>(value)) {
+    if (isDefined<Reference>(value)) {
       // assertFhirType<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
       this.xxxxFieldName = value;
     } else {
@@ -61,7 +61,7 @@
    * @returns `true` if the `xxxxFieldName` property exists and has a value; `false` otherwise
    */
   public hasXxxxFieldName(): boolean {
-    return this.xxxxFieldName !== undefined && !this.xxxxFieldName.isEmpty();
+    return isDefined<Reference>(this.xxxxFieldName) && !this.xxxxFieldName.isEmpty();
   }
 
   // *** NOTE ***
@@ -89,7 +89,7 @@
   constructor(xxxxFieldName: Reference | null) {
 
     this.xxxxFieldName = null;
-    if (isDefined<Reference | null>(xxxxFieldName)) {
+    if (isDefined<Reference>(xxxxFieldName)) {
       this.setXxxxFieldName(xxxxFieldName);
     }
 
@@ -126,7 +126,7 @@
   }
 
   /**
-   * @returns the `xxxxFieldName` property value as a Reference object
+   * @returns the `xxxxFieldName` property value as a Reference object if defined; else null
    */
   public getXxxxFieldName(): Reference | null {
     return this.xxxxFieldName;
@@ -152,7 +152,7 @@
    * @returns `true` if the `xxxxFieldName` property exists and has a value; `false` otherwise
    */
   public hasXxxxFieldName(): boolean {
-    return isDefined<Reference | null>(this.xxxxFieldName) && !this.xxxxFieldName.isEmpty();
+    return isDefined<Reference>(this.xxxxFieldName) && !this.xxxxFieldName.isEmpty();
   }
 
   // *** NOTE ***
@@ -227,7 +227,7 @@
    */
   @ReferenceTargets('XxxxParentClassElement.xxxxFieldName', XxxxReferenceTypeList)
   public setXxxxFieldName(value: Reference[] | undefined): this {
-    if (isDefined<Reference[] | undefined>(value)) {
+    if (isDefinedList<Reference>(value)) {
       // assertFhirTypeList<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
       this.xxxxFieldName = value;
     } else {
@@ -246,7 +246,7 @@
    */
   @ReferenceTargets('XxxxParentClassElement.xxxxFieldName', XxxxReferenceTypeList)
   public addXxxxFieldName(value: Reference | undefined): this {
-    if (isDefined<Reference | undefined>(value)) {
+    if (isDefined<Reference>(value)) {
       // assertFhirType<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
       this.initXxxxFieldName();
       this.xxxxFieldName?.push(value);
@@ -258,18 +258,14 @@
    * @returns `true` if the `xxxxFieldName` property exists and has a value; `false` otherwise
    */
   public hasXxxxFieldName(): boolean {
-    return (
-      this.xxxxFieldName !== undefined &&
-      this.xxxxFieldName.length > 0 &&
-      this.xxxxFieldName.some((item: Reference) => !item.isEmpty())
-    );
+    return isDefinedList<Reference>(this.xxxxFieldName) && this.xxxxFieldName.some((item: Reference) => !item.isEmpty());
   }
 
   /**
    * Initialize the `xxxxFieldName` property
    */
   private initXxxxFieldName(): void {
-    if (this.xxxxFieldName === undefined) {
+    if (!this.hasXxxxFieldName()) {
       this.xxxxFieldName = [] as Reference[];
     }
   }
@@ -299,7 +295,7 @@
   constructor(xxxxFieldName: Reference[] | null) {
 
     this.xxxxFieldName = null;
-    if (isDefined<Reference[] | null>(xxxxFieldName)) {
+    if (isDefinedList<Reference>(xxxxFieldName)) {
       this.setXxxxFieldName(xxxxFieldName);
     }
   }
@@ -342,8 +338,8 @@
   /**
    * @returns the `xxxxFieldName` property value as a Reference array
    */
-  public getXxxxFieldName(): Reference[] | null {
-    return this.xxxxFieldName;
+  public getXxxxFieldName(): Reference[] {
+    return this.xxxxFieldName ?? ([] as Reference[]);
   }
 
   /**
@@ -356,7 +352,7 @@
    */
   @ReferenceTargets('XxxxParentClassElement.xxxxFieldName', XxxxReferenceTypeList)
   public setXxxxFieldName(value: Reference[]): this {
-    assertIsDefined<Reference[]>(value, `XxxxParentClassElement.xxxxFieldName is required`);
+    assertIsDefinedList<Reference>(value, `XxxxParentClassElement.xxxxFieldName is required`);
     // assertFhirTypeList<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
     this.xxxxFieldName = value;
     return this;
@@ -372,7 +368,7 @@
    */
   @ReferenceTargets('XxxxParentClassElement.xxxxFieldName', XxxxReferenceTypeList)
   public addXxxxFieldName(value: Reference | undefined): this {
-    if (isDefined<Reference | undefined>(value)) {
+    if (isDefined<Reference>(value)) {
       // assertFhirType<Reference>(value, Reference) unnecessary because @ReferenceTargets decorator ensures proper type/value
       this.initXxxxFieldName();
       this.xxxxFieldName?.push(value);
@@ -384,11 +380,7 @@
    * @returns `true` if the `xxxxFieldName` property exists and has a value; `false` otherwise
    */
   public hasXxxxFieldName(): boolean {
-    return (
-      isDefined<Reference[] | null>(this.xxxxFieldName) &&
-      this.xxxxFieldName.length > 0 &&
-      this.xxxxFieldName.some((item: Reference) => !item.isEmpty())
-    );
+    return isDefinedList<Reference>(this.xxxxFieldName) && this.xxxxFieldName.some((item: Reference) => !item.isEmpty());
   }
 
   /**

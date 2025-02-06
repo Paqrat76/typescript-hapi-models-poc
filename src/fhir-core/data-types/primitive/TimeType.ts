@@ -82,7 +82,7 @@ export class TimeType extends PrimitiveType<fhirTime> {
   }
 
   private assignValue(value: fhirTime | undefined): void {
-    if (isDefined<fhirTime | undefined>(value)) {
+    if (isDefined<fhirTime>(value)) {
       super.setValue(parseFhirPrimitiveData(value, fhirTimeSchema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);

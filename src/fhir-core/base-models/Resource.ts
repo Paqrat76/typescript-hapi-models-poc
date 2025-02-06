@@ -56,7 +56,7 @@ import {
 import { setFhirComplexJson, setFhirPrimitiveJson } from '@src/fhir-core/base-models/core-fhir-models';
 import { isEmpty as _isEmpty } from '@src/fhir-core/utility/common-util';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirType, assertIsDefined } from '@src/fhir-core/utility/type-guards';
+import { assertFhirType, assertIsDefined, isDefined } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
@@ -90,6 +90,23 @@ import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 export abstract class Resource extends Base implements IBase {
   protected constructor() {
     super();
+  }
+
+  /**
+   * Parse the provided json to instantiate the data model.
+   *
+   * @remarks
+   *
+   * @param _sourceJson - JSON representing FHIR resource
+   * @returns Data model or undefined
+   *
+   * @abstract
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public static parse(_sourceJson: JSON.Object): Resource | undefined {
+    throw new Error(
+      'parse() not implemented in abstract Resource - must be implemented in subclass of Resource/DomainResource',
+    );
   }
 
   /**
@@ -181,7 +198,7 @@ export abstract class Resource extends Base implements IBase {
    * @returns `true` if the `id` property exists and has a value; `false` otherwise
    */
   public hasIdElement(): boolean {
-    return this.id !== undefined && !this.id.isEmpty();
+    return isDefined<IdType>(this.id) && !this.id.isEmpty();
   }
 
   /**
@@ -237,7 +254,7 @@ export abstract class Resource extends Base implements IBase {
    * @returns `true` if the `meta` property exists and has a value; `false` otherwise
    */
   public hasMeta(): boolean {
-    return this.meta !== undefined && !this.meta.isEmpty();
+    return isDefined<Meta>(this.meta) && !this.meta.isEmpty();
   }
 
   /**
@@ -264,7 +281,7 @@ export abstract class Resource extends Base implements IBase {
    * @returns `true` if the `implicitRules` property exists and has a value; `false` otherwise
    */
   public hasImplicitRulesElement(): boolean {
-    return this.implicitRules !== undefined && !this.implicitRules.isEmpty();
+    return isDefined<UriType>(this.implicitRules) && !this.implicitRules.isEmpty();
   }
 
   /**
@@ -320,7 +337,7 @@ export abstract class Resource extends Base implements IBase {
    * @returns `true` if the `language` property exists and has a value; `false` otherwise
    */
   public hasLanguageElement(): boolean {
-    return this.language !== undefined && !this.language.isEmpty();
+    return isDefined<CodeType>(this.language) && !this.language.isEmpty();
   }
 
   /**
@@ -467,7 +484,7 @@ export function setFhirResourceJson(resource: Resource, propName: string, jsonOb
  * Transforms the provided array of FHIR Resource to their JSON representation and adds it to the provided
  * JSON.Object. Does nothing if the FHIR Resource's value is undefined.
  *
- * @param resources - array of FHIR Resources to transform
+ * @param resources - array of FHIR Resources to transform (can be empty array)
  * @param propName - the property name for the provided FHIR complex DataTypes
  * @param jsonObj - JSON.Object to which to add the transformed FHIR complex DataTypes
  * @throws AssertionError for invalid parameters

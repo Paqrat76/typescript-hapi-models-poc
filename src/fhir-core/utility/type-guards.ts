@@ -49,7 +49,7 @@ import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
  *
  * @category Type Guards/Assertions
  */
-export function isDefined<T>(value: T): value is NonNullable<T> {
+export function isDefined<T>(value: T | undefined | null): value is NonNullable<T> {
   return value !== undefined && value !== null;
 }
 
@@ -63,9 +63,54 @@ export function isDefined<T>(value: T): value is NonNullable<T> {
  *
  * @category Type Guards/Assertions
  */
-export function assertIsDefined<T>(value: T, errorMessage?: string): asserts value is NonNullable<T> {
+export function assertIsDefined<T>(
+  value: T | undefined | null,
+  errorMessage?: string,
+): asserts value is NonNullable<T> {
   if (!isDefined<T>(value)) {
     const errMsg = errorMessage ?? `Value is ${value === undefined ? 'undefined' : 'null'}.`;
+    throw new AssertionError({ message: errMsg });
+  }
+}
+
+/**
+ * Generic type for non-empty arrays
+ *
+ * @typeParam T - the array type
+ * @category Type Guards/Assertions
+ */
+export type NonEmptyArray<T> = [T, ...T[]];
+
+/**
+ * Value type guard that determines if the provided arr is defined (i.e., not `undefined` and not `null`) and
+ * is not an empty array
+ *
+ * @typeParam T - the array type
+ * @param arr - array to be evaluated
+ * @returns true if arr is not `undefined` and not `null` and not an empty array; false otherwise
+ *
+ * @category Type Guards/Assertions
+ */
+export function isDefinedList<T>(arr: T[] | undefined | null): arr is NonEmptyArray<T> {
+  return isDefined(arr) && arr.length > 0;
+}
+
+/**
+ * Assertion that the provided array is defined (i.e., not `undefined` and not `null` and not empty)
+ *
+ * @typeParam T - the value type
+ * @param arr - array to be evaluated
+ * @param errorMessage - optional error message to override the default
+ * @throws AssertionError when instance is either `undefined` or `null` or an empty array
+ *
+ * @category Type Guards/Assertions
+ */
+export function assertIsDefinedList<T>(
+  arr: T[] | undefined | null,
+  errorMessage?: string,
+): asserts arr is NonEmptyArray<T> {
+  if (!isDefinedList(arr)) {
+    const errMsg = errorMessage ?? `Array argument is not defined (i.e., undefined or null or an empty array.`;
     throw new AssertionError({ message: errMsg });
   }
 }

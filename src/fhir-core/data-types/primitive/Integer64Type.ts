@@ -94,7 +94,7 @@ export class Integer64Type extends PrimitiveType<fhirInteger64> {
   }
 
   private assignValue(value: fhirInteger64 | undefined): void {
-    if (isDefined<fhirInteger64 | undefined>(value)) {
+    if (isDefined<fhirInteger64>(value)) {
       super.setValue(parseFhirPrimitiveData(value, fhirInteger64Schema, this.typeErrorMessage(value)));
     } else {
       super.setValue(undefined);

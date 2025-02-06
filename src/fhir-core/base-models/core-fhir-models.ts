@@ -54,7 +54,13 @@ import {
 import { OPEN_DATA_TYPES } from '@src/fhir-core/data-types/FhirDataType';
 import { isEmpty, upperFirst } from '@src/fhir-core/utility/common-util';
 import { copyListValues, isElementEmpty, validateUrl } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirType, assertFhirTypeList, assertIsDefined, isDefined } from '@src/fhir-core/utility/type-guards';
+import {
+  assertFhirType,
+  assertFhirTypeList,
+  assertIsDefined,
+  isDefined,
+  isDefinedList,
+} from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
@@ -306,7 +312,7 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
    * {@inheritDoc IBaseExtension.addExtension}
    */
   public addExtension(extension: Extension | undefined): this {
-    if (isDefined<Extension | undefined>(extension)) {
+    if (isDefined<Extension>(extension)) {
       const optErrMsg = `Invalid Element.extension; Provided extension is not an instance of Extension.`;
       assertFhirType<Extension>(extension, Extension, optErrMsg);
       this.initExtension();
@@ -342,11 +348,7 @@ export abstract class Element extends Base implements IBase, IBaseExtension {
    * @returns `true` if the `extension` property array exists and has at least one element; false otherwise
    */
   private existsExtension(): boolean {
-    return (
-      this.extension !== undefined &&
-      this.extension.length > 0 &&
-      this.extension.some((item: Extension) => !item.isEmpty())
-    );
+    return isDefinedList<Extension>(this.extension) && this.extension.some((item: Extension) => !item.isEmpty());
   }
 
   /**
@@ -487,7 +489,7 @@ export abstract class BackboneElement extends Element implements IBase, IBaseMod
    * {@inheritDoc IBaseModifierExtension.addModifierExtension}
    */
   public addModifierExtension(extension: Extension | undefined): this {
-    if (isDefined<Extension | undefined>(extension)) {
+    if (isDefined<Extension>(extension)) {
       const optErrMsg = `Invalid BackboneElement.modifierExtension; Provided extension is not an instance of Extension.`;
       assertFhirType<Extension>(extension, Extension, optErrMsg);
       this.initModifierExtension();
@@ -695,7 +697,7 @@ export abstract class BackboneType extends DataType implements IBase, IBaseModif
    * {@inheritDoc IBaseModifierExtension.addModifierExtension}
    */
   public addModifierExtension(extension: Extension | undefined): this {
-    if (isDefined<Extension | undefined>(extension)) {
+    if (isDefined<Extension>(extension)) {
       const optErrMsg = `Invalid BackboneType.modifierExtension; Provided extension is not an instance of Extension.`;
       assertFhirType<Extension>(extension, Extension, optErrMsg);
       this.initModifierExtension();
@@ -1062,7 +1064,7 @@ export class Extension extends Element implements IBase {
    */
   @OpenDataTypes('Extension.value[x]')
   public setValue(value: DataType | undefined): this {
-    if (isDefined<DataType | undefined>(value)) {
+    if (isDefined<DataType>(value)) {
       // assertFhirType<DataType>(value, DataType) unnecessary because @OpenDataTypes decorator ensures proper type/value
       this.value = value;
     } else {
@@ -1075,7 +1077,7 @@ export class Extension extends Element implements IBase {
    * @returns `true` if the `value` property exists and has a value; `false` otherwise
    */
   public hasValue(): boolean {
-    return this.value !== undefined && !this.value.isEmpty();
+    return isDefined<DataType>(this.value) && !this.value.isEmpty();
   }
 
   /**
@@ -1194,13 +1196,21 @@ export function setPolymorphicValueJson(value: DataType, propName: string, jsonO
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     jsonObj[valueKeyName] = json!;
   }
+
+  if (value instanceof PrimitiveType) {
+    const siblingJson: JSON.Value | undefined = value.toSiblingJSON();
+    if (!isEmpty(siblingJson)) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      jsonObj[`_${valueKeyName}`] = siblingJson!;
+    }
+  }
 }
 
 /**
  * Transforms the provided FHIR Extensions to their JSON representations and adds them to the provided JSON.Object.
  * Does nothing if the individual FHIR Extensions are undefined.
  *
- * @param extensions - FHIR Extensions to be transformed
+ * @param extensions - FHIR Extensions to be transformed (can be empty array)
  * @param jsonObj - JSON.Object to which to add the transformed Extensions
  * @param isModifierExtension - optional boolean (default: `false`); sets JSON object key name to `modifierExtension` if true; otherwise `extension`
  * @throws AssertionError for invalid parameters
@@ -1266,7 +1276,7 @@ export function setFhirPrimitiveJson<T>(ptElement: PrimitiveType<T>, propName: s
  * JSON.Object. Does nothing if the FHIR primitive DataType's value is undefined.
  *
  * @typeParam T - the FHIR primitive type
- * @param ptElements - array of FHIR primitive DataTypes to transform
+ * @param ptElements - array of FHIR primitive DataTypes to transform (can be empty array)
  * @param propName - the property name for the provided FHIR complex DataTypes
  * @param jsonObj - JSON.Object to which to add the transformed FHIR complex DataTypes
  * @throws AssertionError for invalid parameters
@@ -1351,7 +1361,7 @@ export function setFhirComplexJson(cElement: DataType, propName: string, jsonObj
  * Transforms the provided array of FHIR complex DataType to their JSON representation and adds it to the provided
  * JSON.Object. Does nothing if the FHIR complex DataType's value is undefined.
  *
- * @param cElements - array of FHIR complex DataTypes to transform
+ * @param cElements - array of FHIR complex DataTypes to transform (can be empty array)
  * @param propName - the property name for the provided FHIR complex DataTypes
  * @param jsonObj - JSON.Object to which to add the transformed FHIR complex DataTypes
  * @throws AssertionError for invalid parameters
@@ -1408,7 +1418,7 @@ export function setFhirBackboneElementJson(bElement: BackboneElement, propName: 
  * Transforms the provided array of FHIR BackboneElement to their JSON representation and adds it to the provided
  * JSON.Object. Does nothing if the FHIR BackboneElement's value is undefined.
  *
- * @param bElements - array of FHIR BackboneElements to transform
+ * @param bElements - array of FHIR BackboneElements to transform (can be empty array)
  * @param propName - the property name for the provided FHIR BackboneElements
  * @param jsonObj - JSON.Object to which to add the transformed FHIR BackboneElements
  * @throws AssertionError for invalid parameters
@@ -1469,7 +1479,7 @@ export function setFhirBackboneTypeJson(bType: BackboneType, propName: string, j
  * Transforms the provided array of FHIR BackboneType to their JSON representation and adds it to the provided
  * JSON.Object. Does nothing if the FHIR BackboneType's value is undefined.
  *
- * @param bTypes - array of FHIR BackboneType to transform
+ * @param bTypes - array of FHIR BackboneType to transform (can be empty array)
  * @param propName - the property name for the provided FHIR BackboneTypes
  * @param jsonObj - JSON.Object to which to add the transformed FHIR BackboneTypes
  * @throws AssertionError for invalid parameters
