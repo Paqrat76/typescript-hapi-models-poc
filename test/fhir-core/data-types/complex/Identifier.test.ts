@@ -26,17 +26,18 @@ import { Identifier, Reference } from '@src/fhir-core/data-types/complex/Referen
 import { DataType, Extension } from '@src/fhir-core/base-models/core-fhir-models';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
-import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
 import { Period } from '@src/fhir-core/data-types/complex/Period';
+import { IdentifierUseEnum } from '@src/fhir-core/data-types/code-systems/IdentiferUseEnum';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { INVALID_NON_STRING_TYPE, INVALID_STRING_TYPE, UNDEFINED_VALUE } from '../../../test-utils';
 
 describe('Identifier Tests', () => {
-  const VALID_CODE = `testCodeType`;
+  const VALID_CODE = `official`;
   const VALID_CODE_TYPE = new CodeType(VALID_CODE);
-  const VALID_CODE_2 = `testCodeType2`;
+  const VALID_CODE_2 = `temp`;
   const VALID_CODE_TYPE_2 = new CodeType(VALID_CODE_2);
   const INVALID_CODE = ' invalid CodeType ';
 
@@ -80,6 +81,11 @@ describe('Identifier Tests', () => {
   const INVALID_REFERENCE_VALUE = new Reference();
   INVALID_REFERENCE_VALUE.setReference(INVALID_REFERENCE);
 
+  let identifierUseEnum: IdentifierUseEnum;
+  beforeAll(() => {
+    identifierUseEnum = new IdentifierUseEnum();
+  });
+
   describe('Core', () => {
     const expectedJson = {
       use: VALID_CODE,
@@ -113,9 +119,12 @@ describe('Identifier Tests', () => {
       expect(testIdentifier.hasExtension()).toBe(false);
       expect(testIdentifier.getExtension()).toEqual([] as Extension[]);
 
-      // Reference properties
+      // Identifier properties
+      expect(testIdentifier.hasUseEnumType()).toBe(false);
+      expect(testIdentifier.getUseEnumType()).toBeUndefined();
+
       expect(testIdentifier.hasUseElement()).toBe(false);
-      expect(testIdentifier.getUseElement()).toEqual(new CodeType());
+      expect(testIdentifier.getUseElement()).toBeUndefined();
       expect(testIdentifier.hasSystemElement()).toBe(false);
       expect(testIdentifier.getSystemElement()).toEqual(new UriType());
       expect(testIdentifier.hasValueElement()).toBe(false);
@@ -161,9 +170,12 @@ describe('Identifier Tests', () => {
       expect(testIdentifier.hasExtension()).toBe(false);
       expect(testIdentifier.getExtension()).toEqual([] as Extension[]);
 
-      // Reference properties
+      // Identifier properties
+      expect(testIdentifier.hasUseEnumType()).toBe(true);
+      expect(testIdentifier.getUseEnumType()).toEqual(new EnumCodeType(VALID_CODE, identifierUseEnum));
+
       expect(testIdentifier.hasUseElement()).toBe(true);
-      expect(testIdentifier.getUseElement()).toEqual(VALID_CODE_TYPE);
+      expect(testIdentifier.getUseElement()).toMatchObject(VALID_CODE_TYPE);
       expect(testIdentifier.hasSystemElement()).toBe(true);
       expect(testIdentifier.getSystemElement()).toEqual(VALID_URI_TYPE);
       expect(testIdentifier.hasValueElement()).toBe(true);
@@ -210,7 +222,7 @@ describe('Identifier Tests', () => {
 
       // Reference properties
       expect(testIdentifier.hasUseElement()).toBe(false);
-      expect(testIdentifier.getUseElement()).toEqual(new CodeType());
+      expect(testIdentifier.getUseElement()).toBeUndefined();
       expect(testIdentifier.hasSystemElement()).toBe(false);
       expect(testIdentifier.getSystemElement()).toEqual(new UriType());
       expect(testIdentifier.hasValueElement()).toBe(false);
@@ -257,9 +269,12 @@ describe('Identifier Tests', () => {
       expect(testIdentifier.hasExtension()).toBe(false);
       expect(testIdentifier.getExtension()).toEqual([] as Extension[]);
 
-      // Reference properties
+      // Identifier properties
+      expect(testIdentifier.hasUseEnumType()).toBe(true);
+      expect(testIdentifier.getUseEnumType()).toEqual(new EnumCodeType(VALID_CODE, identifierUseEnum));
+
       expect(testIdentifier.hasUseElement()).toBe(true);
-      expect(testIdentifier.getUseElement()).toEqual(VALID_CODE_TYPE);
+      expect(testIdentifier.getUseElement()).toMatchObject(VALID_CODE_TYPE);
       expect(testIdentifier.hasSystemElement()).toBe(true);
       expect(testIdentifier.getSystemElement()).toEqual(VALID_URI_TYPE);
       expect(testIdentifier.hasValueElement()).toBe(true);
@@ -292,9 +307,12 @@ describe('Identifier Tests', () => {
       expect(testIdentifier).toBeDefined();
       expect(testIdentifier.isEmpty()).toBe(false);
 
-      // Reference properties
+      // Identifier properties
+      expect(testIdentifier.hasUseEnumType()).toBe(true);
+      expect(testIdentifier.getUseEnumType()).toEqual(new EnumCodeType(VALID_CODE, identifierUseEnum));
+
       expect(testIdentifier.hasUseElement()).toBe(true);
-      expect(testIdentifier.getUseElement()).toEqual(VALID_CODE_TYPE);
+      expect(testIdentifier.getUseElement()).toMatchObject(VALID_CODE_TYPE);
       expect(testIdentifier.hasSystemElement()).toBe(true);
       expect(testIdentifier.getSystemElement()).toEqual(VALID_URI_TYPE);
       expect(testIdentifier.hasValueElement()).toBe(true);
@@ -326,9 +344,12 @@ describe('Identifier Tests', () => {
       expect(testIdentifier).toBeDefined();
       expect(testIdentifier.isEmpty()).toBe(false);
 
-      // Reference properties
+      // Identifier properties
+      expect(testIdentifier.hasUseEnumType()).toBe(true);
+      expect(testIdentifier.getUseEnumType()).toEqual(new EnumCodeType(VALID_CODE_2, identifierUseEnum));
+
       expect(testIdentifier.hasUseElement()).toBe(true);
-      expect(testIdentifier.getUseElement()).toEqual(VALID_CODE_TYPE_2);
+      expect(testIdentifier.getUseElement()).toMatchObject(VALID_CODE_TYPE_2);
       expect(testIdentifier.hasSystemElement()).toBe(true);
       expect(testIdentifier.getSystemElement()).toEqual(VALID_URI_TYPE_2);
       expect(testIdentifier.hasValueElement()).toBe(true);
@@ -360,9 +381,12 @@ describe('Identifier Tests', () => {
       expect(testIdentifier).toBeDefined();
       expect(testIdentifier.isEmpty()).toBe(true);
 
-      // Reference properties
+      // Identifier properties
+      expect(testIdentifier.hasUseEnumType()).toBe(false);
+      expect(testIdentifier.getUseEnumType()).toBeUndefined();
+
       expect(testIdentifier.hasUseElement()).toBe(false);
-      expect(testIdentifier.getUseElement()).toEqual(new CodeType());
+      expect(testIdentifier.getUseElement()).toBeUndefined();
       expect(testIdentifier.hasSystemElement()).toBe(false);
       expect(testIdentifier.getSystemElement()).toEqual(new UriType());
       expect(testIdentifier.hasValueElement()).toBe(false);
@@ -390,7 +414,7 @@ describe('Identifier Tests', () => {
         testIdentifier.setUse(INVALID_CODE);
       };
       expect(t).toThrow(PrimitiveTypeError);
-      expect(t).toThrow(`Invalid Identifier.use (${INVALID_CODE})`);
+      expect(t).toThrow(`Invalid Identifier.use; Provided value is not an instance of fhirCode.`);
 
       t = () => {
         testIdentifier.setSystem(INVALID_URI);
@@ -404,44 +428,6 @@ describe('Identifier Tests', () => {
       expect(t).toThrow(PrimitiveTypeError);
       expect(t).toThrow(`Invalid Identifier.value (${INVALID_STRING})`);
     });
-
-    // it('should throw PrimitiveTypeError when reset with invalid primitive Identifier.use value', () => {
-    //   const testIdentifier = new Identifier();
-    //   const t = () => {
-    //     testIdentifier.setUse(INVALID_CODE);
-    //   };
-    //   expect(t).toThrow(PrimitiveTypeError);
-    //   expect(t).toThrow(`Invalid Identifier.use (${INVALID_CODE})`);
-    // });
-
-    // it('should throw PrimitiveTypeError when reset with invalid primitive Identifier.system value', () => {
-    //   const testIdentifier = new Identifier();
-    //   const t = () => {
-    //     testIdentifier.setSystem(INVALID_URI);
-    //   };
-    //   expect(t).toThrow(PrimitiveTypeError);
-    //   expect(t).toThrow(`Invalid Identifier.system (${INVALID_URI})`);
-    // });
-
-    // it('should throw PrimitiveTypeError when reset with invalid primitive Identifier.value value', () => {
-    //   const testIdentifier = new Identifier();
-    //   const t = () => {
-    //     testIdentifier.setValue(INVALID_STRING);
-    //   };
-    //   expect(t).toThrow(PrimitiveTypeError);
-    //   expect(t).toThrow(`Invalid Identifier.value (${INVALID_STRING})`);
-    // });
-
-    // it('should throw InvalidTypeError when reset with invalid Identifier.assigner reference value', () => {
-    //   const testIdentifier = new Identifier();
-    //   const t = () => {
-    //     testIdentifier.setAssigner(INVALID_REFERENCE_VALUE);
-    //   };
-    //   expect(t).toThrow(InvalidTypeError);
-    //   expect(t).toThrow(
-    //     `ReferenceTargets decorator on setAssigner (Identifier.assigner) expects argument (${INVALID_REFERENCE}) to be a valid 'Reference' type`,
-    //   );
-    // });
 
     // Tests using DataType elements
 
@@ -469,9 +455,12 @@ describe('Identifier Tests', () => {
       expect(testIdentifier.hasExtension()).toBe(false);
       expect(testIdentifier.getExtension()).toEqual([] as Extension[]);
 
-      // Reference properties
+      // Identifier properties
+      expect(testIdentifier.hasUseEnumType()).toBe(true);
+      expect(testIdentifier.getUseEnumType()).toEqual(new EnumCodeType(VALID_CODE, identifierUseEnum));
+
       expect(testIdentifier.hasUseElement()).toBe(true);
-      expect(testIdentifier.getUseElement()).toEqual(VALID_CODE_TYPE);
+      expect(testIdentifier.getUseElement()).toMatchObject(VALID_CODE_TYPE);
       expect(testIdentifier.hasSystemElement()).toBe(true);
       expect(testIdentifier.getSystemElement()).toEqual(VALID_URI_TYPE);
       expect(testIdentifier.hasValueElement()).toBe(true);
@@ -504,9 +493,12 @@ describe('Identifier Tests', () => {
       expect(testIdentifier).toBeDefined();
       expect(testIdentifier.isEmpty()).toBe(false);
 
-      // Reference properties
+      // Identifier properties
+      expect(testIdentifier.hasUseEnumType()).toBe(true);
+      expect(testIdentifier.getUseEnumType()).toEqual(new EnumCodeType(VALID_CODE, identifierUseEnum));
+
       expect(testIdentifier.hasUseElement()).toBe(true);
-      expect(testIdentifier.getUseElement()).toEqual(VALID_CODE_TYPE);
+      expect(testIdentifier.getUseElement()).toMatchObject(VALID_CODE_TYPE);
       expect(testIdentifier.hasSystemElement()).toBe(true);
       expect(testIdentifier.getSystemElement()).toEqual(VALID_URI_TYPE);
       expect(testIdentifier.hasValueElement()).toBe(true);
@@ -528,7 +520,7 @@ describe('Identifier Tests', () => {
 
       // Reset
 
-      testIdentifier.setUseElement(VALID_CODE_TYPE_2);
+      testIdentifier.setUseEnumType(new EnumCodeType(VALID_CODE_TYPE_2, identifierUseEnum));
       testIdentifier.setType(VALID_CODEABLECONCEPT_VALUE_2);
       testIdentifier.setSystemElement(VALID_URI_TYPE_2);
       testIdentifier.setValueElement(VALID_STRING_TYPE_2);
@@ -538,9 +530,12 @@ describe('Identifier Tests', () => {
       expect(testIdentifier).toBeDefined();
       expect(testIdentifier.isEmpty()).toBe(false);
 
-      // Reference properties
+      // Identifier properties
+      expect(testIdentifier.hasUseEnumType()).toBe(true);
+      expect(testIdentifier.getUseEnumType()).toEqual(new EnumCodeType(VALID_CODE_2, identifierUseEnum));
+
       expect(testIdentifier.hasUseElement()).toBe(true);
-      expect(testIdentifier.getUseElement()).toEqual(VALID_CODE_TYPE_2);
+      expect(testIdentifier.getUseElement()).toMatchObject(VALID_CODE_TYPE_2);
       expect(testIdentifier.hasSystemElement()).toBe(true);
       expect(testIdentifier.getSystemElement()).toEqual(VALID_URI_TYPE_2);
       expect(testIdentifier.hasValueElement()).toBe(true);
@@ -572,9 +567,12 @@ describe('Identifier Tests', () => {
       expect(testIdentifier).toBeDefined();
       expect(testIdentifier.isEmpty()).toBe(true);
 
-      // Reference properties
+      // Identifier properties
+      expect(testIdentifier.hasUseEnumType()).toBe(false);
+      expect(testIdentifier.getUseEnumType()).toBeUndefined();
+
       expect(testIdentifier.hasUseElement()).toBe(false);
-      expect(testIdentifier.getUseElement()).toEqual(new CodeType());
+      expect(testIdentifier.getUseElement()).toBeUndefined();
       expect(testIdentifier.hasSystemElement()).toBe(false);
       expect(testIdentifier.getSystemElement()).toEqual(new UriType());
       expect(testIdentifier.hasValueElement()).toBe(false);
@@ -593,6 +591,12 @@ describe('Identifier Tests', () => {
       expect(testIdentifier.getSystem()).toBeUndefined();
       expect(testIdentifier.hasValue()).toBe(false);
       expect(testIdentifier.getValue()).toBeUndefined();
+
+      // Identifier EnumType properties
+      testIdentifier.setUseEnumType(UNDEFINED_VALUE);
+
+      expect(testIdentifier.hasUseEnumType()).toBe(false);
+      expect(testIdentifier.getUseEnumType()).toBeUndefined();
     });
 
     it('should throw errors for invalid DataType values', () => {
@@ -642,56 +646,6 @@ describe('Identifier Tests', () => {
         `ReferenceTargets decorator on setAssigner (Identifier.assigner) expects a single argument to be type of 'Reference | undefined | null'`,
       );
     });
-
-    // it('should throw InvalidTypeError when reset with invalid PrimitiveType Identifier.use value', () => {
-    //   const testIdentifier = new Identifier();
-    //   const t = () => {
-    //     // @ts-expect-error: allow invalid type for testing
-    //     testIdentifier.setUseElement(INVALID_CODE_TYPE);
-    //   };
-    //   expect(t).toThrow(InvalidTypeError);
-    //   expect(t).toThrow(`Invalid Identifier.use; Provided element is not an instance of CodeType.`);
-    // });
-
-    // it('should throw InvalidTypeError when reset with invalid PrimitiveType Identifier.type value', () => {
-    //   const testIdentifier = new Identifier();
-    //   const t = () => {
-    //     // @ts-expect-error: allow invalid type for testing
-    //     testIdentifier.setType(INVALID_CODEABLECONCEPT_TYPE);
-    //   };
-    //   expect(t).toThrow(InvalidTypeError);
-    //   expect(t).toThrow(`Invalid Identifier.type; Provided element is not an instance of CodeableConcept.`);
-    // });
-
-    // it('should throw InvalidTypeError when reset with invalid PrimitiveType Identifier.system value', () => {
-    //   const testIdentifier = new Identifier();
-    //   const t = () => {
-    //     // @ts-expect-error: allow invalid type for testing
-    //     testIdentifier.setSystemElement(INVALID_URI_TYPE);
-    //   };
-    //   expect(t).toThrow(InvalidTypeError);
-    //   expect(t).toThrow(`Invalid Identifier.system; Provided element is not an instance of UriType.`);
-    // });
-
-    // it('should throw InvalidTypeError when reset with invalid PrimitiveType Identifier.value value', () => {
-    //   const testIdentifier = new Identifier();
-    //   const t = () => {
-    //     // @ts-expect-error: allow invalid type for testing
-    //     testIdentifier.setValueElement(INVALID_STRING_TYPE);
-    //   };
-    //   expect(t).toThrow(InvalidTypeError);
-    //   expect(t).toThrow(`Invalid Identifier.value; Provided element is not an instance of StringType.`);
-    // });
-
-    // it('should throw InvalidTypeError when reset with invalid PrimitiveType Identifier.period value', () => {
-    //   const testIdentifier = new Identifier();
-    //   const t = () => {
-    //     // @ts-expect-error: allow invalid type for testing
-    //     testIdentifier.setPeriod(INVALID_PERIOD_TYPE);
-    //   };
-    //   expect(t).toThrow(InvalidTypeError);
-    //   expect(t).toThrow(`Invalid Identifier.period; Provided element is not an instance of Period.`);
-    // });
   });
 
   describe('Serialization/Deserialization', () => {
@@ -732,9 +686,12 @@ describe('Identifier Tests', () => {
       expect(testIdentifier.hasExtension()).toBe(true);
       expect(testIdentifier.getExtension()).toEqual([testExtension1, testExtension2]);
 
-      // Reference properties
+      // Identifier properties
+      expect(testIdentifier.hasUseEnumType()).toBe(true);
+      expect(testIdentifier.getUseEnumType()).toEqual(new EnumCodeType(VALID_CODE, identifierUseEnum));
+
       expect(testIdentifier.hasUseElement()).toBe(true);
-      expect(testIdentifier.getUseElement()).toEqual(VALID_CODE_TYPE);
+      expect(testIdentifier.getUseElement()).toMatchObject(VALID_CODE_TYPE);
       expect(testIdentifier.hasSystemElement()).toBe(true);
       expect(testIdentifier.getSystemElement()).toEqual(VALID_URI_TYPE);
       expect(testIdentifier.hasValueElement()).toBe(true);
@@ -766,7 +723,7 @@ describe('Identifier Tests', () => {
             valueString: 'base extension string value 2',
           },
         ],
-        use: 'testCodeType',
+        use: 'official',
         type: {
           text: 'CodeableConcept text 1',
         },

@@ -94,7 +94,7 @@ export class Parameters extends Resource implements IBase {
    * @param sourceJson - JSON representing FHIR `Parameters`
    * @returns Parameters data model or undefined for `Parameters`
    */
-  public static parse(sourceJson: JSON.Object): Parameters | undefined {
+  public static override parse(sourceJson: JSON.Object): Parameters | undefined {
     if (!isDefined<JSON.Object>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
@@ -296,6 +296,8 @@ export class ParametersParameterComponent extends BackboneElement {
 
     // NOTE: Added IF and ONLY IF an open data type is used
     const classMetadata: DecoratorMetadataObject | null = ParametersParameterComponent[Symbol.metadata];
+    const errorMessage = `DecoratorMetadataObject does not exist for ParametersParameterComponent`;
+    assertIsDefined<DecoratorMetadataObject>(classMetadata, errorMessage);
 
     const missingReqdProperties: string[] = [];
 
@@ -315,10 +317,8 @@ export class ParametersParameterComponent extends BackboneElement {
 
     sourceField = 'Parameters.parameter.value[x]';
     fieldName = extractFieldName(sourceField);
-    if (isDefined<DecoratorMetadataObject>(classMetadata)) {
-      const datatype: DataType | undefined = parseOpenDataType(backboneJsonObj, sourceField, fieldName, classMetadata);
-      instance.setValue(datatype);
-    }
+    const value: DataType | undefined = parseOpenDataType(backboneJsonObj, sourceField, fieldName, classMetadata);
+    instance.setValue(value);
 
     sourceField = 'Parameters.parameter.resource';
     fieldName = extractFieldName(sourceField);
@@ -588,7 +588,7 @@ export class ParametersParameterComponent extends BackboneElement {
    * Initialize the `part` property
    */
   private initPart(): void {
-    if (this.part === undefined) {
+    if (!this.hasPart()) {
       this.part = [] as ParametersParameterComponent[];
     }
   }

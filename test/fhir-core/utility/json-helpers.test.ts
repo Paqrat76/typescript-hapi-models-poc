@@ -386,6 +386,26 @@ describe('json-helpers', () => {
       expect(jsonObj).toEqual(expectedJson);
 
       jsonObj = {} as Object;
+      expectedJson = {
+        valueString: 'testStringExt',
+        _valueString: {
+          id: 'id1357',
+          extension: [
+            {
+              url: 'extUrl1P',
+              valueString: 'ext string 1P',
+            },
+            {
+              url: 'extUrl2P',
+              valueString: 'ext string 2P',
+            },
+          ],
+        },
+      } as Object;
+      setPolymorphicValueJson(PRIMITIVE_DATA_TYPE_STRING_EXT, 'value', jsonObj);
+      expect(jsonObj).toEqual(expectedJson);
+
+      jsonObj = {} as Object;
       expectedJson = {} as Object;
       setPolymorphicValueJson(new Period(), 'value', jsonObj);
       expect(jsonObj).toEqual(expectedJson);
@@ -393,6 +413,27 @@ describe('json-helpers', () => {
       jsonObj = {} as Object;
       expectedJson = { valuePeriod: { start: '2017-03-15T08:00:00.000Z', end: '2017-03-15T17:00:00.000Z' } } as Object;
       setPolymorphicValueJson(COMPLEX_DATA_TYPE, 'value', jsonObj);
+      expect(jsonObj).toEqual(expectedJson);
+
+      jsonObj = {} as Object;
+      expectedJson = {
+        valuePeriod: {
+          id: 'id2468',
+          extension: [
+            {
+              url: 'extUrl1C',
+              valueString: 'ext string 1C',
+            },
+            {
+              url: 'extUrl2C',
+              valueString: 'ext string 2C',
+            },
+          ],
+          start: '2017-03-15T08:00:00.000Z',
+          end: '2017-03-15T17:00:00.000Z',
+        },
+      } as Object;
+      setPolymorphicValueJson(COMPLEX_DATA_TYPE_EXT, 'value', jsonObj);
       expect(jsonObj).toEqual(expectedJson);
 
       // MockComplexDataType returns undefined for toJSON()

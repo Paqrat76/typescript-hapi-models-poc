@@ -129,7 +129,7 @@ export class Patient extends DomainResource implements IBase {
    * @param sourceJson - JSON representing FHIR `Patient`
    * @returns Patient data model or undefined for `Patient`
    */
-  public static parse(sourceJson: JSON.Object): Patient | undefined {
+  public static override parse(sourceJson: JSON.Object): Patient | undefined {
     if (!isDefined<JSON.Object>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
@@ -140,6 +140,8 @@ export class Patient extends DomainResource implements IBase {
 
     // NOTE: Added IF and ONLY IF a choice data type is used
     const classMetadata: DecoratorMetadataObject | null = Patient[Symbol.metadata];
+    const errorMessage = `DecoratorMetadataObject does not exist for Patient`;
+    assertIsDefined<DecoratorMetadataObject>(classMetadata, errorMessage);
 
     // NOTE: "contained" is handled in Resource-based FHIR model rather than in processDomainResourceJson above
     //       to minimize circular references!
@@ -218,15 +220,13 @@ export class Patient extends DomainResource implements IBase {
 
     sourceField = 'Patient.deceased[x]';
     fieldName = extractFieldName(sourceField);
-    if (isDefined<DecoratorMetadataObject>(classMetadata)) {
-      const datatype: DataType | undefined = parsePolymorphicDataType(
-        classJsonObj,
-        sourceField,
-        fieldName,
-        classMetadata,
-      );
-      instance.setDeceased(datatype);
-    }
+    const deceased: DataType | undefined = parsePolymorphicDataType(
+      classJsonObj,
+      sourceField,
+      fieldName,
+      classMetadata,
+    );
+    instance.setDeceased(deceased);
 
     sourceField = 'Patient.address';
     fieldName = extractFieldName(sourceField);
@@ -250,15 +250,13 @@ export class Patient extends DomainResource implements IBase {
 
     sourceField = 'Patient.multipleBirth[x]';
     fieldName = extractFieldName(sourceField);
-    if (isDefined<DecoratorMetadataObject>(classMetadata)) {
-      const datatype: DataType | undefined = parsePolymorphicDataType(
-        classJsonObj,
-        sourceField,
-        fieldName,
-        classMetadata,
-      );
-      instance.setMultipleBirth(datatype);
-    }
+    const multipleBirth: DataType | undefined = parsePolymorphicDataType(
+      classJsonObj,
+      sourceField,
+      fieldName,
+      classMetadata,
+    );
+    instance.setMultipleBirth(multipleBirth);
 
     sourceField = 'Patient.photo';
     fieldName = extractFieldName(sourceField);

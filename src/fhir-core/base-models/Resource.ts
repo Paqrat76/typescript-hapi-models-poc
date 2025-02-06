@@ -93,6 +93,23 @@ export abstract class Resource extends Base implements IBase {
   }
 
   /**
+   * Parse the provided json to instantiate the data model.
+   *
+   * @remarks
+   *
+   * @param _sourceJson - JSON representing FHIR resource
+   * @returns Data model or undefined
+   *
+   * @abstract
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public static parse(_sourceJson: JSON.Object): Resource | undefined {
+    throw new Error(
+      'parse() not implemented in abstract Resource - must be implemented in subclass of Resource/DomainResource',
+    );
+  }
+
+  /**
    * @returns the FHIR resource type as defined by the FHIR specification
    */
   public abstract resourceType(): FhirResourceType;

@@ -144,7 +144,7 @@ export class Group extends DomainResource implements IBase {
    * @param sourceJson - JSON representing FHIR `Group`
    * @returns Group data model or undefined for `Group`
    */
-  public static parse(sourceJson: JSON.Object): Group | undefined {
+  public static override parse(sourceJson: JSON.Object): Group | undefined {
     if (!isDefined<JSON.Object>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
@@ -1204,6 +1204,8 @@ export class GroupCharacteristicComponent extends BackboneElement {
 
     // NOTE: Added IF and ONLY IF a choice data type is used
     const classMetadata: DecoratorMetadataObject | null = GroupCharacteristicComponent[Symbol.metadata];
+    const errorMessage = `DecoratorMetadataObject does not exist for GroupCharacteristicComponent`;
+    assertIsDefined<DecoratorMetadataObject>(classMetadata, errorMessage);
 
     const missingReqdProperties: string[] = [];
 
@@ -1223,20 +1225,16 @@ export class GroupCharacteristicComponent extends BackboneElement {
     // Handle polymorphic data type
     sourceField = 'Group.characteristic.value[x]';
     fieldName = extractFieldName(sourceField);
-    if (isDefined<DecoratorMetadataObject>(classMetadata)) {
-      const datatype: DataType | undefined = parsePolymorphicDataType(
-        backboneJsonObj,
-        sourceField,
-        fieldName,
-        classMetadata,
-      );
-      if (datatype === undefined) {
-        missingReqdProperties.push(sourceField);
-      } else {
-        instance.setValue(datatype);
-      }
-    } else {
+    const value: DataType | undefined = parsePolymorphicDataType(
+      backboneJsonObj,
+      sourceField,
+      fieldName,
+      classMetadata,
+    );
+    if (value === undefined) {
       missingReqdProperties.push(sourceField);
+    } else {
+      instance.setValue(value);
     }
 
     sourceField = 'Group.characteristic.exclude';

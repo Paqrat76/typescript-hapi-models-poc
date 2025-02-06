@@ -38,14 +38,14 @@
 
     // NOTE: Added IF and ONLY IF an open data type is used
     const classMetadata: DecoratorMetadataObject | null = XxxxParentClassName[Symbol.metadata];
+    const errorMessage = `DecoratorMetadataObject does not exist for XxxxParentClassName`;
+    assertIsDefined<DecoratorMetadataObject>(classMetadata, errorMessage);
 
 
     sourceField = 'XxxxParentClassElement.xxxxFieldName[x]';
     fieldName = extractFieldName(sourceField);
-    if (isDefined<DecoratorMetadataObject>(classMetadata)) {
-      const datatype: DataType | undefined = parseOpenDataType(backboneJsonObj, sourceField, fieldName, classMetadata);
-      instance.setXxxxFieldName(datatype);
-    }
+    const xxxxFieldName: DataType | undefined = parseOpenDataType(classJsonObj, sourceField, fieldName, classMetadata);
+    instance.setXxxxFieldName(xxxxFieldName);
 
   }
 
@@ -131,6 +131,8 @@
 
     // NOTE: Added IF and ONLY IF an open data type is used
     const classMetadata: DecoratorMetadataObject | null = XxxxParentClassName[Symbol.metadata];
+    const errorMessage = `DecoratorMetadataObject does not exist for XxxxParentClassName`;
+    assertIsDefined<DecoratorMetadataObject>(classMetadata, errorMessage);
 
     // *** NOTE ***
     // Add following near top of method ONLY IF it does not already exist
@@ -139,15 +141,11 @@
 
     sourceField = 'XxxxParentClassElement.xxxxFieldName[x]';
     fieldName = extractFieldName(sourceField);
-    if (isDefined<DecoratorMetadataObject>(classMetadata)) {
-      const datatype: DataType | undefined = parseOpenDataType(classJsonObj, sourceField, fieldName, classMetadata);
-      if (datatype === undefined) {
-        missingReqdProperties.push(sourceField);
-      } else {
-        instance.setXxxxFieldName(datatype);
-      }
-    } else {
+    const xxxxFieldName: DataType | undefined = parseOpenDataType(classJsonObj, sourceField, fieldName, classMetadata);
+    if (xxxxFieldName === undefined) {
       missingReqdProperties.push(sourceField);
+    } else {
+      instance.setXxxxFieldName(xxxxFieldName);
     }
 
 

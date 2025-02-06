@@ -21,7 +21,7 @@
 // XxxxParentClassName / XxxxParentClassElement
 //   e.g., GroupCharacteristicComponent / 'Group.characteristic'
 // XxxxChoiceTypeList
-//   e.g., ['boolean', 'CodeableConcept']
+//   e.g., ['boolean', 'integer', 'CodeableConcept']
 // =====================================================================
   /**
    * XxxxParentClassElement.xxxxFieldName[x] Element
@@ -41,19 +41,19 @@
 
     // NOTE: Added IF and ONLY IF a choice data type is used
     const classMetadata: DecoratorMetadataObject | null = XxxxParentClassName[Symbol.metadata];
+    const errorMessage = `DecoratorMetadataObject does not exist for XxxxParentClassName`;
+    assertIsDefined<DecoratorMetadataObject>(classMetadata, errorMessage);
 
 
-    sourceField = 'XxxxParentClassElement.xxxxFieldName';
+    sourceField = 'XxxxParentClassElement.xxxxFieldName[x]';
     fieldName = extractFieldName(sourceField);
-    if (isDefined<DecoratorMetadataObject | null>(classMetadata)) {
-      const datatype: DataType | undefined = parsePolymorphicDataType(
-        classJsonObj,
-        sourceField,
-        fieldName,
-        classMetadata,
-      );
-      instance.setXxxxFieldName(datatype);
-    }
+    const xxxxFieldName: DataType | undefined = parsePolymorphicDataType(
+      classJsonObj,
+      sourceField,
+      fieldName,
+      classMetadata,
+    );
+    instance.setXxxxFieldName(xxxxFieldName);
 
   }
 
@@ -139,7 +139,7 @@
 // XxxxParentClassName / XxxxParentClassElement
 //   e.g., GroupCharacteristicComponent / 'Group.characteristic'
 // XxxxChoiceTypeList
-//   e.g., ['boolean', 'CodeableConcept']
+//   e.g., ['boolean', 'integer', 'CodeableConcept']
 // =====================================================================
   /**
    * XxxxParentClassElement.xxxxFieldName[x] Element
@@ -168,6 +168,8 @@
 
     // NOTE: Added IF and ONLY IF a choice data type is used
     const classMetadata: DecoratorMetadataObject | null = XxxxParentClassName[Symbol.metadata];
+    const errorMessage = `DecoratorMetadataObject does not exist for XxxxParentClassName`;
+    assertIsDefined<DecoratorMetadataObject>(classMetadata, errorMessage);
 
     // *** NOTE ***
     // Add following near top of method ONLY IF it does not already exist
@@ -176,20 +178,16 @@
 
     sourceField = 'XxxxParentClassElement.xxxxFieldName[x]';
     fieldName = extractFieldName(sourceField);
-    if (isDefined<DecoratorMetadataObject | null>(classMetadata)) {
-      const datatype: DataType | undefined = parsePolymorphicDataType(
-        classJsonObj,
-        sourceField,
-        fieldName,
-        classMetadata,
-      );
-      if (datatype === undefined) {
-        missingReqdProperties.push(sourceField);
-      } else {
-        instance.setXxxxFieldName(datatype);
-      }
-    } else {
+    const xxxxFieldName: DataType | undefined = parsePolymorphicDataType(
+      classJsonObj,
+      sourceField,
+      fieldName,
+      classMetadata,
+    );
+    if (xxxxFieldName === undefined) {
       missingReqdProperties.push(sourceField);
+    } else {
+      instance.setXxxxFieldName(xxxxFieldName);
     }
 
 

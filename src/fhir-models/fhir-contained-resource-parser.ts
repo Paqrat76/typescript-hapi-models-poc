@@ -37,6 +37,7 @@ import { strict as assert } from 'node:assert';
 import { Resource } from '@src/fhir-core/base-models/Resource';
 import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
 import { isFhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
+import { Bundle } from '@src/fhir-models/Bundle';
 import { Group } from '@src/fhir-models/Group';
 import { Parameters } from '@src/fhir-models/Parameters';
 import { Patient } from '@src/fhir-models/Patient';
@@ -45,6 +46,8 @@ import { isDefined } from '@src/fhir-core/utility/type-guards';
 import { isEmpty } from '@src/fhir-core/utility/common-util';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { TestDataModel } from '@src/test-models/TestDataModel';
+import { SimplePersonModel } from '@src/test-models/SimplePersonModel';
 
 // Ignore for coverage because all parse methods have their own tests
 /* istanbul ignore next */
@@ -61,6 +64,9 @@ import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 function getFhirModelParseResults(resourceTypeValue: string, jsonObj: JSON.Object): Resource | undefined {
   let parseResult: Resource | undefined = undefined;
   switch (resourceTypeValue) {
+    case 'Bundle':
+      parseResult = Bundle.parse(jsonObj);
+      break;
     case 'Group':
       parseResult = Group.parse(jsonObj);
       break;
@@ -72,6 +78,14 @@ function getFhirModelParseResults(resourceTypeValue: string, jsonObj: JSON.Objec
       break;
     case 'PractitionerRole':
       parseResult = PractitionerRole.parse(jsonObj);
+      break;
+    case 'Basic':
+      // Test class TestDataModel
+      parseResult = TestDataModel.parse(jsonObj);
+      break;
+    case 'Person':
+      // Test class SimplePersonModel used by TestDataModel
+      parseResult = SimplePersonModel.parse(jsonObj);
       break;
     default:
       // TODO: Eventually return undefined rather that throw an error - throwing error during POC development

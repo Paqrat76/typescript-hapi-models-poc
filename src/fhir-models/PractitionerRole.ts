@@ -120,7 +120,7 @@ export class PractitionerRole extends DomainResource implements IBase {
    * @param sourceJson - JSON representing FHIR `PractitionerRole`
    * @returns PractitionerRole data model or undefined for `PractitionerRole`
    */
-  public static parse(sourceJson: JSON.Object): PractitionerRole | undefined {
+  public static override parse(sourceJson: JSON.Object): PractitionerRole | undefined {
     if (!isDefined<JSON.Object>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }

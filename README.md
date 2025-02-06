@@ -31,6 +31,11 @@ generated data models for all FHIR resources and complex data types.
     - org.hl7.fhir.r5 ([Source](https://github.com/hapifhir/org.hl7.fhir.core/tree/master/org.hl7.fhir.r5))
 - [Project Design Notes](./dev-docs/design-notes.md)
 
+## Comprehensive Data Model Testing
+
+Add hand-crafted test (mock) FHIR data models for comprehensive template testing.
+Refer to the [test models README.md](./src/test-models/README-TestModels.md)
+
 ## Usage Notes
 
 ### Date/Time Handling for FHIR Primitive `date`, `dateTime`, and `instant`

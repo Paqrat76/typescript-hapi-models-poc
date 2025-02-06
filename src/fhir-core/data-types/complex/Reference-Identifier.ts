@@ -36,7 +36,7 @@
 import { strict as assert } from 'node:assert';
 import { DataType, setFhirPrimitiveJson, setFhirComplexJson } from '@src/fhir-core/base-models/core-fhir-models';
 import { IBase } from '@src/fhir-core/base-models/IBase';
-import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { assertEnumCodeType, CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
 import { Period } from '@src/fhir-core/data-types/complex/Period';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
@@ -55,6 +55,7 @@ import { RESOURCE_TYPES, FhirResourceType } from '@src/fhir-core/base-models/Fhi
 import { assertFhirType, FhirTypeGuard, isDefined } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { IdentifierUseEnum } from '@src/fhir-core/data-types/code-systems/IdentiferUseEnum';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -451,10 +452,18 @@ export class Reference extends DataType implements IBase {
  * @see [FHIR Identifier](http://hl7.org/fhir/StructureDefinition/Identifier)
  */
 export class Identifier extends DataType implements IBase {
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor() {
     super();
+
+    this.identifierUseEnum = new IdentifierUseEnum();
   }
+
+  /**
+   * FHIR CodeSystem: QuantityComparator
+   *
+   * @see {@link IdentifierUseEnum}
+   */
+  private readonly identifierUseEnum: IdentifierUseEnum;
 
   /**
    * Identifier.use Element
@@ -471,7 +480,7 @@ export class Identifier extends DataType implements IBase {
    * - **isModifierReason:** This is labeled as "Is Modifier" because applications should not mistake a temporary id for a permanent one.
    * - **isSummary:** true
    */
-  private use?: CodeType | undefined;
+  private use?: EnumCodeType | undefined;
 
   /**
    * Identifier.type Element
@@ -551,10 +560,44 @@ export class Identifier extends DataType implements IBase {
   private assigner?: Reference | undefined;
 
   /**
+   * @returns the `use` property value as a EnumCodeType if defined; else undefined
+   */
+  public getUseEnumType(): EnumCodeType | undefined {
+    return this.use;
+  }
+
+  /**
+   * Assigns the provided EnumCodeType value to the `use` property.
+   *
+   * @param enumType - the `use` value
+   * @returns this
+   */
+  public setUseEnumType(enumType: EnumCodeType | undefined): this {
+    if (isDefined<EnumCodeType>(enumType)) {
+      const errMsgPrefix = 'Invalid Identifier.use';
+      assertEnumCodeType<IdentifierUseEnum>(enumType, IdentifierUseEnum, errMsgPrefix);
+      this.use = enumType;
+    } else {
+      this.use = undefined;
+    }
+    return this;
+  }
+
+  /**
+   * @returns `true` if the `use` property exists and has a value; `false` otherwise
+   */
+  public hasUseEnumType(): boolean {
+    return isDefined<EnumCodeType>(this.use) && !this.use.isEmpty() && this.use.fhirCodeEnumeration.length > 0;
+  }
+
+  /**
    * @returns the `use` property value as a PrimitiveType
    */
-  public getUseElement(): CodeType {
-    return this.use ?? new CodeType();
+  public getUseElement(): CodeType | undefined {
+    if (this.use === undefined) {
+      return undefined;
+    }
+    return this.use as CodeType;
   }
 
   /**
@@ -567,7 +610,7 @@ export class Identifier extends DataType implements IBase {
     if (isDefined<CodeType>(element)) {
       const optErrMsg = `Invalid Identifier.use; Provided element is not an instance of CodeType.`;
       assertFhirType<CodeType>(element, CodeType, optErrMsg);
-      this.use = element;
+      this.use = new EnumCodeType(element, this.identifierUseEnum);
     } else {
       this.use = undefined;
     }
@@ -578,14 +621,17 @@ export class Identifier extends DataType implements IBase {
    * @returns `true` if the `use` property exists and has a value; `false` otherwise
    */
   public hasUseElement(): boolean {
-    return isDefined<CodeType>(this.use) && !this.use.isEmpty();
+    return this.hasUseEnumType();
   }
 
   /**
    * @returns the `use` property value as a primitive value
    */
   public getUse(): fhirCode | undefined {
-    return this.use?.getValue();
+    if (this.use === undefined) {
+      return undefined;
+    }
+    return this.use.fhirCode.code;
   }
 
   /**
@@ -597,8 +643,8 @@ export class Identifier extends DataType implements IBase {
    */
   public setUse(value: fhirCode | undefined): this {
     if (isDefined<fhirCode>(value)) {
-      const optErrMsg = `Invalid Identifier.use (${String(value)})`;
-      this.use = new CodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg));
+      const optErrMsg = `Invalid Identifier.use; Provided value is not an instance of fhirCode.`;
+      this.use = new EnumCodeType(parseFhirPrimitiveData(value, fhirCodeSchema, optErrMsg), this.identifierUseEnum);
     } else {
       this.use = undefined;
     }
@@ -609,7 +655,7 @@ export class Identifier extends DataType implements IBase {
    * @returns `true` if the `use` property exists and has a value; `false` otherwise
    */
   public hasUse(): boolean {
-    return this.hasUseElement();
+    return this.hasUseEnumType();
   }
 
   /**
@@ -888,7 +934,8 @@ export class Identifier extends DataType implements IBase {
     }
 
     if (this.hasUseElement()) {
-      setFhirPrimitiveJson<fhirCode>(this.getUseElement(), 'use', jsonObj);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      setFhirPrimitiveJson<fhirCode>(this.getUseElement()!, 'use', jsonObj);
     }
 
     if (this.hasType()) {

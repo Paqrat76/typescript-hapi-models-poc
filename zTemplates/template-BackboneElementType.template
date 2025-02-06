@@ -104,7 +104,8 @@
     sourceField = 'XxxxParentClassElement.xxxxFieldName';
     fieldName = extractFieldName(sourceField);
     if (fieldName in classJsonObj) {
-      const datatype: XxxxClass | undefined = XxxxClass.parse(classJsonObj[fieldName]);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const datatype: XxxxClass | undefined = XxxxClass.parse(classJsonObj[fieldName]!);
       if (datatype === undefined) {
         missingReqdProperties.push(sourceField);
       } else {

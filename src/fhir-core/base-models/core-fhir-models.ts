@@ -1196,6 +1196,14 @@ export function setPolymorphicValueJson(value: DataType, propName: string, jsonO
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     jsonObj[valueKeyName] = json!;
   }
+
+  if (value instanceof PrimitiveType) {
+    const siblingJson: JSON.Value | undefined = value.toSiblingJSON();
+    if (!isEmpty(siblingJson)) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      jsonObj[`_${valueKeyName}`] = siblingJson!;
+    }
+  }
 }
 
 /**

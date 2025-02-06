@@ -134,7 +134,7 @@ export class Bundle extends Resource implements IBase {
    * @param sourceJson - JSON representing FHIR `Bundle`
    * @returns Bundle data model or undefined for `Bundle`
    */
-  public static parse(sourceJson: JSON.Object): Bundle | undefined {
+  public static override parse(sourceJson: JSON.Object): Bundle | undefined {
     if (!isDefined<JSON.Object>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
