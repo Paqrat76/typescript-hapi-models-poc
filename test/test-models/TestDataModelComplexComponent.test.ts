@@ -21,22 +21,22 @@
  *
  */
 
-import { AssertionError } from 'node:assert';
+import { Base } from '@src/fhir-core/base-models/Base';
+import { BackboneElement, DataType, Element, Extension } from '@src/fhir-core/base-models/core-fhir-models';
+import { Address } from '@src/fhir-core/data-types/complex/Address';
+import { Attachment } from '@src/fhir-core/data-types/complex/Attachment';
+import { HumanName } from '@src/fhir-core/data-types/complex/HumanName';
+import { EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { FhirError } from '@src/fhir-core/errors/FhirError';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { ConsentStateEnum } from '@src/test-models/code-systems/ConsentStateEnum';
+import { TaskStatusEnum } from '@src/test-models/code-systems/TaskStatusEnum';
 import {
   TestDataModelComplexComponent,
   TestDataModelEnumCodeComponent,
   TestDataModelReferenceComponent,
 } from '@src/test-models/TestDataModel';
-import { Base } from '@src/fhir-core/base-models/Base';
-import { BackboneElement, DataType, Element, Extension } from '@src/fhir-core/base-models/core-fhir-models';
-import { Address } from '@src/fhir-core/data-types/complex/Address';
-import { Attachment } from '@src/fhir-core/data-types/complex/Attachment';
-import { EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
-import { HumanName } from '@src/fhir-core/data-types/complex/HumanName';
-import { ConsentStateEnum } from '@src/test-models/code-systems/ConsentStateEnum';
-import { TaskStatusEnum } from '@src/test-models/code-systems/TaskStatusEnum';
-import { FhirError } from '@src/fhir-core/errors/FhirError';
-import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { AssertionError } from 'node:assert';
 import { TestData } from '../test-data';
 import {
   DATATYPE_EXTENSION,

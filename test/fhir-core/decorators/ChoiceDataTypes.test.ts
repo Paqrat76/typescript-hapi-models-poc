@@ -21,18 +21,18 @@
  *
  */
 
-import { AssertionError } from 'node:assert';
 import { DataType } from '@src/fhir-core/base-models/core-fhir-models';
-import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { MarkdownType } from '@src/fhir-core/data-types/primitive/MarkdownType';
 import { fhirMarkdown } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import {
   ChoiceDatatypeDef,
   ChoiceDataTypes,
   ChoiceDataTypesMeta,
   getChoiceDatatypeDefs,
 } from '@src/fhir-core/utility/decorators';
-import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { AssertionError } from 'node:assert';
 import { MockResource, MockTask } from '../../test-utils';
 
 describe('decorators', () => {

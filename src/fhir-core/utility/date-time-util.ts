@@ -34,9 +34,9 @@
  * @see [Luxon](https://moment.github.io/luxon/#/)
  */
 
-import { DateTime, Zone } from 'luxon';
-import { isDefined } from '@src/fhir-core/utility/type-guards';
 import { InvalidDateTimeError } from '@src/fhir-core/errors/InvalidDateTimeError';
+import { isDefined } from '@src/fhir-core/utility/type-guards';
+import { DateTime, Zone } from 'luxon';
 
 /**
  * Luxon DateTime options to affect the creation of the DateTime instance.

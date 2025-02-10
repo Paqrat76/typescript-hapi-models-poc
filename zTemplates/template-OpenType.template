@@ -42,8 +42,8 @@
     assertIsDefined<DecoratorMetadataObject>(classMetadata, errorMessage);
 
 
-    sourceField = 'XxxxParentClassElement.xxxxFieldName[x]';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'xxxxFieldName[x]';
+    sourceField = `${source}.${fieldName}`;
     const xxxxFieldName: DataType | undefined = parseOpenDataType(classJsonObj, sourceField, fieldName, classMetadata);
     instance.setXxxxFieldName(xxxxFieldName);
 
@@ -139,8 +139,8 @@
     const missingReqdProperties: string[] = [];
 
 
-    sourceField = 'XxxxParentClassElement.xxxxFieldName[x]';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'xxxxFieldName[x]';
+    sourceField = `${source}.${fieldName}`;
     const xxxxFieldName: DataType | undefined = parseOpenDataType(classJsonObj, sourceField, fieldName, classMetadata);
     if (xxxxFieldName === undefined) {
       missingReqdProperties.push(sourceField);

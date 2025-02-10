@@ -21,11 +21,11 @@
  *
  */
 
-import { DateTime } from 'luxon';
+import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { DateTimeType } from '@src/fhir-core/data-types/primitive/DateTimeType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
-import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { DateTime } from 'luxon';
 
 describe('DateTimeType', () => {
   const VALID_DATETIME = `2015-02-07T13:28:17.239+02:00`;

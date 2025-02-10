@@ -21,13 +21,13 @@
  *
  */
 
-import { Period } from '@src/fhir-core/data-types/complex/Period';
 import { DataType, Extension } from '@src/fhir-core/base-models/core-fhir-models';
+import { Period } from '@src/fhir-core/data-types/complex/Period';
 import { DateTimeType } from '@src/fhir-core/data-types/primitive/DateTimeType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { INVALID_NON_STRING_TYPE, UNDEFINED_VALUE } from '../../../test-utils';
 
 describe('Period', () => {
@@ -592,6 +592,51 @@ describe('Period', () => {
   });
 
   describe('Serialization/Deserialization', () => {
+    const VALID_JSON = {
+      id: 'id1234',
+      extension: [
+        {
+          url: 'testUrl1',
+          valueString: 'base extension string value 1',
+        },
+        {
+          url: 'testUrl2',
+          valueString: 'base extension string value 2',
+        },
+      ],
+      start: '2017-01-01T00:00:00.000Z',
+      _start: {
+        id: 'S1357',
+        extension: [
+          {
+            url: 'startUrl',
+            valueString: 'start extension string value',
+          },
+        ],
+      },
+      end: '2017-01-01T01:00:00.000Z',
+    };
+
+    it('should return undefined for empty json', () => {
+      let testType = Period.parse({});
+      expect(testType).toBeUndefined();
+
+      // @ts-expect-error: allow for testing
+      testType = Period.parse(undefined);
+      expect(testType).toBeUndefined();
+
+      testType = Period.parse(null);
+      expect(testType).toBeUndefined();
+    });
+
+    it('should throw TypeError for invalid json type', () => {
+      const t = () => {
+        Period.parse('NOT AN OBJECT');
+      };
+      expect(t).toThrow(TypeError);
+      expect(t).toThrow(`Period JSON is not a JSON object.`);
+    });
+
     it('should properly create serialized content', () => {
       const startDt = new DateTimeType(VALID_START_DATETIME);
       const startId = 'S1357';
@@ -636,31 +681,19 @@ describe('Period', () => {
       expect(testPeriod.hasEnd()).toBe(true);
       expect(testPeriod.getEnd()).toStrictEqual(VALID_END_DATETIME);
 
-      const expectedJson = {
-        id: 'id1234',
-        extension: [
-          {
-            url: 'testUrl1',
-            valueString: 'base extension string value 1',
-          },
-          {
-            url: 'testUrl2',
-            valueString: 'base extension string value 2',
-          },
-        ],
-        start: '2017-01-01T00:00:00.000Z',
-        _start: {
-          id: 'S1357',
-          extension: [
-            {
-              url: 'startUrl',
-              valueString: 'start extension string value',
-            },
-          ],
-        },
-        end: '2017-01-01T01:00:00.000Z',
-      };
-      expect(testPeriod.toJSON()).toEqual(expectedJson);
+      expect(testPeriod.toJSON()).toEqual(VALID_JSON);
+    });
+
+    it('should return Period for valid json', () => {
+      const testType: Period | undefined = Period.parse(VALID_JSON);
+
+      expect(testType).toBeDefined();
+      expect(testType).toBeInstanceOf(Period);
+      expect(testType?.constructor.name).toStrictEqual('Period');
+      expect(testType?.fhirType()).toStrictEqual('Period');
+      expect(testType?.isEmpty()).toBe(false);
+      expect(testType?.isComplexDataType()).toBe(true);
+      expect(testType?.toJSON()).toEqual(VALID_JSON);
     });
   });
 });

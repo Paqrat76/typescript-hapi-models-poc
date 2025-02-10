@@ -22,12 +22,12 @@
  */
 
 import { Element, Extension } from '@src/fhir-core/base-models/core-fhir-models';
+import { Period } from '@src/fhir-core/data-types/complex/Period';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { XhtmlType } from '@src/fhir-core/data-types/primitive/XhtmlType';
-import { Period } from '@src/fhir-core/data-types/complex/Period';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 
 describe('Extension', () => {
   it('should be properly instantiated as empty', () => {

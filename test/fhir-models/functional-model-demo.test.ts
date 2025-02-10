@@ -21,21 +21,21 @@
  *
  */
 
-import { PractitionerRole, PractitionerRoleNotAvailableComponent } from '../../src/fhir-models/PractitionerRole';
+import { DateTime } from 'luxon';
 import { Extension } from '../../src/fhir-core/base-models/core-fhir-models';
+import { IdentifierUseEnum } from '../../src/fhir-core/data-types/code-systems/IdentiferUseEnum';
 import { Address } from '../../src/fhir-core/data-types/complex/Address';
 import { CodeableConcept } from '../../src/fhir-core/data-types/complex/CodeableConcept';
 import { Coding } from '../../src/fhir-core/data-types/complex/Coding';
 import { ContactPoint } from '../../src/fhir-core/data-types/complex/ContactPoint';
 import { HumanName } from '../../src/fhir-core/data-types/complex/HumanName';
-import { Identifier, Reference } from '../../src/fhir-core/data-types/complex/Reference-Identifier';
 import { Period } from '../../src/fhir-core/data-types/complex/Period';
+import { Identifier, Reference } from '../../src/fhir-core/data-types/complex/Reference-Identifier';
 import { StringType } from '../../src/fhir-core/data-types/primitive/StringType';
-import { Patient, PatientLinkComponent } from '../../src/fhir-models/Patient';
-import { AdministrativeGenderEnum } from '../../src/fhir-models/code-systems/AdministrativeGenderEnum';
-import { IdentifierUseEnum } from '../../src/fhir-core/data-types/code-systems/IdentiferUseEnum';
-import { DateTime } from 'luxon';
 import { getDateTimeObject, getValueAsDateOnly } from '../../src/fhir-core/utility/date-time-util';
+import { AdministrativeGenderEnum } from '../../src/fhir-models/code-systems/AdministrativeGenderEnum';
+import { Patient, PatientLinkComponent } from '../../src/fhir-models/Patient';
+import { PractitionerRole, PractitionerRoleNotAvailableComponent } from '../../src/fhir-models/PractitionerRole';
 
 /**
  * Functional testing to demonstrate implementation of features inspired by HAPI FHIR such as convenience methods and,

@@ -21,39 +21,39 @@
  *
  */
 
-import { AssertionError } from 'node:assert';
-import {
-  PractitionerRole,
-  PractitionerRoleAvailableTimeComponent,
-  PractitionerRoleNotAvailableComponent,
-} from '@src/fhir-models/PractitionerRole';
 import { Base } from '@src/fhir-core/base-models/Base';
-import { Resource } from '@src/fhir-core/base-models/Resource';
-import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
 import { Extension } from '@src/fhir-core/base-models/core-fhir-models';
-import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
+import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
+import { Resource } from '@src/fhir-core/base-models/Resource';
 import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
-import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { Coding } from '@src/fhir-core/data-types/complex/Coding';
 import { ContactPoint } from '@src/fhir-core/data-types/complex/ContactPoint';
-import { Identifier, Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
-import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
 import { Meta } from '@src/fhir-core/data-types/complex/Meta';
 import { Narrative } from '@src/fhir-core/data-types/complex/Narrative';
 import { Period } from '@src/fhir-core/data-types/complex/Period';
+import { Identifier, Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
+import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
+import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import {
+  PractitionerRole,
+  PractitionerRoleAvailableTimeComponent,
+  PractitionerRoleNotAvailableComponent,
+} from '@src/fhir-models/PractitionerRole';
+import { AssertionError } from 'node:assert';
+import {
   DATATYPE_EXTENSION,
   DATATYPE_ID,
   IMPLICIT_RULES_VALUE,
   IMPLICIT_RULES_VALUE_2,
-  INVALID_STRING_TYPE,
-  INVALID_STRING_TYPE_VALUE,
   INVALID_NON_STRING_TYPE,
   INVALID_NON_STRING_TYPE_VALUE,
+  INVALID_STRING_TYPE,
+  INVALID_STRING_TYPE_VALUE,
   LANGUAGE_VALUE,
   LANGUAGE_VALUE_2,
   MockComplexDataType,

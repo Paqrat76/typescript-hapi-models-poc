@@ -21,22 +21,22 @@
  *
  */
 
-import { AssertionError } from 'node:assert';
-import { PatientContactComponent } from '../../src/fhir-models/Patient';
 import { Base } from '@src/fhir-core/base-models/Base';
 import { BackboneElement, Element, Extension } from '@src/fhir-core/base-models/core-fhir-models';
-import { AdministrativeGenderEnum } from '../../src/fhir-models/code-systems/AdministrativeGenderEnum';
 import { Address } from '@src/fhir-core/data-types/complex/Address';
 import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
-import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { Coding } from '@src/fhir-core/data-types/complex/Coding';
 import { ContactPoint } from '@src/fhir-core/data-types/complex/ContactPoint';
 import { HumanName } from '@src/fhir-core/data-types/complex/HumanName';
 import { Period } from '@src/fhir-core/data-types/complex/Period';
 import { Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
+import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { AssertionError } from 'node:assert';
+import { AdministrativeGenderEnum } from '../../src/fhir-models/code-systems/AdministrativeGenderEnum';
+import { PatientContactComponent } from '../../src/fhir-models/Patient';
 import {
   DATATYPE_EXTENSION,
   DATATYPE_ID,

@@ -21,10 +21,10 @@
  *
  */
 
+import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { OidType } from '@src/fhir-core/data-types/primitive/OidType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 
 describe('OidType', () => {
   const VALID_OID = `urn:oid:1.2.3.4.5`;

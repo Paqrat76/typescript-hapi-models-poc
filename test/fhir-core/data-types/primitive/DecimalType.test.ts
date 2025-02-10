@@ -21,10 +21,10 @@
  *
  */
 
+import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { DecimalType } from '@src/fhir-core/data-types/primitive/DecimalType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 
 describe('DecimalType', () => {
   const VALID_DECIMAL = -1234.56789;

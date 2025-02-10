@@ -31,23 +31,34 @@
  * @module
  */
 
-import { strict as assert } from 'node:assert';
+import { BackboneElement, DataType, Extension } from '@src/fhir-core/base-models/core-fhir-models';
+import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
+import { FhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
+import { Resource } from '@src/fhir-core/base-models/Resource';
 import {
   INSTANCE_EMPTY_ERROR_MSG,
   INVALID_VALUEX_MULTIPLE_PROPERTIES,
   INVALID_VALUEX_PROPERTY,
   REQUIRED_PROPERTIES_REQD_IN_JSON,
 } from '@src/fhir-core/constants';
-import * as JSON from '@src/fhir-core/utility/json-helpers';
-import { BackboneElement, DataType, Extension } from '@src/fhir-core/base-models/core-fhir-models';
-import { Resource } from '@src/fhir-core/base-models/Resource';
-import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
-import { FhirDataType, OPEN_DATA_TYPES, OPEN_DATE_TYPE_KEY_NAMES } from '@src/fhir-core/data-types/FhirDataType';
+import { Address } from '@src/fhir-core/data-types/complex/Address';
+import { Attachment } from '@src/fhir-core/data-types/complex/Attachment';
+import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
+import { Coding } from '@src/fhir-core/data-types/complex/Coding';
+import { ContactPoint } from '@src/fhir-core/data-types/complex/ContactPoint';
+import { HumanName } from '@src/fhir-core/data-types/complex/HumanName';
+import { Meta } from '@src/fhir-core/data-types/complex/Meta';
+import { Narrative } from '@src/fhir-core/data-types/complex/Narrative';
+import { Period } from '@src/fhir-core/data-types/complex/Period';
+import { Quantity, SimpleQuantity } from '@src/fhir-core/data-types/complex/Quantity-variations';
+import { Range } from '@src/fhir-core/data-types/complex/Range';
+import { Identifier, Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
+import { Signature } from '@src/fhir-core/data-types/complex/Signature';
+import { FhirDataType, OPEN_DATA_TYPE_KEY_NAMES, OPEN_DATA_TYPES } from '@src/fhir-core/data-types/FhirDataType';
 import { Base64BinaryType } from '@src/fhir-core/data-types/primitive/Base64BinaryType';
 import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
 import { CanonicalType } from '@src/fhir-core/data-types/primitive/CanonicalType';
 import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
-import { ContactPoint } from '@src/fhir-core/data-types/complex/ContactPoint';
 import { DateTimeType } from '@src/fhir-core/data-types/primitive/DateTimeType';
 import { DateType } from '@src/fhir-core/data-types/primitive/DateType';
 import { DecimalType } from '@src/fhir-core/data-types/primitive/DecimalType';
@@ -65,25 +76,13 @@ import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { UrlType } from '@src/fhir-core/data-types/primitive/UrlType';
 import { UuidType } from '@src/fhir-core/data-types/primitive/UuidType';
 import { XhtmlType } from '@src/fhir-core/data-types/primitive/XhtmlType';
-import { Address } from '@src/fhir-core/data-types/complex/Address';
-import { Attachment } from '@src/fhir-core/data-types/complex/Attachment';
-import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
-import { Coding } from '@src/fhir-core/data-types/complex/Coding';
-import { HumanName } from '@src/fhir-core/data-types/complex/HumanName';
-import { Identifier, Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
-import { Meta } from '@src/fhir-core/data-types/complex/Meta';
-import { Narrative } from '@src/fhir-core/data-types/complex/Narrative';
-import { Period } from '@src/fhir-core/data-types/complex/Period';
-import { Quantity } from '@src/fhir-core/data-types/complex/Quantity';
-import { Range } from '@src/fhir-core/data-types/complex/Range';
-import { SimpleQuantity } from '@src/fhir-core/data-types/complex/SimpleQuantity';
-import { Signature } from '@src/fhir-core/data-types/complex/Signature';
-import { FhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
-import { isEmpty, upperFirst } from '@src/fhir-core/utility/common-util';
-import { getChoiceDatatypeDefsForField, getOpenDatatypeFields } from '@src/fhir-core/utility/decorators';
-import { assertIsDefined, assertIsString, isDefined } from '@src/fhir-core/utility/type-guards';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { isEmpty, upperFirst } from '@src/fhir-core/utility/common-util';
+import { getChoiceDatatypeDefsForField, getOpenDatatypeFields } from '@src/fhir-core/utility/decorators';
+import * as JSON from '@src/fhir-core/utility/json-helpers';
+import { assertIsDefined, assertIsString, isDefined } from '@src/fhir-core/utility/type-guards';
+import { strict as assert } from 'node:assert';
 
 //region CoreTypes
 
@@ -281,7 +280,7 @@ export function processResourceJson(instance: Resource, dataJson: JSON.Value | u
   }
 
   if ('meta' in resourceObj) {
-    const datatype: Meta | undefined = parseMeta(resourceObj['meta'], `${sourceResource}.meta`);
+    const datatype: Meta | undefined = Meta.parse(resourceObj['meta'], `${sourceResource}.meta`);
     instance.setMeta(datatype);
   }
 
@@ -331,7 +330,7 @@ export function processDomainResourceJson(instance: DomainResource, dataJson: JS
   processResourceJson(instance, resourceObj);
 
   if ('text' in resourceObj) {
-    const datatype: Narrative | undefined = parseNarrative(resourceObj['text'], `${sourceResource}.text`);
+    const datatype: Narrative | undefined = Narrative.parse(resourceObj['text'], `${sourceResource}.text`);
     instance.setText(datatype);
   }
 
@@ -377,7 +376,7 @@ export function processDomainResourceJson(instance: DomainResource, dataJson: JS
 export function getValueXData(jsonObj: JSON.Object, fieldName: string): DataType | undefined {
   assertIsDefined<JSON.Object>(jsonObj, `Provided jsonObj is undefined/null`);
   const valueXKey = Object.keys(jsonObj).find((key) =>
-    OPEN_DATE_TYPE_KEY_NAMES.includes(key.replace(fieldName, 'value')),
+    OPEN_DATA_TYPE_KEY_NAMES.includes(key.replace(fieldName, 'value')),
   );
 
   if (valueXKey !== undefined && valueXKey in jsonObj) {
@@ -396,20 +395,20 @@ export function getValueXData(jsonObj: JSON.Object, fieldName: string): DataType
         case 'valueCode':
           // NOTE - EnumCodeType is a subclass of CodeType and will always be serialized/parsed as a CodeType
           return parseCodeType(dataValue, siblingDataValue);
-        case 'valueDateTime':
-          return parseDateTimeType(dataValue, siblingDataValue);
         case 'valueDate':
           return parseDateType(dataValue, siblingDataValue);
+        case 'valueDateTime':
+          return parseDateTimeType(dataValue, siblingDataValue);
         case 'valueDecimal':
           return parseDecimalType(dataValue, siblingDataValue);
         case 'valueId':
           return parseIdType(dataValue, siblingDataValue);
         case 'valueInstant':
           return parseInstantType(dataValue, siblingDataValue);
-        case 'valueInteger64':
-          return parseInteger64Type(dataValue, siblingDataValue);
         case 'valueInteger':
           return parseIntegerType(dataValue, siblingDataValue);
+        case 'valueInteger64':
+          return parseInteger64Type(dataValue, siblingDataValue);
         case 'valueMarkdown':
           return parseMarkdownType(dataValue, siblingDataValue);
         case 'valueOid':
@@ -428,39 +427,38 @@ export function getValueXData(jsonObj: JSON.Object, fieldName: string): DataType
           return parseUrlType(dataValue, siblingDataValue);
         case 'valueUuid':
           return parseUuidType(dataValue, siblingDataValue);
-        case 'valueXhtml':
-          return parseXhtmlType(dataValue, siblingDataValue);
+        // case 'valueXhtml': NOT INCLUDED IN OPEN DATATYPES
 
         case 'valueAddress':
-          return parseAddress(dataValue);
+          return Address.parse(dataValue);
         case 'valueAttachment':
-          return parseAttachment(dataValue);
+          return Attachment.parse(dataValue);
         case 'valueCodeableConcept':
-          return parseCodeableConcept(dataValue);
+          return CodeableConcept.parse(dataValue);
         case 'valueCoding':
-          return parseCoding(dataValue);
+          return Coding.parse(dataValue);
         case 'valueContactPoint':
-          return parseContactPoint(dataValue);
+          return ContactPoint.parse(dataValue);
         case 'valueHumanName':
-          return parseHumanName(dataValue);
+          return HumanName.parse(dataValue);
         case 'valueIdentifier':
-          return parseIdentifier(dataValue);
+          return Identifier.parse(dataValue);
         case 'valueMeta':
-          return parseMeta(dataValue);
-        case 'valueNarrative':
-          return parseNarrative(dataValue);
+          return Meta.parse(dataValue);
+        // case 'valueNarrative': NOT INCLUDED IN OPEN DATATYPES
         case 'valuePeriod':
-          return parsePeriod(dataValue);
+          return Period.parse(dataValue);
         case 'valueQuantity':
-          return parseQuantity(dataValue);
+          return Quantity.parse(dataValue);
         case 'valueRange':
-          return parseRange(dataValue);
+          return Range.parse(dataValue);
         case 'valueReference':
-          return parseReference(dataValue);
+          return Reference.parse(dataValue);
         case 'valueSignature':
-          return parseSignature(dataValue);
+          return Signature.parse(dataValue);
         case 'valueSimpleQuantity':
-          return parseSimpleQuantity(dataValue);
+          // Subclass of Quantity
+          return SimpleQuantity.parse(dataValue);
 
         default:
           return undefined;
@@ -497,6 +495,8 @@ export function getPrimitiveTypeJson(
   assertIsString(primitiveFieldName, `Provided primitiveFieldName is not a string`);
   assertIsDefined<string>(jsonType, `Provided jsonType is undefined/null`);
   assertIsString(jsonType, `Provided jsonType is not a string`);
+  // Calling function should have already ensured this is true!
+  assert(primitiveFieldName in datatypeJsonObj, `${primitiveFieldName} does not exist in provided JSON.Object!`);
 
   let dtJson: JSON.Value | undefined = undefined;
   if (isDefined<JSON.Value>(datatypeJsonObj[primitiveFieldName])) {
@@ -1159,10 +1159,17 @@ export function parsePolymorphicDataType(
   assertIsDefined<string>(fieldName, `The fieldName argument is undefined/null.`);
   assertIsDefined<DecoratorMetadataObject>(metadata, `The metadata argument is undefined/null.`);
 
-  const choiceDataTypes: FhirDataType[] = getChoiceDatatypeDefsForField(metadata, fieldName);
-  const supportedFieldNames = choiceDataTypes.map((item) => `${fieldName}${upperFirst(item)}`);
+  // Strip the '[x]' from the fieldName but not the sourceField
+  let plainFieldName = fieldName;
+  const posX = fieldName.toLowerCase().lastIndexOf('[x]');
+  if (posX > 0) {
+    plainFieldName = fieldName.substring(0, posX);
+  }
 
-  return getParsedType(jsonObj, sourceField, fieldName, supportedFieldNames);
+  const choiceDataTypes: FhirDataType[] = getChoiceDatatypeDefsForField(metadata, plainFieldName);
+  const supportedFieldNames = choiceDataTypes.map((item) => `${plainFieldName}${upperFirst(item)}`);
+
+  return getParsedType(jsonObj, sourceField, plainFieldName, supportedFieldNames);
 }
 
 /**
@@ -1193,10 +1200,20 @@ export function parseOpenDataType(
   assertIsDefined<string>(fieldName, `The fieldName argument is undefined/null.`);
   assertIsDefined<DecoratorMetadataObject>(metadata, `The metadata argument is undefined/null.`);
 
+  // Strip the '[x]' from the fieldName but not the sourceField
+  let plainFieldName = fieldName;
+  const posX = fieldName.toLowerCase().lastIndexOf('[x]');
+  if (posX > 0) {
+    plainFieldName = fieldName.substring(0, posX);
+  }
+  // Replace any array indices with '[i].'
+  const regex = new RegExp(/\[\d+\]\./g);
+  const checkSourceField = sourceField.replaceAll(regex, '[i].');
+
   const openDatatypeFields: string[] = getOpenDatatypeFields(metadata);
-  if (openDatatypeFields.includes(sourceField)) {
-    const supportedFieldNames = OPEN_DATA_TYPES.map((item) => `${fieldName}${upperFirst(item)}`);
-    return getParsedType(jsonObj, sourceField, fieldName, supportedFieldNames);
+  if (openDatatypeFields.includes(checkSourceField)) {
+    const supportedFieldNames = OPEN_DATA_TYPES.map((item) => `${plainFieldName}${upperFirst(item)}`);
+    return getParsedType(jsonObj, sourceField, plainFieldName, supportedFieldNames);
   }
 
   return undefined;
@@ -1244,913 +1261,6 @@ function getParsedType(
     return instance;
   }
   return undefined;
-}
-
-/**
- * Parse the provided json into Address data model.
- *
- * @param json - JSON representing Address
- * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to HumanName
- * @returns Address data model or undefined
- *
- * @category Utilities: FHIR Parsers
- */
-export function parseAddress(json: JSON.Value | undefined, sourceField?: string): Address | undefined {
-  if (!JSON.hasFhirData(json)) {
-    return undefined;
-  }
-
-  const source = isDefined<string>(sourceField) ? sourceField : 'Address';
-
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
-  const instance = new Address();
-
-  processElementJson(instance, datatypeJsonObj);
-
-  if ('use' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'use', 'string');
-    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
-    instance.setUseElement(datatype);
-  }
-
-  if ('type' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'type', 'string');
-    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
-    instance.setTypeElement(datatype);
-  }
-
-  if ('text' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'text', 'string');
-    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
-    instance.setTextElement(datatype);
-  }
-
-  if ('line' in datatypeJsonObj) {
-    const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(datatypeJsonObj, source, 'line', 'string');
-    dataJsonArray.forEach((dataJson: PrimitiveTypeJson) => {
-      const datatype: StringType | undefined = parseStringType(dataJson.dtJson, dataJson.dtSiblingJson);
-      if (datatype !== undefined) {
-        instance.addLineElement(datatype);
-      }
-    });
-  }
-
-  if ('city' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'city', 'string');
-    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
-    instance.setCityElement(datatype);
-  }
-
-  if ('district' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'district', 'string');
-    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
-    instance.setDistrictElement(datatype);
-  }
-
-  if ('state' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'state', 'string');
-    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
-    instance.setStateElement(datatype);
-  }
-
-  if ('postalCode' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'postalCode', 'string');
-    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
-    instance.setPostalCodeElement(datatype);
-  }
-
-  if ('country' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'country', 'string');
-    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
-    instance.setCountryElement(datatype);
-  }
-
-  if ('period' in datatypeJsonObj) {
-    const datatype: Period | undefined = parsePeriod(datatypeJsonObj['period'], `${source}.period`);
-    instance.setPeriod(datatype);
-  }
-
-  assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
-  return instance;
-}
-
-/**
- * Parse the provided json into Attachment data model.
- *
- * @param json - JSON representing Attachment
- * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to HumanName
- * @returns Attachment data model or undefined
- *
- * @category Utilities: FHIR Parsers
- */
-export function parseAttachment(json: JSON.Value | undefined, sourceField?: string): Attachment | undefined {
-  if (!JSON.hasFhirData(json)) {
-    return undefined;
-  }
-
-  const source = isDefined<string>(sourceField) ? sourceField : 'Attachment';
-
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
-  const instance = new Attachment();
-
-  processElementJson(instance, datatypeJsonObj);
-
-  if ('contentType' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'contentType', 'string');
-    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
-    instance.setContentTypeElement(datatype);
-  }
-
-  if ('language' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'language', 'string');
-    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
-    instance.setLanguageElement(datatype);
-  }
-
-  if ('data' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'data', 'string');
-    const datatype: Base64BinaryType | undefined = parseBase64BinaryType(dtJson, dtSiblingJson);
-    instance.setDataElement(datatype);
-  }
-
-  if ('url' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'url', 'string');
-    const datatype: UrlType | undefined = parseUrlType(dtJson, dtSiblingJson);
-    instance.setUrlElement(datatype);
-  }
-
-  if ('size' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'size', 'number');
-    const datatype: UnsignedIntType | undefined = parseUnsignedIntType(dtJson, dtSiblingJson);
-    instance.setSizeElement(datatype);
-  }
-
-  if ('hash' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'hash', 'string');
-    const datatype: Base64BinaryType | undefined = parseBase64BinaryType(dtJson, dtSiblingJson);
-    instance.setHashElement(datatype);
-  }
-
-  if ('title' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'title', 'string');
-    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
-    instance.setTitleElement(datatype);
-  }
-
-  if ('creation' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'creation', 'string');
-    const datatype: DateTimeType | undefined = parseDateTimeType(dtJson, dtSiblingJson);
-    instance.setCreationElement(datatype);
-  }
-
-  assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
-  return instance;
-}
-
-/**
- * Parse the provided json into CodeableConcept data model.
- *
- * @param json - JSON representing CodeableConcept
- * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to CodeableConcept
- * @returns CodeableConcept data model or undefined
- *
- * @category Utilities: FHIR Parsers
- */
-export function parseCodeableConcept(json: JSON.Value | undefined, sourceField?: string): CodeableConcept | undefined {
-  if (!JSON.hasFhirData(json)) {
-    return undefined;
-  }
-
-  const source = isDefined<string>(sourceField) ? sourceField : 'CodeableConcept';
-
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
-  const instance = new CodeableConcept();
-
-  processElementJson(instance, datatypeJsonObj);
-
-  if ('coding' in datatypeJsonObj) {
-    const dataElementJsonArray: JSON.Array = JSON.asArray(datatypeJsonObj['coding'], `${source}.coding`);
-    dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
-      const datatype: Coding | undefined = parseCoding(dataElementJson, `${source}.coding[${String(idx)}]`);
-      if (datatype !== undefined) {
-        instance.addCoding(datatype);
-      }
-    });
-  }
-
-  if ('text' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'text', 'string');
-    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
-    instance.setTextElement(datatype);
-  }
-
-  assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
-  return instance;
-}
-
-/**
- * Parse the provided json into Coding data model.
- *
- * @param json - JSON representing Coding
- * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Coding
- * @returns Coding data model or undefined
- *
- * @category Utilities: FHIR Parsers
- */
-export function parseCoding(json: JSON.Value | undefined, sourceField?: string): Coding | undefined {
-  if (!JSON.hasFhirData(json)) {
-    return undefined;
-  }
-
-  const source = isDefined<string>(sourceField) ? sourceField : 'Coding';
-
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
-  const instance = new Coding();
-
-  processElementJson(instance, datatypeJsonObj);
-
-  if ('system' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'system', 'string');
-    const datatype: UriType | undefined = parseUriType(dtJson, dtSiblingJson);
-    instance.setSystemElement(datatype);
-  }
-
-  if ('version' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'version', 'string');
-    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
-    instance.setVersionElement(datatype);
-  }
-
-  if ('code' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'code', 'string');
-    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
-    instance.setCodeElement(datatype);
-  }
-
-  if ('display' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'display', 'string');
-    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
-    instance.setDisplayElement(datatype);
-  }
-
-  if ('userSelected' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'userSelected', 'boolean');
-    const datatype: BooleanType | undefined = parseBooleanType(dtJson, dtSiblingJson);
-    instance.setUserSelectedElement(datatype);
-  }
-
-  assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
-  return instance;
-}
-
-/**
- * Parse the provided json into ContactPoint data model.
- *
- * @param json - JSON representing ContactPoint
- * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to ContactPoint
- * @returns ContactPoint data model or undefined
- *
- * @category Utilities: FHIR Parsers
- */
-export function parseContactPoint(json: JSON.Value | undefined, sourceField?: string): ContactPoint | undefined {
-  if (!JSON.hasFhirData(json)) {
-    return undefined;
-  }
-
-  const source = isDefined<string>(sourceField) ? sourceField : 'ContactPoint';
-
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
-  const instance = new ContactPoint();
-
-  processElementJson(instance, datatypeJsonObj);
-
-  if ('system' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'system', 'string');
-    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
-    instance.setSystemElement(datatype);
-  }
-
-  if ('value' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'value', 'string');
-    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
-    instance.setValueElement(datatype);
-  }
-
-  if ('use' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'use', 'string');
-    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
-    instance.setUseElement(datatype);
-  }
-
-  if ('rank' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'rank', 'number');
-    const datatype: PositiveIntType | undefined = parsePositiveIntType(dtJson, dtSiblingJson);
-    instance.setRankElement(datatype);
-  }
-
-  if ('period' in datatypeJsonObj) {
-    const datatype: Period | undefined = parsePeriod(datatypeJsonObj['period'], `${source}.period`);
-    instance.setPeriod(datatype);
-  }
-
-  assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
-  return instance;
-}
-
-/**
- * Parse the provided json into HumanName data model.
- *
- * @param json - JSON representing HumanName
- * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to HumanName
- * @returns HumanName data model or undefined
- *
- * @category Utilities: FHIR Parsers
- */
-export function parseHumanName(json: JSON.Value | undefined, sourceField?: string): HumanName | undefined {
-  if (!JSON.hasFhirData(json)) {
-    return undefined;
-  }
-
-  const source = isDefined<string>(sourceField) ? sourceField : 'HumanName';
-
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
-  const instance = new HumanName();
-
-  processElementJson(instance, datatypeJsonObj);
-
-  if ('use' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'use', 'string');
-    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
-    instance.setUseElement(datatype);
-  }
-
-  if ('text' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'text', 'string');
-    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
-    instance.setTextElement(datatype);
-  }
-
-  if ('family' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'family', 'string');
-    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
-    instance.setFamilyElement(datatype);
-  }
-
-  if ('given' in datatypeJsonObj) {
-    const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(datatypeJsonObj, source, 'given', 'string');
-    dataJsonArray.forEach((dataJson: PrimitiveTypeJson) => {
-      const datatype: StringType | undefined = parseStringType(dataJson.dtJson, dataJson.dtSiblingJson);
-      if (datatype !== undefined) {
-        instance.addGivenElement(datatype);
-      }
-    });
-  }
-
-  if ('prefix' in datatypeJsonObj) {
-    const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(datatypeJsonObj, source, 'prefix', 'string');
-    dataJsonArray.forEach((dataJson: PrimitiveTypeJson) => {
-      const datatype: StringType | undefined = parseStringType(dataJson.dtJson, dataJson.dtSiblingJson);
-      if (datatype !== undefined) {
-        instance.addPrefixElement(datatype);
-      }
-    });
-  }
-
-  if ('suffix' in datatypeJsonObj) {
-    const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(datatypeJsonObj, source, 'suffix', 'string');
-    dataJsonArray.forEach((dataJson: PrimitiveTypeJson) => {
-      const datatype: StringType | undefined = parseStringType(dataJson.dtJson, dataJson.dtSiblingJson);
-      if (datatype !== undefined) {
-        instance.addSuffixElement(datatype);
-      }
-    });
-  }
-
-  if ('period' in datatypeJsonObj) {
-    const datatype: Period | undefined = parsePeriod(datatypeJsonObj['period'], `${source}.period`);
-    instance.setPeriod(datatype);
-  }
-
-  assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
-  return instance;
-}
-
-/**
- * Parse the provided json into Identifier data model.
- *
- * @param json - JSON representing Identifier
- * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Identifier
- * @returns Identifier data model or undefined
- *
- * @category Utilities: FHIR Parsers
- */
-export function parseIdentifier(json: JSON.Value | undefined, sourceField?: string): Identifier | undefined {
-  if (!JSON.hasFhirData(json)) {
-    return undefined;
-  }
-
-  const source = isDefined<string>(sourceField) ? sourceField : 'Identifier';
-
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
-  const instance = new Identifier();
-
-  processElementJson(instance, datatypeJsonObj);
-
-  if ('use' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'use', 'string');
-    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
-    instance.setUseElement(datatype);
-  }
-
-  if ('type' in datatypeJsonObj) {
-    const datatype: CodeableConcept | undefined = parseCodeableConcept(datatypeJsonObj['type'], `${source}.type`);
-    instance.setType(datatype);
-  }
-
-  if ('system' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'system', 'string');
-    const datatype: UriType | undefined = parseUriType(dtJson, dtSiblingJson);
-    instance.setSystemElement(datatype);
-  }
-
-  if ('value' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'value', 'string');
-    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
-    instance.setValueElement(datatype);
-  }
-
-  if ('period' in datatypeJsonObj) {
-    const datatype: Period | undefined = parsePeriod(datatypeJsonObj['period'], `${source}.period`);
-    instance.setPeriod(datatype);
-  }
-
-  if ('assigner' in datatypeJsonObj) {
-    const datatype: Reference | undefined = parseReference(datatypeJsonObj['assigner'], `${source}.assigner`);
-    instance.setAssigner(datatype);
-  }
-
-  assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
-  return instance;
-}
-
-/**
- * Parse the provided json into Meta data model.
- *
- * @param json - JSON representing Meta
- * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Meta
- * @returns Meta data model or undefined
- *
- * @category Utilities: FHIR Parsers
- */
-export function parseMeta(json: JSON.Value | undefined, sourceField?: string): Meta | undefined {
-  if (!JSON.hasFhirData(json)) {
-    return undefined;
-  }
-
-  const source = isDefined<string>(sourceField) ? sourceField : 'Meta';
-
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
-  const instance = new Meta();
-
-  processElementJson(instance, datatypeJsonObj);
-
-  if ('versionId' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'versionId', 'string');
-    const datatype: IdType | undefined = parseIdType(dtJson, dtSiblingJson);
-    instance.setVersionIdElement(datatype);
-  }
-
-  if ('lastUpdated' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'lastUpdated', 'string');
-    const datatype: InstantType | undefined = parseInstantType(dtJson, dtSiblingJson);
-    instance.setLastUpdatedElement(datatype);
-  }
-
-  if ('source' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'source', 'string');
-    const datatype: UriType | undefined = parseUriType(dtJson, dtSiblingJson);
-    instance.setSourceElement(datatype);
-  }
-
-  if ('profile' in datatypeJsonObj) {
-    const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(datatypeJsonObj, source, 'profile', 'string');
-    dataJsonArray.forEach((dataJson: PrimitiveTypeJson) => {
-      const datatype: CanonicalType | undefined = parseCanonicalType(dataJson.dtJson, dataJson.dtSiblingJson);
-      if (datatype !== undefined) {
-        instance.addProfileElement(datatype);
-      }
-    });
-  }
-
-  if ('security' in datatypeJsonObj) {
-    const dataElementJsonArray: JSON.Array = JSON.asArray(datatypeJsonObj['security'], `${source}.security`);
-    dataElementJsonArray.forEach((dataElementJson: JSON.Value) => {
-      const datatype: Coding | undefined = parseCoding(dataElementJson, `${source}.security.coding`);
-      if (datatype !== undefined) {
-        instance.addSecurity(datatype);
-      }
-    });
-  }
-
-  if ('tag' in datatypeJsonObj) {
-    const dataElementJsonArray: JSON.Array = JSON.asArray(datatypeJsonObj['tag'], `${source}.tag`);
-    dataElementJsonArray.forEach((dataElementJson: JSON.Value) => {
-      const datatype: Coding | undefined = parseCoding(dataElementJson, `${source}.tag.coding`);
-      if (datatype !== undefined) {
-        instance.addTag(datatype);
-      }
-    });
-  }
-
-  assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
-  return instance;
-}
-
-/**
- * Parse the provided json into Narrative data model.
- *
- * @param json - JSON representing Narrative
- * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Narrative
- * @returns Narrative data model or undefined
- *
- * @category Utilities: FHIR Parsers
- */
-export function parseNarrative(json: JSON.Value | undefined, sourceField?: string): Narrative | undefined {
-  if (!JSON.hasFhirData(json)) {
-    return undefined;
-  }
-
-  const source = isDefined<string>(sourceField) ? sourceField : 'Narrative';
-
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
-  const instance = new Narrative(null, null);
-
-  processElementJson(instance, datatypeJsonObj);
-
-  const missingReqdProperties: string[] = [];
-
-  if ('status' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'status', 'string');
-    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
-    if (datatype === undefined) {
-      missingReqdProperties.push(`${source}.status`);
-    } else {
-      instance.setStatusElement(datatype);
-    }
-  } else {
-    missingReqdProperties.push(`${source}.status`);
-  }
-
-  if ('div' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'div', 'string');
-    const datatype: XhtmlType | undefined = parseXhtmlType(dtJson, dtSiblingJson);
-    if (datatype === undefined) {
-      missingReqdProperties.push(`${source}.div`);
-    } else {
-      instance.setDivElement(datatype);
-    }
-  } else {
-    missingReqdProperties.push(`${source}.div`);
-  }
-
-  if (missingReqdProperties.length > 0) {
-    const errMsg = `${REQUIRED_PROPERTIES_REQD_IN_JSON} ${missingReqdProperties.join(', ')}`;
-    throw new FhirError(errMsg);
-  }
-
-  assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
-  return instance;
-}
-
-/**
- * Parse the provided json into Period data model.
- *
- * @param json - JSON representing Period
- * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Period
- * @returns Period data model or undefined
- *
- * @category Utilities: FHIR Parsers
- */
-export function parsePeriod(json: JSON.Value | undefined, sourceField?: string): Period | undefined {
-  if (!JSON.hasFhirData(json)) {
-    return undefined;
-  }
-
-  const source = isDefined<string>(sourceField) ? sourceField : 'Period';
-
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
-  const instance = new Period();
-
-  processElementJson(instance, datatypeJsonObj);
-
-  if ('start' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'start', 'string');
-    const datatype: DateTimeType | undefined = parseDateTimeType(dtJson, dtSiblingJson);
-    instance.setStartElement(datatype);
-  }
-
-  if ('end' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'end', 'string');
-    const datatype: DateTimeType | undefined = parseDateTimeType(dtJson, dtSiblingJson);
-    instance.setEndElement(datatype);
-  }
-
-  assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
-  return instance;
-}
-
-/**
- * Parse the provided json into Quantity data model.
- *
- * @param json - JSON representing Quantity
- * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Quantity
- * @returns Quantity data model or undefined
- *
- * @category Utilities: FHIR Parsers
- */
-export function parseQuantity(json: JSON.Value | undefined, sourceField?: string): Quantity | undefined {
-  if (!JSON.hasFhirData(json)) {
-    return undefined;
-  }
-
-  const source = isDefined<string>(sourceField) ? sourceField : 'Quantity';
-
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
-  const instance = new Quantity();
-
-  processElementJson(instance, datatypeJsonObj);
-
-  if ('value' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'value', 'number');
-    const datatype: DecimalType | undefined = parseDecimalType(dtJson, dtSiblingJson);
-    instance.setValueElement(datatype);
-  }
-
-  if ('comparator' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'comparator', 'string');
-    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
-    instance.setComparatorElement(datatype);
-  }
-
-  if ('unit' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'unit', 'string');
-    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
-    instance.setUnitElement(datatype);
-  }
-
-  if ('system' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'system', 'string');
-    const datatype: UriType | undefined = parseUriType(dtJson, dtSiblingJson);
-    instance.setSystemElement(datatype);
-  }
-
-  if ('code' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'code', 'string');
-    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
-    instance.setCodeElement(datatype);
-  }
-
-  assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
-  return instance;
-}
-
-/**
- * Parse the provided json into Range data model.
- *
- * @param json - JSON representing Range
- * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Range
- * @returns Range data model or undefined
- *
- * @category Utilities: FHIR Parsers
- */
-export function parseRange(json: JSON.Value | undefined, sourceField?: string): Range | undefined {
-  if (!JSON.hasFhirData(json)) {
-    return undefined;
-  }
-
-  const source = isDefined<string>(sourceField) ? sourceField : 'Range';
-
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
-  const instance = new Range();
-
-  processElementJson(instance, datatypeJsonObj);
-
-  if ('low' in datatypeJsonObj) {
-    const datatype: SimpleQuantity | undefined = parseSimpleQuantity(datatypeJsonObj['low'], `${source}.low`);
-    instance.setLow(datatype);
-  }
-
-  if ('high' in datatypeJsonObj) {
-    const datatype: SimpleQuantity | undefined = parseSimpleQuantity(datatypeJsonObj['high'], `${source}.high`);
-    instance.setHigh(datatype);
-  }
-
-  assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
-  return instance;
-}
-
-/**
- * Parse the provided json into Reference data model.
- *
- * @param json - JSON representing Reference
- * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Reference
- * @returns Reference data model or undefined
- *
- * @category Utilities: FHIR Parsers
- */
-export function parseReference(json: JSON.Value | undefined, sourceField?: string): Reference | undefined {
-  if (!JSON.hasFhirData(json)) {
-    return undefined;
-  }
-
-  const source = isDefined<string>(sourceField) ? sourceField : 'Reference';
-
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
-  const instance = new Reference();
-
-  processElementJson(instance, datatypeJsonObj);
-
-  if ('reference' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'reference', 'string');
-    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
-    instance.setReferenceElement(datatype);
-  }
-
-  if ('type' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'type', 'string');
-    const datatype: UriType | undefined = parseUriType(dtJson, dtSiblingJson);
-    instance.setTypeElement(datatype);
-  }
-
-  if ('identifier' in datatypeJsonObj) {
-    const datatype: Identifier | undefined = parseIdentifier(datatypeJsonObj['identifier'], `${source}.identifier`);
-    instance.setIdentifier(datatype);
-  }
-
-  if ('display' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'display', 'string');
-    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
-    instance.setDisplayElement(datatype);
-  }
-
-  assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
-  return instance;
-}
-
-/**
- * Parse the provided json into Signature data model.
- *
- * @param json - JSON representing Signature
- * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Signature
- * @returns Signature data model or undefined
- *
- * @category Utilities: FHIR Parsers
- */
-export function parseSignature(json: JSON.Value | undefined, sourceField?: string): Signature | undefined {
-  if (!JSON.hasFhirData(json)) {
-    return undefined;
-  }
-
-  const source = isDefined<string>(sourceField) ? sourceField : 'Signature';
-
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
-  const instance = new Signature(null, null, null);
-
-  processElementJson(instance, datatypeJsonObj);
-
-  const missingReqdProperties: string[] = [];
-
-  if ('type' in datatypeJsonObj) {
-    const dataElementJsonArray: JSON.Array = JSON.asArray(datatypeJsonObj['type'], `${source}.type`);
-    dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
-      const datatype: Coding | undefined = parseCoding(dataElementJson, `${source}.type[${String(idx)}]`);
-      if (datatype === undefined) {
-        missingReqdProperties.push(`${source}.type[${String(idx)}]`);
-      } else {
-        instance.addType(datatype);
-      }
-    });
-  } else {
-    missingReqdProperties.push(`${source}.type`);
-  }
-
-  if ('when' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'when', 'string');
-    const datatype: InstantType | undefined = parseInstantType(dtJson, dtSiblingJson);
-    if (datatype === undefined) {
-      missingReqdProperties.push(`${source}.when`);
-    } else {
-      instance.setWhenElement(datatype);
-    }
-  } else {
-    missingReqdProperties.push(`${source}.when`);
-  }
-
-  if ('who' in datatypeJsonObj) {
-    const datatype: Reference | undefined = parseReference(datatypeJsonObj['who'], `${source}.who`);
-    if (datatype === undefined) {
-      missingReqdProperties.push(`${source}.who`);
-    } else {
-      instance.setWho(datatype);
-    }
-  } else {
-    missingReqdProperties.push(`${source}.who`);
-  }
-
-  if ('onBehalfOf' in datatypeJsonObj) {
-    const datatype: Reference | undefined = parseReference(datatypeJsonObj['onBehalfOf'], `${source}.onBehalfOf`);
-    instance.setOnBehalfOf(datatype);
-  }
-
-  if ('targetFormat' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'targetFormat', 'string');
-    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
-    instance.setTargetFormatElement(datatype);
-  }
-
-  if ('sigFormat' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'sigFormat', 'string');
-    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
-    instance.setSigFormatElement(datatype);
-  }
-
-  if ('data' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'data', 'string');
-    const datatype: Base64BinaryType | undefined = parseBase64BinaryType(dtJson, dtSiblingJson);
-    instance.setDataElement(datatype);
-  }
-
-  if (missingReqdProperties.length > 0) {
-    const errMsg = `${REQUIRED_PROPERTIES_REQD_IN_JSON} ${missingReqdProperties.join(', ')}`;
-    throw new FhirError(errMsg);
-  }
-
-  assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
-  return instance;
-}
-
-/**
- * Parse the provided json into SimpleQuantity data model.
- *
- * @param json - JSON representing SimpleQuantity
- * @param sourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to SimpleQuantity
- * @returns SimpleQuantity data model or undefined
- *
- * @category Utilities: FHIR Parsers
- */
-export function parseSimpleQuantity(json: JSON.Value | undefined, sourceField?: string): SimpleQuantity | undefined {
-  if (!JSON.hasFhirData(json)) {
-    return undefined;
-  }
-
-  const source = isDefined<string>(sourceField) ? sourceField : 'SimpleQuantity';
-
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const datatypeJsonObj: JSON.Object = JSON.asObject(json!, `${source} JSON`);
-  const instance = new SimpleQuantity();
-
-  processElementJson(instance, datatypeJsonObj);
-
-  if ('value' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'value', 'number');
-    const datatype: DecimalType | undefined = parseDecimalType(dtJson, dtSiblingJson);
-    instance.setValueElement(datatype);
-  }
-
-  if ('unit' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'unit', 'string');
-    const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
-    instance.setUnitElement(datatype);
-  }
-
-  if ('system' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'system', 'string');
-    const datatype: UriType | undefined = parseUriType(dtJson, dtSiblingJson);
-    instance.setSystemElement(datatype);
-  }
-
-  if ('code' in datatypeJsonObj) {
-    const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(datatypeJsonObj, source, 'code', 'string');
-    const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
-    instance.setCodeElement(datatype);
-  }
-
-  assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
-  return instance;
 }
 
 //endregion

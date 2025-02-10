@@ -21,9 +21,6 @@
  *
  */
 
-import { assertFhirResourceType, Resource, setFhirResourceJson } from '@src/fhir-core/base-models/Resource';
-import { IBase } from '@src/fhir-core/base-models/IBase';
-import { FhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
 import {
   BackboneElement,
   DataType,
@@ -33,23 +30,19 @@ import {
   setFhirPrimitiveJson,
   setPolymorphicValueJson,
 } from '@src/fhir-core/base-models/core-fhir-models';
-import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { FhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
+import { IBase } from '@src/fhir-core/base-models/IBase';
+import { assertFhirResourceType, Resource, setFhirResourceJson } from '@src/fhir-core/base-models/Resource';
+import { REQUIRED_PROPERTIES_DO_NOT_EXIST, REQUIRED_PROPERTIES_REQD_IN_JSON } from '@src/fhir-core/constants';
 import {
   fhirString,
   fhirStringSchema,
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { REQUIRED_PROPERTIES_DO_NOT_EXIST, REQUIRED_PROPERTIES_REQD_IN_JSON } from '@src/fhir-core/constants';
-import { copyListValues, extractFieldName, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { FhirError } from '@src/fhir-core/errors/FhirError';
+import { isEmpty } from '@src/fhir-core/utility/common-util';
 import { OpenDataTypesMeta } from '@src/fhir-core/utility/decorators';
-import {
-  assertFhirType,
-  assertFhirTypeList,
-  assertIsDefined,
-  isDefined,
-  isDefinedList,
-} from '@src/fhir-core/utility/type-guards';
-import { parseInlineResource } from '@src/fhir-models/fhir-contained-resource-parser';
 import {
   assertFhirResourceTypeJson,
   getPrimitiveTypeJson,
@@ -58,9 +51,16 @@ import {
   processBackboneElementJson,
   processResourceJson,
 } from '@src/fhir-core/utility/fhir-parsers';
-import { isEmpty } from '@src/fhir-core/utility/common-util';
+import { copyListValues, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
-import { FhirError } from '@src/fhir-core/errors/FhirError';
+import {
+  assertFhirType,
+  assertFhirTypeList,
+  assertIsDefined,
+  isDefined,
+  isDefinedList,
+} from '@src/fhir-core/utility/type-guards';
+import { parseInlineResource } from '@src/fhir-models/fhir-contained-resource-parser';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -92,24 +92,35 @@ export class Parameters extends Resource implements IBase {
    * Parse the provided `Parameters` json to instantiate the Parameters model.
    *
    * @param sourceJson - JSON representing FHIR `Parameters`
+   * @param optSourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Parameters
    * @returns Parameters data model or undefined for `Parameters`
    */
-  public static override parse(sourceJson: JSON.Object): Parameters | undefined {
+  public static override parse(sourceJson: JSON.Object, optSourceField?: string): Parameters | undefined {
     if (!isDefined<JSON.Object>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
-    const classJsonObj: JSON.Object = JSON.asObject(sourceJson, `Parameters JSON`);
+    const source = isDefined<string>(optSourceField) ? optSourceField : 'Parameters';
+    const classJsonObj: JSON.Object = JSON.asObject(sourceJson, `${source} JSON`);
     assertFhirResourceTypeJson(classJsonObj, 'Parameters');
     const instance = new Parameters();
     processResourceJson(instance, classJsonObj);
 
-    const sourceField = 'Parameters.parameter';
-    const fieldName = extractFieldName(sourceField);
+    let fieldName: string;
+    let sourceField: string;
+    //let primitiveJsonType: 'boolean' | 'number' | 'string';
+
+    // eslint-disable-next-line prefer-const
+    fieldName = 'parameter';
+    // eslint-disable-next-line prefer-const
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const componentJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
-      componentJsonArray.forEach((componentJson: JSON.Value) => {
-        const component: ParametersParameterComponent | undefined = ParametersParameterComponent.parse(componentJson);
+      componentJsonArray.forEach((componentJson: JSON.Value, idx) => {
+        const component: ParametersParameterComponent | undefined = ParametersParameterComponent.parse(
+          componentJson,
+          `${sourceField}[${String(idx)}]`,
+        );
         if (component !== undefined) {
           instance.addParameter(component);
         }
@@ -284,27 +295,34 @@ export class ParametersParameterComponent extends BackboneElement {
    * Parse the provided `Parameters.parameter` json to instantiate the ParametersParameterComponent data model.
    *
    * @param sourceJson - JSON representing FHIR `Parameters.parameter`
+   * @param optSourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Parameters.parameter
    * @returns ParametersParameterComponent data model or undefined for `Parameters.parameter`
    */
-  public static parse(sourceJson: JSON.Value): ParametersParameterComponent | undefined {
+  public static parse(sourceJson: JSON.Value, optSourceField?: string): ParametersParameterComponent | undefined {
     if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
-    const backboneJsonObj: JSON.Object = JSON.asObject(sourceJson, `ParametersParameterComponent JSON`);
+    const source = isDefined<string>(optSourceField) ? optSourceField : 'Parameters.parameter';
+    const classJsonObj: JSON.Object = JSON.asObject(sourceJson, `${source} JSON`);
     const instance = new ParametersParameterComponent(null);
-    processBackboneElementJson(instance, backboneJsonObj);
+    processBackboneElementJson(instance, classJsonObj);
 
-    // NOTE: Added IF and ONLY IF an open data type is used
+    let fieldName: string;
+    let sourceField: string;
+    let primitiveJsonType: 'boolean' | 'number' | 'string';
+
     const classMetadata: DecoratorMetadataObject | null = ParametersParameterComponent[Symbol.metadata];
     const errorMessage = `DecoratorMetadataObject does not exist for ParametersParameterComponent`;
     assertIsDefined<DecoratorMetadataObject>(classMetadata, errorMessage);
 
     const missingReqdProperties: string[] = [];
 
-    let sourceField = 'Parameters.parameter.name';
-    let fieldName = extractFieldName(sourceField);
-    if (fieldName in backboneJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(backboneJsonObj, sourceField, fieldName, 'string');
+    fieldName = 'name';
+    sourceField = `${source}.${fieldName}`;
+    // eslint-disable-next-line prefer-const
+    primitiveJsonType = 'string';
+    if (fieldName in classJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
       const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
       if (datatype === undefined) {
         missingReqdProperties.push(sourceField);
@@ -315,25 +333,28 @@ export class ParametersParameterComponent extends BackboneElement {
       missingReqdProperties.push(sourceField);
     }
 
-    sourceField = 'Parameters.parameter.value[x]';
-    fieldName = extractFieldName(sourceField);
-    const value: DataType | undefined = parseOpenDataType(backboneJsonObj, sourceField, fieldName, classMetadata);
+    fieldName = 'value[x]';
+    sourceField = `${source}.${fieldName}`;
+    const value: DataType | undefined = parseOpenDataType(classJsonObj, sourceField, fieldName, classMetadata);
     instance.setValue(value);
 
-    sourceField = 'Parameters.parameter.resource';
-    fieldName = extractFieldName(sourceField);
-    if (fieldName in backboneJsonObj) {
-      const datatype: Resource | undefined = parseInlineResource(backboneJsonObj[fieldName], sourceField);
+    fieldName = 'resource';
+    sourceField = `${source}.${fieldName}`;
+    if (fieldName in classJsonObj) {
+      const datatype: Resource | undefined = parseInlineResource(classJsonObj[fieldName], sourceField);
       instance.setResource(datatype);
     }
 
-    sourceField = 'Parameters.parameter.part';
-    fieldName = extractFieldName(sourceField);
-    if (fieldName in backboneJsonObj) {
+    fieldName = 'part';
+    sourceField = `${source}.${fieldName}`;
+    if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const componentJsonArray: JSON.Array = JSON.asArray(backboneJsonObj[fieldName]!, sourceField);
-      componentJsonArray.forEach((componentJson: JSON.Value) => {
-        const component: ParametersParameterComponent | undefined = ParametersParameterComponent.parse(componentJson);
+      const componentJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
+      componentJsonArray.forEach((componentJson: JSON.Value, idx) => {
+        const component: ParametersParameterComponent | undefined = ParametersParameterComponent.parse(
+          componentJson,
+          `${sourceField}[${String(idx)}]`,
+        );
         if (component !== undefined) {
           instance.addPart(component);
         }
@@ -377,7 +398,11 @@ export class ParametersParameterComponent extends BackboneElement {
    * - **isModifier:** false
    * - **isSummary:** true
    */
+  // TODO: Document logic for these combinations for @OpenDataTypesMeta()
   @OpenDataTypesMeta('Parameters.parameter.value[x]')
+  @OpenDataTypesMeta('Parameters.parameter[i].value[x]')
+  @OpenDataTypesMeta('Parameters.parameter.part[i].value[x]')
+  @OpenDataTypesMeta('Parameters.parameter[i].part[i].value[x]')
   private value?: DataType | undefined;
 
   /**

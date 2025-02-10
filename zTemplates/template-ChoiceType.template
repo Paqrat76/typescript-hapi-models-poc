@@ -45,8 +45,8 @@
     assertIsDefined<DecoratorMetadataObject>(classMetadata, errorMessage);
 
 
-    sourceField = 'XxxxParentClassElement.xxxxFieldName[x]';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'xxxxFieldName[x]';
+    sourceField = `${source}.${fieldName}`;
     const xxxxFieldName: DataType | undefined = parsePolymorphicDataType(
       classJsonObj,
       sourceField,
@@ -176,8 +176,8 @@
     const missingReqdProperties: string[] = [];
 
 
-    sourceField = 'XxxxParentClassElement.xxxxFieldName[x]';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'xxxxFieldName[x]';
+    sourceField = `${source}.${fieldName}`;
     const xxxxFieldName: DataType | undefined = parsePolymorphicDataType(
       classJsonObj,
       sourceField,

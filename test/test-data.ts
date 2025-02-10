@@ -23,19 +23,19 @@
 
 import { Address } from '../src/fhir-core/data-types/complex/Address';
 import { Attachment } from '../src/fhir-core/data-types/complex/Attachment';
+import { HumanName } from '../src/fhir-core/data-types/complex/HumanName';
+import { Period } from '../src/fhir-core/data-types/complex/Period';
+import { Quantity } from '../src/fhir-core/data-types/complex/Quantity-variations';
+import { Identifier, Reference } from '../src/fhir-core/data-types/complex/Reference-Identifier';
 import { BooleanType } from '../src/fhir-core/data-types/primitive/BooleanType';
 import { CodeType } from '../src/fhir-core/data-types/primitive/CodeType';
 import { DateTimeType } from '../src/fhir-core/data-types/primitive/DateTimeType';
 import { DecimalType } from '../src/fhir-core/data-types/primitive/DecimalType';
-import { HumanName } from '../src/fhir-core/data-types/complex/HumanName';
-import { Identifier, Reference } from '../src/fhir-core/data-types/complex/Reference-Identifier';
 import { IntegerType } from '../src/fhir-core/data-types/primitive/IntegerType';
-import { Period } from '../src/fhir-core/data-types/complex/Period';
-import { Quantity } from '../src/fhir-core/data-types/complex/Quantity';
-import { SimplePersonModel } from '../src/test-models/SimplePersonModel';
+import { fhirUri } from '../src/fhir-core/data-types/primitive/primitive-types';
 import { StringType } from '../src/fhir-core/data-types/primitive/StringType';
 import { UriType } from '../src/fhir-core/data-types/primitive/UriType';
-import { fhirUri } from '../src/fhir-core/data-types/primitive/primitive-types';
+import { SimplePersonModel } from '../src/test-models/SimplePersonModel';
 import { MockTask } from './test-utils';
 
 /**

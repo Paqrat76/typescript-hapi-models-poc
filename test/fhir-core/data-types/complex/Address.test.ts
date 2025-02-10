@@ -22,13 +22,13 @@
  */
 
 import { DataType, Extension } from '@src/fhir-core/base-models/core-fhir-models';
-import { Address } from '@src/fhir-core/data-types/complex/Address';
-import { AddressUseEnum } from '@src/fhir-core/data-types/code-systems/AddressUseEnum';
 import { AddressTypeEnum } from '@src/fhir-core/data-types/code-systems/AddressTypeEnum';
-import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
-import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { AddressUseEnum } from '@src/fhir-core/data-types/code-systems/AddressUseEnum';
+import { Address } from '@src/fhir-core/data-types/complex/Address';
 import { Period } from '@src/fhir-core/data-types/complex/Period';
+import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { fhirString } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
@@ -51,8 +51,8 @@ describe('Address', () => {
   const VALID_TYPE_POSTAL_TYPE = new CodeType(VALID_TYPE_POSTAL);
   const VALID_TYPE_PHYSICAL = `physical`;
   const VALID_TYPE_PHYSICAL_TYPE = new CodeType(VALID_TYPE_PHYSICAL);
-  const VALID_USE_BOTH = `both`;
-  const VALID_USE_BOTH_TYPE = new CodeType(VALID_USE_BOTH);
+  const VALID_TYPE_BOTH = `both`;
+  const VALID_TYPE_BOTH_TYPE = new CodeType(VALID_TYPE_BOTH);
 
   const UNSUPPORTED_ENUM_CODE = 'unsupportedEnumCode';
   const INVALID_CODE_TYPE = new CodeType(UNSUPPORTED_ENUM_CODE);
@@ -391,9 +391,9 @@ describe('Address', () => {
       expect(testAddress.hasTypeElement()).toBe(true);
       expect(testAddress.getTypeElement()).toMatchObject(VALID_TYPE_PHYSICAL_TYPE);
 
-      testAddress.setTypeEnumType(new EnumCodeType(VALID_USE_BOTH, addressTypeEnum));
+      testAddress.setTypeEnumType(new EnumCodeType(VALID_TYPE_BOTH, addressTypeEnum));
       expect(testAddress.hasTypeEnumType()).toBe(true);
-      expect(testAddress.getTypeEnumType()).toEqual(new EnumCodeType(VALID_USE_BOTH_TYPE, addressTypeEnum));
+      expect(testAddress.getTypeEnumType()).toEqual(new EnumCodeType(VALID_TYPE_BOTH_TYPE, addressTypeEnum));
 
       testAddress.setType(UNDEFINED_VALUE);
       expect(testAddress.hasType()).toBe(false);
@@ -1091,6 +1091,62 @@ describe('Address', () => {
   });
 
   describe('Serialization/Deserialization', () => {
+    const VALID_JSON = {
+      id: 'id1234',
+      extension: [
+        {
+          url: 'testUrl1',
+          valueString: 'base extension string value 1',
+        },
+        {
+          url: 'testUrl2',
+          valueString: 'base extension string value 2',
+        },
+      ],
+      use: 'home',
+      type: 'both',
+      text: 'This is a valid string.',
+      _text: {
+        id: 'T1357',
+        extension: [
+          {
+            url: 'textUrl',
+            valueString: 'text extension string value',
+          },
+        ],
+      },
+      line: ['1234 Main ST', 'APT 15A'],
+      city: 'Nashua',
+      district: 'Hillsborough',
+      state: 'NH',
+      postalCode: '03064',
+      country: 'US',
+      period: {
+        start: '2017-01-01T00:00:00.000Z',
+        end: '2017-01-01T01:00:00.000Z',
+      },
+    };
+
+    it('should return undefined for empty json', () => {
+      let testType = Address.parse({});
+      expect(testType).toBeUndefined();
+
+      // @ts-expect-error: allow for testing
+      testType = Address.parse(undefined);
+      expect(testType).toBeUndefined();
+
+      testType = Address.parse(null);
+      expect(testType).toBeUndefined();
+    });
+
+    it('should throw TypeError for invalid json type', () => {
+      const t = () => {
+        Address.parse('NOT AN OBJECT');
+      };
+      expect(t).toThrow(TypeError);
+      expect(t).toThrow(`Address JSON is not a JSON object.`);
+    });
+
     it('should properly create serialized content', () => {
       const textType = new StringType(VALID_STRING);
       const textId = 'T1357';
@@ -1107,7 +1163,7 @@ describe('Address', () => {
       testAddress.addExtension(testExtension2);
 
       testAddress.setUseElement(VALID_USE_HOME_TYPE);
-      testAddress.setTypeElement(VALID_TYPE_POSTAL_TYPE);
+      testAddress.setTypeElement(VALID_TYPE_BOTH_TYPE);
       testAddress.setTextElement(textType);
       testAddress.setLineElement([VALID_LINE_TYPE_A, VALID_LINE_TYPE_B]);
       testAddress.setCityElement(VALID_CITY_TYPE);
@@ -1135,12 +1191,12 @@ describe('Address', () => {
       expect(testAddress.hasUseEnumType()).toBe(true);
       expect(testAddress.getUseEnumType()).toEqual(new EnumCodeType(VALID_USE_HOME_TYPE, addressUseEnum));
       expect(testAddress.hasTypeEnumType()).toBe(true);
-      expect(testAddress.getTypeEnumType()).toEqual(new EnumCodeType(VALID_TYPE_POSTAL_TYPE, addressTypeEnum));
+      expect(testAddress.getTypeEnumType()).toEqual(new EnumCodeType(VALID_TYPE_BOTH_TYPE, addressTypeEnum));
 
       expect(testAddress.hasUseElement()).toBe(true);
       expect(testAddress.getUseElement()).toMatchObject(VALID_USE_HOME_TYPE);
       expect(testAddress.hasTypeElement()).toBe(true);
-      expect(testAddress.getTypeElement()).toMatchObject(VALID_TYPE_POSTAL_TYPE);
+      expect(testAddress.getTypeElement()).toMatchObject(VALID_TYPE_BOTH_TYPE);
       expect(testAddress.hasTextElement()).toBe(true);
       expect(testAddress.getTextElement()).toMatchObject(textType);
       expect(testAddress.hasLineElement()).toBe(true);
@@ -1161,7 +1217,7 @@ describe('Address', () => {
       expect(testAddress.hasUse()).toBe(true);
       expect(testAddress.getUse()).toStrictEqual(VALID_USE_HOME);
       expect(testAddress.hasType()).toBe(true);
-      expect(testAddress.getType()).toStrictEqual(VALID_TYPE_POSTAL);
+      expect(testAddress.getType()).toStrictEqual(VALID_TYPE_BOTH);
       expect(testAddress.hasText()).toBe(true);
       expect(testAddress.getText()).toStrictEqual(VALID_STRING);
       expect(testAddress.hasLine()).toBe(true);
@@ -1177,42 +1233,19 @@ describe('Address', () => {
       expect(testAddress.hasCountry()).toBe(true);
       expect(testAddress.getCountry()).toStrictEqual(VALID_COUNTRY);
 
-      const expectedJson = {
-        id: 'id1234',
-        extension: [
-          {
-            url: 'testUrl1',
-            valueString: 'base extension string value 1',
-          },
-          {
-            url: 'testUrl2',
-            valueString: 'base extension string value 2',
-          },
-        ],
-        use: 'home',
-        type: 'postal',
-        text: 'This is a valid string.',
-        _text: {
-          id: 'T1357',
-          extension: [
-            {
-              url: 'textUrl',
-              valueString: 'text extension string value',
-            },
-          ],
-        },
-        line: ['1234 Main ST', 'APT 15A'],
-        city: 'Nashua',
-        district: 'Hillsborough',
-        state: 'NH',
-        postalCode: '03064',
-        country: 'US',
-        period: {
-          start: '2017-01-01T00:00:00.000Z',
-          end: '2017-01-01T01:00:00.000Z',
-        },
-      };
-      expect(testAddress.toJSON()).toEqual(expectedJson);
+      expect(testAddress.toJSON()).toEqual(VALID_JSON);
+    });
+
+    it('should return Address for valid json', () => {
+      const testType: Address | undefined = Address.parse(VALID_JSON);
+
+      expect(testType).toBeDefined();
+      expect(testType).toBeInstanceOf(Address);
+      expect(testType?.constructor.name).toStrictEqual('Address');
+      expect(testType?.fhirType()).toStrictEqual('Address');
+      expect(testType?.isEmpty()).toBe(false);
+      expect(testType?.isComplexDataType()).toBe(true);
+      expect(testType?.toJSON()).toEqual(VALID_JSON);
     });
   });
 });

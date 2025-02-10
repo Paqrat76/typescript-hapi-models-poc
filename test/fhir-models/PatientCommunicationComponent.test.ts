@@ -21,16 +21,16 @@
  *
  */
 
-import { AssertionError } from 'node:assert';
-import { PatientCommunicationComponent } from '@src/fhir-models/Patient';
 import { Base } from '@src/fhir-core/base-models/Base';
 import { BackboneElement, Element, Extension } from '@src/fhir-core/base-models/core-fhir-models';
-import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
 import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
 import { Coding } from '@src/fhir-core/data-types/complex/Coding';
+import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { PatientCommunicationComponent } from '@src/fhir-models/Patient';
+import { AssertionError } from 'node:assert';
 import {
   DATATYPE_EXTENSION,
   DATATYPE_ID,

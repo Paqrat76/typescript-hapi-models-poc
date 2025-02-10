@@ -22,16 +22,16 @@
  */
 
 import { Base } from '@src/fhir-core/base-models/Base';
-import { Resource } from '@src/fhir-core/base-models/Resource';
-import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
-import { Narrative } from '@src/fhir-core/data-types/complex/Narrative';
-import { NarrativeStatusEnum } from '@src/fhir-core/data-types/code-systems/NarrativeStatusEnum';
 import { Extension } from '@src/fhir-core/base-models/core-fhir-models';
-import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
+import { Resource } from '@src/fhir-core/base-models/Resource';
+import { NarrativeStatusEnum } from '@src/fhir-core/data-types/code-systems/NarrativeStatusEnum';
 import { Meta } from '@src/fhir-core/data-types/complex/Meta';
-import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
-import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
+import { Narrative } from '@src/fhir-core/data-types/complex/Narrative';
 import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { MockTask } from '../../test-utils';
 

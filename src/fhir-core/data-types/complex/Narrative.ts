@@ -21,17 +21,20 @@
  *
  */
 
-import { REQUIRED_PROPERTIES_DO_NOT_EXIST } from '@src/fhir-core/constants';
 import { DataType, PrimitiveType, setFhirPrimitiveJson } from '@src/fhir-core/base-models/core-fhir-models';
 import { IBase } from '@src/fhir-core/base-models/IBase';
 import {
+  INSTANCE_EMPTY_ERROR_MSG,
+  REQUIRED_PROPERTIES_DO_NOT_EXIST,
+  REQUIRED_PROPERTIES_REQD_IN_JSON,
+} from '@src/fhir-core/constants';
+import { NarrativeStatusEnum } from '@src/fhir-core/data-types/code-systems/NarrativeStatusEnum';
+import {
   assertEnumCodeType,
   CodeType,
-  EnumCodeType,
   constructorCodeValueAsEnumCodeType,
+  EnumCodeType,
 } from '@src/fhir-core/data-types/primitive/CodeType';
-import { NarrativeStatusEnum } from '@src/fhir-core/data-types/code-systems/NarrativeStatusEnum';
-import { XhtmlType } from '@src/fhir-core/data-types/primitive/XhtmlType';
 import {
   fhirCode,
   fhirCodeSchema,
@@ -39,10 +42,19 @@ import {
   fhirXhtmlSchema,
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirType, assertIsDefined, isDefined } from '@src/fhir-core/utility/type-guards';
-import * as JSON from '@src/fhir-core/utility/json-helpers';
+import { XhtmlType } from '@src/fhir-core/data-types/primitive/XhtmlType';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
+import { isEmpty } from '@src/fhir-core/utility/common-util';
+import {
+  getPrimitiveTypeJson,
+  parseCodeType,
+  parseXhtmlType,
+  processElementJson,
+} from '@src/fhir-core/utility/fhir-parsers';
+import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
+import * as JSON from '@src/fhir-core/utility/json-helpers';
+import { assertFhirType, assertIsDefined, isDefined } from '@src/fhir-core/utility/type-guards';
+import { strict as assert } from 'node:assert';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -92,6 +104,77 @@ export class Narrative extends DataType implements IBase {
         this.setDiv(div);
       }
     }
+  }
+
+  /**
+   * Parse the provided `Narrative` json to instantiate the Narrative data model.
+   *
+   * @param sourceJson - JSON representing FHIR `Narrative`
+   * @param optSourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Narrative
+   * @returns Narrative data model or undefined for `Narrative`
+   */
+  public static parse(sourceJson: JSON.Value, optSourceField?: string): Narrative | undefined {
+    if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
+      return undefined;
+    }
+    const source = isDefined<string>(optSourceField) ? optSourceField : 'Narrative';
+    const datatypeJsonObj: JSON.Object = JSON.asObject(sourceJson, `${source} JSON`);
+    const instance = new Narrative(null, null);
+    processElementJson(instance, datatypeJsonObj);
+
+    let fieldName: string;
+    let sourceField: string;
+    let primitiveJsonType: 'boolean' | 'number' | 'string';
+
+    const missingReqdProperties: string[] = [];
+
+    fieldName = 'status';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
+      if (datatype === undefined) {
+        missingReqdProperties.push(`${source}.status`);
+      } else {
+        instance.setStatusElement(datatype);
+      }
+    } else {
+      missingReqdProperties.push(sourceField);
+    }
+
+    fieldName = 'div';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: XhtmlType | undefined = parseXhtmlType(dtJson, dtSiblingJson);
+      if (datatype === undefined) {
+        missingReqdProperties.push(sourceField);
+      } else {
+        instance.setDivElement(datatype);
+      }
+    } else {
+      missingReqdProperties.push(sourceField);
+    }
+
+    if (missingReqdProperties.length > 0) {
+      const errMsg = `${REQUIRED_PROPERTIES_REQD_IN_JSON} ${missingReqdProperties.join(', ')}`;
+      throw new FhirError(errMsg);
+    }
+
+    assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
+    return instance;
   }
 
   /**

@@ -23,18 +23,18 @@
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
-import { IBase } from '@src/fhir-core/base-models/IBase';
 import {
   DataType,
   setFhirComplexJson,
   setFhirPrimitiveJson,
   setFhirPrimitiveListJson,
 } from '@src/fhir-core/base-models/core-fhir-models';
+import { IBase } from '@src/fhir-core/base-models/IBase';
+import { INSTANCE_EMPTY_ERROR_MSG } from '@src/fhir-core/constants';
 import { AddressTypeEnum } from '@src/fhir-core/data-types/code-systems/AddressTypeEnum';
 import { AddressUseEnum } from '@src/fhir-core/data-types/code-systems/AddressUseEnum';
-import { assertEnumCodeType, CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
-import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { Period } from '@src/fhir-core/data-types/complex/Period';
+import { assertEnumCodeType, CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import {
   fhirCode,
   fhirCodeSchema,
@@ -42,9 +42,20 @@ import {
   fhirStringSchema,
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { isEmpty } from '@src/fhir-core/utility/common-util';
+import {
+  getPrimitiveTypeJson,
+  getPrimitiveTypeListJson,
+  parseCodeType,
+  parseStringType,
+  PrimitiveTypeJson,
+  processElementJson,
+} from '@src/fhir-core/utility/fhir-parsers';
 import { copyListValues, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirType, assertFhirTypeList, isDefined, isDefinedList } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
+import { assertFhirType, assertFhirTypeList, isDefined, isDefinedList } from '@src/fhir-core/utility/type-guards';
+import { strict as assert } from 'node:assert';
 
 /**
  * Address Class
@@ -71,6 +82,168 @@ export class Address extends DataType implements IBase {
     super();
     this.addressUseEnum = new AddressUseEnum();
     this.addressTypeEnum = new AddressTypeEnum();
+  }
+
+  /**
+   * Parse the provided `Address` json to instantiate the Address data model.
+   *
+   * @param sourceJson - JSON representing FHIR `Address`
+   * @param optSourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Address
+   * @returns Address data model or undefined for `Address`
+   */
+  public static parse(sourceJson: JSON.Value, optSourceField?: string): Address | undefined {
+    if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
+      return undefined;
+    }
+    const source = isDefined<string>(optSourceField) ? optSourceField : 'Address';
+    const datatypeJsonObj: JSON.Object = JSON.asObject(sourceJson, `${source} JSON`);
+    const instance = new Address();
+    processElementJson(instance, datatypeJsonObj);
+
+    let fieldName: string;
+    let sourceField: string;
+    let primitiveJsonType: 'boolean' | 'number' | 'string';
+
+    fieldName = 'use';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
+      instance.setUseElement(datatype);
+    }
+
+    fieldName = 'type';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
+      instance.setTypeElement(datatype);
+    }
+
+    fieldName = 'text';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
+      instance.setTextElement(datatype);
+    }
+
+    fieldName = 'line';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      dataJsonArray.forEach((dataJson: PrimitiveTypeJson) => {
+        const datatype: StringType | undefined = parseStringType(dataJson.dtJson, dataJson.dtSiblingJson);
+        if (datatype !== undefined) {
+          instance.addLineElement(datatype);
+        }
+      });
+    }
+
+    fieldName = 'city';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
+      instance.setCityElement(datatype);
+    }
+
+    fieldName = 'district';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
+      instance.setDistrictElement(datatype);
+    }
+
+    fieldName = 'state';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
+      instance.setStateElement(datatype);
+    }
+
+    fieldName = 'postalCode';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
+      instance.setPostalCodeElement(datatype);
+    }
+
+    fieldName = 'country';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
+      instance.setCountryElement(datatype);
+    }
+
+    fieldName = 'period';
+    sourceField = `${source}.${fieldName}`;
+    if (fieldName in datatypeJsonObj) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const datatype: Period | undefined = Period.parse(datatypeJsonObj[fieldName]!, sourceField);
+      instance.setPeriod(datatype);
+    }
+
+    assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
+    return instance;
   }
 
   /**

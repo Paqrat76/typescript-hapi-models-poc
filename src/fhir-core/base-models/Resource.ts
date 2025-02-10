@@ -36,14 +36,13 @@
  * @module
  */
 
-import { strict as assert } from 'node:assert';
 import { Base } from '@src/fhir-core/base-models/Base';
+import { setFhirComplexJson, setFhirPrimitiveJson } from '@src/fhir-core/base-models/core-fhir-models';
+import { FhirResourceType, RESOURCE_TYPES } from '@src/fhir-core/base-models/FhirResourceType';
 import { IBase } from '@src/fhir-core/base-models/IBase';
-import { RESOURCE_TYPES, FhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
-import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
-import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
-import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { Meta } from '@src/fhir-core/data-types/complex/Meta';
+import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
 import {
   fhirCode,
   fhirCodeSchema,
@@ -53,12 +52,13 @@ import {
   fhirUriSchema,
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { setFhirComplexJson, setFhirPrimitiveJson } from '@src/fhir-core/base-models/core-fhir-models';
+import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { isEmpty as _isEmpty } from '@src/fhir-core/utility/common-util';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirType, assertIsDefined, isDefined } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
-import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { assertFhirType, assertIsDefined, isDefined } from '@src/fhir-core/utility/type-guards';
+import { strict as assert } from 'node:assert';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -98,12 +98,13 @@ export abstract class Resource extends Base implements IBase {
    * @remarks
    *
    * @param _sourceJson - JSON representing FHIR resource
+   * @param _optSourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`)
    * @returns Data model or undefined
    *
    * @abstract
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public static parse(_sourceJson: JSON.Object): Resource | undefined {
+  public static parse(_sourceJson: JSON.Object, _optSourceField?: string): Resource | undefined {
     throw new Error(
       'parse() not implemented in abstract Resource - must be implemented in subclass of Resource/DomainResource',
     );

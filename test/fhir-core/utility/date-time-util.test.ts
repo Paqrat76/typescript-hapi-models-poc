@@ -21,7 +21,7 @@
  *
  */
 
-import { DateTime, FixedOffsetZone, Zone } from 'luxon';
+import { InvalidDateTimeError } from '@src/fhir-core/errors/InvalidDateTimeError';
 import {
   DateTimeOpts,
   getDateTimeObject,
@@ -32,7 +32,7 @@ import {
   getValueAsYear,
   getValueAsYearMonth,
 } from '@src/fhir-core/utility/date-time-util';
-import { InvalidDateTimeError } from '@src/fhir-core/errors/InvalidDateTimeError';
+import { DateTime, FixedOffsetZone, Zone } from 'luxon';
 
 describe('date-time-util', () => {
   const INVALID_DATE = '2020-03-32';

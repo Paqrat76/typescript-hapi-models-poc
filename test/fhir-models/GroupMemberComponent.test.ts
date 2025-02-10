@@ -21,21 +21,20 @@
  *
  */
 
-import { AssertionError } from 'node:assert';
-import { GroupMemberComponent } from '@src/fhir-models/Group';
-import { BackboneElement, Element, Extension } from '@src/fhir-core/base-models/core-fhir-models';
 import { Base } from '@src/fhir-core/base-models/Base';
-import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
+import { BackboneElement, Element, Extension } from '@src/fhir-core/base-models/core-fhir-models';
 import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
-import { Identifier, Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
 import { Period } from '@src/fhir-core/data-types/complex/Period';
-import { Quantity } from '@src/fhir-core/data-types/complex/Quantity';
+import { Quantity, SimpleQuantity } from '@src/fhir-core/data-types/complex/Quantity-variations';
 import { Range } from '@src/fhir-core/data-types/complex/Range';
-import { SimpleQuantity } from '@src/fhir-core/data-types/complex/SimpleQuantity';
+import { Identifier, Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
+import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { GroupMemberComponent } from '@src/fhir-models/Group';
+import { AssertionError } from 'node:assert';
 import {
   DATATYPE_EXTENSION,
   DATATYPE_ID,

@@ -22,8 +22,8 @@
  */
 
 import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
-import { isDefined, isDefinedList } from '@src/fhir-core/utility/type-guards';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
+import { isDefined, isDefinedList } from '@src/fhir-core/utility/type-guards';
 import { fhirXhtml, fhirXhtmlSchema, parseFhirPrimitiveData } from './primitive-types';
 
 /**

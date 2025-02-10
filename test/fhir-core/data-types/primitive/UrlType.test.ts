@@ -21,11 +21,11 @@
  *
  */
 
-import { UrlType } from '@src/fhir-core/data-types/primitive/UrlType';
-import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { fhirUrl } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { UrlType } from '@src/fhir-core/data-types/primitive/UrlType';
+import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 
 describe('UrlType', () => {
   const VALID_URL = `testUrlType` as fhirUrl;

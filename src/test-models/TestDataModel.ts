@@ -21,9 +21,6 @@
  *
  */
 
-import { IBase } from '@src/fhir-core/base-models/IBase';
-import { assertFhirResourceType, Resource, setFhirResourceJson } from '@src/fhir-core/base-models/Resource';
-import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
 import {
   BackboneElement,
   DataType,
@@ -36,7 +33,17 @@ import {
   setFhirPrimitiveListJson,
   setPolymorphicValueJson,
 } from '@src/fhir-core/base-models/core-fhir-models';
+import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
 import { FhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
+import { IBase } from '@src/fhir-core/base-models/IBase';
+import { assertFhirResourceType, Resource, setFhirResourceJson } from '@src/fhir-core/base-models/Resource';
+import { REQUIRED_PROPERTIES_DO_NOT_EXIST, REQUIRED_PROPERTIES_REQD_IN_JSON } from '@src/fhir-core/constants';
+import { Address } from '@src/fhir-core/data-types/complex/Address';
+import { Attachment } from '@src/fhir-core/data-types/complex/Attachment';
+import { HumanName } from '@src/fhir-core/data-types/complex/HumanName';
+import { Period } from '@src/fhir-core/data-types/complex/Period';
+import { Reference, ReferenceTargets } from '@src/fhir-core/data-types/complex/Reference-Identifier';
+import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
 import {
   assertEnumCodeType,
   assertEnumCodeTypeList,
@@ -45,15 +52,8 @@ import {
   constructorCodeValueAsEnumCodeTypeList,
   EnumCodeType,
 } from '@src/fhir-core/data-types/primitive/CodeType';
-import { Address } from '@src/fhir-core/data-types/complex/Address';
-import { Attachment } from '@src/fhir-core/data-types/complex/Attachment';
-import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
 import { DateTimeType } from '@src/fhir-core/data-types/primitive/DateTimeType';
-import { HumanName } from '@src/fhir-core/data-types/complex/HumanName';
 import { IntegerType } from '@src/fhir-core/data-types/primitive/IntegerType';
-import { Period } from '@src/fhir-core/data-types/complex/Period';
-import { Reference, ReferenceTargets } from '@src/fhir-core/data-types/complex/Reference-Identifier';
-import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import {
   fhirBoolean,
   fhirBooleanSchema,
@@ -67,33 +67,27 @@ import {
   fhirStringSchema,
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { ConsentStateEnum } from '@src/test-models/code-systems/ConsentStateEnum';
-import { ContributorTypeEnum } from '@src/test-models/code-systems/ContributorTypeEnum';
-import { TaskCodeEnum } from '@src/test-models/code-systems/TaskCodeEnum';
-import { TaskStatusEnum } from '@src/test-models/code-systems/TaskStatusEnum';
-import { REQUIRED_PROPERTIES_DO_NOT_EXIST, REQUIRED_PROPERTIES_REQD_IN_JSON } from '@src/fhir-core/constants';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { FhirError } from '@src/fhir-core/errors/FhirError';
 import { isEmpty } from '@src/fhir-core/utility/common-util';
 import { ChoiceDataTypes, ChoiceDataTypesMeta, OpenDataTypesMeta } from '@src/fhir-core/utility/decorators';
 import {
   assertFhirResourceTypeJson,
   getPrimitiveTypeJson,
   getPrimitiveTypeListJson,
-  parseAddress,
-  parseAttachment,
   parseBooleanType,
   parseCodeType,
   parseDateTimeType,
-  parseHumanName,
   parseIntegerType,
   parseOpenDataType,
-  parsePeriod,
   parsePolymorphicDataType,
-  parseReference,
   parseStringType,
   PrimitiveTypeJson,
   processBackboneElementJson,
   processDomainResourceJson,
 } from '@src/fhir-core/utility/fhir-parsers';
+import { copyListValues, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
+import * as JSON from '@src/fhir-core/utility/json-helpers';
 import {
   assertFhirType,
   assertFhirTypeList,
@@ -102,10 +96,11 @@ import {
   isDefined,
   isDefinedList,
 } from '@src/fhir-core/utility/type-guards';
-import { copyListValues, extractFieldName, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import { parseContainedResources, parseInlineResource } from '@src/fhir-models/fhir-contained-resource-parser';
-import * as JSON from '@src/fhir-core/utility/json-helpers';
-import { FhirError } from '@src/fhir-core/errors/FhirError';
+import { ConsentStateEnum } from '@src/test-models/code-systems/ConsentStateEnum';
+import { ContributorTypeEnum } from '@src/test-models/code-systems/ContributorTypeEnum';
+import { TaskCodeEnum } from '@src/test-models/code-systems/TaskCodeEnum';
+import { TaskStatusEnum } from '@src/test-models/code-systems/TaskStatusEnum';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -129,20 +124,25 @@ export class TestDataModel extends DomainResource implements IBase {
     super();
   }
 
-  public static override parse(sourceJson: JSON.Object): TestDataModel | undefined {
+  public static override parse(sourceJson: JSON.Object, optSourceField?: string): TestDataModel | undefined {
     if (!isDefined<JSON.Object>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
-    const classJsonObj: JSON.Object = JSON.asObject(sourceJson, `TestDataModel JSON`);
+    const source = isDefined<string>(optSourceField) ? optSourceField : 'TestDataModel';
+    const classJsonObj: JSON.Object = JSON.asObject(sourceJson, `${source} JSON`);
     // Must be a valid FHIR resource type. Uses 'Basic' for testing purposes.
     assertFhirResourceTypeJson(classJsonObj, 'Basic');
     const instance = new TestDataModel();
     processDomainResourceJson(instance, classJsonObj);
 
+    let fieldName: string;
+    let sourceField: string;
+    // let primitiveJsonType: 'boolean' | 'number' | 'string';
+
     // NOTE: "contained" is handled in Resource-based FHIR model rather than in processDomainResourceJson above
     //       to minimize circular references!
-    let sourceField = 'TestDataModel.contained';
-    let fieldName = extractFieldName(sourceField);
+    fieldName = 'contained';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const containedJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
@@ -153,8 +153,8 @@ export class TestDataModel extends DomainResource implements IBase {
     const errorMessage = `DecoratorMetadataObject does not exist for TestDataModel`;
     assertIsDefined<DecoratorMetadataObject>(classMetadata, errorMessage);
 
-    sourceField = 'TestDataModel.choice01[x]';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'choice01[x]';
+    sourceField = `${source}.${fieldName}`;
     const choice01: DataType | undefined = parsePolymorphicDataType(
       classJsonObj,
       sourceField,
@@ -163,38 +163,41 @@ export class TestDataModel extends DomainResource implements IBase {
     );
     instance.setChoice01(choice01);
 
-    sourceField = 'TestDataModel.open01[x]';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'open01[x]';
+    sourceField = `${source}.${fieldName}`;
     const open01: DataType | undefined = parseOpenDataType(classJsonObj, sourceField, fieldName, classMetadata);
     instance.setOpen01(open01);
 
-    sourceField = 'TestDataModel.resource01';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'resource01';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
       const datatype: Resource | undefined = parseInlineResource(classJsonObj[fieldName], sourceField);
       instance.setResource01(datatype);
     }
 
-    sourceField = 'TestDataModel.backbonePrimitive0x';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'backbonePrimitive0x';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const componentJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
-      componentJsonArray.forEach((componentJson: JSON.Value) => {
-        const component: TestDataModelPrimitiveComponent | undefined =
-          TestDataModelPrimitiveComponent.parse(componentJson);
+      componentJsonArray.forEach((componentJson: JSON.Value, idx) => {
+        const component: TestDataModelPrimitiveComponent | undefined = TestDataModelPrimitiveComponent.parse(
+          componentJson,
+          `${sourceField}[${String(idx)}]`,
+        );
         if (component !== undefined) {
           instance.addBackbonePrimitive0x(component);
         }
       });
     }
 
-    sourceField = 'TestDataModel.backboneComplex01';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'backboneComplex01';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
       const datatype: TestDataModelComplexComponent | undefined = TestDataModelComplexComponent.parse(
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         classJsonObj[fieldName]!,
+        sourceField,
       );
       instance.setBackboneComplex01(datatype);
     }
@@ -532,13 +535,18 @@ export class TestDataModelPrimitiveComponent extends BackboneElement {
     }
   }
 
-  public static parse(sourceJson: JSON.Value): TestDataModelPrimitiveComponent | undefined {
+  public static parse(sourceJson: JSON.Value, optSourceField?: string): TestDataModelPrimitiveComponent | undefined {
     if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
-    const classJsonObj: JSON.Object = JSON.asObject(sourceJson, `TestDataModelPrimitiveComponent JSON`);
+    const source = isDefined<string>(optSourceField) ? optSourceField : 'TestDataModel.backbonePrimitive0x';
+    const classJsonObj: JSON.Object = JSON.asObject(sourceJson, `${source} JSON`);
     const instance = new TestDataModelPrimitiveComponent(null, null, null);
     processBackboneElementJson(instance, classJsonObj);
+
+    let fieldName: string;
+    let sourceField: string;
+    let primitiveJsonType: 'boolean' | 'number' | 'string';
 
     const classMetadata: DecoratorMetadataObject | null = TestDataModelPrimitiveComponent[Symbol.metadata];
     const errorMessage = `DecoratorMetadataObject does not exist for TestDataModelPrimitiveComponent`;
@@ -546,22 +554,24 @@ export class TestDataModelPrimitiveComponent extends BackboneElement {
 
     const missingReqdProperties: string[] = [];
 
-    let sourceField = 'TestDataModel.backbonePrimitive0x.primitive01';
-    let fieldName = extractFieldName(sourceField);
+    fieldName = 'primitive01';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
     if (fieldName in classJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, 'string');
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
       const datatype: DateTimeType | undefined = parseDateTimeType(dtJson, dtSiblingJson);
       instance.setPrimitive01Element(datatype);
     }
 
-    sourceField = 'TestDataModel.backbonePrimitive0x.primitive0x';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'primitive0x';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'number';
     if (fieldName in classJsonObj) {
       const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(
         classJsonObj,
         sourceField,
         fieldName,
-        'number',
+        primitiveJsonType,
       );
       dataJsonArray.forEach((dataJson: PrimitiveTypeJson) => {
         const datatype: IntegerType | undefined = parseIntegerType(dataJson.dtJson, dataJson.dtSiblingJson);
@@ -571,10 +581,11 @@ export class TestDataModelPrimitiveComponent extends BackboneElement {
       });
     }
 
-    sourceField = 'TestDataModel.backbonePrimitive0x.primitive11';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'primitive11';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'boolean';
     if (fieldName in classJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, 'boolean');
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
       const datatype: BooleanType | undefined = parseBooleanType(dtJson, dtSiblingJson);
       if (datatype === undefined) {
         missingReqdProperties.push(sourceField);
@@ -585,14 +596,15 @@ export class TestDataModelPrimitiveComponent extends BackboneElement {
       missingReqdProperties.push(sourceField);
     }
 
-    sourceField = 'TestDataModel.backbonePrimitive0x.primitive1x';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'primitive1x';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
     if (fieldName in classJsonObj) {
       const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(
         classJsonObj,
         sourceField,
         fieldName,
-        'string',
+        primitiveJsonType,
       );
       dataJsonArray.forEach((dataJson: PrimitiveTypeJson, idx) => {
         const datatype: StringType | undefined = parseStringType(dataJson.dtJson, dataJson.dtSiblingJson);
@@ -606,8 +618,8 @@ export class TestDataModelPrimitiveComponent extends BackboneElement {
       missingReqdProperties.push(sourceField);
     }
 
-    sourceField = 'TestDataModel.backbonePrimitive0x.choice11[x]';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'choice11[x]';
+    sourceField = `${source}.${fieldName}`;
     const choice11: DataType | undefined = parsePolymorphicDataType(
       classJsonObj,
       sourceField,
@@ -1156,13 +1168,18 @@ export class TestDataModelComplexComponent extends BackboneElement {
     }
   }
 
-  public static parse(sourceJson: JSON.Value): TestDataModelComplexComponent | undefined {
+  public static parse(sourceJson: JSON.Value, optSourceField?: string): TestDataModelComplexComponent | undefined {
     if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
-    const classJsonObj: JSON.Object = JSON.asObject(sourceJson, `TestDataModelComplexComponent JSON`);
+    const source = isDefined<string>(optSourceField) ? optSourceField : 'TestDataModel.backboneComplex01';
+    const classJsonObj: JSON.Object = JSON.asObject(sourceJson, `${source} JSON`);
     const instance = new TestDataModelComplexComponent(null, null, null, null);
     processBackboneElementJson(instance, classJsonObj);
+
+    let fieldName: string;
+    let sourceField: string;
+    // let primitiveJsonType: 'boolean' | 'number' | 'string';
 
     const classMetadata: DecoratorMetadataObject | null = TestDataModelComplexComponent[Symbol.metadata];
     const errorMessage = `DecoratorMetadataObject does not exist for TestDataModelComplexComponent`;
@@ -1170,30 +1187,32 @@ export class TestDataModelComplexComponent extends BackboneElement {
 
     const missingReqdProperties: string[] = [];
 
-    let sourceField = 'TestDataModel.backboneComplex01.complex01';
-    let fieldName = extractFieldName(sourceField);
+    fieldName = 'complex01';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
-      const datatype: HumanName | undefined = parseHumanName(classJsonObj[fieldName], sourceField);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const datatype: HumanName | undefined = HumanName.parse(classJsonObj[fieldName]!, sourceField);
       instance.setComplex01(datatype);
     }
 
-    sourceField = 'TestDataModel.backboneComplex01.complex0x';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'complex0x';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
-        const datatype: Address | undefined = parseAddress(dataElementJson, `${sourceField}[${String(idx)}]`);
+        const datatype: Address | undefined = Address.parse(dataElementJson, `${sourceField}[${String(idx)}]`);
         if (datatype !== undefined) {
           instance.addComplex0x(datatype);
         }
       });
     }
 
-    sourceField = 'TestDataModel.backboneComplex01.complex11';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'complex11';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
-      const datatype: Period | undefined = parsePeriod(classJsonObj[fieldName], sourceField);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const datatype: Period | undefined = Period.parse(classJsonObj[fieldName]!, sourceField);
       if (datatype === undefined) {
         missingReqdProperties.push(sourceField);
       } else {
@@ -1203,13 +1222,13 @@ export class TestDataModelComplexComponent extends BackboneElement {
       missingReqdProperties.push(sourceField);
     }
 
-    sourceField = 'TestDataModel.backboneComplex01.complex1x';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'complex1x';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
-        const datatype: Attachment | undefined = parseAttachment(dataElementJson, `${sourceField}[${String(idx)}]`);
+        const datatype: Attachment | undefined = Attachment.parse(dataElementJson, `${sourceField}[${String(idx)}]`);
         if (datatype === undefined) {
           missingReqdProperties.push(`${sourceField}[${String(idx)}]`);
         } else {
@@ -1220,8 +1239,8 @@ export class TestDataModelComplexComponent extends BackboneElement {
       missingReqdProperties.push(sourceField);
     }
 
-    sourceField = 'TestDataModel.backboneComplex01.open11[x]';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'open11[x]';
+    sourceField = `${source}.${fieldName}`;
     const open11: DataType | undefined = parseOpenDataType(classJsonObj, sourceField, fieldName, classMetadata);
     if (open11 === undefined) {
       missingReqdProperties.push(sourceField);
@@ -1229,12 +1248,13 @@ export class TestDataModelComplexComponent extends BackboneElement {
       instance.setOpen11(open11);
     }
 
-    sourceField = 'TestDataModel.backboneComplex01.backboneReference11';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'backboneReference11';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
       const datatype: TestDataModelReferenceComponent | undefined = TestDataModelReferenceComponent.parse(
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         classJsonObj[fieldName]!,
+        sourceField,
       );
       if (datatype === undefined) {
         missingReqdProperties.push(sourceField);
@@ -1639,40 +1659,49 @@ export class TestDataModelReferenceComponent extends BackboneElement {
     }
   }
 
-  public static parse(sourceJson: JSON.Value): TestDataModelReferenceComponent | undefined {
+  public static parse(sourceJson: JSON.Value, optSourceField?: string): TestDataModelReferenceComponent | undefined {
     if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
-    const classJsonObj: JSON.Object = JSON.asObject(sourceJson, `TestDataModelReferenceComponent JSON`);
+    const source = isDefined<string>(optSourceField)
+      ? optSourceField
+      : 'TestDataModel.backboneComplex01.backboneReference11';
+    const classJsonObj: JSON.Object = JSON.asObject(sourceJson, `${source} JSON`);
     const instance = new TestDataModelReferenceComponent(null, null, null);
     processBackboneElementJson(instance, classJsonObj);
 
+    let fieldName: string;
+    let sourceField: string;
+    // let primitiveJsonType: 'boolean' | 'number' | 'string';
+
     const missingReqdProperties: string[] = [];
 
-    let sourceField = 'TestDataModel.backboneComplex01.backboneReference11.reference01';
-    let fieldName = extractFieldName(sourceField);
+    fieldName = 'reference01';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
-      const datatype: Reference | undefined = parseReference(classJsonObj[fieldName], sourceField);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const datatype: Reference | undefined = Reference.parse(classJsonObj[fieldName]!, sourceField);
       instance.setReference01(datatype);
     }
 
-    sourceField = 'TestDataModel.backboneComplex01.backboneReference11.reference0x';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'reference0x';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
-        const datatype: Reference | undefined = parseReference(dataElementJson, `${sourceField}[${String(idx)}]`);
+        const datatype: Reference | undefined = Reference.parse(dataElementJson, `${sourceField}[${String(idx)}]`);
         if (datatype !== undefined) {
           instance.addReference0x(datatype);
         }
       });
     }
 
-    sourceField = 'TestDataModel.backboneComplex01.backboneReference11.reference11';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'reference11';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
-      const datatype: Reference | undefined = parseReference(classJsonObj[fieldName], sourceField);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const datatype: Reference | undefined = Reference.parse(classJsonObj[fieldName]!, sourceField);
       if (datatype === undefined) {
         missingReqdProperties.push(sourceField);
       } else {
@@ -1682,13 +1711,13 @@ export class TestDataModelReferenceComponent extends BackboneElement {
       missingReqdProperties.push(sourceField);
     }
 
-    sourceField = 'TestDataModel.backboneComplex01.backboneReference11.reference1x';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'reference1x';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
-        const datatype: Reference | undefined = parseReference(dataElementJson, `${sourceField}[${String(idx)}]`);
+        const datatype: Reference | undefined = Reference.parse(dataElementJson, `${sourceField}[${String(idx)}]`);
         if (datatype === undefined) {
           missingReqdProperties.push(`${sourceField}[${String(idx)}]`);
         } else {
@@ -1699,14 +1728,16 @@ export class TestDataModelReferenceComponent extends BackboneElement {
       missingReqdProperties.push(sourceField);
     }
 
-    sourceField = 'TestDataModel.backboneComplex01.backboneReference11.backboneEnumCode1x';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'backboneEnumCode1x';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const componentJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
-      componentJsonArray.forEach((componentJson: JSON.Value) => {
-        const component: TestDataModelEnumCodeComponent | undefined =
-          TestDataModelEnumCodeComponent.parse(componentJson);
+      componentJsonArray.forEach((componentJson: JSON.Value, idx) => {
+        const component: TestDataModelEnumCodeComponent | undefined = TestDataModelEnumCodeComponent.parse(
+          componentJson,
+          `${sourceField}[${String(idx)}]`,
+        );
         if (component === undefined) {
           missingReqdProperties.push(sourceField);
         } else {
@@ -2118,32 +2149,41 @@ export class TestDataModelEnumCodeComponent extends BackboneElement {
     );
   }
 
-  public static parse(sourceJson: JSON.Value): TestDataModelEnumCodeComponent | undefined {
+  public static parse(sourceJson: JSON.Value, optSourceField?: string): TestDataModelEnumCodeComponent | undefined {
     if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
-    const classJsonObj: JSON.Object = JSON.asObject(sourceJson, `TestDataModelEnumCodeComponent JSON`);
+    const source = isDefined<string>(optSourceField)
+      ? optSourceField
+      : 'TestDataModel.backboneComplex01.backboneReference11.backboneEnumCode1x';
+    const classJsonObj: JSON.Object = JSON.asObject(sourceJson, `${source} JSON`);
     const instance = new TestDataModelEnumCodeComponent(null, null);
     processBackboneElementJson(instance, classJsonObj);
 
+    let fieldName: string;
+    let sourceField: string;
+    let primitiveJsonType: 'boolean' | 'number' | 'string';
+
     const missingReqdProperties: string[] = [];
 
-    let sourceField = 'TestDataModel.backboneComplex01.backboneReference11.backboneEnumCode1x.enumCode01';
-    let fieldName = extractFieldName(sourceField);
+    fieldName = 'enumCode01';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
     if (fieldName in classJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, 'string');
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
       const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
       instance.setEnumCode01Element(datatype);
     }
 
-    sourceField = 'TestDataModel.backboneComplex01.backboneReference11.backboneEnumCode1x.enumCode0x';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'enumCode0x';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
     if (fieldName in classJsonObj) {
       const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(
         classJsonObj,
         sourceField,
         fieldName,
-        'string',
+        primitiveJsonType,
       );
       dataJsonArray.forEach((dataJson: PrimitiveTypeJson) => {
         const datatype: CodeType | undefined = parseCodeType(dataJson.dtJson, dataJson.dtSiblingJson);
@@ -2153,10 +2193,11 @@ export class TestDataModelEnumCodeComponent extends BackboneElement {
       });
     }
 
-    sourceField = 'TestDataModel.backboneComplex01.backboneReference11.backboneEnumCode1x.enumCode11';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'enumCode11';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
     if (fieldName in classJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, 'string');
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
       const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
       if (datatype === undefined) {
         missingReqdProperties.push(sourceField);
@@ -2167,14 +2208,15 @@ export class TestDataModelEnumCodeComponent extends BackboneElement {
       missingReqdProperties.push(sourceField);
     }
 
-    sourceField = 'TestDataModel.backboneComplex01.backboneReference11.backboneEnumCode1x.enumCode1x';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'enumCode1x';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
     if (fieldName in classJsonObj) {
       const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(
         classJsonObj,
         sourceField,
         fieldName,
-        'string',
+        primitiveJsonType,
       );
       dataJsonArray.forEach((dataJson: PrimitiveTypeJson, idx) => {
         const datatype: CodeType | undefined = parseCodeType(dataJson.dtJson, dataJson.dtSiblingJson);
@@ -2188,14 +2230,16 @@ export class TestDataModelEnumCodeComponent extends BackboneElement {
       missingReqdProperties.push(sourceField);
     }
 
-    sourceField = 'TestDataModel.backboneComplex01.backboneReference11.backboneEnumCode1x.backbonePrimitive0x';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'backbonePrimitive0x';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const componentJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
-      componentJsonArray.forEach((componentJson: JSON.Value) => {
-        const component: TestDataModelPrimitiveComponent | undefined =
-          TestDataModelPrimitiveComponent.parse(componentJson);
+      componentJsonArray.forEach((componentJson: JSON.Value, idx) => {
+        const component: TestDataModelPrimitiveComponent | undefined = TestDataModelPrimitiveComponent.parse(
+          componentJson,
+          `${sourceField}[${String(idx)}]`,
+        );
         if (component !== undefined) {
           instance.addBackbonePrimitive0x(component);
         }

@@ -22,9 +22,9 @@
  */
 
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
+import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { isDefined } from '@src/fhir-core/utility/type-guards';
 import { fhirInteger64, fhirInteger64Schema, parseFhirPrimitiveData } from './primitive-types';
-import * as JSON from '@src/fhir-core/utility/json-helpers';
 
 /**
  * Integer64 Class

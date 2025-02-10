@@ -21,10 +21,6 @@
  *
  */
 
-import { strict as assert } from 'node:assert';
-import { IBase } from '@src/fhir-core/base-models/IBase';
-import { assertFhirResourceType, Resource, setFhirResourceListJson } from '@src/fhir-core/base-models/Resource';
-import { Narrative } from '@src/fhir-core/data-types/complex/Narrative';
 import {
   Extension,
   IBaseExtension,
@@ -32,10 +28,14 @@ import {
   setFhirComplexJson,
   setFhirExtensionJson,
 } from '@src/fhir-core/base-models/core-fhir-models';
+import { IBase } from '@src/fhir-core/base-models/IBase';
+import { assertFhirResourceType, Resource, setFhirResourceListJson } from '@src/fhir-core/base-models/Resource';
+import { Narrative } from '@src/fhir-core/data-types/complex/Narrative';
 import { fhirUri } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { copyListValues, isElementEmpty, validateUrl } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirType, assertFhirTypeList, isDefined, isDefinedList } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
+import { assertFhirType, assertFhirTypeList, isDefined, isDefinedList } from '@src/fhir-core/utility/type-guards';
+import { strict as assert } from 'node:assert';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 

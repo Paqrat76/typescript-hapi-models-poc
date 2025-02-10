@@ -21,19 +21,23 @@
  *
  */
 
-import { DateTime } from 'luxon';
-import { IBase } from '@src/fhir-core/base-models/IBase';
 import { DataType, setFhirPrimitiveJson } from '@src/fhir-core/base-models/core-fhir-models';
+import { IBase } from '@src/fhir-core/base-models/IBase';
+import { INSTANCE_EMPTY_ERROR_MSG } from '@src/fhir-core/constants';
 import { DateTimeType } from '@src/fhir-core/data-types/primitive/DateTimeType';
 import {
   fhirDateTime,
   fhirDateTimeSchema,
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { FhirError } from '@src/fhir-core/errors/FhirError';
+import { isEmpty } from '@src/fhir-core/utility/common-util';
+import { getPrimitiveTypeJson, parseDateTimeType, processElementJson } from '@src/fhir-core/utility/fhir-parsers';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { assertFhirType, isDefined } from '@src/fhir-core/utility/type-guards';
-import { FhirError } from '@src/fhir-core/errors/FhirError';
+import { DateTime } from 'luxon';
+import { strict as assert } from 'node:assert';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -59,6 +63,58 @@ export class Period extends DataType implements IBase {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor() {
     super();
+  }
+
+  /**
+   * Parse the provided `Period` json to instantiate the Period data model.
+   *
+   * @param sourceJson - JSON representing FHIR `Period`
+   * @param optSourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Period
+   * @returns Period data model or undefined for `Period`
+   */
+  public static parse(sourceJson: JSON.Value, optSourceField?: string): Period | undefined {
+    if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
+      return undefined;
+    }
+    const source = isDefined<string>(optSourceField) ? optSourceField : 'Period';
+    const datatypeJsonObj: JSON.Object = JSON.asObject(sourceJson, `${source} JSON`);
+    const instance = new Period();
+    processElementJson(instance, datatypeJsonObj);
+
+    let fieldName: string;
+    let sourceField: string;
+    let primitiveJsonType: 'boolean' | 'number' | 'string';
+
+    fieldName = 'start';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: DateTimeType | undefined = parseDateTimeType(dtJson, dtSiblingJson);
+      instance.setStartElement(datatype);
+    }
+
+    fieldName = 'end';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: DateTimeType | undefined = parseDateTimeType(dtJson, dtSiblingJson);
+      instance.setEndElement(datatype);
+    }
+
+    assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
+    return instance;
   }
 
   /**

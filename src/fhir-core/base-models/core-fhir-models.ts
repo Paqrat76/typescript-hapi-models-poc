@@ -40,10 +40,8 @@
  * @module
  */
 
-import { strict as assert } from 'node:assert';
-import { Base } from './Base';
-import { IBase } from './IBase';
 import { REQUIRED_PROPERTIES_DO_NOT_EXIST } from '@src/fhir-core/constants';
+import { OPEN_DATA_TYPES } from '@src/fhir-core/data-types/FhirDataType';
 import {
   fhirString,
   fhirStringSchema,
@@ -51,9 +49,11 @@ import {
   fhirUriSchema,
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { OPEN_DATA_TYPES } from '@src/fhir-core/data-types/FhirDataType';
+import { FhirError } from '@src/fhir-core/errors/FhirError';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { isEmpty, upperFirst } from '@src/fhir-core/utility/common-util';
 import { copyListValues, isElementEmpty, validateUrl } from '@src/fhir-core/utility/fhir-util';
+import * as JSON from '@src/fhir-core/utility/json-helpers';
 import {
   assertFhirType,
   assertFhirTypeList,
@@ -61,9 +61,9 @@ import {
   isDefined,
   isDefinedList,
 } from '@src/fhir-core/utility/type-guards';
-import * as JSON from '@src/fhir-core/utility/json-helpers';
-import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
-import { FhirError } from '@src/fhir-core/errors/FhirError';
+import { strict as assert } from 'node:assert';
+import { Base } from './Base';
+import { IBase } from './IBase';
 
 //region Core Models
 

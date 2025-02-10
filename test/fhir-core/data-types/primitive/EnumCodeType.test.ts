@@ -21,12 +21,12 @@
  *
  */
 
+import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 //import { EnumCodeType } from '@src/fhir-core/data-types/primitive/EnumCodeType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
-import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
-import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { MockCodeEnum } from '../../../test-utils';
 
 describe('EnumCodeType', () => {

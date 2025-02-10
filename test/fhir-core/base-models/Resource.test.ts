@@ -24,11 +24,11 @@
 import { Base } from '@src/fhir-core/base-models/Base';
 import { Resource } from '@src/fhir-core/base-models/Resource';
 import { Meta } from '@src/fhir-core/data-types/complex/Meta';
+import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
-import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { MockTask } from '../../test-utils';
 
 describe('Resource', () => {

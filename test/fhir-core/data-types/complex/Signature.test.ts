@@ -21,18 +21,18 @@
  *
  */
 
-import { AssertionError } from 'node:assert';
-import { Signature } from '@src/fhir-core/data-types/complex/Signature';
 import { DataType, Extension } from '@src/fhir-core/base-models/core-fhir-models';
+import { Coding } from '@src/fhir-core/data-types/complex/Coding';
+import { Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
+import { Signature } from '@src/fhir-core/data-types/complex/Signature';
 import { Base64BinaryType } from '@src/fhir-core/data-types/primitive/Base64BinaryType';
 import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
-import { Coding } from '@src/fhir-core/data-types/complex/Coding';
 import { InstantType } from '@src/fhir-core/data-types/primitive/InstantType';
-import { Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { AssertionError } from 'node:assert';
 import {
   INVALID_BASE64BINARY,
   INVALID_CODE_TYPE,
@@ -722,6 +722,158 @@ describe('Signature', () => {
   });
 
   describe('Serialization/Deserialization', () => {
+    const VALID_JSON = {
+      id: 'id1234',
+      extension: [
+        {
+          url: 'testUrl1',
+          valueString: 'base extension string value 1',
+        },
+        {
+          url: 'testUrl2',
+          valueString: 'base extension string value 2',
+        },
+      ],
+      type: [
+        {
+          system: 'urn:iso-astm:E1762-95:2013',
+          code: '1.2.840.10065.1.12.1.1',
+          display: "Author's Signature",
+        },
+      ],
+      when: '2024-02-07T13:28:00.000+04:00',
+      _when: {
+        id: 'S-1357',
+        extension: [
+          {
+            url: 'simpleUrl',
+            valueString: 'simple extension string value',
+          },
+        ],
+      },
+      who: {
+        reference: 'Practitioner/13579',
+      },
+      onBehalfOf: {
+        extension: [
+          {
+            id: 'C-2468',
+            url: 'complexUrl',
+            extension: [
+              {
+                url: 'complexChildUrl1',
+                valueString: 'complex child extension string value 1',
+              },
+              {
+                url: 'complexChildUrl2',
+                valueString: 'complex child extension string value 2',
+              },
+            ],
+          },
+        ],
+        reference: 'Organization/24680',
+      },
+      targetFormat: 'xml',
+      sigFormat: 'application/signature+xml',
+      data: 'VGhpcyBpcyBhbiBleGFtcGxlIG9mIGEgRkhJUiBTaWduYXR1cmUgZGF0YS4=',
+    };
+
+    it('should return undefined for empty json', () => {
+      let testType = Signature.parse({});
+      expect(testType).toBeUndefined();
+
+      // @ts-expect-error: allow for testing
+      testType = Signature.parse(undefined);
+      expect(testType).toBeUndefined();
+
+      testType = Signature.parse(null);
+      expect(testType).toBeUndefined();
+    });
+
+    it('should throw FhirError for missing required fields', () => {
+      const INVALID_JSON = { bogus: true };
+
+      const t = () => {
+        Signature.parse(INVALID_JSON);
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(
+        `The following required properties must be included in the provided JSON: Signature.type, Signature.when, Signature.who`,
+      );
+    });
+
+    it('should throw FhirError for missing type', () => {
+      const INVALID_JSON = { when: '2024-02-07T13:28:00.000+04:00', who: { reference: 'Practitioner/13579' } };
+
+      const t = () => {
+        Signature.parse(INVALID_JSON);
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(`The following required properties must be included in the provided JSON: Signature.type`);
+    });
+
+    it('should throw TypeError for invalid type', () => {
+      const INVALID_JSON = {
+        type: 'bogus type',
+        when: '2024-02-07T13:28:00.000+04:00',
+        who: { reference: 'Practitioner/13579' },
+      };
+
+      const t = () => {
+        Signature.parse(INVALID_JSON);
+      };
+      expect(t).toThrow(TypeError);
+      expect(t).toThrow(`Signature.type is not a JSON array.`);
+    });
+
+    it('should throw FhirError for missing when', () => {
+      const INVALID_JSON = { type: [{ code: '1.2.840.10065.1.12.1.1' }], who: { reference: 'Practitioner/13579' } };
+
+      const t = () => {
+        Signature.parse(INVALID_JSON);
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(`The following required properties must be included in the provided JSON: Signature.when`);
+    });
+
+    it('should throw PrimitiveTypeError for invalid when', () => {
+      const INVALID_JSON = {
+        type: [{ code: '1.2.840.10065.1.12.1.1' }],
+        when: 'bogus type',
+        who: { reference: 'Practitioner/13579' },
+      };
+
+      const t = () => {
+        Signature.parse(INVALID_JSON);
+      };
+      expect(t).toThrow(PrimitiveTypeError);
+      expect(t).toThrow(`Invalid value for InstantType (bogus type)`);
+    });
+
+    it('should throw FhirError for missing who', () => {
+      const INVALID_JSON = { type: [{ code: '1.2.840.10065.1.12.1.1' }], when: '2024-02-07T13:28:00.000+04:00' };
+
+      const t = () => {
+        Signature.parse(INVALID_JSON);
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(`The following required properties must be included in the provided JSON: Signature.who`);
+    });
+
+    it('should throw TypeError for invalid who', () => {
+      const INVALID_JSON = {
+        type: [{ code: '1.2.840.10065.1.12.1.1' }],
+        when: '2024-02-07T13:28:00.000+04:00',
+        who: 'Practitioner/13579',
+      };
+
+      const t = () => {
+        Signature.parse(INVALID_JSON);
+      };
+      expect(t).toThrow(TypeError);
+      expect(t).toThrow(`Signature.who JSON is not a JSON object.`);
+    });
+
     it('should throw FhirError from toJSON() when instantiated with missing required properties', () => {
       const testId = 'id1234';
       const testSignature = new Signature(null, null, null);
@@ -817,62 +969,19 @@ describe('Signature', () => {
       expect(testSignature.hasData()).toBe(true);
       expect(testSignature.getData()).toEqual(VALID_DATA);
 
-      const expectedJson = {
-        id: 'id1234',
-        extension: [
-          {
-            url: 'testUrl1',
-            valueString: 'base extension string value 1',
-          },
-          {
-            url: 'testUrl2',
-            valueString: 'base extension string value 2',
-          },
-        ],
-        type: [
-          {
-            system: 'urn:iso-astm:E1762-95:2013',
-            code: '1.2.840.10065.1.12.1.1',
-            display: "Author's Signature",
-          },
-        ],
-        when: '2024-02-07T13:28:00.000+04:00',
-        _when: {
-          id: 'S-1357',
-          extension: [
-            {
-              url: 'simpleUrl',
-              valueString: 'simple extension string value',
-            },
-          ],
-        },
-        who: {
-          reference: 'Practitioner/13579',
-        },
-        onBehalfOf: {
-          extension: [
-            {
-              id: 'C-2468',
-              url: 'complexUrl',
-              extension: [
-                {
-                  url: 'complexChildUrl1',
-                  valueString: 'complex child extension string value 1',
-                },
-                {
-                  url: 'complexChildUrl2',
-                  valueString: 'complex child extension string value 2',
-                },
-              ],
-            },
-          ],
-          reference: 'Organization/24680',
-        },
-        targetFormat: 'xml',
-        sigFormat: 'application/signature+xml',
-        data: 'VGhpcyBpcyBhbiBleGFtcGxlIG9mIGEgRkhJUiBTaWduYXR1cmUgZGF0YS4=',
-      };
-      expect(testSignature.toJSON()).toEqual(expectedJson);
+      expect(testSignature.toJSON()).toEqual(VALID_JSON);
+    });
+
+    it('should return Signature for valid json', () => {
+      const testType: Signature | undefined = Signature.parse(VALID_JSON);
+
+      expect(testType).toBeDefined();
+      expect(testType).toBeInstanceOf(Signature);
+      expect(testType?.constructor.name).toStrictEqual('Signature');
+      expect(testType?.fhirType()).toStrictEqual('Signature');
+      expect(testType?.isEmpty()).toBe(false);
+      expect(testType?.isComplexDataType()).toBe(true);
+      expect(testType?.toJSON()).toEqual(VALID_JSON);
     });
   });
 });

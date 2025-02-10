@@ -21,7 +21,6 @@
  *
  */
 
-import { DateTime } from 'luxon';
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import {
   DateTimeOpts,
@@ -34,6 +33,7 @@ import {
   getValueAsYearMonth,
 } from '@src/fhir-core/utility/date-time-util';
 import { isDefined } from '@src/fhir-core/utility/type-guards';
+import { DateTime } from 'luxon';
 import { DateTimeTypeImpl, fhirDateTime, fhirDateTimeSchema, parseFhirPrimitiveData } from './primitive-types';
 
 /**

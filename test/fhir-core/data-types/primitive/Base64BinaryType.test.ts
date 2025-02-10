@@ -21,10 +21,10 @@
  *
  */
 
+import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { Base64BinaryType } from '@src/fhir-core/data-types/primitive/Base64BinaryType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 
 describe('Base64BinaryType', () => {
   const VALID_BASE64BINARY = `dGVzdEJhc2U2NEJpbmFyeQ==`; // from "testBase64Binary"

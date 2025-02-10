@@ -21,16 +21,16 @@
  *
  */
 
-import { AssertionError } from 'node:assert';
-import { TestDataModelEnumCodeComponent, TestDataModelReferenceComponent } from '@src/test-models/TestDataModel';
 import { Base } from '@src/fhir-core/base-models/Base';
 import { BackboneElement, Element, Extension } from '@src/fhir-core/base-models/core-fhir-models';
 import { Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
 import { EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
-import { ConsentStateEnum } from '@src/test-models/code-systems/ConsentStateEnum';
-import { TaskStatusEnum } from '@src/test-models/code-systems/TaskStatusEnum';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { ConsentStateEnum } from '@src/test-models/code-systems/ConsentStateEnum';
+import { TaskStatusEnum } from '@src/test-models/code-systems/TaskStatusEnum';
+import { TestDataModelEnumCodeComponent, TestDataModelReferenceComponent } from '@src/test-models/TestDataModel';
+import { AssertionError } from 'node:assert';
 import {
   DATATYPE_EXTENSION,
   DATATYPE_ID,

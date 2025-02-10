@@ -21,10 +21,10 @@
  *
  */
 
+import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { PositiveIntType } from '@src/fhir-core/data-types/primitive/PositiveIntType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { FHIR_MAX_INTEGER } from '../../../test-utils';
 
 describe('PositiveIntType', () => {

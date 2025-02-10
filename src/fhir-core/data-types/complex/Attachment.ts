@@ -21,14 +21,12 @@
  *
  */
 
-import { IBase } from '@src/fhir-core/base-models/IBase';
 import { DataType, setFhirPrimitiveJson } from '@src/fhir-core/base-models/core-fhir-models';
+import { IBase } from '@src/fhir-core/base-models/IBase';
+import { INSTANCE_EMPTY_ERROR_MSG } from '@src/fhir-core/constants';
 import { Base64BinaryType } from '@src/fhir-core/data-types/primitive/Base64BinaryType';
 import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { DateTimeType } from '@src/fhir-core/data-types/primitive/DateTimeType';
-import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
-import { UnsignedIntType } from '@src/fhir-core/data-types/primitive/UnsignedIntType';
-import { UrlType } from '@src/fhir-core/data-types/primitive/UrlType';
 import {
   fhirBase64Binary,
   fhirBase64BinarySchema,
@@ -44,9 +42,24 @@ import {
   fhirUrlSchema,
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { UnsignedIntType } from '@src/fhir-core/data-types/primitive/UnsignedIntType';
+import { UrlType } from '@src/fhir-core/data-types/primitive/UrlType';
+import { isEmpty } from '@src/fhir-core/utility/common-util';
+import {
+  getPrimitiveTypeJson,
+  parseBase64BinaryType,
+  parseCodeType,
+  parseDateTimeType,
+  parseStringType,
+  parseUnsignedIntType,
+  parseUrlType,
+  processElementJson,
+} from '@src/fhir-core/utility/fhir-parsers';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirType, isDefined } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
+import { assertFhirType, isDefined } from '@src/fhir-core/utility/type-guards';
+import { strict as assert } from 'node:assert';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -73,6 +86,142 @@ export class Attachment extends DataType implements IBase {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor() {
     super();
+  }
+
+  /**
+   * Parse the provided `Attachment` json to instantiate the Attachment data model.
+   *
+   * @param sourceJson - JSON representing FHIR `Attachment`
+   * @param optSourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Attachment
+   * @returns Attachment data model or undefined for `Attachment`
+   */
+  public static parse(sourceJson: JSON.Value, optSourceField?: string): Attachment | undefined {
+    if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
+      return undefined;
+    }
+    const source = isDefined<string>(optSourceField) ? optSourceField : 'Attachment';
+    const datatypeJsonObj: JSON.Object = JSON.asObject(sourceJson, `${source} JSON`);
+    const instance = new Attachment();
+    processElementJson(instance, datatypeJsonObj);
+
+    let fieldName: string;
+    let sourceField: string;
+    let primitiveJsonType: 'boolean' | 'number' | 'string';
+
+    fieldName = 'contentType';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
+      instance.setContentTypeElement(datatype);
+    }
+
+    fieldName = 'language';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
+      instance.setLanguageElement(datatype);
+    }
+
+    fieldName = 'data';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: Base64BinaryType | undefined = parseBase64BinaryType(dtJson, dtSiblingJson);
+      instance.setDataElement(datatype);
+    }
+
+    fieldName = 'url';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: UrlType | undefined = parseUrlType(dtJson, dtSiblingJson);
+      instance.setUrlElement(datatype);
+    }
+
+    fieldName = 'size';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'number';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: UnsignedIntType | undefined = parseUnsignedIntType(dtJson, dtSiblingJson);
+      instance.setSizeElement(datatype);
+    }
+
+    fieldName = 'hash';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: Base64BinaryType | undefined = parseBase64BinaryType(dtJson, dtSiblingJson);
+      instance.setHashElement(datatype);
+    }
+
+    fieldName = 'title';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
+      instance.setTitleElement(datatype);
+    }
+
+    fieldName = 'creation';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: DateTimeType | undefined = parseDateTimeType(dtJson, dtSiblingJson);
+      instance.setCreationElement(datatype);
+    }
+
+    assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
+    return instance;
   }
 
   /**

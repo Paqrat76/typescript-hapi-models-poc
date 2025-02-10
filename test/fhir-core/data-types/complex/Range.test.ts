@@ -22,8 +22,8 @@
  */
 
 import { DataType, Extension } from '@src/fhir-core/base-models/core-fhir-models';
+import { SimpleQuantity } from '@src/fhir-core/data-types/complex/Quantity-variations';
 import { Range } from '@src/fhir-core/data-types/complex/Range';
-import { SimpleQuantity } from '@src/fhir-core/data-types/complex/SimpleQuantity';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { INVALID_NON_STRING_TYPE, UNDEFINED_VALUE } from '../../../test-utils';
@@ -269,6 +269,59 @@ describe('Range', () => {
   });
 
   describe('Serialization/Deserialization', () => {
+    const VALID_JSON = {
+      id: 'id1234',
+      extension: [
+        {
+          url: 'testUrl1',
+          valueString: 'base extension string value 1',
+        },
+        {
+          url: 'testUrl2',
+          valueString: 'base extension string value 2',
+        },
+      ],
+      low: {
+        id: 'L1357',
+        extension: [
+          {
+            url: 'lowUrl',
+            valueString: 'low extension string value',
+          },
+        ],
+        value: 13.579,
+        unit: 'This is a valid string.',
+        system: 'testUriType',
+        code: 'testCodeType',
+      },
+      high: {
+        value: 24.68,
+        unit: 'This is another valid string!',
+        system: 'testUriType2',
+        code: 'testCodeType2',
+      },
+    };
+
+    it('should return undefined for empty json', () => {
+      let testType = Range.parse({});
+      expect(testType).toBeUndefined();
+
+      // @ts-expect-error: allow for testing
+      testType = Range.parse(undefined);
+      expect(testType).toBeUndefined();
+
+      testType = Range.parse(null);
+      expect(testType).toBeUndefined();
+    });
+
+    it('should throw TypeError for invalid json type', () => {
+      const t = () => {
+        Range.parse('NOT AN OBJECT');
+      };
+      expect(t).toThrow(TypeError);
+      expect(t).toThrow(`Range JSON is not a JSON object.`);
+    });
+
     it('should properly create serialized content', () => {
       const lowType = new SimpleQuantity();
       lowType.setValue(VALID_DECIMAL);
@@ -312,39 +365,19 @@ describe('Range', () => {
       expect(testRange.hasHigh()).toBe(true);
       expect(testRange.getHigh()).toEqual(SIMPLE_QUANTITY_2);
 
-      const expectedJson = {
-        id: 'id1234',
-        extension: [
-          {
-            url: 'testUrl1',
-            valueString: 'base extension string value 1',
-          },
-          {
-            url: 'testUrl2',
-            valueString: 'base extension string value 2',
-          },
-        ],
-        low: {
-          id: 'L1357',
-          extension: [
-            {
-              url: 'lowUrl',
-              valueString: 'low extension string value',
-            },
-          ],
-          value: 13.579,
-          unit: 'This is a valid string.',
-          system: 'testUriType',
-          code: 'testCodeType',
-        },
-        high: {
-          value: 24.68,
-          unit: 'This is another valid string!',
-          system: 'testUriType2',
-          code: 'testCodeType2',
-        },
-      };
-      expect(testRange.toJSON()).toEqual(expectedJson);
+      expect(testRange.toJSON()).toEqual(VALID_JSON);
+    });
+
+    it('should return Range for valid json', () => {
+      const testType: Range | undefined = Range.parse(VALID_JSON);
+
+      expect(testType).toBeDefined();
+      expect(testType).toBeInstanceOf(Range);
+      expect(testType?.constructor.name).toStrictEqual('Range');
+      expect(testType?.fhirType()).toStrictEqual('Range');
+      expect(testType?.isEmpty()).toBe(false);
+      expect(testType?.isComplexDataType()).toBe(true);
+      expect(testType?.toJSON()).toEqual(VALID_JSON);
     });
   });
 });

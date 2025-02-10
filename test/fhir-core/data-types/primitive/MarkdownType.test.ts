@@ -21,11 +21,11 @@
  *
  */
 
+import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { MarkdownType } from '@src/fhir-core/data-types/primitive/MarkdownType';
+import { fhirMarkdown } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
-import { fhirMarkdown } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { TOO_BIG_STRING } from '../../../test-utils';
 
 describe('MarkdownType', () => {

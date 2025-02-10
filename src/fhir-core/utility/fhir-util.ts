@@ -27,12 +27,12 @@
  * @module
  */
 
-import { strict as assert } from 'node:assert';
 import { Base } from '@src/fhir-core/base-models/Base';
 import { IBase } from '@src/fhir-core/base-models/IBase';
-import { isEmpty, isNonBlank } from '@src/fhir-core/utility/common-util';
 import { fhirUriSchema } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { isEmpty, isNonBlank } from '@src/fhir-core/utility/common-util';
 import { assertIsDefined, assertIsString, isDefined, isDefinedList } from '@src/fhir-core/utility/type-guards';
+import { strict as assert } from 'node:assert';
 
 /**
  * Determine if all the provided elements are empty

@@ -21,32 +21,31 @@
  *
  */
 
-import { AssertionError } from 'node:assert';
-import { Group, GroupCharacteristicComponent, GroupMemberComponent } from '@src/fhir-models/Group';
-import { PractitionerRole } from '@src/fhir-models/PractitionerRole';
-import { Extension } from '@src/fhir-core/base-models/core-fhir-models';
 import { Base } from '@src/fhir-core/base-models/Base';
-import { Resource } from '@src/fhir-core/base-models/Resource';
+import { Extension } from '@src/fhir-core/base-models/core-fhir-models';
 import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
-import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
+import { Resource } from '@src/fhir-core/base-models/Resource';
 import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
-import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
-import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
 import { Meta } from '@src/fhir-core/data-types/complex/Meta';
 import { Narrative } from '@src/fhir-core/data-types/complex/Narrative';
 import { Period } from '@src/fhir-core/data-types/complex/Period';
-import { Quantity } from '@src/fhir-core/data-types/complex/Quantity';
+import { Quantity, SimpleQuantity } from '@src/fhir-core/data-types/complex/Quantity-variations';
 import { Range } from '@src/fhir-core/data-types/complex/Range';
 import { Identifier, Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
-import { SimpleQuantity } from '@src/fhir-core/data-types/complex/SimpleQuantity';
+import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
+import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UnsignedIntType } from '@src/fhir-core/data-types/primitive/UnsignedIntType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
-import { GroupTypeEnum } from '@src/fhir-models/code-systems/GroupTypeEnum';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { GroupTypeEnum } from '@src/fhir-models/code-systems/GroupTypeEnum';
+import { Group, GroupCharacteristicComponent, GroupMemberComponent } from '@src/fhir-models/Group';
+import { PractitionerRole } from '@src/fhir-models/PractitionerRole';
+import { AssertionError } from 'node:assert';
 import {
   DATATYPE_EXTENSION,
   DATATYPE_ID,

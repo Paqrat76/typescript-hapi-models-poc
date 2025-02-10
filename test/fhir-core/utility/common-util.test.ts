@@ -21,10 +21,10 @@
  *
  */
 
-import { AssertionError } from 'node:assert';
-import { isBlank, isEmpty, isNonBlank, lowerFirst, upperFirst } from '@src/fhir-core/utility/common-util';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { isBlank, isEmpty, isNonBlank, lowerFirst, upperFirst } from '@src/fhir-core/utility/common-util';
+import { AssertionError } from 'node:assert';
 
 describe('common-util', () => {
   const TEST_UNDEFINED = undefined;

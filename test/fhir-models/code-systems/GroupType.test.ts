@@ -21,9 +21,9 @@
  *
  */
 
-import { GroupTypeEnum } from '@src/fhir-models/code-systems/GroupTypeEnum';
 import { FhirCodeDefinition } from '@src/fhir-core/base-models/core-fhir-codes';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
+import { GroupTypeEnum } from '@src/fhir-models/code-systems/GroupTypeEnum';
 
 describe('GroupTypeEnum', () => {
   const INVALID_CODE = ' invalid CodeType ';

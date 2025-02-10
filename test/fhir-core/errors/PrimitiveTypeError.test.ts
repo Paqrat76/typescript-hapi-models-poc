@@ -21,8 +21,8 @@
  *
  */
 
-import z, { ZodError, ZodIssue, ZodIssueCode } from 'zod';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import z, { ZodError, ZodIssue, ZodIssueCode } from 'zod';
 
 describe('PrimitiveTypeError', () => {
   it(`should be properly instantiated`, () => {

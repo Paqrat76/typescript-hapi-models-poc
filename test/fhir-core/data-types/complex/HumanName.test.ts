@@ -22,12 +22,12 @@
  */
 
 import { DataType, Extension } from '@src/fhir-core/base-models/core-fhir-models';
-import { HumanName } from '@src/fhir-core/data-types/complex/HumanName';
 import { NameUseEnum } from '@src/fhir-core/data-types/code-systems/NameUseEnum';
-import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
-import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { HumanName } from '@src/fhir-core/data-types/complex/HumanName';
 import { Period } from '@src/fhir-core/data-types/complex/Period';
+import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { fhirString } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
@@ -913,6 +913,59 @@ describe('HumanName', () => {
   });
 
   describe('Serialization/Deserialization', () => {
+    const VALID_JSON = {
+      id: 'id1234',
+      extension: [
+        {
+          url: 'testUrl1',
+          valueString: 'base extension string value 1',
+        },
+        {
+          url: 'testUrl2',
+          valueString: 'base extension string value 2',
+        },
+      ],
+      use: 'usual',
+      text: 'This is a valid string.',
+      _text: {
+        id: 'T1357',
+        extension: [
+          {
+            url: 'textUrl',
+            valueString: 'text extension string value',
+          },
+        ],
+      },
+      family: 'Surname',
+      given: ['First', 'Middle'],
+      prefix: ['Mr.'],
+      suffix: ['Sr.'],
+      period: {
+        start: '2017-01-01T00:00:00.000Z',
+        end: '2017-01-01T01:00:00.000Z',
+      },
+    };
+
+    it('should return undefined for empty json', () => {
+      let testType = HumanName.parse({});
+      expect(testType).toBeUndefined();
+
+      // @ts-expect-error: allow for testing
+      testType = HumanName.parse(undefined);
+      expect(testType).toBeUndefined();
+
+      testType = HumanName.parse(null);
+      expect(testType).toBeUndefined();
+    });
+
+    it('should throw TypeError for invalid json type', () => {
+      const t = () => {
+        HumanName.parse('NOT AN OBJECT');
+      };
+      expect(t).toThrow(TypeError);
+      expect(t).toThrow(`HumanName JSON is not a JSON object.`);
+    });
+
     it('should properly create serialized content', () => {
       const textType = new StringType(VALID_STRING);
       const textId = 'T1357';
@@ -982,39 +1035,19 @@ describe('HumanName', () => {
       expect(testHumanName.hasSuffix()).toBe(true);
       expect(testHumanName.getSuffix()).toStrictEqual([VALID_SUFFIX]);
 
-      const expectedJson = {
-        id: 'id1234',
-        extension: [
-          {
-            url: 'testUrl1',
-            valueString: 'base extension string value 1',
-          },
-          {
-            url: 'testUrl2',
-            valueString: 'base extension string value 2',
-          },
-        ],
-        use: 'usual',
-        text: 'This is a valid string.',
-        _text: {
-          id: 'T1357',
-          extension: [
-            {
-              url: 'textUrl',
-              valueString: 'text extension string value',
-            },
-          ],
-        },
-        family: 'Surname',
-        given: ['First', 'Middle'],
-        prefix: ['Mr.'],
-        suffix: ['Sr.'],
-        period: {
-          start: '2017-01-01T00:00:00.000Z',
-          end: '2017-01-01T01:00:00.000Z',
-        },
-      };
-      expect(testHumanName.toJSON()).toEqual(expectedJson);
+      expect(testHumanName.toJSON()).toEqual(VALID_JSON);
+    });
+
+    it('should return HumanName for valid json', () => {
+      const testType: HumanName | undefined = HumanName.parse(VALID_JSON);
+
+      expect(testType).toBeDefined();
+      expect(testType).toBeInstanceOf(HumanName);
+      expect(testType?.constructor.name).toStrictEqual('HumanName');
+      expect(testType?.fhirType()).toStrictEqual('HumanName');
+      expect(testType?.isEmpty()).toBe(false);
+      expect(testType?.isComplexDataType()).toBe(true);
+      expect(testType?.toJSON()).toEqual(VALID_JSON);
     });
   });
 });

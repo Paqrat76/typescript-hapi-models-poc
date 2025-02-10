@@ -23,10 +23,11 @@
   // Only copy the internal code block!
   public static parse(sourceJson: JSON.Object): XxxxPrimitiveType | undefined {
 
-    sourceField = 'XxxxParentClassElement.xxxxFieldName';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'xxxxFieldName';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'xxxxJsonType';
     if (fieldName in classJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, 'xxxxJsonType');
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
       const datatype: XxxxPrimitiveType | undefined = parseXxxxPrimitiveType(dtJson, dtSiblingJson);
       instance.setXxxxFieldNameElement(datatype);
     }
@@ -139,10 +140,11 @@
     // Add following near top of method ONLY IF it does not already exist
     const missingReqdProperties: string[] = [];
 
-    sourceField = 'XxxxParentClassElement.xxxxFieldName';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'xxxxFieldName';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'xxxxJsonType';
     if (fieldName in classJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, 'xxxxJsonType');
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
       const datatype: XxxxPrimitiveType | undefined = parseXxxxPrimitiveType(dtJson, dtSiblingJson);
       if (datatype === undefined) {
         missingReqdProperties.push(sourceField);
@@ -263,14 +265,15 @@
   // Only copy the internal code block!
   public static parse(sourceJson: JSON.Object): XxxxPrimitiveType | undefined {
 
-    sourceField = 'XxxxParentClassElement.xxxxFieldName';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'xxxxFieldName';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'xxxxJsonType';
     if (fieldName in classJsonObj) {
       const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(
         classJsonObj,
         sourceField,
         fieldName,
-        'xxxxJsonType',
+        primitiveJsonType,
       );
       dataJsonArray.forEach((dataJson: PrimitiveTypeJson) => {
         const datatype: XxxxPrimitiveType | undefined = parseXxxxPrimitiveType(dataJson.dtJson, dataJson.dtSiblingJson);
@@ -442,14 +445,15 @@
     // Add following near top of method ONLY IF it does not already exist
     const missingReqdProperties: string[] = [];
 
-    sourceField = 'XxxxParentClassElement.xxxxFieldName';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'xxxxFieldName';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'xxxxJsonType';
     if (fieldName in classJsonObj) {
       const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(
         classJsonObj,
         sourceField,
         fieldName,
-        'xxxxJsonType',
+        primitiveJsonType,
       );
       dataJsonArray.forEach((dataJson: PrimitiveTypeJson, idx) => {
         const datatype: XxxxPrimitiveType | undefined = parseXxxxPrimitiveType(dataJson.dtJson, dataJson.dtSiblingJson);

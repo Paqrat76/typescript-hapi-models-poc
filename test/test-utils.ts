@@ -21,17 +21,7 @@
  *
  */
 
-import { FHIR_MAX_STRING_LENGTH, fhirCode, fhirString } from '../src/fhir-core/data-types/primitive/primitive-types';
 import { Base } from '../src/fhir-core/base-models/Base';
-import { Resource } from '../src/fhir-core/base-models/Resource';
-import { DomainResource } from '../src/fhir-core/base-models/DomainResource';
-import { IdType } from '../src/fhir-core/data-types/primitive/IdType';
-import { IntegerType } from '../src/fhir-core/data-types/primitive/IntegerType';
-import { Meta } from '../src/fhir-core/data-types/complex/Meta';
-import { Narrative } from '../src/fhir-core/data-types/complex/Narrative';
-import { Period } from '../src/fhir-core/data-types/complex/Period';
-import { StringType } from '../src/fhir-core/data-types/primitive/StringType';
-import { FhirResourceType } from '../src/fhir-core/base-models/FhirResourceType';
 import { FhirCodeDefinition, IFhirCodeDefinition, IFhirCodeEnum } from '../src/fhir-core/base-models/core-fhir-codes';
 import {
   BackboneElement,
@@ -42,9 +32,19 @@ import {
   setFhirComplexJson,
   setFhirPrimitiveJson,
 } from '../src/fhir-core/base-models/core-fhir-models';
+import { DomainResource } from '../src/fhir-core/base-models/DomainResource';
+import { FhirResourceType } from '../src/fhir-core/base-models/FhirResourceType';
+import { Resource } from '../src/fhir-core/base-models/Resource';
+import { Meta } from '../src/fhir-core/data-types/complex/Meta';
+import { Narrative } from '../src/fhir-core/data-types/complex/Narrative';
+import { Period } from '../src/fhir-core/data-types/complex/Period';
+import { IdType } from '../src/fhir-core/data-types/primitive/IdType';
+import { IntegerType } from '../src/fhir-core/data-types/primitive/IntegerType';
+import { FHIR_MAX_STRING_LENGTH, fhirCode, fhirString } from '../src/fhir-core/data-types/primitive/primitive-types';
+import { StringType } from '../src/fhir-core/data-types/primitive/StringType';
+import { InvalidCodeError } from '../src/fhir-core/errors/InvalidCodeError';
 import { isEmpty as _isEmpty } from '../src/fhir-core/utility/common-util';
 import * as JSON from '../src/fhir-core/utility/json-helpers';
-import { InvalidCodeError } from '../src/fhir-core/errors/InvalidCodeError';
 
 export {
   FHIR_MIN_INTEGER,

@@ -21,7 +21,31 @@
  *
  */
 
-import { AssertionError } from 'node:assert';
+import { Base } from '@src/fhir-core/base-models/Base';
+import { Extension } from '@src/fhir-core/base-models/core-fhir-models';
+import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
+import { Resource } from '@src/fhir-core/base-models/Resource';
+import { Address } from '@src/fhir-core/data-types/complex/Address';
+import { Attachment } from '@src/fhir-core/data-types/complex/Attachment';
+import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
+import { Coding } from '@src/fhir-core/data-types/complex/Coding';
+import { ContactPoint } from '@src/fhir-core/data-types/complex/ContactPoint';
+import { HumanName } from '@src/fhir-core/data-types/complex/HumanName';
+import { Meta } from '@src/fhir-core/data-types/complex/Meta';
+import { Narrative } from '@src/fhir-core/data-types/complex/Narrative';
+import { Period } from '@src/fhir-core/data-types/complex/Period';
+import { Identifier, Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
+import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
+import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { DateTimeType } from '@src/fhir-core/data-types/primitive/DateTimeType';
+import { DateType } from '@src/fhir-core/data-types/primitive/DateType';
+import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
+import { IntegerType } from '@src/fhir-core/data-types/primitive/IntegerType';
+import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
+import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { AdministrativeGenderEnum } from '@src/fhir-models/code-systems/AdministrativeGenderEnum';
 import {
   Patient,
   PatientCommunicationComponent,
@@ -29,31 +53,7 @@ import {
   PatientLinkComponent,
 } from '@src/fhir-models/Patient';
 import { PractitionerRole } from '@src/fhir-models/PractitionerRole';
-import { Base } from '@src/fhir-core/base-models/Base';
-import { Resource } from '@src/fhir-core/base-models/Resource';
-import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
-import { Extension } from '@src/fhir-core/base-models/core-fhir-models';
-import { AdministrativeGenderEnum } from '../../src/fhir-models/code-systems/AdministrativeGenderEnum';
-import { Address } from '@src/fhir-core/data-types/complex/Address';
-import { Attachment } from '@src/fhir-core/data-types/complex/Attachment';
-import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
-import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
-import { Coding } from '@src/fhir-core/data-types/complex/Coding';
-import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
-import { ContactPoint } from '@src/fhir-core/data-types/complex/ContactPoint';
-import { DateTimeType } from '@src/fhir-core/data-types/primitive/DateTimeType';
-import { DateType } from '@src/fhir-core/data-types/primitive/DateType';
-import { HumanName } from '@src/fhir-core/data-types/complex/HumanName';
-import { Identifier, Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
-import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
-import { IntegerType } from '@src/fhir-core/data-types/primitive/IntegerType';
-import { Meta } from '@src/fhir-core/data-types/complex/Meta';
-import { Narrative } from '@src/fhir-core/data-types/complex/Narrative';
-import { Period } from '@src/fhir-core/data-types/complex/Period';
-import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
-import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
-import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { AssertionError } from 'node:assert';
 import {
   DATATYPE_EXTENSION,
   DATATYPE_ID,

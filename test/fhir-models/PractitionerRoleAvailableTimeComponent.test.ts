@@ -21,18 +21,18 @@
  *
  */
 
-import { PractitionerRoleAvailableTimeComponent } from '@src/fhir-models/PractitionerRole';
 import { Base } from '@src/fhir-core/base-models/Base';
 import { BackboneElement, Element, Extension } from '@src/fhir-core/base-models/core-fhir-models';
-import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { DaysOfWeekEnum } from '@src/fhir-core/data-types/code-systems/DaysOfWeekEnum';
 import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
+import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { fhirCode } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { TimeType } from '@src/fhir-core/data-types/primitive/TimeType';
-import { DaysOfWeekEnum } from '@src/fhir-core/data-types/code-systems/DaysOfWeekEnum';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
-import { fhirCode } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { PractitionerRoleAvailableTimeComponent } from '@src/fhir-models/PractitionerRole';
 import {
   DATATYPE_EXTENSION,
   DATATYPE_ID,

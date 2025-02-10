@@ -21,12 +21,12 @@
  *
  */
 
-import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
 import { DataType, Extension } from '@src/fhir-core/base-models/core-fhir-models';
+import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
 import { Coding } from '@src/fhir-core/data-types/complex/Coding';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { INVALID_NON_STRING_TYPE, INVALID_STRING_TYPE, UNDEFINED_VALUE } from '../../../test-utils';
 
 describe('CodeableConcept', () => {
@@ -376,6 +376,60 @@ describe('CodeableConcept', () => {
   });
 
   describe('Serialization/Deserialization', () => {
+    const VALID_JSON = {
+      id: 'id1234',
+      extension: [
+        {
+          url: 'testUrl1',
+          valueString: 'base extension string value 1',
+        },
+        {
+          url: 'testUrl2',
+          valueString: 'base extension string value 2',
+        },
+      ],
+      coding: [
+        {
+          id: 'S1357',
+          extension: [
+            {
+              url: 'coding1Url',
+              valueString: 'coding1 extension string value',
+            },
+          ],
+          system: 'testUriType',
+          code: 'testCodeType',
+          display: 'This is a valid string.',
+        },
+        {
+          system: 'testUriType2',
+          code: 'testCodeType2',
+          display: 'This is another valid string!',
+        },
+      ],
+      text: 'This is a valid string.',
+    };
+
+    it('should return undefined for empty json', () => {
+      let testType = CodeableConcept.parse({});
+      expect(testType).toBeUndefined();
+
+      // @ts-expect-error: allow for testing
+      testType = CodeableConcept.parse(undefined);
+      expect(testType).toBeUndefined();
+
+      testType = CodeableConcept.parse(null);
+      expect(testType).toBeUndefined();
+    });
+
+    it('should throw TypeError for invalid json type', () => {
+      const t = () => {
+        CodeableConcept.parse('NOT AN OBJECT');
+      };
+      expect(t).toThrow(TypeError);
+      expect(t).toThrow(`CodeableConcept JSON is not a JSON object.`);
+    });
+
     it('should properly create serialized content', () => {
       const testCodeableConcept = new CodeableConcept();
       const testId = 'id1234';
@@ -425,40 +479,19 @@ describe('CodeableConcept', () => {
       expect(testCodeableConcept.hasText()).toBe(true);
       expect(testCodeableConcept.getText()).toStrictEqual(VALID_STRING);
 
-      const expectedJson = {
-        id: 'id1234',
-        extension: [
-          {
-            url: 'testUrl1',
-            valueString: 'base extension string value 1',
-          },
-          {
-            url: 'testUrl2',
-            valueString: 'base extension string value 2',
-          },
-        ],
-        coding: [
-          {
-            id: 'S1357',
-            extension: [
-              {
-                url: 'coding1Url',
-                valueString: 'coding1 extension string value',
-              },
-            ],
-            system: 'testUriType',
-            code: 'testCodeType',
-            display: 'This is a valid string.',
-          },
-          {
-            system: 'testUriType2',
-            code: 'testCodeType2',
-            display: 'This is another valid string!',
-          },
-        ],
-        text: 'This is a valid string.',
-      };
-      expect(testCodeableConcept.toJSON()).toEqual(expectedJson);
+      expect(testCodeableConcept.toJSON()).toEqual(VALID_JSON);
+    });
+
+    it('should return CodeableConcept for valid json', () => {
+      const testType: CodeableConcept | undefined = CodeableConcept.parse(VALID_JSON);
+
+      expect(testType).toBeDefined();
+      expect(testType).toBeInstanceOf(CodeableConcept);
+      expect(testType?.constructor.name).toStrictEqual('CodeableConcept');
+      expect(testType?.fhirType()).toStrictEqual('CodeableConcept');
+      expect(testType?.isEmpty()).toBe(false);
+      expect(testType?.isComplexDataType()).toBe(true);
+      expect(testType?.toJSON()).toEqual(VALID_JSON);
     });
   });
 });

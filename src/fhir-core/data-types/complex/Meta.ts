@@ -28,11 +28,11 @@ import {
   setFhirPrimitiveListJson,
 } from '@src/fhir-core/base-models/core-fhir-models';
 import { IBase } from '@src/fhir-core/base-models/IBase';
+import { INSTANCE_EMPTY_ERROR_MSG } from '@src/fhir-core/constants';
 import { Coding } from '@src/fhir-core/data-types/complex/Coding';
 import { CanonicalType } from '@src/fhir-core/data-types/primitive/CanonicalType';
 import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
 import { InstantType } from '@src/fhir-core/data-types/primitive/InstantType';
-import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import {
   fhirCanonical,
   fhirCanonicalSchema,
@@ -44,9 +44,22 @@ import {
   fhirUriSchema,
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
+import { isEmpty } from '@src/fhir-core/utility/common-util';
+import {
+  getPrimitiveTypeJson,
+  getPrimitiveTypeListJson,
+  parseCanonicalType,
+  parseIdType,
+  parseInstantType,
+  parseUriType,
+  PrimitiveTypeJson,
+  processElementJson,
+} from '@src/fhir-core/utility/fhir-parsers';
 import { copyListValues, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirType, assertFhirTypeList, isDefined, isDefinedList } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
+import { assertFhirType, assertFhirTypeList, isDefined, isDefinedList } from '@src/fhir-core/utility/type-guards';
+import { strict as assert } from 'node:assert';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -71,6 +84,116 @@ export class Meta extends DataType implements IBase {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor() {
     super();
+  }
+
+  /**
+   * Parse the provided `Meta` json to instantiate the Meta data model.
+   *
+   * @param sourceJson - JSON representing FHIR `Meta`
+   * @param optSourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Meta
+   * @returns Meta data model or undefined for `Meta`
+   */
+  public static parse(sourceJson: JSON.Value, optSourceField?: string): Meta | undefined {
+    if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
+      return undefined;
+    }
+    const source = isDefined<string>(optSourceField) ? optSourceField : 'Meta';
+    const datatypeJsonObj: JSON.Object = JSON.asObject(sourceJson, `${source} JSON`);
+    const instance = new Meta();
+    processElementJson(instance, datatypeJsonObj);
+
+    let fieldName: string;
+    let sourceField: string;
+    let primitiveJsonType: 'boolean' | 'number' | 'string';
+
+    fieldName = 'versionId';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: IdType | undefined = parseIdType(dtJson, dtSiblingJson);
+      instance.setVersionIdElement(datatype);
+    }
+
+    fieldName = 'lastUpdated';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: InstantType | undefined = parseInstantType(dtJson, dtSiblingJson);
+      instance.setLastUpdatedElement(datatype);
+    }
+
+    fieldName = 'source';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: UriType | undefined = parseUriType(dtJson, dtSiblingJson);
+      instance.setSourceElement(datatype);
+    }
+
+    fieldName = 'profile';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const dataJsonArray: PrimitiveTypeJson[] = getPrimitiveTypeListJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      dataJsonArray.forEach((dataJson: PrimitiveTypeJson) => {
+        const datatype: CanonicalType | undefined = parseCanonicalType(dataJson.dtJson, dataJson.dtSiblingJson);
+        if (datatype !== undefined) {
+          instance.addProfileElement(datatype);
+        }
+      });
+    }
+
+    fieldName = 'security';
+    sourceField = `${source}.${fieldName}`;
+    if (fieldName in datatypeJsonObj) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const dataElementJsonArray: JSON.Array = JSON.asArray(datatypeJsonObj[fieldName]!, sourceField);
+      dataElementJsonArray.forEach((dataElementJson: JSON.Value) => {
+        const datatype: Coding | undefined = Coding.parse(dataElementJson, sourceField);
+        if (datatype !== undefined) {
+          instance.addSecurity(datatype);
+        }
+      });
+    }
+
+    fieldName = 'tag';
+    sourceField = `${source}.${fieldName}`;
+    if (fieldName in datatypeJsonObj) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const dataElementJsonArray: JSON.Array = JSON.asArray(datatypeJsonObj[fieldName]!, sourceField);
+      dataElementJsonArray.forEach((dataElementJson: JSON.Value) => {
+        const datatype: Coding | undefined = Coding.parse(dataElementJson, sourceField);
+        if (datatype !== undefined) {
+          instance.addTag(datatype);
+        }
+      });
+    }
+
+    assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
+    return instance;
   }
 
   /**

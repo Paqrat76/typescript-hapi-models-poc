@@ -21,11 +21,11 @@
  *
  */
 
+import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { Integer64Type } from '@src/fhir-core/data-types/primitive/Integer64Type';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
-import { FHIR_MIN_INTEGER64, FHIR_MAX_INTEGER64 } from '../../../test-utils';
+import { FHIR_MAX_INTEGER64, FHIR_MIN_INTEGER64 } from '../../../test-utils';
 
 describe('Integer64Type', () => {
   const VALID_INTEGER64 = BigInt(FHIR_MIN_INTEGER64);

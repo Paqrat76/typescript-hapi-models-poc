@@ -21,9 +21,9 @@
  *
  */
 
+import { FhirCodeDefinition, IFhirCodeDefinition, IFhirCodeEnum } from '@src/fhir-core/base-models/core-fhir-codes';
 import { fhirCode } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
-import { FhirCodeDefinition, IFhirCodeDefinition, IFhirCodeEnum } from '@src/fhir-core/base-models/core-fhir-codes';
 
 /* istanbul ignore file */
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */

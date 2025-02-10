@@ -21,24 +21,24 @@
  *
  */
 
-import { AssertionError } from 'node:assert';
-import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
-import { DateTimeType } from '@src/fhir-core/data-types/primitive/DateTimeType';
-import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
-import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
-import { fhirUrl } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { IFhirCodeDefinition } from '@src/fhir-core/base-models/core-fhir-codes';
 import { Period } from '@src/fhir-core/data-types/complex/Period';
-import { copyListValues, extractFieldName, isElementEmpty, validateUrl } from '@src/fhir-core/utility/fhir-util';
+import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
 import {
   CodeType,
   constructorCodeValueAsEnumCodeType,
   constructorCodeValueAsEnumCodeTypeList,
   EnumCodeType,
 } from '@src/fhir-core/data-types/primitive/CodeType';
-import { GroupTypeEnum } from '@src/fhir-models/code-systems/GroupTypeEnum';
-import { IFhirCodeDefinition } from '@src/fhir-core/base-models/core-fhir-codes';
+import { DateTimeType } from '@src/fhir-core/data-types/primitive/DateTimeType';
+import { fhirUrl } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { copyListValues, extractFieldName, isElementEmpty, validateUrl } from '@src/fhir-core/utility/fhir-util';
+import { GroupTypeEnum } from '@src/fhir-models/code-systems/GroupTypeEnum';
+import { AssertionError } from 'node:assert';
 import { MockCodeEnum } from '../../test-utils';
 
 describe('fhir-util', () => {

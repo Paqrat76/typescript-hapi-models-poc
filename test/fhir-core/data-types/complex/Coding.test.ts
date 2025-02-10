@@ -21,15 +21,15 @@
  *
  */
 
-import { Coding } from '@src/fhir-core/data-types/complex/Coding';
 import { DataType, Extension } from '@src/fhir-core/base-models/core-fhir-models';
-import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
-import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
-import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { Coding } from '@src/fhir-core/data-types/complex/Coding';
 import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
+import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { fhirBoolean } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import {
   INVALID_NON_STRING_TYPE,
   INVALID_NON_STRING_TYPE_VALUE,
@@ -589,6 +589,54 @@ describe('Coding', () => {
   });
 
   describe('Serialization/Deserialization', () => {
+    const VALID_JSON = {
+      id: 'id1234',
+      extension: [
+        {
+          url: 'testUrl1',
+          valueString: 'base extension string value 1',
+        },
+        {
+          url: 'testUrl2',
+          valueString: 'base extension string value 2',
+        },
+      ],
+      system: 'testUriType',
+      version: 'validVersion',
+      code: 'testCodeType',
+      display: 'This is a valid string.',
+      _display: {
+        id: 'D1357',
+        extension: [
+          {
+            url: 'displayUrl',
+            valueString: 'display extension string value',
+          },
+        ],
+      },
+      userSelected: true,
+    };
+
+    it('should return undefined for empty json', () => {
+      let testType = Coding.parse({});
+      expect(testType).toBeUndefined();
+
+      // @ts-expect-error:allow for testing
+      testType = Coding.parse(undefined);
+      expect(testType).toBeUndefined();
+
+      testType = Coding.parse(null);
+      expect(testType).toBeUndefined();
+    });
+
+    it('should throw TypeError for invalid json type', () => {
+      const t = () => {
+        Coding.parse('NOT AN OBJECT');
+      };
+      expect(t).toThrow(TypeError);
+      expect(t).toThrow(`Coding JSON is not a JSON object.`);
+    });
+
     it('should properly create serialized content', () => {
       const testCoding = new Coding();
       const testId = 'id1234';
@@ -605,8 +653,11 @@ describe('Coding', () => {
       displayType.addExtension(displayExtension);
 
       testCoding.setSystemElement(VALID_URI_TYPE);
+      testCoding.setVersionElement(VALID_VERSION_TYPE);
       testCoding.setCodeElement(VALID_CODE_TYPE);
       testCoding.setDisplayElement(displayType);
+      testCoding.setUserSelectedElement(VALID_BOOLEAN_TYPE_TRUE);
+
       expect(testCoding).toBeDefined();
       expect(testCoding).toBeInstanceOf(DataType);
       expect(testCoding).toBeInstanceOf(Coding);
@@ -624,52 +675,39 @@ describe('Coding', () => {
       // Coding properties
       expect(testCoding.hasSystemElement()).toBe(true);
       expect(testCoding.getSystemElement()).toStrictEqual(VALID_URI_TYPE);
-      expect(testCoding.hasVersionElement()).toBe(false);
-      expect(testCoding.getVersionElement()).toEqual(new StringType());
+      expect(testCoding.hasVersionElement()).toBe(true);
+      expect(testCoding.getVersionElement()).toEqual(VALID_VERSION_TYPE);
       expect(testCoding.hasCodeElement()).toBe(true);
       expect(testCoding.getCodeElement()).toStrictEqual(VALID_CODE_TYPE);
       expect(testCoding.hasDisplayElement()).toBe(true);
       expect(testCoding.getDisplayElement()).toStrictEqual(displayType);
-      expect(testCoding.hasUserSelectedElement()).toBe(false);
-      expect(testCoding.getUserSelectedElement()).toEqual(new BooleanType());
+      expect(testCoding.hasUserSelectedElement()).toBe(true);
+      expect(testCoding.getUserSelectedElement()).toEqual(VALID_BOOLEAN_TYPE_TRUE);
 
       expect(testCoding.hasSystem()).toBe(true);
       expect(testCoding.getSystem()).toStrictEqual(VALID_URI);
-      expect(testCoding.hasVersion()).toBe(false);
-      expect(testCoding.getVersion()).toBeUndefined();
+      expect(testCoding.hasVersion()).toBe(true);
+      expect(testCoding.getVersion()).toStrictEqual(VALID_VERSION);
       expect(testCoding.hasCode()).toBe(true);
       expect(testCoding.getCode()).toStrictEqual(VALID_CODE);
       expect(testCoding.hasDisplay()).toBe(true);
       expect(testCoding.getDisplay()).toStrictEqual(VALID_STRING);
-      expect(testCoding.hasUserSelected()).toBe(false);
-      expect(testCoding.getUserSelected()).toBeUndefined();
+      expect(testCoding.hasUserSelected()).toBe(true);
+      expect(testCoding.getUserSelected()).toBe(VALID_BOOLEAN_TRUE);
 
-      const expectedJson = {
-        id: 'id1234',
-        extension: [
-          {
-            url: 'testUrl1',
-            valueString: 'base extension string value 1',
-          },
-          {
-            url: 'testUrl2',
-            valueString: 'base extension string value 2',
-          },
-        ],
-        system: 'testUriType',
-        code: 'testCodeType',
-        display: 'This is a valid string.',
-        _display: {
-          id: 'D1357',
-          extension: [
-            {
-              url: 'displayUrl',
-              valueString: 'display extension string value',
-            },
-          ],
-        },
-      };
-      expect(testCoding.toJSON()).toEqual(expectedJson);
+      expect(testCoding.toJSON()).toEqual(VALID_JSON);
+    });
+
+    it('should return Coding for valid json', () => {
+      const testType: Coding | undefined = Coding.parse(VALID_JSON);
+
+      expect(testType).toBeDefined();
+      expect(testType).toBeInstanceOf(Coding);
+      expect(testType?.constructor.name).toStrictEqual('Coding');
+      expect(testType?.fhirType()).toStrictEqual('Coding');
+      expect(testType?.isEmpty()).toBe(false);
+      expect(testType?.isComplexDataType()).toBe(true);
+      expect(testType?.toJSON()).toEqual(VALID_JSON);
     });
   });
 });

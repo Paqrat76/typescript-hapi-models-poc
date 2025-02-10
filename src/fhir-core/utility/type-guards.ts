@@ -37,8 +37,8 @@
  * @module
  */
 
-import { AssertionError } from 'node:assert';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { AssertionError } from 'node:assert';
 
 /**
  * Value type guard that determines if the provided value is defined (i.e., not `undefined` and not `null`)

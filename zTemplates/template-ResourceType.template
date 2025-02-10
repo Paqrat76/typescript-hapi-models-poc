@@ -23,8 +23,8 @@
   // Only copy the internal code block!
   public static parse(sourceJson: JSON.Object): Resource | undefined {
 
-    sourceField = 'XxxxParentClassElement.xxxxFieldName';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'xxxxFieldName';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
       const datatype: Resource | undefined = parseInlineResource(classJsonObj[fieldName], sourceField);
       instance.setXxxxFieldName(datatype);

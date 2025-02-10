@@ -21,9 +21,6 @@
  *
  */
 
-import { IBase } from '@src/fhir-core/base-models/IBase';
-import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
-import { FhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
 import {
   BackboneElement,
   DataType,
@@ -33,25 +30,27 @@ import {
   setFhirPrimitiveJson,
   setPolymorphicValueJson,
 } from '@src/fhir-core/base-models/core-fhir-models';
-import { AdministrativeGenderEnum } from '@src/fhir-models/code-systems/AdministrativeGenderEnum';
-import { LinkTypeEnum } from '@src/fhir-models/code-systems/LinkTypeEnum';
+import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
+import { FhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
+import { IBase } from '@src/fhir-core/base-models/IBase';
+import { REQUIRED_PROPERTIES_DO_NOT_EXIST, REQUIRED_PROPERTIES_REQD_IN_JSON } from '@src/fhir-core/constants';
 import { Address } from '@src/fhir-core/data-types/complex/Address';
 import { Attachment } from '@src/fhir-core/data-types/complex/Attachment';
-import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
-import { DateTimeType } from '@src/fhir-core/data-types/primitive/DateTimeType';
 import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
 import { ContactPoint } from '@src/fhir-core/data-types/complex/ContactPoint';
-import { DateType } from '@src/fhir-core/data-types/primitive/DateType';
 import { HumanName } from '@src/fhir-core/data-types/complex/HumanName';
-import { Identifier, Reference, ReferenceTargets } from '@src/fhir-core/data-types/complex/Reference-Identifier';
-import { IntegerType } from '@src/fhir-core/data-types/primitive/IntegerType';
 import { Period } from '@src/fhir-core/data-types/complex/Period';
+import { Identifier, Reference, ReferenceTargets } from '@src/fhir-core/data-types/complex/Reference-Identifier';
+import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
 import {
   assertEnumCodeType,
   CodeType,
   constructorCodeValueAsEnumCodeType,
   EnumCodeType,
 } from '@src/fhir-core/data-types/primitive/CodeType';
+import { DateTimeType } from '@src/fhir-core/data-types/primitive/DateTimeType';
+import { DateType } from '@src/fhir-core/data-types/primitive/DateType';
+import { IntegerType } from '@src/fhir-core/data-types/primitive/IntegerType';
 import {
   fhirBoolean,
   fhirBooleanSchema,
@@ -61,28 +60,22 @@ import {
   fhirDateSchema,
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { REQUIRED_PROPERTIES_DO_NOT_EXIST, REQUIRED_PROPERTIES_REQD_IN_JSON } from '@src/fhir-core/constants';
+import { FhirError } from '@src/fhir-core/errors/FhirError';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { isEmpty } from '@src/fhir-core/utility/common-util';
 import { ChoiceDataTypes, ChoiceDataTypesMeta } from '@src/fhir-core/utility/decorators';
-import { copyListValues, extractFieldName, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import {
   assertFhirResourceTypeJson,
   getPrimitiveTypeJson,
-  parseAddress,
-  parseAttachment,
   parseBooleanType,
-  parseCodeableConcept,
   parseCodeType,
-  parseContactPoint,
   parseDateType,
-  parseHumanName,
-  parseIdentifier,
-  parsePeriod,
   parsePolymorphicDataType,
-  parseReference,
   processBackboneElementJson,
   processDomainResourceJson,
 } from '@src/fhir-core/utility/fhir-parsers';
+import { copyListValues, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
+import * as JSON from '@src/fhir-core/utility/json-helpers';
 import {
   assertFhirType,
   assertFhirTypeList,
@@ -90,10 +83,9 @@ import {
   isDefined,
   isDefinedList,
 } from '@src/fhir-core/utility/type-guards';
+import { AdministrativeGenderEnum } from '@src/fhir-models/code-systems/AdministrativeGenderEnum';
+import { LinkTypeEnum } from '@src/fhir-models/code-systems/LinkTypeEnum';
 import { parseContainedResources } from '@src/fhir-models/fhir-contained-resource-parser';
-import * as JSON from '@src/fhir-core/utility/json-helpers';
-import { FhirError } from '@src/fhir-core/errors/FhirError';
-import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -127,26 +119,31 @@ export class Patient extends DomainResource implements IBase {
    * Parse the provided `Patient` json to instantiate the Patient data model.
    *
    * @param sourceJson - JSON representing FHIR `Patient`
+   * @param optSourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Patient
    * @returns Patient data model or undefined for `Patient`
    */
-  public static override parse(sourceJson: JSON.Object): Patient | undefined {
+  public static override parse(sourceJson: JSON.Object, optSourceField?: string): Patient | undefined {
     if (!isDefined<JSON.Object>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
+    const source = isDefined<string>(optSourceField) ? optSourceField : 'Patient';
     const classJsonObj: JSON.Object = JSON.asObject(sourceJson, `Patient JSON`);
     assertFhirResourceTypeJson(classJsonObj, 'Patient');
     const instance = new Patient();
     processDomainResourceJson(instance, classJsonObj);
 
-    // NOTE: Added IF and ONLY IF a choice data type is used
+    let fieldName: string;
+    let sourceField: string;
+    let primitiveJsonType: 'boolean' | 'number' | 'string';
+
     const classMetadata: DecoratorMetadataObject | null = Patient[Symbol.metadata];
     const errorMessage = `DecoratorMetadataObject does not exist for Patient`;
     assertIsDefined<DecoratorMetadataObject>(classMetadata, errorMessage);
 
     // NOTE: "contained" is handled in Resource-based FHIR model rather than in processDomainResourceJson above
     //       to minimize circular references!
-    let sourceField = 'Patient.contained';
-    let fieldName = extractFieldName(sourceField);
+    fieldName = 'contained';
+    sourceField = `${source}.${fieldName}`;
     // Ignore for coverage because we do not currently have a legal FHIR resource data model to be used
     /* istanbul ignore next */
     if (fieldName in classJsonObj) {
@@ -155,71 +152,77 @@ export class Patient extends DomainResource implements IBase {
       parseContainedResources(instance, containedJsonArray, sourceField);
     }
 
-    sourceField = 'Patient.identifier';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'identifier';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
-        const datatype: Identifier | undefined = parseIdentifier(dataElementJson, `${sourceField}[${String(idx)}]`);
+        const datatype: Identifier | undefined = Identifier.parse(dataElementJson, `${sourceField}[${String(idx)}]`);
         if (datatype !== undefined) {
           instance.addIdentifier(datatype);
         }
       });
     }
 
-    sourceField = 'Patient.active';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'active';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'boolean';
     if (fieldName in classJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, 'boolean');
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
       const datatype: BooleanType | undefined = parseBooleanType(dtJson, dtSiblingJson);
       instance.setActiveElement(datatype);
     }
 
-    sourceField = 'Patient.name';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'name';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
-        const datatype: HumanName | undefined = parseHumanName(dataElementJson, `${sourceField}[${String(idx)}]`);
+        const datatype: HumanName | undefined = HumanName.parse(dataElementJson, `${sourceField}[${String(idx)}]`);
         if (datatype !== undefined) {
           instance.addName(datatype);
         }
       });
     }
 
-    sourceField = 'Patient.telecom';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'telecom';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
-        const datatype: ContactPoint | undefined = parseContactPoint(dataElementJson, `${sourceField}[${String(idx)}]`);
+        const datatype: ContactPoint | undefined = ContactPoint.parse(
+          dataElementJson,
+          `${sourceField}[${String(idx)}]`,
+        );
         if (datatype !== undefined) {
           instance.addTelecom(datatype);
         }
       });
     }
 
-    sourceField = 'Patient.gender';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'gender';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
     if (fieldName in classJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, 'string');
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
       const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
       instance.setGenderElement(datatype);
     }
 
-    sourceField = 'Patient.birthDate';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'birthDate';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
     if (fieldName in classJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, 'string');
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
       const datatype: DateType | undefined = parseDateType(dtJson, dtSiblingJson);
       instance.setBirthDateElement(datatype);
     }
 
-    sourceField = 'Patient.deceased[x]';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'deceased[x]';
+    sourceField = `${source}.${fieldName}`;
     const deceased: DataType | undefined = parsePolymorphicDataType(
       classJsonObj,
       sourceField,
@@ -228,28 +231,29 @@ export class Patient extends DomainResource implements IBase {
     );
     instance.setDeceased(deceased);
 
-    sourceField = 'Patient.address';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'address';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
-        const datatype: Address | undefined = parseAddress(dataElementJson, `${sourceField}[${String(idx)}]`);
+        const datatype: Address | undefined = Address.parse(dataElementJson, `${sourceField}[${String(idx)}]`);
         if (datatype !== undefined) {
           instance.addAddress(datatype);
         }
       });
     }
 
-    sourceField = 'Patient.maritalStatus';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'maritalStatus';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
-      const datatype: CodeableConcept | undefined = parseCodeableConcept(classJsonObj[fieldName], sourceField);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const datatype: CodeableConcept | undefined = CodeableConcept.parse(classJsonObj[fieldName]!, sourceField);
       instance.setMaritalStatus(datatype);
     }
 
-    sourceField = 'Patient.multipleBirth[x]';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'multipleBirth[x]';
+    sourceField = `${source}.${fieldName}`;
     const multipleBirth: DataType | undefined = parsePolymorphicDataType(
       classJsonObj,
       sourceField,
@@ -258,72 +262,82 @@ export class Patient extends DomainResource implements IBase {
     );
     instance.setMultipleBirth(multipleBirth);
 
-    sourceField = 'Patient.photo';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'photo';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
-        const datatype: Attachment | undefined = parseAttachment(dataElementJson, `${sourceField}[${String(idx)}]`);
+        const datatype: Attachment | undefined = Attachment.parse(dataElementJson, `${sourceField}[${String(idx)}]`);
         if (datatype !== undefined) {
           instance.addPhoto(datatype);
         }
       });
     }
 
-    sourceField = 'Patient.contact';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'contact';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const componentJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
-      componentJsonArray.forEach((componentJson: JSON.Value) => {
-        const component: PatientContactComponent | undefined = PatientContactComponent.parse(componentJson);
+      componentJsonArray.forEach((componentJson: JSON.Value, idx) => {
+        const component: PatientContactComponent | undefined = PatientContactComponent.parse(
+          componentJson,
+          `${sourceField}[${String(idx)}]`,
+        );
         if (component !== undefined) {
           instance.addContact(component);
         }
       });
     }
 
-    sourceField = 'Patient.communication';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'communication';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const componentJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
-      componentJsonArray.forEach((componentJson: JSON.Value) => {
-        const component: PatientCommunicationComponent | undefined = PatientCommunicationComponent.parse(componentJson);
+      componentJsonArray.forEach((componentJson: JSON.Value, idx) => {
+        const component: PatientCommunicationComponent | undefined = PatientCommunicationComponent.parse(
+          componentJson,
+          `${sourceField}[${String(idx)}]`,
+        );
         if (component !== undefined) {
           instance.addCommunication(component);
         }
       });
     }
 
-    sourceField = 'Patient.generalPractitioner';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'generalPractitioner';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
-        const datatype: Reference | undefined = parseReference(dataElementJson, `${sourceField}[${String(idx)}]`);
+        const datatype: Reference | undefined = Reference.parse(dataElementJson, `${sourceField}[${String(idx)}]`);
         if (datatype !== undefined) {
           instance.addGeneralPractitioner(datatype);
         }
       });
     }
 
-    sourceField = 'Patient.managingOrganization';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'managingOrganization';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
-      const datatype: Reference | undefined = parseReference(classJsonObj[fieldName], sourceField);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const datatype: Reference | undefined = Reference.parse(classJsonObj[fieldName]!, sourceField);
       instance.setManagingOrganization(datatype);
     }
 
-    sourceField = 'Patient.link';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'link';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const componentJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
-      componentJsonArray.forEach((componentJson: JSON.Value) => {
-        const component: PatientLinkComponent | undefined = PatientLinkComponent.parse(componentJson);
+      componentJsonArray.forEach((componentJson: JSON.Value, idx) => {
+        const component: PatientLinkComponent | undefined = PatientLinkComponent.parse(
+          componentJson,
+          `${sourceField}[${String(idx)}]`,
+        );
         if (component !== undefined) {
           instance.addLink(component);
         }
@@ -1760,23 +1774,29 @@ export class PatientContactComponent extends BackboneElement {
    * Parse the provided `Patient.contact` json to instantiate the PatientContactComponent data model.
    *
    * @param sourceJson - JSON representing FHIR `Patient.communication`
+   * @param optSourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Patient.communication
    * @returns PatientContactComponent data model or undefined for `Patient.contact`
    */
-  public static parse(sourceJson: JSON.Value): PatientContactComponent | undefined {
+  public static parse(sourceJson: JSON.Value, optSourceField?: string): PatientContactComponent | undefined {
     if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
-    const backboneJsonObj: JSON.Object = JSON.asObject(sourceJson, `PatientContactComponent JSON`);
+    const source = isDefined<string>(optSourceField) ? optSourceField : 'Patient.contact';
+    const classJsonObj: JSON.Object = JSON.asObject(sourceJson, `${source} JSON`);
     const instance = new PatientContactComponent();
-    processBackboneElementJson(instance, backboneJsonObj);
+    processBackboneElementJson(instance, classJsonObj);
 
-    let sourceField = 'Patient.contact.relationship';
-    let fieldName = extractFieldName(sourceField);
-    if (fieldName in backboneJsonObj) {
+    let fieldName: string;
+    let sourceField: string;
+    let primitiveJsonType: 'boolean' | 'number' | 'string';
+
+    fieldName = 'relationship';
+    sourceField = `${source}.${fieldName}`;
+    if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const dataElementJsonArray: JSON.Array = JSON.asArray(backboneJsonObj[fieldName]!, sourceField);
+      const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
-        const datatype: CodeableConcept | undefined = parseCodeableConcept(
+        const datatype: CodeableConcept | undefined = CodeableConcept.parse(
           dataElementJson,
           `${sourceField}[${String(idx)}]`,
         );
@@ -1786,52 +1806,61 @@ export class PatientContactComponent extends BackboneElement {
       });
     }
 
-    sourceField = 'Patient.contact.name';
-    fieldName = extractFieldName(sourceField);
-    if (fieldName in backboneJsonObj) {
-      const datatype: HumanName | undefined = parseHumanName(backboneJsonObj[fieldName], sourceField);
+    fieldName = 'name';
+    sourceField = `${source}.${fieldName}`;
+    if (fieldName in classJsonObj) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const datatype: HumanName | undefined = HumanName.parse(classJsonObj[fieldName]!, sourceField);
       instance.setName(datatype);
     }
 
-    sourceField = 'Patient.contact.telecom';
-    fieldName = extractFieldName(sourceField);
-    if (fieldName in backboneJsonObj) {
+    fieldName = 'telecom';
+    sourceField = `${source}.${fieldName}`;
+    if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const dataElementJsonArray: JSON.Array = JSON.asArray(backboneJsonObj[fieldName]!, sourceField);
+      const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
-        const datatype: ContactPoint | undefined = parseContactPoint(dataElementJson, `${sourceField}[${String(idx)}]`);
+        const datatype: ContactPoint | undefined = ContactPoint.parse(
+          dataElementJson,
+          `${sourceField}[${String(idx)}]`,
+        );
         if (datatype !== undefined) {
           instance.addTelecom(datatype);
         }
       });
     }
 
-    sourceField = 'Patient.contact.address';
-    fieldName = extractFieldName(sourceField);
-    if (fieldName in backboneJsonObj) {
-      const datatype: Address | undefined = parseAddress(backboneJsonObj[fieldName], sourceField);
+    fieldName = 'address';
+    sourceField = `${source}.${fieldName}`;
+    if (fieldName in classJsonObj) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const datatype: Address | undefined = Address.parse(classJsonObj[fieldName]!, sourceField);
       instance.setAddress(datatype);
     }
 
-    sourceField = 'Patient.contact.gender';
-    fieldName = extractFieldName(sourceField);
-    if (fieldName in backboneJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(backboneJsonObj, sourceField, fieldName, 'string');
+    fieldName = 'gender';
+    sourceField = `${source}.${fieldName}`;
+    // eslint-disable-next-line prefer-const
+    primitiveJsonType = 'string';
+    if (fieldName in classJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
       const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
       instance.setGenderElement(datatype);
     }
 
-    sourceField = 'Patient.contact.organization';
-    fieldName = extractFieldName(sourceField);
-    if (fieldName in backboneJsonObj) {
-      const datatype: Reference | undefined = parseReference(backboneJsonObj[fieldName], sourceField);
+    fieldName = 'organization';
+    sourceField = `${source}.${fieldName}`;
+    if (fieldName in classJsonObj) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const datatype: Reference | undefined = Reference.parse(classJsonObj[fieldName]!, sourceField);
       instance.setOrganization(datatype);
     }
 
-    sourceField = 'Patient.contact.period';
-    fieldName = extractFieldName(sourceField);
-    if (fieldName in backboneJsonObj) {
-      const datatype: Period | undefined = parsePeriod(backboneJsonObj[fieldName], sourceField);
+    fieldName = 'period';
+    sourceField = `${source}.${fieldName}`;
+    if (fieldName in classJsonObj) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const datatype: Period | undefined = Period.parse(classJsonObj[fieldName]!, sourceField);
       instance.setPeriod(datatype);
     }
 
@@ -2419,22 +2448,29 @@ export class PatientCommunicationComponent extends BackboneElement {
    * Parse the provided `Patient.communication` json to instantiate the PatientCommunicationComponent data model.
    *
    * @param sourceJson - JSON representing FHIR `Patient.communication`
+   * @param optSourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Patient.communication
    * @returns PatientCommunicationComponent data model or undefined for `Patient.communication`
    */
-  public static parse(sourceJson: JSON.Value): PatientCommunicationComponent | undefined {
+  public static parse(sourceJson: JSON.Value, optSourceField?: string): PatientCommunicationComponent | undefined {
     if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
-    const backboneJsonObj: JSON.Object = JSON.asObject(sourceJson, `PatientCommunicationComponent JSON`);
+    const source = isDefined<string>(optSourceField) ? optSourceField : 'Patient.communication';
+    const classJsonObj: JSON.Object = JSON.asObject(sourceJson, `${source} JSON`);
     const instance = new PatientCommunicationComponent(null);
-    processBackboneElementJson(instance, backboneJsonObj);
+    processBackboneElementJson(instance, classJsonObj);
+
+    let fieldName: string;
+    let sourceField: string;
+    let primitiveJsonType: 'boolean' | 'number' | 'string';
 
     const missingReqdProperties: string[] = [];
 
-    let sourceField = 'Patient.communication.language';
-    let fieldName = extractFieldName(sourceField);
-    if (fieldName in backboneJsonObj) {
-      const datatype: CodeableConcept | undefined = parseCodeableConcept(backboneJsonObj[fieldName], sourceField);
+    fieldName = 'language';
+    sourceField = `${source}.${fieldName}`;
+    if (fieldName in classJsonObj) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const datatype: CodeableConcept | undefined = CodeableConcept.parse(classJsonObj[fieldName]!, sourceField);
       if (datatype === undefined) {
         missingReqdProperties.push(sourceField);
       } else {
@@ -2444,10 +2480,12 @@ export class PatientCommunicationComponent extends BackboneElement {
       missingReqdProperties.push(sourceField);
     }
 
-    sourceField = 'Patient.communication.preferred';
-    fieldName = extractFieldName(sourceField);
-    if (fieldName in backboneJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(backboneJsonObj, sourceField, fieldName, 'boolean');
+    fieldName = 'preferred';
+    sourceField = `${source}.${fieldName}`;
+    // eslint-disable-next-line prefer-const
+    primitiveJsonType = 'boolean';
+    if (fieldName in classJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
       const datatype: BooleanType | undefined = parseBooleanType(dtJson, dtSiblingJson);
       instance.setPreferredElement(datatype);
     }
@@ -2690,22 +2728,29 @@ export class PatientLinkComponent extends BackboneElement {
    * Parse the provided `Patient.link` json to instantiate the PatientLinkComponent data model.
    *
    * @param sourceJson - JSON representing FHIR `Patient.link`
+   * @param optSourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Patient.link
    * @returns PatientLinkComponent data model or undefined for `Patient.link`
    */
-  public static parse(sourceJson: JSON.Value): PatientLinkComponent | undefined {
+  public static parse(sourceJson: JSON.Value, optSourceField?: string): PatientLinkComponent | undefined {
     if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
-    const backboneJsonObj: JSON.Object = JSON.asObject(sourceJson, `PatientLinkComponent JSON`);
+    const source = isDefined<string>(optSourceField) ? optSourceField : 'Patient.link';
+    const classJsonObj: JSON.Object = JSON.asObject(sourceJson, `${source} JSON`);
     const instance = new PatientLinkComponent(null, null);
-    processBackboneElementJson(instance, backboneJsonObj);
+    processBackboneElementJson(instance, classJsonObj);
+
+    let fieldName: string;
+    let sourceField: string;
+    let primitiveJsonType: 'boolean' | 'number' | 'string';
 
     const missingReqdProperties: string[] = [];
 
-    let sourceField = 'Patient.link.other';
-    let fieldName = extractFieldName(sourceField);
-    if (fieldName in backboneJsonObj) {
-      const datatype: Reference | undefined = parseReference(backboneJsonObj[fieldName], sourceField);
+    fieldName = 'other';
+    sourceField = `${source}.${fieldName}`;
+    if (fieldName in classJsonObj) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const datatype: Reference | undefined = Reference.parse(classJsonObj[fieldName]!, sourceField);
       if (datatype === undefined) {
         missingReqdProperties.push(sourceField);
       } else {
@@ -2715,10 +2760,12 @@ export class PatientLinkComponent extends BackboneElement {
       missingReqdProperties.push(sourceField);
     }
 
-    sourceField = 'Patient.link.type';
-    fieldName = extractFieldName(sourceField);
-    if (fieldName in backboneJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(backboneJsonObj, sourceField, fieldName, 'string');
+    fieldName = 'type';
+    sourceField = `${source}.${fieldName}`;
+    // eslint-disable-next-line prefer-const
+    primitiveJsonType = 'string';
+    if (fieldName in classJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
       const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
       if (datatype === undefined) {
         missingReqdProperties.push(sourceField);

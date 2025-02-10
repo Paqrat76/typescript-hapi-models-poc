@@ -21,17 +21,17 @@
  *
  */
 
-import { AssertionError } from 'node:assert';
-import { Identifier, Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
 import { DataType, Extension } from '@src/fhir-core/base-models/core-fhir-models';
-import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
-import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
-import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { IdentifierUseEnum } from '@src/fhir-core/data-types/code-systems/IdentiferUseEnum';
 import { CodeableConcept } from '@src/fhir-core/data-types/complex/CodeableConcept';
 import { Period } from '@src/fhir-core/data-types/complex/Period';
-import { IdentifierUseEnum } from '@src/fhir-core/data-types/code-systems/IdentiferUseEnum';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { Identifier, Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
+import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { AssertionError } from 'node:assert';
 import { INVALID_NON_STRING_TYPE, INVALID_STRING_TYPE, UNDEFINED_VALUE } from '../../../test-utils';
 
 describe('Identifier Tests', () => {
@@ -649,6 +649,61 @@ describe('Identifier Tests', () => {
   });
 
   describe('Serialization/Deserialization', () => {
+    const VALID_JSON = {
+      id: 'id1234',
+      extension: [
+        {
+          url: 'testUrl1',
+          valueString: 'base extension string value 1',
+        },
+        {
+          url: 'testUrl2',
+          valueString: 'base extension string value 2',
+        },
+      ],
+      use: 'official',
+      type: {
+        text: 'CodeableConcept text 1',
+      },
+      system: 'testUriType',
+      value: 'value type string',
+      _value: {
+        id: 'V1357',
+        extension: [
+          {
+            url: 'valueUrl',
+            valueString: 'value extension string value',
+          },
+        ],
+      },
+      period: {
+        start: '2017-01-01T00:00:00.000Z',
+      },
+      assigner: {
+        reference: 'Organization/13579',
+      },
+    };
+
+    it('should return undefined for empty json', () => {
+      let testType = Identifier.parse({});
+      expect(testType).toBeUndefined();
+
+      // @ts-expect-error: allow for testing
+      testType = Identifier.parse(undefined);
+      expect(testType).toBeUndefined();
+
+      testType = Identifier.parse(null);
+      expect(testType).toBeUndefined();
+    });
+
+    it('should throw TypeError for invalid json type', () => {
+      const t = () => {
+        Identifier.parse('NOT AN OBJECT');
+      };
+      expect(t).toThrow(TypeError);
+      expect(t).toThrow(`Identifier JSON is not a JSON object.`);
+    });
+
     it('should properly create serialized content', () => {
       const valueStr = 'value type string';
       const valueType = new StringType(valueStr);
@@ -711,41 +766,19 @@ describe('Identifier Tests', () => {
       expect(testIdentifier.hasValue()).toBe(true);
       expect(testIdentifier.getValue()).toStrictEqual(valueStr);
 
-      const expectedJson = {
-        id: 'id1234',
-        extension: [
-          {
-            url: 'testUrl1',
-            valueString: 'base extension string value 1',
-          },
-          {
-            url: 'testUrl2',
-            valueString: 'base extension string value 2',
-          },
-        ],
-        use: 'official',
-        type: {
-          text: 'CodeableConcept text 1',
-        },
-        system: 'testUriType',
-        value: 'value type string',
-        _value: {
-          id: 'V1357',
-          extension: [
-            {
-              url: 'valueUrl',
-              valueString: 'value extension string value',
-            },
-          ],
-        },
-        period: {
-          start: '2017-01-01T00:00:00.000Z',
-        },
-        assigner: {
-          reference: 'Organization/13579',
-        },
-      };
-      expect(testIdentifier.toJSON()).toEqual(expectedJson);
+      expect(testIdentifier.toJSON()).toEqual(VALID_JSON);
+    });
+
+    it('should return Identifier for valid json', () => {
+      const testType: Identifier | undefined = Identifier.parse(VALID_JSON);
+
+      expect(testType).toBeDefined();
+      expect(testType).toBeInstanceOf(Identifier);
+      expect(testType?.constructor.name).toStrictEqual('Identifier');
+      expect(testType?.fhirType()).toStrictEqual('Identifier');
+      expect(testType?.isEmpty()).toBe(false);
+      expect(testType?.isComplexDataType()).toBe(true);
+      expect(testType?.toJSON()).toEqual(VALID_JSON);
     });
   });
 });

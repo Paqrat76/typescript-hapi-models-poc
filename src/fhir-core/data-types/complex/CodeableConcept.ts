@@ -23,16 +23,20 @@
 
 import { DataType, setFhirComplexListJson, setFhirPrimitiveJson } from '@src/fhir-core/base-models/core-fhir-models';
 import { IBase } from '@src/fhir-core/base-models/IBase';
+import { INSTANCE_EMPTY_ERROR_MSG } from '@src/fhir-core/constants';
 import { Coding } from '@src/fhir-core/data-types/complex/Coding';
-import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import {
   fhirString,
   fhirStringSchema,
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { isEmpty } from '@src/fhir-core/utility/common-util';
+import { getPrimitiveTypeJson, parseStringType, processElementJson } from '@src/fhir-core/utility/fhir-parsers';
 import { copyListValues, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirType, assertFhirTypeList, isDefined, isDefinedList } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
+import { assertFhirType, assertFhirTypeList, isDefined, isDefinedList } from '@src/fhir-core/utility/type-guards';
+import { strict as assert } from 'node:assert';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -58,6 +62,58 @@ export class CodeableConcept extends DataType implements IBase {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor() {
     super();
+  }
+
+  /**
+   * Parse the provided `CodeableConcept` json to instantiate the CodeableConcept data model.
+   *
+   * @param sourceJson - JSON representing FHIR `CodeableConcept`
+   * @param optSourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to CodeableConcept
+   * @returns CodeableConcept data model or undefined for `CodeableConcept`
+   */
+  public static parse(sourceJson: JSON.Value, optSourceField?: string): CodeableConcept | undefined {
+    if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
+      return undefined;
+    }
+    const source = isDefined<string>(optSourceField) ? optSourceField : 'CodeableConcept';
+    const datatypeJsonObj: JSON.Object = JSON.asObject(sourceJson, `${source} JSON`);
+    const instance = new CodeableConcept();
+    processElementJson(instance, datatypeJsonObj);
+
+    let fieldName: string;
+    let sourceField: string;
+    let primitiveJsonType: 'boolean' | 'number' | 'string';
+
+    fieldName = 'coding';
+    sourceField = `${source}.${fieldName}`;
+    if (fieldName in datatypeJsonObj) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const dataElementJsonArray: JSON.Array = JSON.asArray(datatypeJsonObj[fieldName]!, sourceField);
+      dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
+        const datatype: Coding | undefined = Coding.parse(dataElementJson, `${sourceField}[${String(idx)}]`);
+        if (datatype !== undefined) {
+          instance.addCoding(datatype);
+        }
+      });
+    }
+
+    fieldName = 'text';
+    sourceField = `${source}.${fieldName}`;
+    // eslint-disable-next-line prefer-const
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
+      instance.setTextElement(datatype);
+    }
+
+    assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
+    return instance;
   }
 
   /**
