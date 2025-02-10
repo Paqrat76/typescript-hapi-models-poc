@@ -23,10 +23,10 @@
 
 import { IFhirCodeDefinition, IFhirCodeEnum } from '@src/fhir-core/base-models/core-fhir-codes';
 import { PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
-import { Class, isDefined, isDefinedList } from '@src/fhir-core/utility/type-guards';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { Class, isDefined, isDefinedList } from '@src/fhir-core/utility/type-guards';
 import { fhirCode, fhirCodeSchema, parseFhirPrimitiveData } from './primitive-types';
 
 /**

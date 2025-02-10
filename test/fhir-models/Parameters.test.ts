@@ -21,19 +21,19 @@
  *
  */
 
-import { Parameters, ParametersParameterComponent } from '@src/fhir-models/Parameters';
 import { Base } from '@src/fhir-core/base-models/Base';
 import { Resource } from '@src/fhir-core/base-models/Resource';
-import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { HumanName } from '@src/fhir-core/data-types/complex/HumanName';
+import { Meta } from '@src/fhir-core/data-types/complex/Meta';
+import { Period } from '@src/fhir-core/data-types/complex/Period';
+import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
 import { IntegerType } from '@src/fhir-core/data-types/primitive/IntegerType';
-import { Meta } from '@src/fhir-core/data-types/complex/Meta';
-import { Patient } from '@src/fhir-models/Patient';
-import { Period } from '@src/fhir-core/data-types/complex/Period';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { Parameters, ParametersParameterComponent } from '@src/fhir-models/Parameters';
+import { Patient } from '@src/fhir-models/Patient';
 import {
   DATATYPE_EXTENSION,
   DATATYPE_ID,

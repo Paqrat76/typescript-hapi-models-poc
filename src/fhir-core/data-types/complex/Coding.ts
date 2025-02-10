@@ -23,10 +23,9 @@
 
 import { DataType, setFhirPrimitiveJson } from '@src/fhir-core/base-models/core-fhir-models';
 import { IBase } from '@src/fhir-core/base-models/IBase';
-import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
-import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
-import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { INSTANCE_EMPTY_ERROR_MSG } from '@src/fhir-core/constants';
 import { BooleanType } from '@src/fhir-core/data-types/primitive/BooleanType';
+import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import {
   fhirBoolean,
   fhirBooleanSchema,
@@ -38,9 +37,21 @@ import {
   fhirUriSchema,
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
+import { isEmpty } from '@src/fhir-core/utility/common-util';
+import {
+  getPrimitiveTypeJson,
+  parseBooleanType,
+  parseCodeType,
+  parseStringType,
+  parseUriType,
+  processElementJson,
+} from '@src/fhir-core/utility/fhir-parsers';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirType, isDefined } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
+import { assertFhirType, isDefined } from '@src/fhir-core/utility/type-guards';
+import { strict as assert } from 'node:assert';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -66,6 +77,100 @@ export class Coding extends DataType implements IBase {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor() {
     super();
+  }
+
+  /**
+   * Parse the provided `Coding` json to instantiate the Coding data model.
+   *
+   * @param sourceJson - JSON representing FHIR `Coding`
+   * @param optSourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Coding
+   * @returns Coding data model or undefined for `Coding`
+   */
+  public static parse(sourceJson: JSON.Value, optSourceField?: string): Coding | undefined {
+    if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
+      return undefined;
+    }
+    const source = isDefined<string>(optSourceField) ? optSourceField : 'Coding';
+    const datatypeJsonObj: JSON.Object = JSON.asObject(sourceJson, `${source} JSON`);
+    const instance = new Coding();
+    processElementJson(instance, datatypeJsonObj);
+
+    let fieldName: string;
+    let sourceField: string;
+    let primitiveJsonType: 'boolean' | 'number' | 'string';
+
+    fieldName = 'system';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: UriType | undefined = parseUriType(dtJson, dtSiblingJson);
+      instance.setSystemElement(datatype);
+    }
+
+    fieldName = 'version';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
+      instance.setVersionElement(datatype);
+    }
+
+    fieldName = 'code';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
+      instance.setCodeElement(datatype);
+    }
+
+    fieldName = 'display';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
+      instance.setDisplayElement(datatype);
+    }
+
+    fieldName = 'userSelected';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'boolean';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: BooleanType | undefined = parseBooleanType(dtJson, dtSiblingJson);
+      instance.setUserSelectedElement(datatype);
+    }
+
+    assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
+    return instance;
   }
 
   /**

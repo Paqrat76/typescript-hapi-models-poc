@@ -25,8 +25,8 @@ import { DataType, Extension } from '@src/fhir-core/base-models/core-fhir-models
 import { Identifier, Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { INVALID_NON_STRING_TYPE, INVALID_STRING, INVALID_STRING_TYPE, UNDEFINED_VALUE } from '../../../test-utils';
 
 describe('Reference', () => {
@@ -545,6 +545,55 @@ describe('Reference', () => {
   });
 
   describe('Serialization/Deserialization', () => {
+    const VALID_JSON = {
+      id: 'id1234',
+      extension: [
+        {
+          url: 'testUrl1',
+          valueString: 'base extension string value 1',
+        },
+        {
+          url: 'testUrl2',
+          valueString: 'base extension string value 2',
+        },
+      ],
+      reference: 'This is a valid string.',
+      type: 'testUriType3',
+      _type: {
+        id: 'T1357',
+        extension: [
+          {
+            url: 'typeUrl',
+            valueString: 'type extension string value',
+          },
+        ],
+      },
+      identifier: {
+        value: 'Identifier value 1',
+      },
+      display: 'This is another valid string!',
+    };
+
+    it('should return undefined for empty json', () => {
+      let testType = Reference.parse({});
+      expect(testType).toBeUndefined();
+
+      // @ts-expect-error: allow for testing
+      testType = Reference.parse(undefined);
+      expect(testType).toBeUndefined();
+
+      testType = Reference.parse(null);
+      expect(testType).toBeUndefined();
+    });
+
+    it('should throw TypeError for invalid json type', () => {
+      const t = () => {
+        Reference.parse('NOT AN OBJECT');
+      };
+      expect(t).toThrow(TypeError);
+      expect(t).toThrow(`Reference JSON is not a JSON object.`);
+    });
+
     it('should properly create serialized content', () => {
       const typeUri = 'testUriType3';
       const typeType = new UriType(typeUri);
@@ -597,35 +646,19 @@ describe('Reference', () => {
       expect(testReference.hasDisplay()).toBe(true);
       expect(testReference.getDisplay()).toStrictEqual(VALID_STRING_2);
 
-      const expectedJson = {
-        id: 'id1234',
-        extension: [
-          {
-            url: 'testUrl1',
-            valueString: 'base extension string value 1',
-          },
-          {
-            url: 'testUrl2',
-            valueString: 'base extension string value 2',
-          },
-        ],
-        reference: 'This is a valid string.',
-        type: 'testUriType3',
-        _type: {
-          id: 'T1357',
-          extension: [
-            {
-              url: 'typeUrl',
-              valueString: 'type extension string value',
-            },
-          ],
-        },
-        identifier: {
-          value: 'Identifier value 1',
-        },
-        display: 'This is another valid string!',
-      };
-      expect(testReference.toJSON()).toEqual(expectedJson);
+      expect(testReference.toJSON()).toEqual(VALID_JSON);
+    });
+
+    it('should return Reference for valid json', () => {
+      const testType: Reference | undefined = Reference.parse(VALID_JSON);
+
+      expect(testType).toBeDefined();
+      expect(testType).toBeInstanceOf(Reference);
+      expect(testType?.constructor.name).toStrictEqual('Reference');
+      expect(testType?.fhirType()).toStrictEqual('Reference');
+      expect(testType?.isEmpty()).toBe(false);
+      expect(testType?.isComplexDataType()).toBe(true);
+      expect(testType?.toJSON()).toEqual(VALID_JSON);
     });
   });
 });

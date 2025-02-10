@@ -19,6 +19,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [0.18.0] - 2025-02-10
+
+### Changed
+
+- Updated dependencies
+- Refactored static parsing methods for all resources and complex data types for consistency and code generator template friendliness
+- Optimized all imports
+
+
 ## [0.17.0] - 2025-02-06
 
 ### Added

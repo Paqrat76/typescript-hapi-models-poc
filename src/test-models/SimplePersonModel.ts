@@ -21,33 +21,30 @@
  *
  */
 
+import { setFhirComplexJson, setFhirPrimitiveJson } from '@src/fhir-core/base-models/core-fhir-models';
 import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
-import { IBase } from '@src/fhir-core/base-models/IBase';
 import { FhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
+import { IBase } from '@src/fhir-core/base-models/IBase';
 import { Address } from '@src/fhir-core/data-types/complex/Address';
 import { HumanName } from '@src/fhir-core/data-types/complex/HumanName';
 import { Identifier } from '@src/fhir-core/data-types/complex/Reference-Identifier';
-import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import {
   fhirString,
   fhirStringSchema,
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { extractFieldName, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
-import { isEmpty } from '../fhir-core/utility/common-util';
-import { assertFhirType, isDefined } from '@src/fhir-core/utility/type-guards';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import {
   assertFhirResourceTypeJson,
   getPrimitiveTypeJson,
-  parseAddress,
-  parseHumanName,
-  parseIdentifier,
   parseStringType,
   processDomainResourceJson,
 } from '@src/fhir-core/utility/fhir-parsers';
-import { setFhirComplexJson, setFhirPrimitiveJson } from '@src/fhir-core/base-models/core-fhir-models';
+import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
+import { assertFhirType, isDefined } from '@src/fhir-core/utility/type-guards';
 import { parseContainedResources } from '@src/fhir-models/fhir-contained-resource-parser';
+import { isEmpty } from '../fhir-core/utility/common-util';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -66,51 +63,62 @@ export class SimplePersonModel extends DomainResource implements IBase {
     super();
   }
 
-  public static override parse(sourceJson: JSON.Object): SimplePersonModel | undefined {
+  public static override parse(sourceJson: JSON.Object, optSourceField?: string): SimplePersonModel | undefined {
     if (!isDefined<JSON.Object>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
-    const classJsonObj: JSON.Object = JSON.asObject(sourceJson, `SimplePersonModel JSON`);
+    const source = isDefined<string>(optSourceField) ? optSourceField : 'SimplePersonModel';
+    const classJsonObj: JSON.Object = JSON.asObject(sourceJson, `${source} JSON`);
     // Must be a valid FHIR resource type. Uses 'Person' for testing purposes.
     assertFhirResourceTypeJson(classJsonObj, 'Person');
     const instance = new SimplePersonModel();
     processDomainResourceJson(instance, classJsonObj);
 
+    let fieldName: string;
+    let sourceField: string;
+    let primitiveJsonType: 'boolean' | 'number' | 'string';
+
     // NOTE: "contained" is handled in Resource-based FHIR model rather than in processDomainResourceJson above
     //       to minimize circular references!
-    let sourceField = 'SimplePersonModel.contained';
-    let fieldName = extractFieldName(sourceField);
+    fieldName = 'contained';
+    sourceField = `${source}.${fieldName}`;
+    /* istanbul ignore next */
     if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const containedJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       parseContainedResources(instance, containedJsonArray, sourceField);
     }
 
-    sourceField = 'SimplePersonModel.identifier';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'identifier';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
-      const datatype: Identifier | undefined = parseIdentifier(classJsonObj[fieldName], sourceField);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const datatype: Identifier | undefined = Identifier.parse(classJsonObj[fieldName]!, sourceField);
       instance.setIdentifier(datatype);
     }
 
-    sourceField = 'SimplePersonModel.name';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'name';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
-      const datatype: HumanName | undefined = parseHumanName(classJsonObj[fieldName], sourceField);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const datatype: HumanName | undefined = HumanName.parse(classJsonObj[fieldName]!, sourceField);
       instance.setName(datatype);
     }
 
-    sourceField = 'SimplePersonModel.address';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'address';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
-      const datatype: Address | undefined = parseAddress(classJsonObj[fieldName], sourceField);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const datatype: Address | undefined = Address.parse(classJsonObj[fieldName]!, sourceField);
       instance.setAddress(datatype);
     }
 
-    sourceField = 'SimplePersonModel.phone';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'phone';
+    sourceField = `${source}.${fieldName}`;
+    // eslint-disable-next-line prefer-const
+    primitiveJsonType = 'string';
     if (fieldName in classJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, 'string');
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
       const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
       instance.setPhoneElement(datatype);
     }

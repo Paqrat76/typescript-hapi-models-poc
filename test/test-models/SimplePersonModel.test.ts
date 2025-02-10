@@ -21,20 +21,23 @@
  *
  */
 
-import { SimplePersonModel } from '@src/test-models/SimplePersonModel';
 import { Base } from '@src/fhir-core/base-models/Base';
-import { Resource } from '@src/fhir-core/base-models/Resource';
-import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
 import { Extension } from '@src/fhir-core/base-models/core-fhir-models';
+import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
+import { Resource } from '@src/fhir-core/base-models/Resource';
 import { Address } from '@src/fhir-core/data-types/complex/Address';
-import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { HumanName } from '@src/fhir-core/data-types/complex/HumanName';
-import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
-import { Identifier } from '@src/fhir-core/data-types/complex/Reference-Identifier';
 import { Meta } from '@src/fhir-core/data-types/complex/Meta';
 import { Narrative } from '@src/fhir-core/data-types/complex/Narrative';
+import { Identifier } from '@src/fhir-core/data-types/complex/Reference-Identifier';
+import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { SimplePersonModel } from '@src/test-models/SimplePersonModel';
+import { TestData } from '../test-data';
 import {
   DATATYPE_EXTENSION,
   DATATYPE_ID,
@@ -59,9 +62,6 @@ import {
   VALID_NARRATIVE,
   VALID_NARRATIVE_2,
 } from '../test-utils';
-import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { TestData } from '../test-data';
 
 describe('SimplePersonModel', () => {
   describe('Base Tests', () => {

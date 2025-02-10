@@ -21,10 +21,10 @@
  *
  */
 
-import { TimeType } from '@src/fhir-core/data-types/primitive/TimeType';
-import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { TimeType } from '@src/fhir-core/data-types/primitive/TimeType';
+import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 
 describe('TimeType', () => {
   const VALID_TIME = `13:28:17`;

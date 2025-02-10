@@ -21,22 +21,24 @@
  *
  */
 
-import { AssertionError } from 'node:assert';
-import { TestDataModelPrimitiveComponent } from '@src/test-models/TestDataModel';
 import { Base } from '@src/fhir-core/base-models/Base';
 import { BackboneElement, DataType, Element, Extension } from '@src/fhir-core/base-models/core-fhir-models';
 import { DateTimeType } from '@src/fhir-core/data-types/primitive/DateTimeType';
 import { IntegerType } from '@src/fhir-core/data-types/primitive/IntegerType';
-import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { fhirInteger, fhirString } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { TestDataModelPrimitiveComponent } from '@src/test-models/TestDataModel';
+import { AssertionError } from 'node:assert';
 import { TestData } from '../test-data';
 import {
+  DATATYPE_EXTENSION,
+  DATATYPE_ID,
   INVALID_NON_STRING_TYPE,
-  INVALID_STRING_TYPE,
   INVALID_NON_STRING_TYPE_VALUE,
+  INVALID_STRING_TYPE,
   INVALID_STRING_TYPE_VALUE,
   UNDEFINED_VALUE,
   VALID_EXTENSION,
@@ -45,8 +47,6 @@ import {
   VALID_ID_2,
   VALID_MODIFIER_EXTENSION,
   VALID_MODIFIER_EXTENSION_2,
-  DATATYPE_ID,
-  DATATYPE_EXTENSION,
 } from '../test-utils';
 
 describe('TestDataModelPrimitiveComponent', () => {

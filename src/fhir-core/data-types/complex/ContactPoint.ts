@@ -21,14 +21,14 @@
  *
  */
 
-import { IBase } from '@src/fhir-core/base-models/IBase';
 import { DataType, setFhirComplexJson, setFhirPrimitiveJson } from '@src/fhir-core/base-models/core-fhir-models';
-import { assertEnumCodeType, CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { IBase } from '@src/fhir-core/base-models/IBase';
+import { INSTANCE_EMPTY_ERROR_MSG } from '@src/fhir-core/constants';
 import { ContactPointSystemEnum } from '@src/fhir-core/data-types/code-systems/ContactPointSystemEnum';
 import { ContactPointUseEnum } from '@src/fhir-core/data-types/code-systems/ContactPointUseEnum';
-import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
-import { PositiveIntType } from '@src/fhir-core/data-types/primitive/PositiveIntType';
 import { Period } from '@src/fhir-core/data-types/complex/Period';
+import { assertEnumCodeType, CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { PositiveIntType } from '@src/fhir-core/data-types/primitive/PositiveIntType';
 import {
   fhirCode,
   fhirCodeSchema,
@@ -38,9 +38,19 @@ import {
   fhirStringSchema,
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { isEmpty } from '@src/fhir-core/utility/common-util';
+import {
+  getPrimitiveTypeJson,
+  parseCodeType,
+  parsePositiveIntType,
+  parseStringType,
+  processElementJson,
+} from '@src/fhir-core/utility/fhir-parsers';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
-import { assertFhirType, isDefined } from '@src/fhir-core/utility/type-guards';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
+import { assertFhirType, isDefined } from '@src/fhir-core/utility/type-guards';
+import { strict as assert } from 'node:assert';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -66,6 +76,94 @@ export class ContactPoint extends DataType implements IBase {
     super();
     this.contactPointSystemEnum = new ContactPointSystemEnum();
     this.contactPointUseEnum = new ContactPointUseEnum();
+  }
+
+  /**
+   * Parse the provided `ContactPoint` json to instantiate the ContactPoint data model.
+   *
+   * @param sourceJson - JSON representing FHIR `ContactPoint`
+   * @param optSourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to ContactPoint
+   * @returns ContactPoint data model or undefined for `ContactPoint`
+   */
+  public static parse(sourceJson: JSON.Value, optSourceField?: string): ContactPoint | undefined {
+    if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
+      return undefined;
+    }
+    const source = isDefined<string>(optSourceField) ? optSourceField : 'ContactPoint';
+    const datatypeJsonObj: JSON.Object = JSON.asObject(sourceJson, `${source} JSON`);
+    const instance = new ContactPoint();
+    processElementJson(instance, datatypeJsonObj);
+
+    let fieldName: string;
+    let sourceField: string;
+    let primitiveJsonType: 'boolean' | 'number' | 'string';
+
+    fieldName = 'system';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
+      instance.setSystemElement(datatype);
+    }
+
+    fieldName = 'value';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
+      instance.setValueElement(datatype);
+    }
+
+    fieldName = 'use';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
+      instance.setUseElement(datatype);
+    }
+
+    fieldName = 'rank';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'number';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: PositiveIntType | undefined = parsePositiveIntType(dtJson, dtSiblingJson);
+      instance.setRankElement(datatype);
+    }
+
+    fieldName = 'period';
+    sourceField = `${source}.${fieldName}`;
+    if (fieldName in datatypeJsonObj) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const datatype: Period | undefined = Period.parse(datatypeJsonObj[fieldName]!, sourceField);
+      instance.setPeriod(datatype);
+    }
+
+    assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
+    return instance;
   }
 
   /**

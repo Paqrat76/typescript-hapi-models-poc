@@ -21,11 +21,11 @@
  *
  */
 
+import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
 import { CanonicalType } from '@src/fhir-core/data-types/primitive/CanonicalType';
+import { fhirCanonical } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
-import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
-import { fhirCanonical } from '@src/fhir-core/data-types/primitive/primitive-types';
 
 describe('CanonicalType', () => {
   const VALID_CANONICAL = `testCanonicalType` as fhirCanonical;

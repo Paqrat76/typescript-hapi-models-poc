@@ -2,12 +2,10 @@
 
 ## POC Feature Set
 
-- Investigate pushing parsers into data models to put them in the data models as in the FHIR data models while
-  eliminating circular references:
-  - including primitive data type parsers in PrimitiveType or in individual primitive data models
-  - including static parse methods in complex data types
-- Determine whether to hand-craft all Complex data types or code generate all Complex data types based on parser
-  investigation above
+- Document logic for combinations for `@OpenDataTypesMeta()` when used in array(s)
+- Investigate strategies to resolve circular references caused by:
+  - fhir-contained-resource-parser/getFhirModelParseResults(...)
+  - fhir-parsers/getValueXData(...)
 
 ## Possible Considerations (future roadmap)
 

@@ -21,19 +21,19 @@
  *
  */
 
-import { AssertionError } from 'node:assert';
-import { ParametersParameterComponent } from '@src/fhir-models/Parameters';
 import { Base } from '@src/fhir-core/base-models/Base';
 import { BackboneElement, Element, Extension } from '@src/fhir-core/base-models/core-fhir-models';
 import { HumanName } from '@src/fhir-core/data-types/complex/HumanName';
-import { IntegerType } from '@src/fhir-core/data-types/primitive/IntegerType';
-import { Patient } from '@src/fhir-models/Patient';
 import { Period } from '@src/fhir-core/data-types/complex/Period';
+import { IntegerType } from '@src/fhir-core/data-types/primitive/IntegerType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { XhtmlType } from '@src/fhir-core/data-types/primitive/XhtmlType';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { ParametersParameterComponent } from '@src/fhir-models/Parameters';
+import { Patient } from '@src/fhir-models/Patient';
+import { AssertionError } from 'node:assert';
 import {
   DATATYPE_EXTENSION,
   DATATYPE_ID,

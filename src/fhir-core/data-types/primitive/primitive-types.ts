@@ -44,10 +44,10 @@
  * @module
  */
 
-import { TypeOf, z } from 'zod';
-import { DateTime } from 'luxon';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { DateTimeOpts } from '@src/fhir-core/utility/date-time-util';
+import { DateTime } from 'luxon';
+import { TypeOf, z } from 'zod';
 
 /**
  * FHIR DateType implementation

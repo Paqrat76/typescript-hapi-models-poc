@@ -60,6 +60,7 @@
  * @module
  */
 
+import { isEmpty } from '@src/fhir-core/utility/common-util';
 import {
   assertIsDefined,
   assertIsString,
@@ -68,7 +69,6 @@ import {
   isNumber,
   isString,
 } from '@src/fhir-core/utility/type-guards';
-import { isEmpty } from '@src/fhir-core/utility/common-util';
 
 export { JsonObject as Object, JsonArray as Array };
 

@@ -21,12 +21,12 @@
  *
  */
 
-import { AssertionError } from 'node:assert';
+import { Identifier, Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { parseContainedResources } from '@src/fhir-models/fhir-contained-resource-parser';
 import { Group } from '@src/fhir-models/Group';
 import { PractitionerRole } from '@src/fhir-models/PractitionerRole';
-import { Identifier, Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
-import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { AssertionError } from 'node:assert';
 
 describe('fhir-contained-resource-parser', () => {
   let testGroup: Group;

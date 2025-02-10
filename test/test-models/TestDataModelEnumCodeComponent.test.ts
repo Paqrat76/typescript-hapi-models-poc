@@ -21,20 +21,20 @@
  *
  */
 
-import { AssertionError } from 'node:assert';
-import { TestDataModelEnumCodeComponent, TestDataModelPrimitiveComponent } from '@src/test-models/TestDataModel';
 import { Base } from '@src/fhir-core/base-models/Base';
 import { BackboneElement, Element, Extension } from '@src/fhir-core/base-models/core-fhir-models';
 import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { fhirCode } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { TaskCodeEnum } from '@src/test-models/code-systems/TaskCodeEnum';
-import { ContributorTypeEnum } from '@src/test-models/code-systems/ContributorTypeEnum';
-import { TaskStatusEnum } from '@src/test-models/code-systems/TaskStatusEnum';
-import { ConsentStateEnum } from '@src/test-models/code-systems/ConsentStateEnum';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { ConsentStateEnum } from '@src/test-models/code-systems/ConsentStateEnum';
+import { ContributorTypeEnum } from '@src/test-models/code-systems/ContributorTypeEnum';
+import { TaskCodeEnum } from '@src/test-models/code-systems/TaskCodeEnum';
+import { TaskStatusEnum } from '@src/test-models/code-systems/TaskStatusEnum';
+import { TestDataModelEnumCodeComponent, TestDataModelPrimitiveComponent } from '@src/test-models/TestDataModel';
+import { AssertionError } from 'node:assert';
 import { TestData } from '../test-data';
 import {
   DATATYPE_EXTENSION,

@@ -22,15 +22,15 @@
  */
 
 import { DataType, Extension } from '@src/fhir-core/base-models/core-fhir-models';
-import { Quantity } from '@src/fhir-core/data-types/complex/Quantity';
-import { DecimalType } from '@src/fhir-core/data-types/primitive/DecimalType';
+import { QuantityComparatorEnum } from '@src/fhir-core/data-types/code-systems/QuantityComparatorEnum';
+import { Quantity } from '@src/fhir-core/data-types/complex/Quantity-variations';
 import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { DecimalType } from '@src/fhir-core/data-types/primitive/DecimalType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
-import { QuantityComparatorEnum } from '@src/fhir-core/data-types/code-systems/QuantityComparatorEnum';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { INVALID_NON_STRING_TYPE, INVALID_STRING_TYPE, UNDEFINED_VALUE } from '../../../test-utils';
 
 describe('Quantity', () => {
@@ -687,6 +687,54 @@ describe('Quantity', () => {
   });
 
   describe('Serialization/Deserialization', () => {
+    const VALID_JSON = {
+      id: 'id1234',
+      extension: [
+        {
+          url: 'testUrl1',
+          valueString: 'base extension string value 1',
+        },
+        {
+          url: 'testUrl2',
+          valueString: 'base extension string value 2',
+        },
+      ],
+      value: 24.68,
+      _value: {
+        id: 'V1357',
+        extension: [
+          {
+            url: 'valueUrl',
+            valueString: 'value extension string value',
+          },
+        ],
+      },
+      comparator: '<',
+      unit: 'This is a valid string.',
+      system: 'testUriType',
+      code: 'testCodeType',
+    };
+
+    it('should return undefined for empty json', () => {
+      let testType = Quantity.parse({});
+      expect(testType).toBeUndefined();
+
+      // @ts-expect-error: allow for testing
+      testType = Quantity.parse(undefined);
+      expect(testType).toBeUndefined();
+
+      testType = Quantity.parse(null);
+      expect(testType).toBeUndefined();
+    });
+
+    it('should throw TypeError for invalid json type', () => {
+      const t = () => {
+        Quantity.parse('NOT AN OBJECT');
+      };
+      expect(t).toThrow(TypeError);
+      expect(t).toThrow(`Quantity JSON is not a JSON object.`);
+    });
+
     it('should properly create serialized content', () => {
       const valueType = new DecimalType(VALID_DECIMAL_2);
       const valueId = 'V1357';
@@ -750,34 +798,19 @@ describe('Quantity', () => {
       expect(testQuantity.hasCode()).toBe(true);
       expect(testQuantity.getCode()).toStrictEqual(VALID_CODE);
 
-      const expectedJson = {
-        id: 'id1234',
-        extension: [
-          {
-            url: 'testUrl1',
-            valueString: 'base extension string value 1',
-          },
-          {
-            url: 'testUrl2',
-            valueString: 'base extension string value 2',
-          },
-        ],
-        value: 24.68,
-        _value: {
-          id: 'V1357',
-          extension: [
-            {
-              url: 'valueUrl',
-              valueString: 'value extension string value',
-            },
-          ],
-        },
-        comparator: '<',
-        unit: 'This is a valid string.',
-        system: 'testUriType',
-        code: 'testCodeType',
-      };
-      expect(testQuantity.toJSON()).toEqual(expectedJson);
+      expect(testQuantity.toJSON()).toEqual(VALID_JSON);
+    });
+
+    it('should return Quantity for valid json', () => {
+      const testType: Quantity | undefined = Quantity.parse(VALID_JSON);
+
+      expect(testType).toBeDefined();
+      expect(testType).toBeInstanceOf(Quantity);
+      expect(testType?.constructor.name).toStrictEqual('Quantity');
+      expect(testType?.fhirType()).toStrictEqual('Quantity');
+      expect(testType?.isEmpty()).toBe(false);
+      expect(testType?.isComplexDataType()).toBe(true);
+      expect(testType?.toJSON()).toEqual(VALID_JSON);
     });
   });
 });

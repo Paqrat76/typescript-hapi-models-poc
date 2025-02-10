@@ -21,9 +21,9 @@
  *
  */
 
-import { XhtmlType } from '@src/fhir-core/data-types/primitive/XhtmlType';
-import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { XhtmlType } from '@src/fhir-core/data-types/primitive/XhtmlType';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 

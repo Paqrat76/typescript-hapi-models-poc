@@ -22,10 +22,11 @@
   // Only copy the internal code block!
   public static parse(sourceJson: JSON.Object): Reference | undefined {
 
-    sourceField = 'XxxxParentClassElement.xxxxFieldName';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'xxxxFieldName';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
-      const datatype: Reference | undefined = parseReference(classJsonObj[fieldName], sourceField);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const datatype: Reference | undefined = Reference.parse(classJsonObj[fieldName]!, sourceField);
       instance.setXxxxFieldName(datatype);
     }
 
@@ -103,10 +104,11 @@
     // Add following near top of method ONLY IF it does not already exist
     const missingReqdProperties: string[] = [];
 
-    sourceField = 'XxxxParentClassElement.xxxxFieldName';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'xxxxFieldName';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
-      const datatype: Reference | undefined = parseReference(classJsonObj[fieldName], sourceField);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const datatype: Reference | undefined = Reference.parse(classJsonObj[fieldName]!, sourceField);
       if (datatype === undefined) {
         missingReqdProperties.push(sourceField);
       } else {
@@ -195,13 +197,13 @@
   // Only copy the internal code block!
   public static parse(sourceJson: JSON.Object): Reference | undefined {
 
-    sourceField = 'XxxxParentClassElement.xxxxFieldName';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'xxxxFieldName';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
-        const datatype: Reference | undefined = parseReference(dataElementJson, `${sourceField}[${String(idx)}]`);
+        const datatype: Reference | undefined = Reference.parse(dataElementJson, `${sourceField}[${String(idx)}]`);
         if (datatype !== undefined) {
           instance.addXxxxFieldName(datatype);
         }
@@ -308,13 +310,13 @@
     // Add following near top of method ONLY IF it does not already exist
     const missingReqdProperties: string[] = [];
 
-    sourceField = 'XxxxParentClassElement.xxxxFieldName';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'xxxxFieldName';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const dataElementJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
       dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
-        const datatype: Reference | undefined = parseReference(dataElementJson, `${sourceField}[${String(idx)}]`);
+        const datatype: Reference | undefined = Reference.parse(dataElementJson, `${sourceField}[${String(idx)}]`);
         if (datatype === undefined) {
           missingReqdProperties.push(`${sourceField}[${String(idx)}]`);
         } else {

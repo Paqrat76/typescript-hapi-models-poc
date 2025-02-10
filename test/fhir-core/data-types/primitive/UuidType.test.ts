@@ -21,10 +21,10 @@
  *
  */
 
-import { UuidType } from '@src/fhir-core/data-types/primitive/UuidType';
-import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { UuidType } from '@src/fhir-core/data-types/primitive/UuidType';
+import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 
 describe('UuidType', () => {
   const VALID_UUID = `urn:uuid:c757873d-ec9a-4326-a141-556f43239520`;

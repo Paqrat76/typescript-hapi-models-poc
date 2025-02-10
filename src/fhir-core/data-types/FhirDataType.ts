@@ -85,7 +85,7 @@ export const OPEN_DATA_TYPES = [
   // Metadata Types
   'Availability', // added in FHIR R5
   'ContactDetail',
-  'Contributor',
+  'Contributor', // removed in R5
   'DataRequirement',
   'Expression',
   'ExtendedContactDetail', // added in FHIR R5
@@ -114,19 +114,12 @@ export type FhirOpenDataType = (typeof OPEN_DATA_TYPES)[number];
  * @category Base Models
  * @see [Open Type Element](https://hl7.org/fhir/R5/datatypes.html#open)
  */
-export const OPEN_DATE_TYPE_KEY_NAMES = OPEN_DATA_TYPES.map((odt) => `value${upperFirst(odt)}`);
+export const OPEN_DATA_TYPE_KEY_NAMES = OPEN_DATA_TYPES.map((odt) => `value${upperFirst(odt)}`);
 
 /**
  * Non-open data types that are valid data types
  */
-const NON_OPEN_DATA_TYPES = [
-  'MonetaryComponent',
-  'VirtualServiceDetail',
-  'CodeableReference',
-  'Narrative',
-  'Reference',
-  'xhtml',
-] as const;
+const NON_OPEN_DATA_TYPES = ['MonetaryComponent', 'VirtualServiceDetail', 'Narrative', 'xhtml'] as const;
 
 /**
  * FHIR data types

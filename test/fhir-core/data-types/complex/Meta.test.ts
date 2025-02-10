@@ -21,17 +21,17 @@
  *
  */
 
-import { Meta } from '@src/fhir-core/data-types/complex/Meta';
 import { DataType, Extension } from '@src/fhir-core/base-models/core-fhir-models';
-import { fhirCanonical } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { Coding } from '@src/fhir-core/data-types/complex/Coding';
+import { Meta } from '@src/fhir-core/data-types/complex/Meta';
+import { CanonicalType } from '@src/fhir-core/data-types/primitive/CanonicalType';
 import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
 import { InstantType } from '@src/fhir-core/data-types/primitive/InstantType';
-import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
-import { CanonicalType } from '@src/fhir-core/data-types/primitive/CanonicalType';
-import { Coding } from '@src/fhir-core/data-types/complex/Coding';
+import { fhirCanonical } from '@src/fhir-core/data-types/primitive/primitive-types';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { INVALID_NON_STRING_TYPE, UNDEFINED_VALUE } from '../../../test-utils';
 
 describe('Meta', () => {
@@ -696,6 +696,78 @@ describe('Meta', () => {
   });
 
   describe('Serialization/Deserialization', () => {
+    const VALID_JSON = {
+      id: 'id1234',
+      extension: [
+        {
+          url: 'testUrl1',
+          valueString: 'base extension string value 1',
+        },
+        {
+          url: 'testUrl2',
+          valueString: 'base extension string value 2',
+        },
+      ],
+      versionId: 'a-432.E-12345',
+      lastUpdated: '2015-02-07T13:28:17.239+02:00',
+      source: 'testUriType1',
+      _source: {
+        id: 'S1357',
+        extension: [
+          {
+            url: 'sourceUrl',
+            valueString: 'source extension string value',
+          },
+        ],
+      },
+      profile: ['testCanonical2'],
+      _profile: [
+        {
+          id: 'C2468',
+          extension: [
+            {
+              url: 'profileUrl',
+              valueString: 'profile extension string value',
+            },
+          ],
+        },
+      ],
+      security: [
+        {
+          system: 'testSystemSecurity',
+          code: 'testCodeSecurity',
+          display: 'testDisplaySecurity',
+        },
+      ],
+      tag: [
+        {
+          system: 'testSystemTag',
+          code: 'testCodeTag',
+          display: 'testDisplayTag',
+        },
+      ],
+    };
+
+    it('should return undefined for empty json', () => {
+      let testType = Meta.parse({});
+      expect(testType).toBeUndefined();
+
+      // @ts-expect-error: allow for testing
+      testType = Meta.parse(undefined);
+      expect(testType).toBeUndefined();
+
+      testType = Meta.parse(null);
+      expect(testType).toBeUndefined();
+    });
+
+    it('should throw TypeError for invalid json type', () => {
+      const t = () => {
+        Meta.parse('NOT AN OBJECT');
+      };
+      expect(t).toThrow(TypeError);
+      expect(t).toThrow(`Meta JSON is not a JSON object.`);
+    });
+
     it('should properly create serialized content', () => {
       const sourceUri = 'testUriType1';
       const sourceType = new UriType(sourceUri);
@@ -766,58 +838,19 @@ describe('Meta', () => {
       expect(testMeta.getTag()).toHaveLength(1); // always returns an array
       expect(testMeta.getTag()[0]).toEqual(VALID_CODING_TAG);
 
-      const expectedJson = {
-        id: 'id1234',
-        extension: [
-          {
-            url: 'testUrl1',
-            valueString: 'base extension string value 1',
-          },
-          {
-            url: 'testUrl2',
-            valueString: 'base extension string value 2',
-          },
-        ],
-        versionId: 'a-432.E-12345',
-        lastUpdated: '2015-02-07T13:28:17.239+02:00',
-        source: 'testUriType1',
-        _source: {
-          id: 'S1357',
-          extension: [
-            {
-              url: 'sourceUrl',
-              valueString: 'source extension string value',
-            },
-          ],
-        },
-        profile: ['testCanonical2'],
-        _profile: [
-          {
-            id: 'C2468',
-            extension: [
-              {
-                url: 'profileUrl',
-                valueString: 'profile extension string value',
-              },
-            ],
-          },
-        ],
-        security: [
-          {
-            system: 'testSystemSecurity',
-            code: 'testCodeSecurity',
-            display: 'testDisplaySecurity',
-          },
-        ],
-        tag: [
-          {
-            system: 'testSystemTag',
-            code: 'testCodeTag',
-            display: 'testDisplayTag',
-          },
-        ],
-      };
-      expect(testMeta.toJSON()).toEqual(expectedJson);
+      expect(testMeta.toJSON()).toEqual(VALID_JSON);
+    });
+
+    it('should return Meta for valid json', () => {
+      const testType: Meta | undefined = Meta.parse(VALID_JSON);
+
+      expect(testType).toBeDefined();
+      expect(testType).toBeInstanceOf(Meta);
+      expect(testType?.constructor.name).toStrictEqual('Meta');
+      expect(testType?.fhirType()).toStrictEqual('Meta');
+      expect(testType?.isEmpty()).toBe(false);
+      expect(testType?.isComplexDataType()).toBe(true);
+      expect(testType?.toJSON()).toEqual(VALID_JSON);
     });
   });
 });

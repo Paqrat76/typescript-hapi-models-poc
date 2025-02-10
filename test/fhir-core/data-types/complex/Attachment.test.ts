@@ -21,8 +21,8 @@
  *
  */
 
-import { Attachment } from '@src/fhir-core/data-types/complex/Attachment';
 import { DataType, Extension } from '@src/fhir-core/base-models/core-fhir-models';
+import { Attachment } from '@src/fhir-core/data-types/complex/Attachment';
 import { Base64BinaryType } from '@src/fhir-core/data-types/primitive/Base64BinaryType';
 import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { DateTimeType } from '@src/fhir-core/data-types/primitive/DateTimeType';
@@ -32,10 +32,10 @@ import { UrlType } from '@src/fhir-core/data-types/primitive/UrlType';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import {
+  FHIR_MAX_INTEGER,
   INVALID_NON_STRING_TYPE,
   INVALID_STRING_TYPE,
   TOO_BIG_STRING,
-  FHIR_MAX_INTEGER,
   UNDEFINED_VALUE,
 } from '../../../test-utils';
 
@@ -790,6 +790,57 @@ describe('Attachment', () => {
   });
 
   describe('Serialization/Deserialization', () => {
+    const VALID_JSON = {
+      id: 'id1234',
+      extension: [
+        {
+          url: 'testUrl1',
+          valueString: 'base extension string value 1',
+        },
+        {
+          url: 'testUrl2',
+          valueString: 'base extension string value 2',
+        },
+      ],
+      contentType: 'testCodeType',
+      language: 'testCodeType2',
+      data: 'VGV4dCByZXByZXNlbnRhdGlvbiBvZiB0aGUgYWRkcmVzcw==',
+      url: 'testUrlType',
+      size: 76,
+      hash: '0f60168295bc9d6b0535feaf0975a63532959834',
+      title: 'This is a valid string.',
+      _title: {
+        id: 'T1357',
+        extension: [
+          {
+            url: 'titleUrl',
+            valueString: 'title extension string value',
+          },
+        ],
+      },
+      creation: '2017-01-01T13:24:00.000Z',
+    };
+
+    it('should return undefined for empty json', () => {
+      let testType = Attachment.parse({});
+      expect(testType).toBeUndefined();
+
+      // @ts-expect-error: allow for testing
+      testType = Attachment.parse(undefined);
+      expect(testType).toBeUndefined();
+
+      testType = Attachment.parse(null);
+      expect(testType).toBeUndefined();
+    });
+
+    it('should throw TypeError for invalid json type', () => {
+      const t = () => {
+        Attachment.parse('NOT AN OBJECT');
+      };
+      expect(t).toThrow(TypeError);
+      expect(t).toThrow(`Attachment JSON is not a JSON object.`);
+    });
+
     it('should properly create serialized content', () => {
       const testAttachment = new Attachment();
       const testId = 'id1234';
@@ -863,37 +914,19 @@ describe('Attachment', () => {
       expect(testAttachment.hasCreation()).toBe(true);
       expect(testAttachment.getCreation()).toStrictEqual(VALID_DATETIME);
 
-      const expectedJson = {
-        id: 'id1234',
-        extension: [
-          {
-            url: 'testUrl1',
-            valueString: 'base extension string value 1',
-          },
-          {
-            url: 'testUrl2',
-            valueString: 'base extension string value 2',
-          },
-        ],
-        contentType: 'testCodeType',
-        language: 'testCodeType2',
-        data: 'VGV4dCByZXByZXNlbnRhdGlvbiBvZiB0aGUgYWRkcmVzcw==',
-        url: 'testUrlType',
-        size: 76,
-        hash: '0f60168295bc9d6b0535feaf0975a63532959834',
-        title: 'This is a valid string.',
-        _title: {
-          id: 'T1357',
-          extension: [
-            {
-              url: 'titleUrl',
-              valueString: 'title extension string value',
-            },
-          ],
-        },
-        creation: '2017-01-01T13:24:00.000Z',
-      };
-      expect(testAttachment.toJSON()).toEqual(expectedJson);
+      expect(testAttachment.toJSON()).toEqual(VALID_JSON);
+    });
+
+    it('should return Attachment for valid json', () => {
+      const testType: Attachment | undefined = Attachment.parse(VALID_JSON);
+
+      expect(testType).toBeDefined();
+      expect(testType).toBeInstanceOf(Attachment);
+      expect(testType?.constructor.name).toStrictEqual('Attachment');
+      expect(testType?.fhirType()).toStrictEqual('Attachment');
+      expect(testType?.isEmpty()).toBe(false);
+      expect(testType?.isComplexDataType()).toBe(true);
+      expect(testType?.toJSON()).toEqual(VALID_JSON);
     });
   });
 });

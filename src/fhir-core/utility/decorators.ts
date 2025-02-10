@@ -34,12 +34,12 @@
  * @module
  */
 
-import { strict as assert } from 'node:assert';
 import { DataType } from '@src/fhir-core/base-models/core-fhir-models';
 import { DATA_TYPES, FhirDataType } from '@src/fhir-core/data-types/FhirDataType';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { lowerFirst } from '@src/fhir-core/utility/common-util';
 import { assertIsDefined, assertIsString } from '@src/fhir-core/utility/type-guards';
-import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { strict as assert } from 'node:assert';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Symbol.metadata polyfill secret sauce for decorator metadata
 (Symbol.metadata as any) ??= Symbol('Symbol.metadata');

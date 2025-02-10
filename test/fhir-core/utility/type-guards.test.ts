@@ -21,37 +21,37 @@
  *
  */
 
-import { AssertionError } from 'node:assert';
+import {
+  assertFhirBackboneElement,
+  assertFhirBackboneType,
+  assertFhirDataType,
+  assertFhirPrimitiveType,
+} from '@src/fhir-core/base-models/core-fhir-models';
+import { isFhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
+import { assertFhirResourceType } from '@src/fhir-core/base-models/Resource';
+import { QuantityComparatorEnum } from '@src/fhir-core/data-types/code-systems/QuantityComparatorEnum';
+import { Period } from '@src/fhir-core/data-types/complex/Period';
+import { assertEnumCodeType, assertEnumCodeTypeList, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { assertFhirResourceTypeJson } from '@src/fhir-core/utility/fhir-parsers';
 import {
   assertFhirType,
   assertFhirTypeList,
+  assertIsBoolean,
   assertIsDefined,
   assertIsDefinedList,
   assertIsNumber,
   assertIsString,
   FhirTypeGuard,
+  isBoolean,
   isDefined,
   isDefinedList,
-  isBoolean,
   isNumber,
   isString,
-  assertIsBoolean,
 } from '@src/fhir-core/utility/type-guards';
-import { isFhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
-import {
-  assertFhirDataType,
-  assertFhirPrimitiveType,
-  assertFhirBackboneElement,
-  assertFhirBackboneType,
-} from '@src/fhir-core/base-models/core-fhir-models';
-import { assertFhirResourceType } from '@src/fhir-core/base-models/Resource';
-import { assertFhirResourceTypeJson } from '@src/fhir-core/utility/fhir-parsers';
-import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
-import { Period } from '@src/fhir-core/data-types/complex/Period';
-import { EnumCodeType, assertEnumCodeType, assertEnumCodeTypeList } from '@src/fhir-core/data-types/primitive/CodeType';
-import { QuantityComparatorEnum } from '@src/fhir-core/data-types/code-systems/QuantityComparatorEnum';
-import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
-import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { AssertionError } from 'node:assert';
 import {
   MockBackboneElement,
   MockBackboneType,

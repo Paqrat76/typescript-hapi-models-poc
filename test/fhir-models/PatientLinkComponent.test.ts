@@ -21,17 +21,17 @@
  *
  */
 
-import { AssertionError } from 'node:assert';
-import { PatientLinkComponent } from '@src/fhir-models/Patient';
 import { Base } from '@src/fhir-core/base-models/Base';
 import { BackboneElement, Element, Extension } from '@src/fhir-core/base-models/core-fhir-models';
 import { Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
 import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
-import { LinkTypeEnum } from '@src/fhir-models/code-systems/LinkTypeEnum';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { LinkTypeEnum } from '@src/fhir-models/code-systems/LinkTypeEnum';
+import { PatientLinkComponent } from '@src/fhir-models/Patient';
+import { AssertionError } from 'node:assert';
 import {
   DATATYPE_EXTENSION,
   DATATYPE_ID,

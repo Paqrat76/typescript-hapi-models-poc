@@ -23,10 +23,14 @@
 
 import { DataType, setFhirComplexJson } from '@src/fhir-core/base-models/core-fhir-models';
 import { IBase } from '@src/fhir-core/base-models/IBase';
-import { SimpleQuantity } from '@src/fhir-core/data-types/complex/SimpleQuantity';
+import { INSTANCE_EMPTY_ERROR_MSG } from '@src/fhir-core/constants';
+import { SimpleQuantity } from '@src/fhir-core/data-types/complex/Quantity-variations';
+import { isEmpty } from '@src/fhir-core/utility/common-util';
+import { processElementJson } from '@src/fhir-core/utility/fhir-parsers';
 import { isElementEmpty } from '@src/fhir-core/utility/fhir-util';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { assertFhirType, isDefined } from '@src/fhir-core/utility/type-guards';
+import { strict as assert } from 'node:assert';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -52,6 +56,46 @@ export class Range extends DataType implements IBase {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor() {
     super();
+  }
+
+  /**
+   * Parse the provided `Range` json to instantiate the Range data model.
+   *
+   * @param sourceJson - JSON representing FHIR `Range`
+   * @param optSourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Range
+   * @returns Range data model or undefined for `Range`
+   */
+  public static parse(sourceJson: JSON.Value, optSourceField?: string): Range | undefined {
+    if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
+      return undefined;
+    }
+    const source = isDefined<string>(optSourceField) ? optSourceField : 'Range';
+    const datatypeJsonObj: JSON.Object = JSON.asObject(sourceJson, `${source} JSON`);
+    const instance = new Range();
+    processElementJson(instance, datatypeJsonObj);
+
+    let fieldName: string;
+    let sourceField: string;
+    //let primitiveJsonType: 'boolean' | 'number' | 'string';
+
+    fieldName = 'low';
+    sourceField = `${source}.${fieldName}`;
+    if (fieldName in datatypeJsonObj) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const datatype: SimpleQuantity | undefined = SimpleQuantity.parse(datatypeJsonObj[fieldName]!, sourceField);
+      instance.setLow(datatype);
+    }
+
+    fieldName = 'high';
+    sourceField = `${source}.${fieldName}`;
+    if (fieldName in datatypeJsonObj) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const datatype: SimpleQuantity | undefined = SimpleQuantity.parse(datatypeJsonObj[fieldName]!, sourceField);
+      instance.setHigh(datatype);
+    }
+
+    assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
+    return instance;
   }
 
   /**

@@ -21,6 +21,19 @@
  *
  */
 
+import { Base } from '@src/fhir-core/base-models/Base';
+import { Extension } from '@src/fhir-core/base-models/core-fhir-models';
+import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
+import { Resource } from '@src/fhir-core/base-models/Resource';
+import { Meta } from '@src/fhir-core/data-types/complex/Meta';
+import { Narrative } from '@src/fhir-core/data-types/complex/Narrative';
+import { Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
+import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
+import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { ConsentStateEnum } from '@src/test-models/code-systems/ConsentStateEnum';
+import { TaskStatusEnum } from '@src/test-models/code-systems/TaskStatusEnum';
 import {
   TestDataModel,
   TestDataModelComplexComponent,
@@ -28,19 +41,7 @@ import {
   TestDataModelPrimitiveComponent,
   TestDataModelReferenceComponent,
 } from '@src/test-models/TestDataModel';
-import { Base } from '@src/fhir-core/base-models/Base';
-import { Resource } from '@src/fhir-core/base-models/Resource';
-import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
-import { Extension } from '@src/fhir-core/base-models/core-fhir-models';
-import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
-import { IdType } from '@src/fhir-core/data-types/primitive/IdType';
-import { Meta } from '@src/fhir-core/data-types/complex/Meta';
-import { Reference } from '@src/fhir-core/data-types/complex/Reference-Identifier';
-import { Narrative } from '@src/fhir-core/data-types/complex/Narrative';
-import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
-import { ConsentStateEnum } from '@src/test-models/code-systems/ConsentStateEnum';
-import { TaskStatusEnum } from '@src/test-models/code-systems/TaskStatusEnum';
-import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { TestData } from '../test-data';
 import {
   DATATYPE_EXTENSION,
   DATATYPE_ID,
@@ -63,7 +64,6 @@ import {
   VALID_NARRATIVE,
   VALID_NARRATIVE_2,
 } from '../test-utils';
-import { TestData } from '../test-data';
 
 describe('TestDataModel', () => {
   const CONTAINED_PERSON_ID = '#SMP-1';

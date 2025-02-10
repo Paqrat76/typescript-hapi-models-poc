@@ -21,8 +21,6 @@
  *
  */
 
-import { AssertionError } from 'node:assert';
-import { PractitionerRoleNotAvailableComponent } from '@src/fhir-models/PractitionerRole';
 import { Base } from '@src/fhir-core/base-models/Base';
 import { BackboneElement, Element, Extension } from '@src/fhir-core/base-models/core-fhir-models';
 import { Period } from '@src/fhir-core/data-types/complex/Period';
@@ -30,6 +28,8 @@ import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { PractitionerRoleNotAvailableComponent } from '@src/fhir-models/PractitionerRole';
+import { AssertionError } from 'node:assert';
 import {
   DATATYPE_EXTENSION,
   DATATYPE_ID,

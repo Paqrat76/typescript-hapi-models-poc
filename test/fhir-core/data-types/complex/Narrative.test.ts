@@ -21,17 +21,17 @@
  *
  */
 
-import { AssertionError } from 'node:assert';
-import { Narrative } from '@src/fhir-core/data-types/complex/Narrative';
 import { DataType, Extension } from '@src/fhir-core/base-models/core-fhir-models';
-import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
-import { XhtmlType } from '@src/fhir-core/data-types/primitive/XhtmlType';
-import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { NarrativeStatusEnum } from '@src/fhir-core/data-types/code-systems/NarrativeStatusEnum';
+import { Narrative } from '@src/fhir-core/data-types/complex/Narrative';
+import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { XhtmlType } from '@src/fhir-core/data-types/primitive/XhtmlType';
 import { FhirError } from '@src/fhir-core/errors/FhirError';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
+import { AssertionError } from 'node:assert';
 import { INVALID_NON_STRING_TYPE } from '../../../test-utils';
 
 describe('Narrative', () => {
@@ -508,6 +508,104 @@ describe('Narrative', () => {
   });
 
   describe('Serialization/Deserialization', () => {
+    const VALID_JSON = {
+      id: 'id1234',
+      extension: [
+        {
+          url: 'testUrl1',
+          valueString: 'base extension string value 1',
+        },
+        {
+          url: 'testUrl2',
+          valueString: 'base extension string value 2',
+        },
+      ],
+      status: 'additional',
+      _status: {
+        id: 'S1357',
+        extension: [
+          {
+            url: 'statusUrl',
+            valueString: 'status extension string value',
+          },
+        ],
+      },
+      div: '<div xmlns="http://www.w3.org/1999/xhtml">text</div>',
+    };
+
+    it('should return undefined for empty json', () => {
+      let testType = Narrative.parse({});
+      expect(testType).toBeUndefined();
+
+      // @ts-expect-error: allow for testing
+      testType = Narrative.parse(undefined);
+      expect(testType).toBeUndefined();
+
+      testType = Narrative.parse(null);
+      expect(testType).toBeUndefined();
+    });
+
+    it('should throw FhirError for missing required fields', () => {
+      const INVALID_JSON = { bogus: true };
+
+      const t = () => {
+        Narrative.parse(INVALID_JSON);
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(
+        `The following required properties must be included in the provided JSON: Narrative.status, Narrative.div`,
+      );
+    });
+
+    it('should throw FhirError for missing status', () => {
+      const INVALID_JSON = { status: '', div: '<div xmlns="http://www.w3.org/1999/xhtml">text</div>' };
+
+      const t = () => {
+        Narrative.parse(INVALID_JSON);
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(`The following required properties must be included in the provided JSON: Narrative.status`);
+    });
+
+    it('should throw FhirError for missing div', () => {
+      const INVALID_JSON = { status: 'generated', div: '' };
+
+      const t = () => {
+        Narrative.parse(INVALID_JSON);
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(`The following required properties must be included in the provided JSON: Narrative.div`);
+    });
+
+    it('should throw TypeError for invalid json type', () => {
+      const t = () => {
+        Narrative.parse('NOT AN OBJECT');
+      };
+      expect(t).toThrow(TypeError);
+      expect(t).toThrow(`Narrative JSON is not a JSON object.`);
+    });
+
+    it('should throw FhirError for including Extension on div (xhtml) field', () => {
+      const INVALID_JSON = {
+        status: 'generated',
+        div: '<div xmlns="http://www.w3.org/1999/xhtml">text</div>',
+        _div: {
+          extension: [
+            {
+              url: 'statusUrl',
+              valueString: 'status extension string value',
+            },
+          ],
+        },
+      };
+
+      const t = () => {
+        Narrative.parse(INVALID_JSON);
+      };
+      expect(t).toThrow(FhirError);
+      expect(t).toThrow(`According to the FHIR specification, Extensions are not permitted on the xhtml type`);
+    });
+
     it('should throw FhirError from toJSON() when instantiated with missing required properties', () => {
       const testId = 'id1234';
       const testNarrative = new Narrative(null, null);
@@ -562,31 +660,19 @@ describe('Narrative', () => {
       expect(testNarrative.hasDiv()).toBe(true);
       expect(testNarrative.getDiv()).toStrictEqual(VALID_XHTML);
 
-      const expectedJson = {
-        id: 'id1234',
-        extension: [
-          {
-            url: 'testUrl1',
-            valueString: 'base extension string value 1',
-          },
-          {
-            url: 'testUrl2',
-            valueString: 'base extension string value 2',
-          },
-        ],
-        status: 'additional',
-        _status: {
-          id: 'S1357',
-          extension: [
-            {
-              url: 'statusUrl',
-              valueString: 'status extension string value',
-            },
-          ],
-        },
-        div: '<div xmlns="http://www.w3.org/1999/xhtml">text</div>',
-      };
-      expect(testNarrative.toJSON()).toEqual(expectedJson);
+      expect(testNarrative.toJSON()).toEqual(VALID_JSON);
+    });
+
+    it('should return Narrative for valid json', () => {
+      const testType: Narrative | undefined = Narrative.parse(VALID_JSON);
+
+      expect(testType).toBeDefined();
+      expect(testType).toBeInstanceOf(Narrative);
+      expect(testType?.constructor.name).toStrictEqual('Narrative');
+      expect(testType?.fhirType()).toStrictEqual('Narrative');
+      expect(testType?.isEmpty()).toBe(false);
+      expect(testType?.isComplexDataType()).toBe(true);
+      expect(testType?.toJSON()).toEqual(VALID_JSON);
     });
   });
 });

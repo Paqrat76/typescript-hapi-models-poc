@@ -29,11 +29,16 @@ import {
   setFhirPrimitiveJson,
 } from '@src/fhir-core/base-models/core-fhir-models';
 import { IBase } from '@src/fhir-core/base-models/IBase';
+import {
+  INSTANCE_EMPTY_ERROR_MSG,
+  REQUIRED_PROPERTIES_DO_NOT_EXIST,
+  REQUIRED_PROPERTIES_REQD_IN_JSON,
+} from '@src/fhir-core/constants';
+import { Coding } from '@src/fhir-core/data-types/complex/Coding';
+import { Reference, ReferenceTargets } from '@src/fhir-core/data-types/complex/Reference-Identifier';
 import { Base64BinaryType } from '@src/fhir-core/data-types/primitive/Base64BinaryType';
 import { CodeType } from '@src/fhir-core/data-types/primitive/CodeType';
-import { Coding } from '@src/fhir-core/data-types/complex/Coding';
 import { InstantType } from '@src/fhir-core/data-types/primitive/InstantType';
-import { Reference, ReferenceTargets } from '@src/fhir-core/data-types/complex/Reference-Identifier';
 import {
   fhirBase64Binary,
   fhirBase64BinarySchema,
@@ -43,6 +48,17 @@ import {
   fhirInstantSchema,
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
+import { FhirError } from '@src/fhir-core/errors/FhirError';
+import { isEmpty } from '@src/fhir-core/utility/common-util';
+import {
+  getPrimitiveTypeJson,
+  parseBase64BinaryType,
+  parseCodeType,
+  parseInstantType,
+  processElementJson,
+} from '@src/fhir-core/utility/fhir-parsers';
+import { copyListValues, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
+import * as JSON from '@src/fhir-core/utility/json-helpers';
 import {
   assertFhirType,
   assertFhirTypeList,
@@ -51,10 +67,7 @@ import {
   isDefined,
   isDefinedList,
 } from '@src/fhir-core/utility/type-guards';
-import { copyListValues, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
-import * as JSON from '@src/fhir-core/utility/json-helpers';
-import { REQUIRED_PROPERTIES_DO_NOT_EXIST } from '@src/fhir-core/constants';
-import { FhirError } from '@src/fhir-core/errors/FhirError';
+import { strict as assert } from 'node:assert';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 
@@ -105,6 +118,138 @@ export class Signature extends DataType implements IBase {
     if (isDefined<Reference>(who)) {
       this.setWho(who);
     }
+  }
+
+  /**
+   * Parse the provided `Signature` json to instantiate the Signature data model.
+   *
+   * @param sourceJson - JSON representing FHIR `Signature`
+   * @param optSourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Signature
+   * @returns Signature data model or undefined for `Signature`
+   */
+  public static parse(sourceJson: JSON.Value, optSourceField?: string): Signature | undefined {
+    if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
+      return undefined;
+    }
+    const source = isDefined<string>(optSourceField) ? optSourceField : 'Signature';
+    const datatypeJsonObj: JSON.Object = JSON.asObject(sourceJson, `${source} JSON`);
+    const instance = new Signature(null, null, null);
+    processElementJson(instance, datatypeJsonObj);
+
+    let fieldName: string;
+    let sourceField: string;
+    let primitiveJsonType: 'boolean' | 'number' | 'string';
+
+    const missingReqdProperties: string[] = [];
+
+    fieldName = 'type';
+    sourceField = `${source}.${fieldName}`;
+    if (fieldName in datatypeJsonObj) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const dataElementJsonArray: JSON.Array = JSON.asArray(datatypeJsonObj[fieldName]!, sourceField);
+      dataElementJsonArray.forEach((dataElementJson: JSON.Value, idx) => {
+        const datatype: Coding | undefined = Coding.parse(dataElementJson, `${sourceField}[${String(idx)}]`);
+        if (datatype === undefined) {
+          missingReqdProperties.push(`${sourceField}[${String(idx)}]`);
+        } else {
+          instance.addType(datatype);
+        }
+      });
+    } else {
+      missingReqdProperties.push(sourceField);
+    }
+
+    fieldName = 'when';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: InstantType | undefined = parseInstantType(dtJson, dtSiblingJson);
+      if (datatype === undefined) {
+        missingReqdProperties.push(sourceField);
+      } else {
+        instance.setWhenElement(datatype);
+      }
+    } else {
+      missingReqdProperties.push(sourceField);
+    }
+
+    fieldName = 'who';
+    sourceField = `${source}.${fieldName}`;
+    if (fieldName in datatypeJsonObj) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const datatype: Reference | undefined = Reference.parse(datatypeJsonObj[fieldName]!, sourceField);
+      if (datatype === undefined) {
+        missingReqdProperties.push(sourceField);
+      } else {
+        instance.setWho(datatype);
+      }
+    } else {
+      missingReqdProperties.push(sourceField);
+    }
+
+    fieldName = 'onBehalfOf';
+    sourceField = `${source}.${fieldName}`;
+    if (fieldName in datatypeJsonObj) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const datatype: Reference | undefined = Reference.parse(datatypeJsonObj[fieldName]!, sourceField);
+      instance.setOnBehalfOf(datatype);
+    }
+
+    fieldName = 'targetFormat';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
+      instance.setTargetFormatElement(datatype);
+    }
+
+    fieldName = 'sigFormat';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
+      instance.setSigFormatElement(datatype);
+    }
+
+    fieldName = 'data';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in datatypeJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(
+        datatypeJsonObj,
+        sourceField,
+        fieldName,
+        primitiveJsonType,
+      );
+      const datatype: Base64BinaryType | undefined = parseBase64BinaryType(dtJson, dtSiblingJson);
+      instance.setDataElement(datatype);
+    }
+
+    if (missingReqdProperties.length > 0) {
+      const errMsg = `${REQUIRED_PROPERTIES_REQD_IN_JSON} ${missingReqdProperties.join(', ')}`;
+      throw new FhirError(errMsg);
+    }
+
+    assert(!instance.isEmpty(), INSTANCE_EMPTY_ERROR_MSG);
+    return instance;
   }
 
   /**

@@ -21,9 +21,6 @@
  *
  */
 
-import { assertFhirResourceType, Resource, setFhirResourceJson } from '@src/fhir-core/base-models/Resource';
-import { IBase } from '@src/fhir-core/base-models/IBase';
-import { FhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
 import {
   BackboneElement,
   PrimitiveType,
@@ -32,6 +29,12 @@ import {
   setFhirComplexJson,
   setFhirPrimitiveJson,
 } from '@src/fhir-core/base-models/core-fhir-models';
+import { FhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
+import { IBase } from '@src/fhir-core/base-models/IBase';
+import { assertFhirResourceType, Resource, setFhirResourceJson } from '@src/fhir-core/base-models/Resource';
+import { REQUIRED_PROPERTIES_DO_NOT_EXIST, REQUIRED_PROPERTIES_REQD_IN_JSON } from '@src/fhir-core/constants';
+import { Identifier } from '@src/fhir-core/data-types/complex/Reference-Identifier';
+import { Signature } from '@src/fhir-core/data-types/complex/Signature';
 import {
   assertEnumCodeType,
   CodeType,
@@ -39,12 +42,7 @@ import {
   EnumCodeType,
 } from '@src/fhir-core/data-types/primitive/CodeType';
 import { DecimalType } from '@src/fhir-core/data-types/primitive/DecimalType';
-import { Identifier } from '@src/fhir-core/data-types/complex/Reference-Identifier';
 import { InstantType } from '@src/fhir-core/data-types/primitive/InstantType';
-import { Signature } from '@src/fhir-core/data-types/complex/Signature';
-import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
-import { UnsignedIntType } from '@src/fhir-core/data-types/primitive/UnsignedIntType';
-import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
 import {
   fhirCode,
   fhirCodeSchema,
@@ -60,12 +58,25 @@ import {
   fhirUriSchema,
   parseFhirPrimitiveData,
 } from '@src/fhir-core/data-types/primitive/primitive-types';
-import { BundleTypeEnum } from '@src/fhir-models/code-systems/BundleTypeEnum';
-import { HTTPVerbEnum } from '@src/fhir-models/code-systems/HTTPVerbEnum';
-import { SearchEntryModeEnum } from '@src/fhir-models/code-systems/SearchEntryModeEnum';
-import { REQUIRED_PROPERTIES_DO_NOT_EXIST, REQUIRED_PROPERTIES_REQD_IN_JSON } from '@src/fhir-core/constants';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { UnsignedIntType } from '@src/fhir-core/data-types/primitive/UnsignedIntType';
+import { UriType } from '@src/fhir-core/data-types/primitive/UriType';
+import { FhirError } from '@src/fhir-core/errors/FhirError';
 import { isEmpty } from '@src/fhir-core/utility/common-util';
-import { copyListValues, extractFieldName, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
+import {
+  assertFhirResourceTypeJson,
+  getPrimitiveTypeJson,
+  parseCodeType,
+  parseDecimalType,
+  parseInstantType,
+  parseStringType,
+  parseUnsignedIntType,
+  parseUriType,
+  processBackboneElementJson,
+  processResourceJson,
+} from '@src/fhir-core/utility/fhir-parsers';
+import { copyListValues, isElementEmpty } from '@src/fhir-core/utility/fhir-util';
+import * as JSON from '@src/fhir-core/utility/json-helpers';
 import {
   assertFhirType,
   assertFhirTypeList,
@@ -73,23 +84,10 @@ import {
   isDefined,
   isDefinedList,
 } from '@src/fhir-core/utility/type-guards';
-import {
-  assertFhirResourceTypeJson,
-  getPrimitiveTypeJson,
-  parseCodeType,
-  parseDecimalType,
-  parseIdentifier,
-  parseInstantType,
-  parseSignature,
-  parseStringType,
-  parseUnsignedIntType,
-  parseUriType,
-  processBackboneElementJson,
-  processResourceJson,
-} from '@src/fhir-core/utility/fhir-parsers';
+import { BundleTypeEnum } from '@src/fhir-models/code-systems/BundleTypeEnum';
+import { HTTPVerbEnum } from '@src/fhir-models/code-systems/HTTPVerbEnum';
+import { SearchEntryModeEnum } from '@src/fhir-models/code-systems/SearchEntryModeEnum';
 import { parseInlineResource } from '@src/fhir-models/fhir-contained-resource-parser';
-import * as JSON from '@src/fhir-core/utility/json-helpers';
-import { FhirError } from '@src/fhir-core/errors/FhirError';
 
 /* istanbul ignore file */
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
@@ -132,31 +130,38 @@ export class Bundle extends Resource implements IBase {
    * Parse the provided `Bundle` json to instantiate the Bundle data model.
    *
    * @param sourceJson - JSON representing FHIR `Bundle`
+   * @param optSourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Bundle
    * @returns Bundle data model or undefined for `Bundle`
    */
-  public static override parse(sourceJson: JSON.Object): Bundle | undefined {
+  public static override parse(sourceJson: JSON.Object, optSourceField?: string): Bundle | undefined {
     if (!isDefined<JSON.Object>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
-    const classJsonObj: JSON.Object = JSON.asObject(sourceJson, `Bundle JSON`);
+    const source = isDefined<string>(optSourceField) ? optSourceField : 'Bundle';
+    const classJsonObj: JSON.Object = JSON.asObject(sourceJson, `${source} JSON`);
     assertFhirResourceTypeJson(classJsonObj, 'Bundle');
     const instance = new Bundle(null);
     processResourceJson(instance, classJsonObj);
 
-    // Add following near top of method ONLY IF it does not already exist
+    let fieldName: string;
+    let sourceField: string;
+    let primitiveJsonType: 'boolean' | 'number' | 'string';
+
     const missingReqdProperties: string[] = [];
 
-    let sourceField = 'Bundle.identifier';
-    let fieldName = extractFieldName(sourceField);
+    fieldName = 'identifier';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
-      const datatype: Identifier | undefined = parseIdentifier(classJsonObj[fieldName], sourceField);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const datatype: Identifier | undefined = Identifier.parse(classJsonObj[fieldName]!, sourceField);
       instance.setIdentifier(datatype);
     }
 
-    sourceField = 'Bundle.type';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'type';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
     if (fieldName in classJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, 'string');
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
       const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
       if (datatype === undefined) {
         missingReqdProperties.push(sourceField);
@@ -167,52 +172,61 @@ export class Bundle extends Resource implements IBase {
       missingReqdProperties.push(sourceField);
     }
 
-    sourceField = 'Bundle.timestamp';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'timestamp';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
     if (fieldName in classJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, 'string');
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
       const datatype: InstantType | undefined = parseInstantType(dtJson, dtSiblingJson);
       instance.setTimestampElement(datatype);
     }
 
-    sourceField = 'Bundle.total';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'total';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'number';
     if (fieldName in classJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, 'number');
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
       const datatype: UnsignedIntType | undefined = parseUnsignedIntType(dtJson, dtSiblingJson);
       instance.setTotalElement(datatype);
     }
 
-    sourceField = 'Bundle.link';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'link';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const componentJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
-      componentJsonArray.forEach((componentJson: JSON.Value) => {
-        const component: BundleLinkComponent | undefined = BundleLinkComponent.parse(componentJson);
+      componentJsonArray.forEach((componentJson: JSON.Value, idx) => {
+        const component: BundleLinkComponent | undefined = BundleLinkComponent.parse(
+          componentJson,
+          `${sourceField}[${String(idx)}]`,
+        );
         if (component !== undefined) {
           instance.addLink(component);
         }
       });
     }
 
-    sourceField = 'Bundle.entry';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'entry';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const componentJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
-      componentJsonArray.forEach((componentJson: JSON.Value) => {
-        const component: BundleEntryComponent | undefined = BundleEntryComponent.parse(componentJson);
+      componentJsonArray.forEach((componentJson: JSON.Value, idx) => {
+        const component: BundleEntryComponent | undefined = BundleEntryComponent.parse(
+          componentJson,
+          `${sourceField}[${String(idx)}]`,
+        );
         if (component !== undefined) {
           instance.addEntry(component);
         }
       });
     }
 
-    sourceField = 'Bundle.signature';
-    fieldName = extractFieldName(sourceField);
+    fieldName = 'signature';
+    sourceField = `${source}.${fieldName}`;
     if (fieldName in classJsonObj) {
-      const datatype: Signature | undefined = parseSignature(classJsonObj[fieldName], sourceField);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const datatype: Signature | undefined = Signature.parse(classJsonObj[fieldName]!, sourceField);
       instance.setSignature(datatype);
     }
 
@@ -876,22 +890,29 @@ export class BundleLinkComponent extends BackboneElement {
    * Parse the provided `Bundle.link` json to instantiate the BundleLinkComponent data model.
    *
    * @param sourceJson - JSON representing FHIR `Bundle.link`
+   * @param optSourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Bundle.link
    * @returns BundleLinkComponent data model or undefined for `Bundle.link`
    */
-  public static parse(sourceJson: JSON.Value): BundleLinkComponent | undefined {
+  public static parse(sourceJson: JSON.Value, optSourceField?: string): BundleLinkComponent | undefined {
     if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
-    const backboneJsonObj: JSON.Object = JSON.asObject(sourceJson, `GroupMemberComponent JSON`);
+    const source = isDefined<string>(optSourceField) ? optSourceField : 'Bundle.link';
+    const classJsonObj: JSON.Object = JSON.asObject(sourceJson, `${source} JSON`);
     const instance = new BundleLinkComponent(null, null);
-    processBackboneElementJson(instance, backboneJsonObj);
+    processBackboneElementJson(instance, classJsonObj);
+
+    let fieldName: string;
+    let sourceField: string;
+    let primitiveJsonType: 'boolean' | 'number' | 'string';
 
     const missingReqdProperties: string[] = [];
 
-    let sourceField = 'Bundle.link.relation';
-    let fieldName = extractFieldName(sourceField);
-    if (fieldName in backboneJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(backboneJsonObj, sourceField, fieldName, 'string');
+    fieldName = 'relation';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in classJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
       const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
       if (datatype === undefined) {
         missingReqdProperties.push(sourceField);
@@ -902,10 +923,11 @@ export class BundleLinkComponent extends BackboneElement {
       missingReqdProperties.push(sourceField);
     }
 
-    sourceField = 'Bundle.link.url';
-    fieldName = extractFieldName(sourceField);
-    if (fieldName in backboneJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(backboneJsonObj, sourceField, fieldName, 'string');
+    fieldName = 'url';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in classJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
       const datatype: UriType | undefined = parseUriType(dtJson, dtSiblingJson);
       if (datatype === undefined) {
         missingReqdProperties.push(sourceField);
@@ -1164,72 +1186,86 @@ export class BundleEntryComponent extends BackboneElement {
    * Parse the provided `Bundle.entry` json to instantiate the BundleEntryComponent data model.
    *
    * @param sourceJson - JSON representing FHIR `Bundle.entry`
+   * @param optSourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Bundle.entry
    * @returns BundleEntryComponent data model or undefined for `Bundle.entry`
    */
-  public static parse(sourceJson: JSON.Value): BundleEntryComponent | undefined {
+  public static parse(sourceJson: JSON.Value, optSourceField?: string): BundleEntryComponent | undefined {
     if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
-    const backboneJsonObj: JSON.Object = JSON.asObject(sourceJson, `BundleEntryComponent JSON`);
+    const source = isDefined<string>(optSourceField) ? optSourceField : 'Bundle.entry';
+    const classJsonObj: JSON.Object = JSON.asObject(sourceJson, `${source} JSON`);
     const instance = new BundleEntryComponent();
-    processBackboneElementJson(instance, backboneJsonObj);
+    processBackboneElementJson(instance, classJsonObj);
 
-    let sourceField = 'Bundle.entry.link';
-    let fieldName = extractFieldName(sourceField);
-    if (fieldName in backboneJsonObj) {
+    let fieldName: string;
+    let sourceField: string;
+    let primitiveJsonType: 'boolean' | 'number' | 'string';
+
+    fieldName = 'link';
+    sourceField = `${source}.${fieldName}`;
+    if (fieldName in classJsonObj) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const componentJsonArray: JSON.Array = JSON.asArray(backboneJsonObj[fieldName]!, sourceField);
-      componentJsonArray.forEach((componentJson: JSON.Value) => {
-        const component: BundleLinkComponent | undefined = BundleLinkComponent.parse(componentJson);
+      const componentJsonArray: JSON.Array = JSON.asArray(classJsonObj[fieldName]!, sourceField);
+      componentJsonArray.forEach((componentJson: JSON.Value, idx) => {
+        const component: BundleLinkComponent | undefined = BundleLinkComponent.parse(
+          componentJson,
+          `${sourceField}[${String(idx)}]`,
+        );
         if (component !== undefined) {
           instance.addLink(component);
         }
       });
+    }
 
-      sourceField = 'Bundle.entry.fullUrl';
-      fieldName = extractFieldName(sourceField);
-      if (fieldName in backboneJsonObj) {
-        const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(backboneJsonObj, sourceField, fieldName, 'string');
-        const datatype: UriType | undefined = parseUriType(dtJson, dtSiblingJson);
-        instance.setFullUrlElement(datatype);
-      }
+    fieldName = 'fullUrl';
+    sourceField = `${source}.${fieldName}`;
+    // eslint-disable-next-line prefer-const
+    primitiveJsonType = 'string';
+    if (fieldName in classJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
+      const datatype: UriType | undefined = parseUriType(dtJson, dtSiblingJson);
+      instance.setFullUrlElement(datatype);
+    }
 
-      sourceField = 'Bundle.entry.resource';
-      fieldName = extractFieldName(sourceField);
-      if (fieldName in backboneJsonObj) {
-        const datatype: Resource | undefined = parseInlineResource(backboneJsonObj[fieldName], sourceField);
-        instance.setResource(datatype);
-      }
+    fieldName = 'resource';
+    sourceField = `${source}.${fieldName}`;
+    if (fieldName in classJsonObj) {
+      const datatype: Resource | undefined = parseInlineResource(classJsonObj[fieldName], sourceField);
+      instance.setResource(datatype);
+    }
 
-      sourceField = 'Bundle.entry.search';
-      fieldName = extractFieldName(sourceField);
-      if (fieldName in backboneJsonObj) {
-        const datatype: BundleEntrySearchComponent | undefined = BundleEntrySearchComponent.parse(
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          backboneJsonObj[fieldName]!,
-        );
-        instance.setSearch(datatype);
-      }
+    fieldName = 'search';
+    sourceField = `${source}.${fieldName}`;
+    if (fieldName in classJsonObj) {
+      const datatype: BundleEntrySearchComponent | undefined = BundleEntrySearchComponent.parse(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        classJsonObj[fieldName]!,
+        sourceField,
+      );
+      instance.setSearch(datatype);
+    }
 
-      sourceField = 'Bundle.entry.request';
-      fieldName = extractFieldName(sourceField);
-      if (fieldName in backboneJsonObj) {
-        const datatype: BundleEntryRequestComponent | undefined = BundleEntryRequestComponent.parse(
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          backboneJsonObj[fieldName]!,
-        );
-        instance.setRequest(datatype);
-      }
+    fieldName = 'request';
+    sourceField = `${source}.${fieldName}`;
+    if (fieldName in classJsonObj) {
+      const datatype: BundleEntryRequestComponent | undefined = BundleEntryRequestComponent.parse(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        classJsonObj[fieldName]!,
+        sourceField,
+      );
+      instance.setRequest(datatype);
+    }
 
-      sourceField = 'Bundle.entry.response';
-      fieldName = extractFieldName(sourceField);
-      if (fieldName in backboneJsonObj) {
-        const datatype: BundleEntryResponseComponent | undefined = BundleEntryResponseComponent.parse(
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          backboneJsonObj[fieldName]!,
-        );
-        instance.setResponse(datatype);
-      }
+    fieldName = 'response';
+    sourceField = `${source}.${fieldName}`;
+    if (fieldName in classJsonObj) {
+      const datatype: BundleEntryResponseComponent | undefined = BundleEntryResponseComponent.parse(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        classJsonObj[fieldName]!,
+        sourceField,
+      );
+      instance.setResponse(datatype);
     }
 
     return instance;
@@ -1668,28 +1704,36 @@ export class BundleEntrySearchComponent extends BackboneElement {
    * Parse the provided `Bundle.entry.search` json to instantiate the BundleEntrySearchComponent data model.
    *
    * @param sourceJson - JSON representing FHIR `Bundle.entry.search`
+   * @param optSourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Bundle.entry.search
    * @returns BundleEntrySearchComponent data model or undefined for `Bundle.entry.search`
    */
-  public static parse(sourceJson: JSON.Value): BundleEntrySearchComponent | undefined {
+  public static parse(sourceJson: JSON.Value, optSourceField?: string): BundleEntrySearchComponent | undefined {
     if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
-    const backboneJsonObj: JSON.Object = JSON.asObject(sourceJson, `BundleEntrySearchComponent JSON`);
+    const source = isDefined<string>(optSourceField) ? optSourceField : 'Bundle.entry.search';
+    const classJsonObj: JSON.Object = JSON.asObject(sourceJson, `${source} JSON`);
     const instance = new BundleEntrySearchComponent();
-    processBackboneElementJson(instance, backboneJsonObj);
+    processBackboneElementJson(instance, classJsonObj);
 
-    let sourceField = 'Bundle.entry.search.mode';
-    let fieldName = extractFieldName(sourceField);
-    if (fieldName in backboneJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(backboneJsonObj, sourceField, fieldName, 'string');
+    let fieldName: string;
+    let sourceField: string;
+    let primitiveJsonType: 'boolean' | 'number' | 'string';
+
+    fieldName = 'mode';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in classJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
       const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
       instance.setModeElement(datatype);
     }
 
-    sourceField = 'Bundle.entry.search.score';
-    fieldName = extractFieldName(sourceField);
-    if (fieldName in backboneJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(backboneJsonObj, sourceField, fieldName, 'number');
+    fieldName = 'score';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'number';
+    if (fieldName in classJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
       const datatype: DecimalType | undefined = parseDecimalType(dtJson, dtSiblingJson);
       instance.setScoreElement(datatype);
     }
@@ -1994,22 +2038,29 @@ export class BundleEntryRequestComponent extends BackboneElement {
    * Parse the provided `Bundle.entry.request` json to instantiate the BundleEntryRequestComponent data model.
    *
    * @param sourceJson - JSON representing FHIR `Bundle.entry.request`
+   * @param optSourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Bundle.entry.request
    * @returns BundleEntryRequestComponent data model or undefined for `Bundle.entry.request`
    */
-  public static parse(sourceJson: JSON.Value): BundleEntryRequestComponent | undefined {
+  public static parse(sourceJson: JSON.Value, optSourceField?: string): BundleEntryRequestComponent | undefined {
     if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
-    const backboneJsonObj: JSON.Object = JSON.asObject(sourceJson, `BundleEntryRequestComponent JSON`);
+    const source = isDefined<string>(optSourceField) ? optSourceField : 'Bundle.entry.request';
+    const classJsonObj: JSON.Object = JSON.asObject(sourceJson, `${source} JSON`);
     const instance = new BundleEntryRequestComponent(null, null);
-    processBackboneElementJson(instance, backboneJsonObj);
+    processBackboneElementJson(instance, classJsonObj);
+
+    let fieldName: string;
+    let sourceField: string;
+    let primitiveJsonType: 'boolean' | 'number' | 'string';
 
     const missingReqdProperties: string[] = [];
 
-    let sourceField = 'Bundle.entry.request.method';
-    let fieldName = extractFieldName(sourceField);
-    if (fieldName in backboneJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(backboneJsonObj, sourceField, fieldName, 'string');
+    fieldName = 'method';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in classJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
       const datatype: CodeType | undefined = parseCodeType(dtJson, dtSiblingJson);
       if (datatype === undefined) {
         missingReqdProperties.push(sourceField);
@@ -2020,10 +2071,11 @@ export class BundleEntryRequestComponent extends BackboneElement {
       missingReqdProperties.push(sourceField);
     }
 
-    sourceField = 'Bundle.entry.request.url';
-    fieldName = extractFieldName(sourceField);
-    if (fieldName in backboneJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(backboneJsonObj, sourceField, fieldName, 'string');
+    fieldName = 'url';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in classJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, 'string');
       const datatype: UriType | undefined = parseUriType(dtJson, dtSiblingJson);
       if (datatype === undefined) {
         missingReqdProperties.push(sourceField);
@@ -2034,34 +2086,38 @@ export class BundleEntryRequestComponent extends BackboneElement {
       missingReqdProperties.push(sourceField);
     }
 
-    sourceField = 'Bundle.entry.request.ifNoneMatch';
-    fieldName = extractFieldName(sourceField);
-    if (fieldName in backboneJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(backboneJsonObj, sourceField, fieldName, 'string');
+    fieldName = 'ifNoneMatch';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in classJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
       const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
       instance.setIfNoneMatchElement(datatype);
     }
 
-    sourceField = 'Bundle.entry.request.ifModifiedSince';
-    fieldName = extractFieldName(sourceField);
-    if (fieldName in backboneJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(backboneJsonObj, sourceField, fieldName, 'string');
+    fieldName = 'ifModifiedSince';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in classJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
       const datatype: InstantType | undefined = parseInstantType(dtJson, dtSiblingJson);
       instance.setIfModifiedSinceElement(datatype);
     }
 
-    sourceField = 'Bundle.entry.request.ifMatch';
-    fieldName = extractFieldName(sourceField);
-    if (fieldName in backboneJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(backboneJsonObj, sourceField, fieldName, 'string');
+    fieldName = 'ifMatch';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in classJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
       const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
       instance.setIfMatchElement(datatype);
     }
 
-    sourceField = 'Bundle.entry.request.ifNoneExist';
-    fieldName = extractFieldName(sourceField);
-    if (fieldName in backboneJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(backboneJsonObj, sourceField, fieldName, 'string');
+    fieldName = 'ifNoneExist';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in classJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
       const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
       instance.setIfNoneExistElement(datatype);
     }
@@ -2689,22 +2745,29 @@ export class BundleEntryResponseComponent extends BackboneElement {
    * Parse the provided `Bundle.entry.response` json to instantiate the BundleEntryResponseComponent data model.
    *
    * @param sourceJson - JSON representing FHIR `Bundle.entry.response`
+   * @param optSourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Bundle.entry.response
    * @returns BundleEntryResponseComponent data model or undefined for `Bundle.entry.response`
    */
-  public static parse(sourceJson: JSON.Value): BundleEntryResponseComponent | undefined {
+  public static parse(sourceJson: JSON.Value, optSourceField?: string): BundleEntryResponseComponent | undefined {
     if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
-    const backboneJsonObj: JSON.Object = JSON.asObject(sourceJson, `BundleEntryResponseComponent JSON`);
+    const source = isDefined<string>(optSourceField) ? optSourceField : 'Bundle.entry.response';
+    const classJsonObj: JSON.Object = JSON.asObject(sourceJson, `${source} JSON`);
     const instance = new BundleEntryResponseComponent(null);
-    processBackboneElementJson(instance, backboneJsonObj);
+    processBackboneElementJson(instance, classJsonObj);
+
+    let fieldName: string;
+    let sourceField: string;
+    let primitiveJsonType: 'boolean' | 'number' | 'string';
 
     const missingReqdProperties: string[] = [];
 
-    let sourceField = 'Bundle.entry.response.status';
-    let fieldName = extractFieldName(sourceField);
-    if (fieldName in backboneJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(backboneJsonObj, sourceField, fieldName, 'string');
+    fieldName = 'status';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in classJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
       const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
       if (datatype === undefined) {
         missingReqdProperties.push(sourceField);
@@ -2715,34 +2778,37 @@ export class BundleEntryResponseComponent extends BackboneElement {
       missingReqdProperties.push(sourceField);
     }
 
-    sourceField = 'Bundle.entry.response.location';
-    fieldName = extractFieldName(sourceField);
-    if (fieldName in backboneJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(backboneJsonObj, sourceField, fieldName, 'string');
+    fieldName = 'location';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in classJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
       const datatype: UriType | undefined = parseUriType(dtJson, dtSiblingJson);
       instance.setLocationElement(datatype);
     }
 
-    sourceField = 'Bundle.entry.response.etag';
-    fieldName = extractFieldName(sourceField);
-    if (fieldName in backboneJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(backboneJsonObj, sourceField, fieldName, 'string');
+    fieldName = 'etag';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in classJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
       const datatype: StringType | undefined = parseStringType(dtJson, dtSiblingJson);
       instance.setEtagElement(datatype);
     }
 
-    sourceField = 'Bundle.entry.response.lastModified';
-    fieldName = extractFieldName(sourceField);
-    if (fieldName in backboneJsonObj) {
-      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(backboneJsonObj, sourceField, fieldName, 'string');
+    fieldName = 'lastModified';
+    sourceField = `${source}.${fieldName}`;
+    primitiveJsonType = 'string';
+    if (fieldName in classJsonObj) {
+      const { dtJson, dtSiblingJson } = getPrimitiveTypeJson(classJsonObj, sourceField, fieldName, primitiveJsonType);
       const datatype: InstantType | undefined = parseInstantType(dtJson, dtSiblingJson);
       instance.setLastModifiedElement(datatype);
     }
 
-    sourceField = 'Bundle.entry.response.outcome';
-    fieldName = extractFieldName(sourceField);
-    if (fieldName in backboneJsonObj) {
-      const datatype: Resource | undefined = parseInlineResource(backboneJsonObj[fieldName], sourceField);
+    fieldName = 'outcome';
+    sourceField = `${source}.${fieldName}`;
+    if (fieldName in classJsonObj) {
+      const datatype: Resource | undefined = parseInlineResource(classJsonObj[fieldName], sourceField);
       instance.setOutcome(datatype);
     }
 

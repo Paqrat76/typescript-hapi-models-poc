@@ -21,13 +21,12 @@
  *
  */
 
-import { AssertionError } from 'node:assert';
-import { DataType } from '@src/fhir-core/base-models/core-fhir-models';
+import { DataType, OpenDataTypes } from '@src/fhir-core/base-models/core-fhir-models';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
 import { XhtmlType } from '@src/fhir-core/data-types/primitive/XhtmlType';
-import { OpenDataTypes } from '@src/fhir-core/base-models/core-fhir-models';
-import { getOpenDatatypeFields, OpenDataTypesMeta } from '@src/fhir-core/utility/decorators';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { getOpenDatatypeFields, OpenDataTypesMeta } from '@src/fhir-core/utility/decorators';
+import { AssertionError } from 'node:assert';
 import { MockResource, MockTask } from '../../test-utils';
 
 describe('decorators', () => {

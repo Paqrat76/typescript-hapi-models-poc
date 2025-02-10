@@ -21,8 +21,8 @@
  *
  */
 
-import { IBase } from './IBase';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
+import { IBase } from './IBase';
 
 /* eslint-disable jsdoc/require-param, jsdoc/require-returns -- false positives when inheritDoc tag used */
 

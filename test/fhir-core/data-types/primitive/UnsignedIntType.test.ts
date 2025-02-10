@@ -21,10 +21,10 @@
  *
  */
 
-import { UnsignedIntType } from '@src/fhir-core/data-types/primitive/UnsignedIntType';
-import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { Extension, PrimitiveType } from '@src/fhir-core/base-models/core-fhir-models';
+import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
+import { UnsignedIntType } from '@src/fhir-core/data-types/primitive/UnsignedIntType';
+import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { FHIR_MAX_INTEGER } from '../../../test-utils';
 
 describe('UnsignedIntType', () => {

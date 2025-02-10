@@ -33,21 +33,21 @@
  * @module
  */
 
-import { strict as assert } from 'node:assert';
-import { Resource } from '@src/fhir-core/base-models/Resource';
 import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
 import { isFhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
+import { Resource } from '@src/fhir-core/base-models/Resource';
+import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { isEmpty } from '@src/fhir-core/utility/common-util';
+import * as JSON from '@src/fhir-core/utility/json-helpers';
+import { isDefined } from '@src/fhir-core/utility/type-guards';
 import { Bundle } from '@src/fhir-models/Bundle';
 import { Group } from '@src/fhir-models/Group';
 import { Parameters } from '@src/fhir-models/Parameters';
 import { Patient } from '@src/fhir-models/Patient';
 import { PractitionerRole } from '@src/fhir-models/PractitionerRole';
-import { isDefined } from '@src/fhir-core/utility/type-guards';
-import { isEmpty } from '@src/fhir-core/utility/common-util';
-import * as JSON from '@src/fhir-core/utility/json-helpers';
-import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
-import { TestDataModel } from '@src/test-models/TestDataModel';
 import { SimplePersonModel } from '@src/test-models/SimplePersonModel';
+import { TestDataModel } from '@src/test-models/TestDataModel';
+import { strict as assert } from 'node:assert';
 
 // Ignore for coverage because all parse methods have their own tests
 /* istanbul ignore next */

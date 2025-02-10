@@ -22,16 +22,16 @@
  */
 
 import { DataType, Extension } from '@src/fhir-core/base-models/core-fhir-models';
+import { ContactPointSystemEnum } from '@src/fhir-core/data-types/code-systems/ContactPointSystemEnum';
+import { ContactPointUseEnum } from '@src/fhir-core/data-types/code-systems/ContactPointUseEnum';
+import { ContactPoint } from '@src/fhir-core/data-types/complex/ContactPoint';
+import { Period } from '@src/fhir-core/data-types/complex/Period';
 import { CodeType, EnumCodeType } from '@src/fhir-core/data-types/primitive/CodeType';
 import { PositiveIntType } from '@src/fhir-core/data-types/primitive/PositiveIntType';
 import { StringType } from '@src/fhir-core/data-types/primitive/StringType';
-import { ContactPoint } from '@src/fhir-core/data-types/complex/ContactPoint';
-import { Period } from '@src/fhir-core/data-types/complex/Period';
-import { ContactPointSystemEnum } from '@src/fhir-core/data-types/code-systems/ContactPointSystemEnum';
-import { ContactPointUseEnum } from '@src/fhir-core/data-types/code-systems/ContactPointUseEnum';
-import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import { InvalidCodeError } from '@src/fhir-core/errors/InvalidCodeError';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
+import { PrimitiveTypeError } from '@src/fhir-core/errors/PrimitiveTypeError';
 import {
   INVALID_NON_STRING_TYPE,
   INVALID_NON_STRING_TYPE_VALUE,
@@ -701,6 +701,57 @@ describe('ContactPoint', () => {
   });
 
   describe('Serialization/Deserialization', () => {
+    const VALID_JSON = {
+      id: 'id1234',
+      extension: [
+        {
+          url: 'testUrl1',
+          valueString: 'base extension string value 1',
+        },
+        {
+          url: 'testUrl2',
+          valueString: 'base extension string value 2',
+        },
+      ],
+      system: 'phone',
+      value: 'This is a valid string.',
+      _value: {
+        id: 'V1357',
+        extension: [
+          {
+            url: 'valueUrl',
+            valueString: 'value extension string value',
+          },
+        ],
+      },
+      use: 'home',
+      rank: 13579,
+      period: {
+        start: '2017-01-01T00:00:00.000Z',
+        end: '2017-01-01T01:00:00.000Z',
+      },
+    };
+
+    it('should return undefined for empty json', () => {
+      let testType = ContactPoint.parse({});
+      expect(testType).toBeUndefined();
+
+      // @ts-expect-error: allow for testing
+      testType = ContactPoint.parse(undefined);
+      expect(testType).toBeUndefined();
+
+      testType = ContactPoint.parse(null);
+      expect(testType).toBeUndefined();
+    });
+
+    it('should throw TypeError for invalid json type', () => {
+      const t = () => {
+        ContactPoint.parse('NOT AN OBJECT');
+      };
+      expect(t).toThrow(TypeError);
+      expect(t).toThrow(`ContactPoint JSON is not a JSON object.`);
+    });
+
     it('should properly create serialized content', () => {
       const valueType = new StringType(VALID_STRING);
       const valueId = 'V1357';
@@ -764,37 +815,19 @@ describe('ContactPoint', () => {
       expect(testContactPoint.hasRank()).toBe(true);
       expect(testContactPoint.getRank()).toStrictEqual(VALID_POSITIVEINT);
 
-      const expectedJson = {
-        id: 'id1234',
-        extension: [
-          {
-            url: 'testUrl1',
-            valueString: 'base extension string value 1',
-          },
-          {
-            url: 'testUrl2',
-            valueString: 'base extension string value 2',
-          },
-        ],
-        system: 'phone',
-        value: 'This is a valid string.',
-        _value: {
-          id: 'V1357',
-          extension: [
-            {
-              url: 'valueUrl',
-              valueString: 'value extension string value',
-            },
-          ],
-        },
-        use: 'home',
-        rank: 13579,
-        period: {
-          start: '2017-01-01T00:00:00.000Z',
-          end: '2017-01-01T01:00:00.000Z',
-        },
-      };
-      expect(testContactPoint.toJSON()).toEqual(expectedJson);
+      expect(testContactPoint.toJSON()).toEqual(VALID_JSON);
+    });
+
+    it('should return ContactPoint for valid json', () => {
+      const testType: ContactPoint | undefined = ContactPoint.parse(VALID_JSON);
+
+      expect(testType).toBeDefined();
+      expect(testType).toBeInstanceOf(ContactPoint);
+      expect(testType?.constructor.name).toStrictEqual('ContactPoint');
+      expect(testType?.fhirType()).toStrictEqual('ContactPoint');
+      expect(testType?.isEmpty()).toBe(false);
+      expect(testType?.isComplexDataType()).toBe(true);
+      expect(testType?.toJSON()).toEqual(VALID_JSON);
     });
   });
 });
