@@ -199,9 +199,7 @@ export class CodeableConcept extends DataType implements IBase {
    * Initialize the `coding` property
    */
   private initCoding(): void {
-    if (this.coding === undefined) {
-      this.coding = [] as Coding[];
-    }
+    this.coding ??= [] as Coding[];
   }
 
   /**
@@ -315,9 +313,7 @@ export class CodeableConcept extends DataType implements IBase {
     }
 
     let jsonObj = super.toJSON() as JSON.Object | undefined;
-    if (jsonObj === undefined) {
-      jsonObj = {} as JSON.Object;
-    }
+    jsonObj ??= {} as JSON.Object;
 
     if (this.hasCoding()) {
       setFhirComplexListJson(this.getCoding(), 'coding', jsonObj);

@@ -680,9 +680,7 @@ export class Patient extends DomainResource implements IBase {
    * Initialize the `identifier` property
    */
   private initIdentifier(): void {
-    if (this.identifier === undefined) {
-      this.identifier = [] as Identifier[];
-    }
+    this.identifier ??= [] as Identifier[];
   }
 
   /**
@@ -798,9 +796,7 @@ export class Patient extends DomainResource implements IBase {
    * Initialize the `name` property
    */
   private initName(): void {
-    if (this.name === undefined) {
-      this.name = [] as HumanName[];
-    }
+    this.name ??= [] as HumanName[];
   }
 
   /**
@@ -854,9 +850,7 @@ export class Patient extends DomainResource implements IBase {
    * Initialize the `telecom` property
    */
   private initTelecom(): void {
-    if (this.telecom === undefined) {
-      this.telecom = [] as ContactPoint[];
-    }
+    this.telecom ??= [] as ContactPoint[];
   }
 
   /**
@@ -1150,9 +1144,7 @@ export class Patient extends DomainResource implements IBase {
    * Initialize the `address` property
    */
   private initAddress(): void {
-    if (this.address === undefined) {
-      this.address = [] as Address[];
-    }
+    this.address ??= [] as Address[];
   }
 
   /**
@@ -1314,9 +1306,7 @@ export class Patient extends DomainResource implements IBase {
    * Initialize the `photo` property
    */
   private initPhoto(): void {
-    if (this.photo === undefined) {
-      this.photo = [] as Attachment[];
-    }
+    this.photo ??= [] as Attachment[];
   }
 
   /**
@@ -1373,9 +1363,7 @@ export class Patient extends DomainResource implements IBase {
    * Initialize the `contact` property
    */
   private initContact(): void {
-    if (this.contact === undefined) {
-      this.contact = [] as PatientContactComponent[];
-    }
+    this.contact ??= [] as PatientContactComponent[];
   }
 
   /**
@@ -1432,9 +1420,7 @@ export class Patient extends DomainResource implements IBase {
    * Initialize the `communication` property
    */
   private initCommunication(): void {
-    if (this.communication === undefined) {
-      this.communication = [] as PatientCommunicationComponent[];
-    }
+    this.communication ??= [] as PatientCommunicationComponent[];
   }
 
   /**
@@ -1495,9 +1481,7 @@ export class Patient extends DomainResource implements IBase {
    * Initialize the `generalPractitioner` property
    */
   private initGeneralPractitioner(): void {
-    if (this.generalPractitioner === undefined) {
-      this.generalPractitioner = [] as Reference[];
-    }
+    this.generalPractitioner ??= [] as Reference[];
   }
 
   /**
@@ -1586,9 +1570,7 @@ export class Patient extends DomainResource implements IBase {
    * Initialize the `link` property
    */
   private initLink(): void {
-    if (this.link === undefined) {
-      this.link = [] as PatientLinkComponent[];
-    }
+    this.link ??= [] as PatientLinkComponent[];
   }
 
   /**
@@ -2034,9 +2016,7 @@ export class PatientContactComponent extends BackboneElement {
    * Initialize the `relationship` property
    */
   private initRelationship(): void {
-    if (this.relationship === undefined) {
-      this.relationship = [] as CodeableConcept[];
-    }
+    this.relationship ??= [] as CodeableConcept[];
   }
 
   /**
@@ -2121,9 +2101,7 @@ export class PatientContactComponent extends BackboneElement {
    * Initialize the `telecom` property
    */
   private initTelecom(): void {
-    if (this.telecom === undefined) {
-      this.telecom = [] as ContactPoint[];
-    }
+    this.telecom ??= [] as ContactPoint[];
   }
 
   /**
@@ -2381,9 +2359,7 @@ export class PatientContactComponent extends BackboneElement {
     }
 
     let jsonObj = super.toJSON() as JSON.Object | undefined;
-    if (jsonObj === undefined) {
-      jsonObj = {} as JSON.Object;
-    }
+    jsonObj ??= {} as JSON.Object;
 
     if (this.hasRelationship()) {
       setFhirComplexListJson(this.getRelationship(), 'relationship', jsonObj);
@@ -2662,9 +2638,7 @@ export class PatientCommunicationComponent extends BackboneElement {
     // }
 
     let jsonObj = super.toJSON() as JSON.Object | undefined;
-    if (jsonObj === undefined) {
-      jsonObj = {} as JSON.Object;
-    }
+    jsonObj ??= {} as JSON.Object;
 
     const missingReqdProperties: string[] = [];
 
@@ -2982,9 +2956,7 @@ export class PatientLinkComponent extends BackboneElement {
     // }
 
     let jsonObj = super.toJSON() as JSON.Object | undefined;
-    if (jsonObj === undefined) {
-      jsonObj = {} as JSON.Object;
-    }
+    jsonObj ??= {} as JSON.Object;
 
     const missingReqdProperties: string[] = [];
 

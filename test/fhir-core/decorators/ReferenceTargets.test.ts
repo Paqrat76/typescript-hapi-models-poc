@@ -325,9 +325,7 @@ export class MockTaskR1 extends MockTask {
   @ReferenceTargets('MockTaskR1.myReferenceProperty8', ['Organization'])
   public addMyReferenceProperty8(value: Reference | undefined): this {
     if (value !== undefined) {
-      if (this.myReferenceProperty8 === undefined) {
-        this.myReferenceProperty8 = [] as Reference[];
-      }
+      this.myReferenceProperty8 ??= [] as Reference[];
       this.myReferenceProperty8.push(value);
     }
     return this;

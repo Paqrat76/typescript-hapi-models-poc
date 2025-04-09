@@ -583,9 +583,7 @@ export class Meta extends DataType implements IBase {
    * Initialize the profile property
    */
   private initProfile(): void {
-    if (this.profile === undefined) {
-      this.profile = [] as CanonicalType[];
-    }
+    this.profile ??= [] as CanonicalType[];
   }
 
   /**
@@ -639,9 +637,7 @@ export class Meta extends DataType implements IBase {
    * Initialize the `security` property
    */
   private initSecurity(): void {
-    if (this.security === undefined) {
-      this.security = [] as Coding[];
-    }
+    this.security ??= [] as Coding[];
   }
 
   /**
@@ -695,9 +691,7 @@ export class Meta extends DataType implements IBase {
    * Initialize the `tag` property
    */
   private initTag(): void {
-    if (this.tag === undefined) {
-      this.tag = [] as Coding[];
-    }
+    this.tag ??= [] as Coding[];
   }
 
   /**
@@ -758,9 +752,7 @@ export class Meta extends DataType implements IBase {
     }
 
     let jsonObj = super.toJSON() as JSON.Object | undefined;
-    if (jsonObj === undefined) {
-      jsonObj = {} as JSON.Object;
-    }
+    jsonObj ??= {} as JSON.Object;
 
     if (this.hasVersionIdElement()) {
       setFhirPrimitiveJson<fhirId>(this.getVersionIdElement(), 'versionId', jsonObj);

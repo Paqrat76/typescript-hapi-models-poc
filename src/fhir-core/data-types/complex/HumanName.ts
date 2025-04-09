@@ -654,9 +654,7 @@ export class HumanName extends DataType implements IBase {
    * Initialize the `given` property
    */
   private initGiven(): void {
-    if (this.given === undefined) {
-      this.given = [] as StringType[];
-    }
+    this.given ??= [] as StringType[];
   }
 
   /**
@@ -770,9 +768,7 @@ export class HumanName extends DataType implements IBase {
    * Initialize the `prefix` property
    */
   private initPrefix(): void {
-    if (this.prefix === undefined) {
-      this.prefix = [] as StringType[];
-    }
+    this.prefix ??= [] as StringType[];
   }
 
   /**
@@ -886,9 +882,7 @@ export class HumanName extends DataType implements IBase {
    * Initialize the `suffix` property
    */
   private initSuffix(): void {
-    if (this.suffix === undefined) {
-      this.suffix = [] as StringType[];
-    }
+    this.suffix ??= [] as StringType[];
   }
 
   /**
@@ -981,9 +975,7 @@ export class HumanName extends DataType implements IBase {
     }
 
     let jsonObj = super.toJSON() as JSON.Object | undefined;
-    if (jsonObj === undefined) {
-      jsonObj = {} as JSON.Object;
-    }
+    jsonObj ??= {} as JSON.Object;
 
     if (this.hasUseElement()) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

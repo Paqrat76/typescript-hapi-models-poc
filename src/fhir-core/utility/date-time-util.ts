@@ -95,7 +95,7 @@ export function getDateTimeObject(value: string | undefined, opts?: DateTimeOpts
 
   let dt;
   if (isDefined<DateTimeOpts>(opts)) {
-    dt = DateTime.fromISO(value, opts);
+    dt = DateTime.fromISO(value, opts as object);
   } else {
     dt = DateTime.fromISO(value);
   }

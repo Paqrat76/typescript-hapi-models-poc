@@ -493,9 +493,7 @@ export class Reference extends DataType implements IBase {
     }
 
     let jsonObj = super.toJSON() as JSON.Object | undefined;
-    if (jsonObj === undefined) {
-      jsonObj = {} as JSON.Object;
-    }
+    jsonObj ??= {} as JSON.Object;
 
     if (this.hasReferenceElement()) {
       setFhirPrimitiveJson<fhirString>(this.getReferenceElement(), 'reference', jsonObj);
@@ -1102,9 +1100,7 @@ export class Identifier extends DataType implements IBase {
     }
 
     let jsonObj = super.toJSON() as JSON.Object | undefined;
-    if (jsonObj === undefined) {
-      jsonObj = {} as JSON.Object;
-    }
+    jsonObj ??= {} as JSON.Object;
 
     if (this.hasUseElement()) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

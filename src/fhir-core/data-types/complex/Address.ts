@@ -779,9 +779,7 @@ export class Address extends DataType implements IBase {
    * Initialize the `line` property
    */
   private initLine(): void {
-    if (this.line === undefined) {
-      this.line = [] as StringType[];
-    }
+    this.line ??= [] as StringType[];
   }
 
   /**
@@ -1196,9 +1194,7 @@ export class Address extends DataType implements IBase {
     }
 
     let jsonObj = super.toJSON() as JSON.Object | undefined;
-    if (jsonObj === undefined) {
-      jsonObj = {} as JSON.Object;
-    }
+    jsonObj ??= {} as JSON.Object;
 
     if (this.hasUseElement()) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

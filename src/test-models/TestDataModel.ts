@@ -1083,9 +1083,7 @@ export class TestDataModelPrimitiveComponent extends BackboneElement {
     // }
 
     let jsonObj = super.toJSON() as JSON.Object | undefined;
-    if (jsonObj === undefined) {
-      jsonObj = {} as JSON.Object;
-    }
+    jsonObj ??= {} as JSON.Object;
 
     const missingReqdProperties: string[] = [];
 
@@ -1573,9 +1571,7 @@ export class TestDataModelComplexComponent extends BackboneElement {
     // }
 
     let jsonObj = super.toJSON() as JSON.Object | undefined;
-    if (jsonObj === undefined) {
-      jsonObj = {} as JSON.Object;
-    }
+    jsonObj ??= {} as JSON.Object;
 
     const missingReqdProperties: string[] = [];
 
@@ -2067,9 +2063,7 @@ export class TestDataModelReferenceComponent extends BackboneElement {
     // }
 
     let jsonObj = super.toJSON() as JSON.Object | undefined;
-    if (jsonObj === undefined) {
-      jsonObj = {} as JSON.Object;
-    }
+    jsonObj ??= {} as JSON.Object;
 
     const missingReqdProperties: string[] = [];
 
@@ -2933,9 +2927,7 @@ export class TestDataModelEnumCodeComponent extends BackboneElement {
     // }
 
     let jsonObj = super.toJSON() as JSON.Object | undefined;
-    if (jsonObj === undefined) {
-      jsonObj = {} as JSON.Object;
-    }
+    jsonObj ??= {} as JSON.Object;
 
     const missingReqdProperties: string[] = [];
 

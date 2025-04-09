@@ -611,9 +611,7 @@ export class Coding extends DataType implements IBase {
     }
 
     let jsonObj = super.toJSON() as JSON.Object | undefined;
-    if (jsonObj === undefined) {
-      jsonObj = {} as JSON.Object;
-    }
+    jsonObj ??= {} as JSON.Object;
 
     if (this.hasSystemElement()) {
       setFhirPrimitiveJson<fhirUri>(this.getSystemElement(), 'system', jsonObj);

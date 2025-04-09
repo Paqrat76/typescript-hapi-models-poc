@@ -660,9 +660,7 @@ export class ContactPoint extends DataType implements IBase {
     }
 
     let jsonObj = super.toJSON() as JSON.Object | undefined;
-    if (jsonObj === undefined) {
-      jsonObj = {} as JSON.Object;
-    }
+    jsonObj ??= {} as JSON.Object;
 
     if (this.hasSystemElement()) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
