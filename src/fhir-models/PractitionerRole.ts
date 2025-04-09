@@ -1106,9 +1106,7 @@ export class PractitionerRole extends DomainResource implements IBase {
    * Initialize the `availableTime` property
    */
   private initAvailableTime(): void {
-    if (this.availableTime === undefined) {
-      this.availableTime = [] as PractitionerRoleAvailableTimeComponent[];
-    }
+    this.availableTime ??= [] as PractitionerRoleAvailableTimeComponent[];
   }
 
   /**
@@ -1169,9 +1167,7 @@ export class PractitionerRole extends DomainResource implements IBase {
    * Initialize the `notAvailable` property
    */
   private initNotAvailable(): void {
-    if (this.notAvailable === undefined) {
-      this.notAvailable = [] as PractitionerRoleNotAvailableComponent[];
-    }
+    this.notAvailable ??= [] as PractitionerRoleNotAvailableComponent[];
   }
 
   /**
@@ -1764,9 +1760,7 @@ export class PractitionerRoleAvailableTimeComponent extends BackboneElement {
    * Initialize the profile property
    */
   private initDaysOfWeek(): void {
-    if (this.daysOfWeek === undefined) {
-      this.daysOfWeek = [] as EnumCodeType[];
-    }
+    this.daysOfWeek ??= [] as EnumCodeType[];
   }
 
   /**
@@ -2001,9 +1995,7 @@ export class PractitionerRoleAvailableTimeComponent extends BackboneElement {
     }
 
     let jsonObj = super.toJSON() as JSON.Object | undefined;
-    if (jsonObj === undefined) {
-      jsonObj = {} as JSON.Object;
-    }
+    jsonObj ??= {} as JSON.Object;
 
     if (this.hasDaysOfWeekElement()) {
       setFhirPrimitiveListJson<fhirCode>(this.getDaysOfWeekElement(), 'daysOfWeek', jsonObj);
@@ -2274,9 +2266,7 @@ export class PractitionerRoleNotAvailableComponent extends BackboneElement {
     // }
 
     let jsonObj = super.toJSON() as JSON.Object | undefined;
-    if (jsonObj === undefined) {
-      jsonObj = {} as JSON.Object;
-    }
+    jsonObj ??= {} as JSON.Object;
 
     const missingReqdProperties: string[] = [];
 

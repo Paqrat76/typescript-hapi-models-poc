@@ -205,9 +205,7 @@ export class Parameters extends Resource implements IBase {
    * Initialize the `parameter` property
    */
   private initParameter(): void {
-    if (this.parameter === undefined) {
-      this.parameter = [] as ParametersParameterComponent[];
-    }
+    this.parameter ??= [] as ParametersParameterComponent[];
   }
 
   /**
@@ -663,9 +661,7 @@ export class ParametersParameterComponent extends BackboneElement {
     // }
 
     let jsonObj = super.toJSON() as JSON.Object | undefined;
-    if (jsonObj === undefined) {
-      jsonObj = {} as JSON.Object;
-    }
+    jsonObj ??= {} as JSON.Object;
 
     const missingReqdProperties: string[] = [];
 

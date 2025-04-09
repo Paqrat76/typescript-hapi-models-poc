@@ -655,9 +655,7 @@ export class Bundle extends Resource implements IBase {
    * Initialize the `link` property
    */
   private initLink(): void {
-    if (this.link === undefined) {
-      this.link = [] as BundleLinkComponent[];
-    }
+    this.link ??= [] as BundleLinkComponent[];
   }
 
   /**
@@ -714,9 +712,7 @@ export class Bundle extends Resource implements IBase {
    * Initialize the `entry` property
    */
   private initEntry(): void {
-    if (this.entry === undefined) {
-      this.entry = [] as BundleEntryComponent[];
-    }
+    this.entry ??= [] as BundleEntryComponent[];
   }
 
   /**
@@ -1136,9 +1132,7 @@ export class BundleLinkComponent extends BackboneElement {
     // }
 
     let jsonObj = super.toJSON() as JSON.Object | undefined;
-    if (jsonObj === undefined) {
-      jsonObj = {} as JSON.Object;
-    }
+    jsonObj ??= {} as JSON.Object;
 
     const missingReqdProperties: string[] = [];
 
@@ -1409,9 +1403,7 @@ export class BundleEntryComponent extends BackboneElement {
    * Initialize the `link` property
    */
   private initLink(): void {
-    if (this.link === undefined) {
-      this.link = [] as BundleLinkComponent[];
-    }
+    this.link ??= [] as BundleLinkComponent[];
   }
 
   /**
@@ -1649,9 +1641,7 @@ export class BundleEntryComponent extends BackboneElement {
     }
 
     let jsonObj = super.toJSON() as JSON.Object | undefined;
-    if (jsonObj === undefined) {
-      jsonObj = {} as JSON.Object;
-    }
+    jsonObj ??= {} as JSON.Object;
 
     if (this.hasLink()) {
       setFhirBackboneElementListJson(this.getLink(), 'link', jsonObj);
@@ -1979,9 +1969,7 @@ export class BundleEntrySearchComponent extends BackboneElement {
     }
 
     let jsonObj = super.toJSON() as JSON.Object | undefined;
-    if (jsonObj === undefined) {
-      jsonObj = {} as JSON.Object;
-    }
+    jsonObj ??= {} as JSON.Object;
 
     if (this.hasModeElement()) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -2668,9 +2656,7 @@ export class BundleEntryRequestComponent extends BackboneElement {
     // }
 
     let jsonObj = super.toJSON() as JSON.Object | undefined;
-    if (jsonObj === undefined) {
-      jsonObj = {} as JSON.Object;
-    }
+    jsonObj ??= {} as JSON.Object;
 
     const missingReqdProperties: string[] = [];
 
@@ -3215,9 +3201,7 @@ export class BundleEntryResponseComponent extends BackboneElement {
     // }
 
     let jsonObj = super.toJSON() as JSON.Object | undefined;
-    if (jsonObj === undefined) {
-      jsonObj = {} as JSON.Object;
-    }
+    jsonObj ??= {} as JSON.Object;
 
     const missingReqdProperties: string[] = [];
 

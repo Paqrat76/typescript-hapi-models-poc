@@ -570,9 +570,7 @@ export abstract class BackboneElement extends Element implements IBase, IBaseMod
     }
 
     let jsonObj = super.toJSON() as JSON.Object | undefined;
-    if (jsonObj === undefined) {
-      jsonObj = {} as JSON.Object;
-    }
+    jsonObj ??= {} as JSON.Object;
 
     if (this.hasModifierExtension()) {
       setFhirExtensionJson(this.getModifierExtension(), jsonObj, true);
@@ -778,9 +776,7 @@ export abstract class BackboneType extends DataType implements IBase, IBaseModif
     }
 
     let jsonObj = super.toJSON() as JSON.Object | undefined;
-    if (jsonObj === undefined) {
-      jsonObj = {} as JSON.Object;
-    }
+    jsonObj ??= {} as JSON.Object;
 
     if (this.hasModifierExtension()) {
       setFhirExtensionJson(this.getModifierExtension(), jsonObj, true);
