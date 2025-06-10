@@ -141,8 +141,8 @@ export class Group extends DomainResource implements IBase {
    * @param optSourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Group
    * @returns Group data model or undefined for `Group`
    */
-  public static override parse(sourceJson: JSON.Object, optSourceField?: string): Group | undefined {
-    if (!isDefined<JSON.Object>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
+  public static override parse(sourceJson: JSON.Value, optSourceField?: string): Group | undefined {
+    if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
     const source = isDefined<string>(optSourceField) ? optSourceField : 'Group';

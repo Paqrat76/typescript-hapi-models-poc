@@ -1,6 +1,6 @@
 {
   "name": "typescript-hapi-models-poc",
-  "version": "0.19.0",
+  "version": "0.20.0",
   "description": "POC project for TypeScript FHIR data models inspired by HAPI FHIR",
   "keywords": [
     "node",
@@ -38,35 +38,35 @@
   },
   "dependencies": {
     "luxon": "^3.6.1",
-    "zod": "^3.24.2"
+    "zod": "^3.25.57"
   },
   "overrides": {
     "micromatch": "4.0.8"
   },
   "devDependencies": {
-    "@eslint/js": "^9.24.0",
+    "@eslint/js": "^9.28.0",
     "@jest/globals": "^29.7.0",
     "@types/jest": "^29.5.14",
     "@types/luxon": "^3.6.2",
-    "@types/node": "^22.14.0",
-    "eslint": "^9.24.0",
-    "eslint-config-prettier": "^10.1.1",
-    "eslint-plugin-jest": "^28.11.0",
-    "eslint-plugin-jsdoc": "^50.6.9",
-    "eslint-plugin-node-import": "^1.0.4",
-    "globals": "^16.0.0",
+    "@types/node": "^22.15.31",
+    "eslint": "^9.28.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-jest": "^28.13.0",
+    "eslint-plugin-jsdoc": "^50.7.1",
+    "eslint-plugin-node-import": "^1.0.5",
+    "globals": "^16.2.0",
     "husky": "^9.1.7",
     "jest": "^29.7.0",
     "jest-circus": "^29.7.0",
-    "lint-staged": "^15.5.0",
-    "markdownlint-cli": "^0.44.0",
+    "lint-staged": "^16.1.0",
+    "markdownlint-cli": "^0.45.0",
     "prettier": "^3.5.3",
-    "ts-jest": "^29.3.1",
+    "ts-jest": "^29.3.4",
     "ts-node": "^10.9.2",
-    "typedoc": "^0.28.2",
-    "typedoc-plugin-zod": "^1.4.0",
+    "typedoc": "^0.28.5",
+    "typedoc-plugin-zod": "^1.4.1",
     "typescript": "~5.8.3",
-    "typescript-eslint": "^8.29.1"
+    "typescript-eslint": "^8.34.0"
   },
   "engines": {
     "node": ">=20.9",

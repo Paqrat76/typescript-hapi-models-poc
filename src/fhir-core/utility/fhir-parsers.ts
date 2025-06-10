@@ -82,7 +82,46 @@ import { isEmpty, upperFirst } from '@src/fhir-core/utility/common-util';
 import { getChoiceDatatypeDefsForField, getOpenDatatypeFields } from '@src/fhir-core/utility/decorators';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { assertIsDefined, assertIsString, isDefined } from '@src/fhir-core/utility/type-guards';
-import { strict as assert } from 'node:assert';
+import { AssertionError, strict as assert } from 'node:assert';
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+export type ParsableDataModel<T extends DataType | Resource> = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  new (...args: any[]): T;
+  parse: (sourceJson: JSON.Value | JSON.Object, optSourceField?: string) => T | undefined;
+};
+
+/**
+ * Parse the provided sourceJson to return the class instance from the parser
+ *
+ * @param className - class having static parse method
+ * @param sourceJson - source JSON to be parsed
+ * @param optSourceField - option source field use to identify origin in error messages
+ * @returns the class instance from the parser
+ */
+export function parser<T extends DataType | Resource>(
+  className: ParsableDataModel<T>,
+  sourceJson: JSON.Value | JSON.Object,
+  optSourceField?: string,
+): T | undefined {
+  return className.parse(sourceJson, optSourceField);
+}
+
+export const PARSABLE_DATATYPE_MAP = new Map<string, ParsableDataModel<DataType | Resource>>();
+PARSABLE_DATATYPE_MAP.set('Address', Address);
+PARSABLE_DATATYPE_MAP.set('Attachment', Attachment);
+PARSABLE_DATATYPE_MAP.set('CodeableConcept', CodeableConcept);
+PARSABLE_DATATYPE_MAP.set('Coding', Coding);
+PARSABLE_DATATYPE_MAP.set('ContactPoint', ContactPoint);
+PARSABLE_DATATYPE_MAP.set('HumanName', HumanName);
+PARSABLE_DATATYPE_MAP.set('Identifier', Identifier);
+PARSABLE_DATATYPE_MAP.set('Meta', Meta);
+PARSABLE_DATATYPE_MAP.set('Period', Period);
+PARSABLE_DATATYPE_MAP.set('Quantity', Quantity);
+PARSABLE_DATATYPE_MAP.set('Range', Range);
+PARSABLE_DATATYPE_MAP.set('Reference', Reference);
+PARSABLE_DATATYPE_MAP.set('Signature', Signature);
+PARSABLE_DATATYPE_MAP.set('SimpleQuantity', SimpleQuantity);
 
 //region CoreTypes
 
@@ -383,6 +422,7 @@ export function getValueXData(jsonObj: JSON.Object, fieldName: string): DataType
     const dataValue: JSON.Value | undefined = jsonObj[valueXKey];
     const siblingDataValue: JSON.Value | undefined = jsonObj[`_${valueXKey}`];
     const switchKey = valueXKey.replace(fieldName, 'value');
+    const mapKey = valueXKey.replace(fieldName, '');
 
     if (dataValue !== undefined) {
       switch (switchKey) {
@@ -429,39 +469,46 @@ export function getValueXData(jsonObj: JSON.Object, fieldName: string): DataType
           return parseUuidType(dataValue, siblingDataValue);
         // case 'valueXhtml': NOT INCLUDED IN OPEN DATATYPES
 
-        case 'valueAddress':
-          return Address.parse(dataValue);
-        case 'valueAttachment':
-          return Attachment.parse(dataValue);
-        case 'valueCodeableConcept':
-          return CodeableConcept.parse(dataValue);
-        case 'valueCoding':
-          return Coding.parse(dataValue);
-        case 'valueContactPoint':
-          return ContactPoint.parse(dataValue);
-        case 'valueHumanName':
-          return HumanName.parse(dataValue);
-        case 'valueIdentifier':
-          return Identifier.parse(dataValue);
-        case 'valueMeta':
-          return Meta.parse(dataValue);
-        // case 'valueNarrative': NOT INCLUDED IN OPEN DATATYPES
-        case 'valuePeriod':
-          return Period.parse(dataValue);
-        case 'valueQuantity':
-          return Quantity.parse(dataValue);
-        case 'valueRange':
-          return Range.parse(dataValue);
-        case 'valueReference':
-          return Reference.parse(dataValue);
-        case 'valueSignature':
-          return Signature.parse(dataValue);
-        case 'valueSimpleQuantity':
-          // Subclass of Quantity
-          return SimpleQuantity.parse(dataValue);
+        // case 'valueAddress':
+        //   return Address.parse(dataValue);
+        // case 'valueAttachment':
+        //   return Attachment.parse(dataValue);
+        // case 'valueCodeableConcept':
+        //   return CodeableConcept.parse(dataValue);
+        // case 'valueCoding':
+        //   return Coding.parse(dataValue);
+        // case 'valueContactPoint':
+        //   return ContactPoint.parse(dataValue);
+        // case 'valueHumanName':
+        //   return HumanName.parse(dataValue);
+        // case 'valueIdentifier':
+        //   return Identifier.parse(dataValue);
+        // case 'valueMeta':
+        //   return Meta.parse(dataValue);
+        // // case 'valueNarrative': NOT INCLUDED IN OPEN DATATYPES
+        // case 'valuePeriod':
+        //   return Period.parse(dataValue);
+        // case 'valueQuantity':
+        //   return Quantity.parse(dataValue);
+        // case 'valueRange':
+        //   return Range.parse(dataValue);
+        // case 'valueReference':
+        //   return Reference.parse(dataValue);
+        // case 'valueSignature':
+        //   return Signature.parse(dataValue);
+        // case 'valueSimpleQuantity':
+        //   // Subclass of Quantity
+        //   return SimpleQuantity.parse(dataValue);
 
         default:
-          return undefined;
+          if (PARSABLE_DATATYPE_MAP.has(mapKey)) {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            const parsableClass: ParsableDataModel<DataType | Resource> = PARSABLE_DATATYPE_MAP.get(mapKey)!;
+            assert(parsableClass, `parsableClass data model for '${mapKey}' is not defined???`);
+            return parser<DataType | Resource>(parsableClass, dataValue) as DataType | undefined;
+          } else {
+            return undefined;
+          }
       }
     }
   }
@@ -1253,6 +1300,12 @@ function getParsedType(
     } catch (err) {
       if (err instanceof TypeError) {
         throw new TypeError(`Failed to parse ${sourceField}: ${err.message}`, err);
+      } else if (err instanceof AssertionError) {
+        throw new AssertionError({
+          message: `Failed to parse ${sourceField}: ${err.message}`,
+          expected: `Parsed instance for ${sourceField}`,
+          actual: undefined,
+        });
       } else {
         const unexpectedErrorMsg = `Unexpected error parsing ${sourceField} from the provided JSON`;
         throw new Error(unexpectedErrorMsg);

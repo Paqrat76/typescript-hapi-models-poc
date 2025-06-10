@@ -124,8 +124,8 @@ export class TestDataModel extends DomainResource implements IBase {
     super();
   }
 
-  public static override parse(sourceJson: JSON.Object, optSourceField?: string): TestDataModel | undefined {
-    if (!isDefined<JSON.Object>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
+  public static override parse(sourceJson: JSON.Value, optSourceField?: string): TestDataModel | undefined {
+    if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
     const source = isDefined<string>(optSourceField) ? optSourceField : 'TestDataModel';

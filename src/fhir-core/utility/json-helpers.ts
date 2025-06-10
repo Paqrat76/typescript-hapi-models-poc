@@ -70,7 +70,7 @@ import {
   isString,
 } from '@src/fhir-core/utility/type-guards';
 
-export { JsonObject as Object, JsonArray as Array };
+export type { JsonObject as Object, JsonArray as Array };
 
 /**
  * JSON data types, as returned by `JSON.parse()`.

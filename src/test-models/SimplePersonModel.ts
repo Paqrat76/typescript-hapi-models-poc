@@ -63,8 +63,8 @@ export class SimplePersonModel extends DomainResource implements IBase {
     super();
   }
 
-  public static override parse(sourceJson: JSON.Object, optSourceField?: string): SimplePersonModel | undefined {
-    if (!isDefined<JSON.Object>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
+  public static override parse(sourceJson: JSON.Value, optSourceField?: string): SimplePersonModel | undefined {
+    if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
     const source = isDefined<string>(optSourceField) ? optSourceField : 'SimplePersonModel';

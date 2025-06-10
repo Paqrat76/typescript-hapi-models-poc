@@ -33,21 +33,33 @@
  * @module
  */
 
+import { DataType } from '@src/fhir-core/base-models/core-fhir-models';
 import { DomainResource } from '@src/fhir-core/base-models/DomainResource';
 import { isFhirResourceType } from '@src/fhir-core/base-models/FhirResourceType';
 import { Resource } from '@src/fhir-core/base-models/Resource';
 import { InvalidTypeError } from '@src/fhir-core/errors/InvalidTypeError';
 import { isEmpty } from '@src/fhir-core/utility/common-util';
+import { ParsableDataModel, parser } from '@src/fhir-core/utility/fhir-parsers';
 import * as JSON from '@src/fhir-core/utility/json-helpers';
 import { isDefined } from '@src/fhir-core/utility/type-guards';
 import { Bundle } from '@src/fhir-models/Bundle';
 import { Group } from '@src/fhir-models/Group';
-import { Parameters } from '@src/fhir-models/Parameters';
+import { Parameters, ParametersParameterComponent } from '@src/fhir-models/Parameters';
 import { Patient } from '@src/fhir-models/Patient';
 import { PractitionerRole } from '@src/fhir-models/PractitionerRole';
 import { SimplePersonModel } from '@src/test-models/SimplePersonModel';
 import { TestDataModel } from '@src/test-models/TestDataModel';
 import { strict as assert } from 'node:assert';
+
+export const PARSABLE_RESOURCE_MAP = new Map<string, ParsableDataModel<DataType | Resource>>();
+PARSABLE_RESOURCE_MAP.set('Bundle', Bundle);
+PARSABLE_RESOURCE_MAP.set('Group', Group);
+PARSABLE_RESOURCE_MAP.set('Parameters', Parameters);
+PARSABLE_RESOURCE_MAP.set('ParametersParameterComponent', ParametersParameterComponent);
+PARSABLE_RESOURCE_MAP.set('Patient', Patient);
+PARSABLE_RESOURCE_MAP.set('PractitionerRole', PractitionerRole);
+PARSABLE_RESOURCE_MAP.set('Basic', TestDataModel);
+PARSABLE_RESOURCE_MAP.set('Person', SimplePersonModel);
 
 // Ignore for coverage because all parse methods have their own tests
 /* istanbul ignore next */
@@ -58,40 +70,47 @@ import { strict as assert } from 'node:assert';
  * The FHIR resource code generator will fill out the switch statement for all FHIR resources.
  *
  * @param resourceTypeValue - String name of FHIR model to do the parsing
- * @param jsonObj - JSON object to parse by the resourceTypeValue implementation of `parse()`
+ * @param jsonValue - JSON object to parse by the resourceTypeValue implementation of `parse()`
  * @returns the parsed Resource or undefined
  */
-function getFhirModelParseResults(resourceTypeValue: string, jsonObj: JSON.Object): Resource | undefined {
+function getFhirModelParseResults(resourceTypeValue: string, jsonValue: JSON.Value): Resource | undefined {
   let parseResult: Resource | undefined = undefined;
-  switch (resourceTypeValue) {
-    case 'Bundle':
-      parseResult = Bundle.parse(jsonObj);
-      break;
-    case 'Group':
-      parseResult = Group.parse(jsonObj);
-      break;
-    case 'Parameters':
-      parseResult = Parameters.parse(jsonObj);
-      break;
-    case 'Patient':
-      parseResult = Patient.parse(jsonObj);
-      break;
-    case 'PractitionerRole':
-      parseResult = PractitionerRole.parse(jsonObj);
-      break;
-    case 'Basic':
-      // Test class TestDataModel
-      parseResult = TestDataModel.parse(jsonObj);
-      break;
-    case 'Person':
-      // Test class SimplePersonModel used by TestDataModel
-      parseResult = SimplePersonModel.parse(jsonObj);
-      break;
-    default:
-      // TODO: Eventually return undefined rather that throw an error - throwing error during POC development
-      // return parseResult; // undefined
-      throw new InvalidTypeError(`Unexpected resource type ${resourceTypeValue}`);
+  // switch (resourceTypeValue) {
+  //   case 'Bundle':
+  //     parseResult = Bundle.parse(jsonObj);
+  //     break;
+  //   case 'Group':
+  //     parseResult = Group.parse(jsonObj);
+  //     break;
+  //   case 'Parameters':
+  //     parseResult = Parameters.parse(jsonObj);
+  //     break;
+  //   case 'Patient':
+  //     parseResult = Patient.parse(jsonObj);
+  //     break;
+  //   case 'PractitionerRole':
+  //     parseResult = PractitionerRole.parse(jsonObj);
+  //     break;
+  //   case 'Basic':
+  //     // Test class TestDataModel
+  //     parseResult = TestDataModel.parse(jsonObj);
+  //     break;
+  //   case 'Person':
+  //     // Test class SimplePersonModel used by TestDataModel
+  //     parseResult = SimplePersonModel.parse(jsonObj);
+  //     break;
+  //   default:
+  //     // TODO: Eventually return undefined rather that throw an error - throwing error during POC development
+  //     // return parseResult; // undefined
+  //     throw new InvalidTypeError(`Unexpected resource type ${resourceTypeValue}`);
+  // }
+  if (PARSABLE_RESOURCE_MAP.has(resourceTypeValue)) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const parsableClass: ParsableDataModel<DataType | Resource> = PARSABLE_RESOURCE_MAP.get(resourceTypeValue)!;
+    assert(parsableClass, `parsableClass data model for '${resourceTypeValue}' is not defined???`);
+    parseResult = parser<DataType | Resource>(parsableClass, jsonValue) as Resource | undefined;
   }
+
   return parseResult;
 }
 
@@ -122,7 +141,7 @@ export function parseInlineResource(json: JSON.Value | undefined, sourceField: s
     );
   }
 
-  return getFhirModelParseResults(resourceTypeValue, jsonObj);
+  return getFhirModelParseResults(resourceTypeValue, json);
 }
 
 /**
