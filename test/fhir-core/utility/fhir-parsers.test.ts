@@ -81,6 +81,7 @@ import {
   processResourceJson,
 } from '@src/fhir-core/utility/fhir-parsers';
 import { AssertionError } from 'node:assert';
+import { Address, ParsableDataModel, parser, Patient, Resource } from '../../../src';
 import {
   FHIR_MAX_INTEGER,
   FHIR_MAX_INTEGER64,
@@ -462,6 +463,233 @@ describe('fhir-parsers', () => {
         };
         expect(t).toThrow(InvalidTypeError);
         expect(t).toThrow(`The provided JSON does not represent a FHIR Resource (missing 'resourceType' element).`);
+      });
+    });
+
+    describe('parser', () => {
+      const CLASS_MAP = new Map<string, ParsableDataModel<DataType | Resource>>();
+      CLASS_MAP.set('Address', Address);
+      CLASS_MAP.set('Patient', Patient);
+
+      it('should parse a complex type', () => {
+        const VALID_JSON_ADDRESS = {
+          id: 'id1234',
+          extension: [
+            {
+              url: 'testUrl1',
+              valueString: 'base extension string value 1',
+            },
+            {
+              url: 'testUrl2',
+              valueString: 'base extension string value 2',
+            },
+          ],
+          use: 'home',
+          type: 'both',
+          text: 'This is a valid string.',
+          _text: {
+            id: 'T1357',
+            extension: [
+              {
+                url: 'textUrl',
+                valueString: 'text extension string value',
+              },
+            ],
+          },
+          line: ['1234 Main ST', 'APT 15A'],
+          city: 'Nashua',
+          district: 'Hillsborough',
+          state: 'NH',
+          postalCode: '03064',
+          country: 'US',
+          period: {
+            start: '2017-01-01T00:00:00.000Z',
+            end: '2017-01-01T01:00:00.000Z',
+          },
+        };
+
+        if (CLASS_MAP.has('Address')) {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          const addressClass: ParsableDataModel<DataType | Resource> = CLASS_MAP.get('Address')!;
+          const parsedAddress: Address | undefined = parser<DataType | Resource>(addressClass, VALID_JSON_ADDRESS);
+          expect(parsedAddress).toBeDefined();
+          expect(parsedAddress.toJSON()).toEqual(VALID_JSON_ADDRESS);
+        } else {
+          expect(false).toBe(true);
+        }
+      });
+
+      it('should parse a resource', () => {
+        const VALID_JSON_PATIENT = {
+          resourceType: 'Patient',
+          id: 'id12345',
+          meta: {
+            versionId: 'VID-1972',
+          },
+          implicitRules: 'implicitRules',
+          language: 'en-US',
+          text: {
+            status: 'generated',
+            div: '<div xmlns="http://www.w3.org/1999/xhtml">text</div>',
+          },
+          contained: [
+            {
+              resourceType: 'PractitionerRole',
+              id: '#PR1',
+              identifier: [
+                {
+                  value: 'This is a valid string.',
+                },
+              ],
+              active: false,
+              practitioner: {
+                reference: 'Practitioner/13579',
+              },
+            },
+          ],
+          extension: [
+            {
+              url: 'extUrl',
+              valueString: 'Extension string value',
+            },
+          ],
+          modifierExtension: [
+            {
+              url: 'modExtUrl',
+              valueString: 'ModifierExtension string value',
+            },
+          ],
+          identifier: [
+            {
+              value: 'This is a valid string.',
+            },
+          ],
+          active: true,
+          name: [
+            {
+              family: 'Surname',
+              given: ['First', 'Middle'],
+              prefix: ['Mr.'],
+              suffix: ['Sr.'],
+            },
+          ],
+          telecom: [
+            {
+              id: 'DT-1357',
+              extension: [
+                {
+                  url: 'datatypeUrl',
+                  valueString: 'datatype extension string value',
+                },
+              ],
+              system: 'phone',
+              value: 'This is a valid string.',
+              use: 'home',
+            },
+          ],
+          gender: 'male',
+          birthDate: '1978-01-28',
+          deceasedBoolean: false,
+          address: [
+            {
+              use: 'home',
+              type: 'postal',
+              line: ['1234 Main ST', 'APT 15A'],
+              city: 'Nashua',
+              state: 'NH',
+              postalCode: '03064',
+              country: 'US',
+            },
+          ],
+          maritalStatus: {
+            text: 'This is a valid string.',
+          },
+          multipleBirthInteger: 2,
+          photo: [
+            {
+              contentType: 'testCodeType',
+              url: 'testUrlType',
+              size: 697276,
+              hash: '0f60168295bc9d6b0535feaf0975a63532959834',
+              title: 'This is a valid string.',
+            },
+          ],
+          contact: [
+            {
+              relationship: [
+                {
+                  text: 'relationship unknown 1',
+                },
+              ],
+              name: {
+                family: 'Surname1',
+                given: ['Firstname1', 'Middlename1'],
+                prefix: ['Mr.'],
+              },
+              telecom: [
+                {
+                  system: 'phone',
+                  value: '888-555-1234 1',
+                  use: 'home',
+                },
+              ],
+              address: {
+                use: 'home',
+                type: 'both',
+                line: ['1234 Main Street', 'APT 1'],
+                city: 'Nashua',
+                state: 'NH',
+                postalCode: '03064',
+              },
+              gender: 'male',
+              organization: {
+                reference: 'Organization/123451',
+              },
+              period: {
+                start: '2013-11-21T00:00:00.000Z',
+              },
+            },
+          ],
+          communication: [
+            {
+              language: {
+                coding: [
+                  {
+                    system: 'urn:ietf:bcp:47',
+                    code: 'en-US',
+                  },
+                ],
+              },
+              preferred: true,
+            },
+          ],
+          generalPractitioner: [
+            {
+              reference: 'Practitioner/13579',
+            },
+          ],
+          managingOrganization: {
+            reference: 'Organization/123',
+          },
+          link: [
+            {
+              other: {
+                reference: 'Patient/987651',
+              },
+              type: 'replaces',
+            },
+          ],
+        };
+
+        if (CLASS_MAP.has('Patient')) {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          const patientClass: ParsableDataModel<DataType | Resource> = CLASS_MAP.get('Patient')!;
+          const parsedPatient: Patient | undefined = parser<DataType | Resource>(patientClass, VALID_JSON_PATIENT);
+          expect(parsedPatient).toBeDefined();
+          expect(parsedPatient.toJSON()).toEqual(VALID_JSON_PATIENT);
+        } else {
+          expect(false).toBe(true);
+        }
       });
     });
   });

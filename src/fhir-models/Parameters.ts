@@ -95,8 +95,8 @@ export class Parameters extends Resource implements IBase {
    * @param optSourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Parameters
    * @returns Parameters data model or undefined for `Parameters`
    */
-  public static override parse(sourceJson: JSON.Object, optSourceField?: string): Parameters | undefined {
-    if (!isDefined<JSON.Object>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
+  public static override parse(sourceJson: JSON.Value, optSourceField?: string): Parameters | undefined {
+    if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
     const source = isDefined<string>(optSourceField) ? optSourceField : 'Parameters';

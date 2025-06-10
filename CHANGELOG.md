@@ -19,6 +19,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [0.20.0] - 2025-06-10
+
+### Added
+
+- `type ParsableDataModel<T extends DataType | Resource>` and
+  `function parser<T extends DataType | Resource>(className: ParsableDataModel<T>, sourceJson: JSON.Value | JSON.Object, optSourceField?: string): T | undefined`
+  to replace the switch statement based parsing maps
+
+### Changed
+
+- Updated dependencies
+- Updated all resource data models `parse` methods to use `JSON.Value` rather than `JSON.Object` for consistency
+
+
 ## [0.19.0] - 2025-04-09
 
 ### Changed

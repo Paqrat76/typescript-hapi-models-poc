@@ -122,8 +122,8 @@ export class Patient extends DomainResource implements IBase {
    * @param optSourceField - Optional data source field (e.g. `<complexTypeName>.<complexTypeFieldName>`); defaults to Patient
    * @returns Patient data model or undefined for `Patient`
    */
-  public static override parse(sourceJson: JSON.Object, optSourceField?: string): Patient | undefined {
-    if (!isDefined<JSON.Object>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
+  public static override parse(sourceJson: JSON.Value, optSourceField?: string): Patient | undefined {
+    if (!isDefined<JSON.Value>(sourceJson) || (JSON.isJsonObject(sourceJson) && isEmpty(sourceJson))) {
       return undefined;
     }
     const source = isDefined<string>(optSourceField) ? optSourceField : 'Patient';
